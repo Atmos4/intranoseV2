@@ -1,3 +1,4 @@
 <?php
 
-echo "Accueil";
+$title = "Accueil";
+require "template/layout.php";
