@@ -23,6 +23,10 @@ article div {
   padding: 1rem;
 }
 
+article h1 {
+  text-align: center;
+}
+
 @media (min-width: 576px) {
   body > main {
     padding: 1.25rem 0;

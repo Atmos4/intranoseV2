@@ -1,0 +1,37 @@
+/* Pink Light scheme (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --primary: hsl(123, 78%, 48%);
+  --primary-hover: hsl(121, 78%, 43%);
+  --primary-focus: hsla(123, 78%, 48%, 0.125);
+  --primary-inverse: #fff;
+}
+
+/* Pink Dark scheme (Auto) */
+/* Automatically enabled if user has Dark mode enabled */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: hsl(123, 78%, 48%);
+    --primary-hover: hsl(125, 82%, 52%);
+    --primary-focus: hsla(123, 78%, 48%, 0.25);
+    --primary-inverse: #fff;
+  }
+}
+
+/* Pink Dark scheme (Forced) */
+/* Enabled if forced with data-theme="dark" */
+[data-theme="dark"] {
+  --primary: hsl(123, 78%, 48%);
+  --primary-hover: hsl(125, 82%, 52%);
+  --primary-focus: hsla(123, 78%, 48%, 0.25);
+  --primary-inverse: #fff;
+}
+
+/* Pink (Common styles) */
+:root {
+  --form-element-active-border-color: var(--primary);
+  --form-element-focus-color: var(--primary-focus);
+  --switch-color: var(--primary-inverse);
+  --switch-checked-background-color: var(--primary);
+}

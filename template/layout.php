@@ -17,6 +17,7 @@ $content ??= "";
 
     <!-- Pico.css -->
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
 
     <?php if (!empty($css)) : ?>
         <link rel="stylesheet" href="<?= $css ?>">
