@@ -1,16 +1,22 @@
 <?php
+
+require_once "core/db.php";
+require_once "core/utils.php";
+
 if (count($_POST) && (!empty($_POST['login']) || !empty($_POST['password']))) {
     $login = $_POST['login'];
     $password = $_POST['password'];
 
     $user_data = fetch(
-        "SELECT login, password, perm, nom, prenom, id, valid 
+        "SELECT id, perm
         FROM licencies
-        WHERE login=? AND password=? LIMIT 1;",
+        WHERE login=? AND password=MD5(?) LIMIT 1;",
         [$login, $password]
     );
-
-    var_dump($user_data);
+    if (count($user_data)) {
+        $_SESSION['user_id'] = $user_data['id'];
+        redirect("accueil.php");
+    }
 }
 
 $title = "Login";
