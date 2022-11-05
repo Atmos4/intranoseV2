@@ -1,9 +1,9 @@
 <nav class="container-fluid">
     <ul>
-        <li><a href="#" class="secondary">…</a></li>
-    </ul>
-    <ul>
-        <li><strong>Brand</strong></li>
+        <li><a href="accueil.php"><strong>Intranose</strong></a></li>
+        <li><a href="inscriptions.php">Inscriptions</a></li>
+        <li><a href="licencies.php">Licenciés</a></li>
+        <li><a href="profil.php">Mon profil</a></li>
     </ul>
     <ul>
         <li>

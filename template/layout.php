@@ -1,9 +1,9 @@
 <?php
-
-$title ??= "";
+// Recover global variables with $GLOBALS, because including the file puts them out of scope
+$title = $GLOBALS['title'] ?? "";
 $title .= " | Intranose";
-$description ??= "";
-$content ??= "";
+$description = $GLOBALS['description'] ?? "";
+$content = $GLOBALS['content'] ?? "";
 
 ?>
 <!doctype html>
@@ -16,7 +16,7 @@ $content ??= "";
     <meta name="description" content="<?= $description ?>">
 
     <!-- Pico.css -->
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="assets/css/pico.min.css">
     <link rel="stylesheet" href="assets/css/theme.css">
 
     <?php if (!empty($css)) : ?>
