@@ -1,0 +1,2 @@
+<?php
+page("Les licenciés");

@@ -1,11 +1,12 @@
 <nav class="container-fluid">
     <ul>
-        <li><a href="accueil.php"><strong>Intranose</strong></a></li>
-        <li><a href="inscriptions.php">Inscriptions</a></li>
-        <li><a href="licencies.php">Licenciés</a></li>
-        <li><a href="profil.php">Mon profil</a></li>
+        <li><a class="contrast" href="accueil"><strong>Intranose</strong></a></li>
+        <li><a class="contrast" href="mes-inscriptions">Inscriptions</a></li>
+        <li><a class="contrast" href="les-licencies">Licenciés</a></li>
+        <li><a class="contrast" href="mon-profil">Mon profil</a></li>
     </ul>
     <ul>
+        <li><a class="contrast" href="logout">Déconnexion</a></li>
         <li>
             <details role="list" dir="rtl">
                 <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>

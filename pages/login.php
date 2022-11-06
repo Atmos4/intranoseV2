@@ -1,7 +1,6 @@
 <?php
 
 require_once "utils/db.php";
-require_once "utils/core.php";
 
 if (count($_POST) && (!empty($_POST['login']) || !empty($_POST['password']))) {
     $login = $_POST['login'];
@@ -17,11 +16,11 @@ if (count($_POST) && (!empty($_POST['login']) || !empty($_POST['password']))) {
         $_SESSION['user_id'] = $user_data['id'];
         $_SESSION['user_permission'] = $user_data['perm'];
 
-        redirect("accueil.php");
+        redirect("accueil");
     }
 }
 
-create_page("Login", "assets/css/login.css", false);
+page("Login", "assets/css/login.css", false);
 ?>
 
 <main class="container small">
@@ -42,6 +41,3 @@ create_page("Login", "assets/css/login.css", false);
         </div>
     </article>
 </main>
-
-<?php
-render_page();

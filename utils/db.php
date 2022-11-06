@@ -7,8 +7,6 @@ $db_password = "";
 global $database;
 $database = new PDO("mysql:dbname=" . $db_name . ";host=" . $db_host . ";charset=UTF8", $db_user, $db_password);
 
-session_start();
-
 function db()
 {
     return $GLOBALS['database'];

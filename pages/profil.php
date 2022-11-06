@@ -1,0 +1,2 @@
+<?php
+page("Mon profil");
