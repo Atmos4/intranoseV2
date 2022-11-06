@@ -35,3 +35,7 @@
   --switch-color: var(--primary-inverse);
   --switch-checked-background-color: var(--primary);
 }
+
+.page-title {
+  text-align: center;
+}

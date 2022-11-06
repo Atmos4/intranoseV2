@@ -17,7 +17,7 @@ $content = $GLOBALS['content'] ?? "";
 
     <!-- Pico.css -->
     <link rel="stylesheet" href="assets/css/pico.min.css">
-    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/main.css">
 
     <?php if (!empty($GLOBALS['css'])) : ?>
         <link rel="stylesheet" href="<?= $GLOBALS['css'] ?>">
