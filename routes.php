@@ -17,5 +17,5 @@ get('/logout', function () {
     redirect("login");
 });
 
-// This route must be the last, this way is the fallback
+// Special route, see router.php
 any('/404', 'pages/404.php');

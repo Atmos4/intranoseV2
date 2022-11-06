@@ -1,25 +1,8 @@
 <?php
 
-require_once "utils/db.php";
+require_once "database/login_data.php";
 
-if (count($_POST) && (!empty($_POST['login']) || !empty($_POST['password']))) {
-    $login = $_POST['login'];
-    $password = $_POST['password'];
-
-    $user_data = fetch(
-        "SELECT id, perm
-        FROM licencies
-        WHERE login=? AND password=MD5(?) LIMIT 1;",
-        [$login, $password]
-    );
-    if (count($user_data)) {
-        $_SESSION['user_id'] = $user_data['id'];
-        $_SESSION['user_permission'] = $user_data['perm'];
-
-        redirect("accueil");
-    }
-}
-
+$validation_error = handle_login($_POST);
 page("Login", "assets/css/login.css", false);
 ?>
 
@@ -30,6 +13,9 @@ page("Login", "assets/css/login.css", false);
             <form method="post">
                 <input type="text" name="login" placeholder="Login" aria-label="Login" autocomplete="off" required>
                 <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
+                <?php if ($validation_error) : ?>
+                    <p class="error"><?= $validation_error ?></p>
+                <?php endif ?>
                 <fieldset>
                     <label for="remember">
                         <input type="checkbox" role="switch" id="remember" name="remember">
