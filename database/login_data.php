@@ -9,7 +9,8 @@ function handle_login($post)
             "SELECT id, perm
             FROM licencies
             WHERE login=? AND password=MD5(?) LIMIT 1;",
-            [$login, $password]
+            $login,
+            $password
         );
         if (count($user_data)) {
             $_SESSION['user_id'] = $user_data[0]['id'];

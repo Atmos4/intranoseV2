@@ -14,7 +14,7 @@ function db()
     return $GLOBALS['database'];
 }
 /** perform a SQL query */
-function query_db($sql_query, $args = null)
+function query_db($sql_query, ...$args)
 {
     if ($args) {
         $request = db()->prepare($sql_query);
@@ -25,9 +25,9 @@ function query_db($sql_query, $args = null)
     }
 }
 /** Calls query_db() and unwraps the result */
-function fetch($sql, $args = null)
+function fetch($sql, ...$args)
 {
-    return query_db($sql, $args)->fetchAll();
+    return query_db($sql, ...$args)->fetchAll();
 }
 
 // HELPER METHODS
