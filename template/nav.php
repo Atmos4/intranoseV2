@@ -16,12 +16,6 @@ $nav_routes = [
         </li>
     </ul>
     <ul>
-        <?php foreach ($nav_routes as $route => $nav_title) : ?>
-            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
-        <?php endforeach ?>
-    </ul>
-    <ul>
-        <li><a class="contrast" href="logout">Déconnexion</a></li>
         <li>
             <details role="list" dir="rtl">
                 <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
@@ -32,6 +26,14 @@ $nav_routes = [
                 </ul>
             </details>
         </li>
+    </ul>
+    <ul>
+        <?php foreach ($nav_routes as $route => $nav_title) : ?>
+            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
+        <?php endforeach ?>
+    </ul>
+    <ul>
+        <li><a class="contrast" href="logout">Déconnexion</a></li>
     </ul>
 
 </nav>

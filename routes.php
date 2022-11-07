@@ -8,7 +8,8 @@ any('/login', 'pages/login.php');
 get('/accueil', 'pages/accueil.php');
 any('/mon-profil', 'pages/profil.php');
 get('/mes-inscriptions', 'pages/inscriptions.php');
-get('/les-licencies', 'pages/licencies.php');
+get('/les-licencies', 'pages/licencies_list.php');
+get('/les-licencies/details/$licencie_id', 'pages/licencie_view.php');
 
 // Logout
 get('/logout', function () {
