@@ -4,7 +4,10 @@ require_once "database/profil_data.php";
 
 page("Mon profil");
 check_auth("USER");
+
+$user_data = get_user_data();
 ?>
+
 
 <main class="container">
     <form method="post">
