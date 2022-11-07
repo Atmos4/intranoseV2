@@ -45,6 +45,7 @@ function inject_in_template($path_to_include)
 }
 function route($route, $path_to_include)
 {
+    $_SESSION['current_route'] = $route;
     $callback = $path_to_include;
     if (!is_callable($callback)) {
         if (!strpos($path_to_include, '.php')) {

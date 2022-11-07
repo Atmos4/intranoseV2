@@ -6,7 +6,6 @@ $user_data = fetch("SELECT * FROM licencies WHERE id = ? LIMIT 1;", [$_SESSION['
 ?>
 
 <main class="container">
-    <?php include "template/page_title.php"; ?>
     <form>
         <!-- Grid -->
         <div class="grid">

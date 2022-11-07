@@ -39,3 +39,35 @@
 .page-title {
   text-align: center;
 }
+
+form p.error,
+a.destructive {
+  color: red;
+}
+
+/* Nav bar */
+
+#main-menu .icon {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  #main-menu li:not(.active) {
+    display: none;
+  }
+  #main-menu ul.icon {
+    float: left;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #main-menu.toggled,
+  #main-menu.toggled ul {
+    flex-direction: column;
+  }
+  #main-menu.toggled li {
+    display: block;
+    padding: 5px;
+  }
+}

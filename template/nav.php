@@ -1,12 +1,27 @@
-<nav class="container-fluid">
-    <ul>
-        <li><a class="contrast" href="accueil"><strong>Intranose</strong></a></li>
-        <li><a class="contrast" href="mes-inscriptions">Inscriptions</a></li>
-        <li><a class="contrast" href="les-licencies">Licenciés</a></li>
-        <li><a class="contrast" href="mon-profil">Mon profil</a></li>
+<?php
+$nav_routes = [
+    "/accueil" => "Accueil",
+    "/mes-inscriptions" => "Mes inscriptions",
+    "/les-licencies" => "Les licenciés",
+    "/mon-profil" => "Mon profil"
+];
+?>
+
+<nav class="container-fluid" id="main-menu">
+    <ul class="icon">
+        <li class="active">
+            <a href="javascript:void(0);" onclick="toggleNav()">
+                <i class="fa fa-bars"></i>
+            </a>
+        </li>
     </ul>
     <ul>
-        <li><a class="contrast" href="logout">Déconnexion</a></li>
+        <?php foreach ($nav_routes as $route => $nav_title) : ?>
+            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
+        <?php endforeach ?>
+    </ul>
+    <ul>
+        <li><a class="secondary" href="logout">Déconnexion</a></li>
         <li>
             <details role="list" dir="rtl">
                 <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
@@ -18,4 +33,5 @@
             </details>
         </li>
     </ul>
+
 </nav>
