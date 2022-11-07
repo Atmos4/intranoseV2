@@ -46,7 +46,6 @@ a.destructive {
 }
 
 /* Nav bar */
-
 #main-menu .icon {
   display: none;
 }
@@ -56,7 +55,6 @@ a.destructive {
     display: none;
   }
   #main-menu ul.icon {
-    float: left;
     display: block;
   }
 }
@@ -66,7 +64,7 @@ a.destructive {
   #main-menu.toggled ul {
     flex-direction: column;
   }
-  #main-menu.toggled li {
+  #main-menu.toggled ul:not(.icon) li {
     display: block;
     padding: 5px;
   }

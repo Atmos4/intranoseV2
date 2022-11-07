@@ -21,7 +21,7 @@ $nav_routes = [
         <?php endforeach ?>
     </ul>
     <ul>
-        <li><a class="secondary" href="logout">Déconnexion</a></li>
+        <li><a class="contrast" href="logout">Déconnexion</a></li>
         <li>
             <details role="list" dir="rtl">
                 <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
