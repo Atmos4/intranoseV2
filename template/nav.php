@@ -15,7 +15,6 @@ $nav_routes = [
             </a>
         </li>
     </ul>
-    <ul class="responsive"></ul>
     <ul>
         <li>
             <details role="list" dir="rtl">
