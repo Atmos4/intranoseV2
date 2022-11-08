@@ -48,7 +48,7 @@ function page($page_title, $page_css = null, $with_nav = true, $page_description
     global $title, $description, $css;
     $title = $page_title;
     $description = $page_description;
-    $css = $page_css;
+    $css = "/assets/css/" . $page_css;
     if ($with_nav) {
         require_root("template/nav.php");
     }

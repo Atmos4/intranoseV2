@@ -8,13 +8,14 @@ $nav_routes = [
 ?>
 
 <nav class="container-fluid" id="main-menu">
-    <ul class="icon">
-        <li class="active">
+    <ul class="responsive icon">
+        <li>
             <a href="javascript:void(0);" onclick="toggleNav()">
-                <i class="fa fa-bars"></i>
+                Menu
             </a>
         </li>
     </ul>
+    <ul class="responsive"></ul>
     <ul>
         <li>
             <details role="list" dir="rtl">
@@ -33,7 +34,7 @@ $nav_routes = [
         <?php endforeach ?>
     </ul>
     <ul>
-        <li><a class="contrast" href="logout">Déconnexion</a></li>
+        <li><a class="contrast" href="/logout">Déconnexion</a></li>
     </ul>
 
 </nav>

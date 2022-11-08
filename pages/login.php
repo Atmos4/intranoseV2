@@ -3,7 +3,7 @@
 require_once "database/login_data.php";
 
 $validation_error = handle_login($_POST);
-page("Login", "assets/css/login.css", false);
+page("Login", "login.css", false);
 ?>
 
 <main class="container small">

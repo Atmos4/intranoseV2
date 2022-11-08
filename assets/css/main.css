@@ -46,26 +46,30 @@ a.destructive {
 }
 
 /* Nav bar */
-#main-menu .icon {
+#main-menu {
+  position: relative;
+}
+#main-menu .responsive {
   display: none;
 }
-
 @media screen and (max-width: 768px) {
-  #main-menu li:not(.active) {
+  #main-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+  #main-menu ul:not(.responsive) {
     display: none;
   }
-  #main-menu ul.icon {
-    display: block;
+  #main-menu ul.responsive {
+    display: flex;
   }
-}
-
-@media screen and (max-width: 768px) {
-  #main-menu.toggled,
   #main-menu.toggled ul {
     flex-direction: column;
   }
-  #main-menu.toggled ul:not(.icon) li {
-    display: block;
-    padding: 5px;
+  #main-menu.toggled ul:not(.responsive) {
+    display: flex;
+  }
+  #main-menu.toggled ul:not(.responsive) li {
+    padding: 7px;
   }
 }

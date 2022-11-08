@@ -34,7 +34,7 @@ function any($route, $path_to_include)
 {
     route($route, $path_to_include);
 }
-function inject_in_template($path_to_include)
+function inject_in_template($path_to_include = "pages/404.php")
 {
     ob_start();
     include_once $path_to_include;
@@ -88,8 +88,11 @@ function route($route, $path_to_include)
     }
     inject_in_template($path_to_include);
 }
-function get_route_param($param)
+function get_route_param($param, $numeric = true)
 {
+    if (empty($GLOBALS[$param]) or ($numeric and !is_numeric($GLOBALS[$param]))) {
+        inject_in_template();
+    }
     return $GLOBALS[$param];
 }
 function out($text)
