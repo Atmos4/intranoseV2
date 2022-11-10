@@ -56,7 +56,7 @@ a.destructive {
   #main-menu,
   #main-menu.toggled ul {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
   #main-menu ul:not(.responsive) {
     display: none;

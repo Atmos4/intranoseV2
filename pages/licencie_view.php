@@ -6,11 +6,12 @@ page($licencie['prenom'] . " " . $licencie['nom'], "licencie.css");
 
 $profile_picture = (file_exists("images/profile/" . $licencie['id'] . ".jpg")) ? "/images/profile/" . $licencie['id'] . ".jpg" : "/images/profile/none.jpg";
 ?>
-<main class="container">
-    <a href="/les-licencies" class="contrast return-link">Retour aux licenciés</a>
-    <article class="user-infos grid">
+<main class="container user-infos ">
+    <a href="/les-licencies" class="return-link">Retour aux licenciés</a>
+    <article class="grid">
         <figure>
             <img src="<?= $profile_picture ?>">
+            <figcaption><?= $licencie['prenom'] . " " . $licencie['nom'] ?></figcaption>
         </figure>
         <table class="infos-table">
             <tr>
@@ -32,11 +33,11 @@ $profile_picture = (file_exists("images/profile/" . $licencie['id'] . ".jpg")) ?
                         ) ?></td>
             </tr>
             <tr>
-                <td>📞 Fixe</td>
+                <td>Fixe</td>
                 <td> <?= $licencie['tel'] ?></td>
             </tr>
             <tr>
-                <td>📞 Portable </td>
+                <td>Portable </td>
                 <td><?= $licencie['telport'] ?></td>
             </tr>
             <tr>
