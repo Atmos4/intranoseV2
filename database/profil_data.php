@@ -5,7 +5,7 @@ function get_user_data()
     return fetch("SELECT * FROM licencies WHERE id = ? LIMIT 1;", $_SESSION['user_id'])[0];
 }
 
-function modify_email($post)
+function change_email($post)
 {
     if (isset($post["email"]) and isset($post["emailnose"])) {
         $email = $post["email"];
@@ -25,7 +25,7 @@ function modify_email($post)
     }
 }
 
-function modify_infos($post)
+function change_infos($post)
 {
 
     if (isset($post["sportident"])) {
@@ -62,7 +62,7 @@ function modify_infos($post)
     }
 }
 
-function modify_password($post)
+function change_password($post)
 {
     if (isset($post["password"])) {
         $currentPassword = $post['currentPassword'];
@@ -97,16 +97,16 @@ function modify_password($post)
     }
 }
 
-function modify_profil_data($post)
+function change_profil_data($post)
 {
     //Check from which form it is coming
     if (isset($post['submitEMail'])) {
-        return modify_email($post);
+        return change_email($post);
     }
     if (isset($post['submitInfos'])) {
-        return modify_infos($post);
+        return change_infos($post);
     }
     if (isset($post['submitPassword'])) {
-        return modify_password($post);
+        return change_password($post);
     }
 }

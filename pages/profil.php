@@ -5,7 +5,7 @@ require_once "database/profil_data.php";
 page("Mon profil");
 check_auth("USER");
 
-[$validation_result, $validation_color] = modify_profil_data($_POST);
+[$validation_result, $validation_color] = change_profil_data($_POST);
 $user_data = get_user_data();
 $messageEmail = "";
 ?>
