@@ -5,60 +5,88 @@ require_once "database/profil_data.php";
 page("Mon profil");
 check_auth("USER");
 
+[$validation_result, $validation_color] = modify_profil_data($_POST);
 $user_data = get_user_data();
+$messageEmail = "";
 ?>
 
-
 <main class="container">
-    <form method="post">
-        <!-- Grid -->
-        <div class="grid">
 
-            <label for="firstname">
-                Prénom
-                <input type="text" id="prenom" name="prenom" value=<?= $user_data["prenom"] ?> required>
-            </label>
+    <?php if ($validation_result) : ?>
+        <p class=<?= $validation_color ?>><?= $validation_result ?></p>
+    <?php endif ?>
 
-            <label for="nom">
-                Nom
-                <input type="text" id="nom" name="nom" value=<?= $user_data["nom"] ?> required>
-            </label>
 
-        </div>
+    <h2>Identité</h2>
+
+    <div class="grid">
+
+        <label for="firstname">
+            Prénom
+            <input type="text" id="prenom" name="prenom" value=<?= $user_data["prenom"] ?> disabled>
+        </label>
+
+        <label for="nom">
+            Nom
+            <input type="text" id="nom" name="nom" value=<?= $user_data["nom"] ?> disabled>
+        </label>
+
+    </div>
+
+    <div class="grid">
+
+        <label for="numlicense">
+            Numéro de license
+            <input type="text" id="numlicense" name="numlicense" value=<?= $user_data["num_lic"] ?> disabled>
+        </label>
 
         <fieldset>
             <legend>Sexe</legend>
             <label for="homme">
-                <input type="radio" id="homme" name="sexe" value="H" <?php echo ($user_data["sexe"] == 'H') ? 'checked="checked"' : ''; ?>>
+                <input type="radio" id="homme" name="sexe" value="H" <?php echo ($user_data["sexe"] == 'H') ? 'checked="checked"' : ''; ?> disabled>
                 Homme
             </label>
             <label for="dame">
-                <input type="radio" id="dame" name="sexe" value="D" <?php echo ($user_data["sexe"] == 'D') ? 'checked="checked"' : ''; ?>>
+                <input type="radio" id="dame" name="sexe" value="D" <?php echo ($user_data["sexe"] == 'D') ? 'checked="checked"' : ''; ?> disabled>
                 Dame
             </label>
         </fieldset>
+    </div>
+
+
+    <hr>
+
+
+    <form method="post">
+
+
+        <h2>Compte</h2>
+
+
+        <button type=button class=col-md-3 onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
+
 
         <label for="email">Adresse mail perso</label>
         <input type="email" id="email" name="email" value=<?= $user_data["realmail"] ?> required>
 
-        <button class=col-md-4>Changer le mot de passe</button>
-
         <label for="emailnose">Adresse mail NOSE</label>
         <input type="email" id="emailnose" name="emailnose" value=<?= $user_data["email"] ?> required>
 
-        <div class="grid">
+        <button type="submit" name="submitEMail" class=col-md-4>Mettre à jour les mails</button>
+    </form>
 
-            <label for="numlicense">
-                Numéro de license
-                <input type="text" id="numlicense" name="numlicense" value=<?= $user_data["num_lic"] ?> readonly>
-            </label>
+    <hr>
 
-            <label for="sportident">
-                SportIdent
-                <input type="text" id="sportident" name="sportident" value=<?= $user_data["sportident"] ?> required>
-            </label>
 
-        </div>
+    <h2> Infos perso </h2>
+
+
+    <form method="post">
+
+        <label for="sportident">
+            SportIdent
+            <input type="text" id="sportident" name="sportident" value=<?= $user_data["sportident"] ?> required>
+        </label>
 
         <label for="adresse">Adresse</label>
         <input type="text" id="adresse" name="adresse" value="<?= $user_data["adresse1"] ?>" required>
@@ -98,7 +126,8 @@ $user_data = get_user_data();
 
         </div>
 
-        <button type="submit" name="submitButton">Enregistrer</button>
+        <button type="submit" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
 
     </form>
+
 </main>

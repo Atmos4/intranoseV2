@@ -45,6 +45,10 @@ a.destructive {
   color: red;
 }
 
+p.success {
+  color:hsl(123, 78%, 48%);
+}
+
 /* Nav bar */
 #main-menu {
   position: relative;
