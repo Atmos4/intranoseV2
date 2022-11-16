@@ -5,7 +5,10 @@ require_once "database/profil_data.php";
 page("Mon profil");
 check_auth("USER");
 
-[$validation_result, $validation_color] = change_profil_data($_POST);
+//might be changed later for admins
+$id = $_SESSION['user_id'];
+
+[$validation_result, $validation_color] = change_profil_data($_POST, $id);
 $user_data = get_user_data();
 $messageEmail = "";
 ?>
@@ -63,7 +66,9 @@ $messageEmail = "";
         <h2>Compte</h2>
 
 
-        <button type=button class=col-md-3 onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
+        <button type=button class="col-md-3 secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
+        <button type=button class="col-md-3 secondary pull-right" onclick="window.location.href = '/mon-profil/changement-login'">Changer le login</button>
+
 
 
         <label for="email">Adresse mail perso</label>

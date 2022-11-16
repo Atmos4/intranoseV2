@@ -5,7 +5,7 @@ function get_user_data()
     return fetch("SELECT * FROM licencies WHERE id = ? LIMIT 1;", $_SESSION['user_id'])[0];
 }
 
-function change_email($post)
+function change_email($post, $id)
 {
     if (isset($post["email"]) and isset($post["emailnose"])) {
         $email = $post["email"];
@@ -19,13 +19,13 @@ function change_email($post)
             id = ? ;",
             $email,
             $emailnose,
-            $_SESSION['user_id']
+            $id
         );
-        return ["Mails mis à jours !", "success"];
+        return ["Mails mis à jour !", "success"];
     }
 }
 
-function change_infos($post)
+function change_infos($post, $id)
 {
 
     if (isset($post["sportident"])) {
@@ -56,13 +56,13 @@ function change_infos($post)
             $ville,
             $fixe,
             $portable,
-            $_SESSION['user_id']
+            $id
         );
         return ["Infos mises à jour !", "success"];
     }
 }
 
-function change_password($post)
+function change_password($post, $id)
 {
     if (isset($post["password"])) {
         $currentPassword = $post['currentPassword'];
@@ -73,7 +73,7 @@ function change_password($post)
         id, perm 
         FROM licencies
         WHERE id = ? AND password=MD5(?) LIMIT 1;",
-            $_SESSION['user_id'],
+            $id,
             $currentPassword
         );
         if (count($test_pass)) {
@@ -85,11 +85,11 @@ function change_password($post)
                 WHERE
                     id = ? ;",
                     $password,
-                    $_SESSION['user_id']
+                    $id
                 );
                 return ["Mot de passe mis à jour", "success"];
             } else {
-                return ["Confirmez le même mot de passe", "error"];
+                return ["Nouveau mot de passe et confirmation différents", "error"];
             }
         } else {
             return ["Mauvais mot de passe", "error"];
@@ -97,16 +97,50 @@ function change_password($post)
     }
 }
 
-function change_profil_data($post)
+function change_login($post, $id)
+{
+    if (isset($post["login"])) {
+        $login = $post['login'];
+        $password = $post['password'];
+        $newLogin = $post["newLogin"];
+        $test_pass = fetch(
+            "SELECT 
+        login, perm 
+        FROM licencies
+        WHERE login = ? AND password = MD5(?) LIMIT 1;",
+            $login,
+            $password
+        );
+        if (count($test_pass)) {
+            query_db(
+                "UPDATE licencies 
+        SET 
+            login =?
+        WHERE
+            id = ? ;",
+                $newLogin,
+                $id
+            );
+            return ["Login mis à jour !", "success"];
+        } else {
+            return ["Mauvais login/mot de passe", "error"];
+        }
+    }
+}
+
+function change_profil_data($post, $id)
 {
     //Check from which form it is coming
     if (isset($post['submitEMail'])) {
-        return change_email($post);
+        return change_email($post, $id);
     }
     if (isset($post['submitInfos'])) {
-        return change_infos($post);
+        return change_infos($post, $id);
     }
     if (isset($post['submitPassword'])) {
-        return change_password($post);
+        return change_password($post, $id);
+    }
+    if (isset($post['submitLogin'])) {
+        return change_login($post, $id);
     }
 }

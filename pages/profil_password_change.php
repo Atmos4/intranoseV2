@@ -5,7 +5,9 @@ require_once "database/profil_data.php";
 page("Changement de mot de passe");
 check_auth("USER");
 
-[$validation_result, $validation_color] = change_password($_POST);
+$id = $_SESSION['user_id'];
+
+[$validation_result, $validation_color] = change_password($_POST, $id);
 $user_data = get_user_data();
 ?>
 
