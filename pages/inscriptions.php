@@ -1,5 +1,5 @@
 <?php
-require_once "database/data_inscriptions.php";
+require_once "database/inscriptions_data.php";
 
 page("Mes inscriptions", "inscriptions.css");
 check_auth("USER");
@@ -10,6 +10,8 @@ setlocale(LC_TIME, "fr_FR");
 
 $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
 $formatter2 = new IntlDateFormatter('fr_FR', IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
+
+$user_id = $_SESSION["user_id"];
 ?>
 
 <main class="container">
@@ -22,7 +24,11 @@ $formatter2 = new IntlDateFormatter('fr_FR', IntlDateFormatter::SHORT, IntlDateF
     <hr>
     <?php foreach ($deplacements as $deplacement) : ?>
         <div class="row row-events">
-            <div class="col-md-1"><img src="/assets/icon/check-32x32.png" /></div>
+            <?php if (is_registered($deplacement, $user_id)) : ?>
+                <div class="col-md-1"><img src="/assets/icon/check-32x32.png" /></div>
+            <?php else : ?>
+                <div class="col-md-1"><img src="/assets/icon/cross-32x32.png" /></div>
+            <?php endif ?>
             <div class="col-md-3 row-title"><b><?= $deplacement['nom'] ?></b></div>
             <div class=col-md-3><?= $formatter->format(strtotime($deplacement['depart'])) ?></div>
             <div class=col-md-3><?= $formatter->format(strtotime($deplacement['arrivee'])) ?></div>
