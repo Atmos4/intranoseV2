@@ -5,6 +5,11 @@ page("Mes inscriptions", "inscriptions.css");
 check_auth("USER");
 
 $deplacements = get_deplacements();
+
+setlocale(LC_TIME, "fr_FR");
+
+$formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+$formatter2 = new IntlDateFormatter('fr_FR', IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
 ?>
 
 <main class="container">
@@ -19,9 +24,9 @@ $deplacements = get_deplacements();
         <div class="row row-events">
             <div class="col-md-1"><img src="/assets/icon/check-32x32.png" /></div>
             <div class="col-md-3 row-title"><b><?= $deplacement['nom'] ?></b></div>
-            <div class=col-md-3><?= date_format(date_create($deplacement['depart']), "l d F Y") ?></div>
-            <div class=col-md-3><?= date_format(date_create($deplacement['arrivee']), "l d F Y") ?></div>
-            <div class=col-md-2><?= $deplacement['limite'] ?></div>
+            <div class=col-md-3><?= $formatter->format(strtotime($deplacement['depart'])) ?></div>
+            <div class=col-md-3><?= $formatter->format(strtotime($deplacement['arrivee'])) ?></div>
+            <div class=col-md-2><?= $formatter2->format(strtotime($deplacement['limite'])) ?></div>
         </div>
     <?php endforeach ?>
 </main>
