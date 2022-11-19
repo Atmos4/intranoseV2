@@ -16,6 +16,7 @@ $user_id = $_SESSION["user_id"];
 
 <main class="container">
     <div class="row">
+        <div class="col-md-1"></div>
         <div class=col-md-3>Nom</div>
         <div class=col-md-3>Debut</div>
         <div class=col-md-3>Fin</div>
@@ -23,7 +24,7 @@ $user_id = $_SESSION["user_id"];
     </div>
     <hr>
     <?php foreach ($deplacements as $deplacement) : ?>
-        <div class="row row-events">
+        <div class="row row-events" style="cursor:pointer" onclick="window.location.href = '/mes-inscriptions/details/<?= $deplacement['did'] ?>'">
             <?php if (is_registered($deplacement, $user_id)) : ?>
                 <div class="col-md-1"><img src="/assets/icon/check-32x32.png" /></div>
             <?php else : ?>
