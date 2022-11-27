@@ -8,13 +8,12 @@ check_auth("USER");
 $id = $_SESSION['user_id'];
 
 [$validation_result, $validation_color] = change_login($_POST, $id);
-$user_data = get_user_data();
 ?>
 
 <main class="container col-md-6 col-lg-6">
     <form method="post">
 
-        <a href="/mon-profil" class="return-link">Retour au profil</a>
+        <a href="/mon-profil#mon-compte" class="return-link">Retour au profil</a>
 
         <h2>Changement de login</h2>
 
@@ -25,11 +24,6 @@ $user_data = get_user_data();
         <div>
             <label for="login">Login actuel</label>
             <input type="text" id="login" name="login" required>
-        </div>
-
-        <div>
-            <label for="pass">Mot de passe :</label>
-            <input type="password" id="password" name="password" required>
         </div>
 
         <div>

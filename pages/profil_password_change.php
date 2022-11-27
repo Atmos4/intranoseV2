@@ -14,7 +14,7 @@ $user_data = get_user_data();
 <main class="container col-md-6 col-lg-6">
     <form method="post">
 
-        <a href="/mon-profil" class="return-link">Retour au profil</a>
+        <a href="/mon-profil#mon-compte" class="return-link">Retour au profil</a>
 
         <h2>Changement de mot de passe</h2>
 

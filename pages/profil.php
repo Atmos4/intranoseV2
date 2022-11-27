@@ -63,19 +63,25 @@ $messageEmail = "";
     <form method="post">
 
 
-        <h2>Compte</h2>
+        <h2 id="mon-compte">Compte</h2>
+
+        <div class="grid">
+            <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
+            <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-login'">Changer le login</button>
+        </div>
 
 
-        <button type=button class="col-md-3 secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
-        <button type=button class="col-md-3 secondary pull-right" onclick="window.location.href = '/mon-profil/changement-login'">Changer le login</button>
+        <div class="grid">
+            <label for="email">
+                Adresse mail perso
+                <input type="email" id="email" name="email" value=<?= $user_data["realmail"] ?> required>
+            </label>
 
-
-
-        <label for="email">Adresse mail perso</label>
-        <input type="email" id="email" name="email" value=<?= $user_data["realmail"] ?> required>
-
-        <label for="emailnose">Adresse mail NOSE</label>
-        <input type="email" id="emailnose" name="emailnose" value=<?= $user_data["email"] ?> required>
+            <label for="emailnose">
+                Adresse mail NOSE
+                <input type="email" id="emailnose" name="emailnose" value=<?= $user_data["email"] ?> required>
+            </label>
+        </div>
 
         <button type="submit" name="submitEMail" class=col-md-4>Mettre à jour les mails</button>
     </form>

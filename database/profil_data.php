@@ -5,6 +5,11 @@ function get_user_data()
     return fetch("SELECT * FROM licencies WHERE id = ? LIMIT 1;", $_SESSION['user_id'])[0];
 }
 
+function get_user_login($id)
+{
+    return fetch("SELECT login FROM licencies WHERE id=? LIMIT 1;", $id)[0];
+}
+
 function change_email($post, $id)
 {
     if (isset($post["email"]) and isset($post["emailnose"])) {
@@ -68,6 +73,9 @@ function change_password($post, $id)
         $currentPassword = $post['currentPassword'];
         $password = $post['password'];
         $passwordConfirm = $post['passwordConfirm'];
+        if (strlen($password) < 6) {
+            return ["Mot de passe trop court", "error"];
+        }
         $test_pass = fetch(
             "SELECT 
         id, perm 
@@ -101,30 +109,32 @@ function change_login($post, $id)
 {
     if (isset($post["login"])) {
         $login = $post['login'];
-        $password = $post['password'];
         $newLogin = $post["newLogin"];
-        $test_pass = fetch(
-            "SELECT 
-        login, perm 
-        FROM licencies
-        WHERE login = ? AND password = MD5(?) LIMIT 1;",
-            $login,
-            $password
-        );
-        if (count($test_pass)) {
-            query_db(
-                "UPDATE licencies 
-        SET 
-            login =?
-        WHERE
-            id = ? ;",
-                $newLogin,
-                $id
-            );
-            return ["Login mis à jour !", "success"];
-        } else {
-            return ["Mauvais login/mot de passe", "error"];
+        if (strlen($newLogin) < 6) {
+            return ["Trop court", "error"];
         }
+        $test_pass = fetch(
+            "SELECT id, login, perm 
+            FROM licencies
+            WHERE login = ? OR login = ?;",
+            $login,
+            $newLogin
+        );
+        if (count($test_pass) == 1) {
+            if ($test_pass[0]['id'] == $_SESSION['user_id'] or check_auth("COACH")) {
+                query_db(
+                    "UPDATE licencies 
+                    SET login =?
+                    WHERE id = ? ;",
+                    $newLogin,
+                    $id
+                );
+                return ["Login mis à jour", "success"];
+            }
+        } elseif (count($test_pass) > 1) {
+            return ["Déjà utilisé", "error"];
+        }
+        return ["Mauvais login", "error"];
     }
 }
 
