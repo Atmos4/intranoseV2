@@ -1,4 +1,6 @@
 <?php
+restrict_access();
+
 require_once "database/inscriptions_data.php";
 
 $id_depl = get_route_param('id_depl');

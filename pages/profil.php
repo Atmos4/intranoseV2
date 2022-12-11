@@ -1,16 +1,15 @@
 <?php
+restrict_access();
 
 require_once "database/profil_data.php";
-
-page("Mon profil");
-check_auth("USER");
-
 //might be changed later for admins
 $id = $_SESSION['user_id'];
 
 [$validation_result, $validation_color] = change_profil_data($_POST, $id);
 $user_data = get_user_data();
 $messageEmail = "";
+
+page("Mon profil");
 ?>
 
 <main class="container">

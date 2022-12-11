@@ -1,26 +1,8 @@
-.row-events {
-    margin-top: calc(var(--typography-spacing-vertical));
-    margin-bottom: calc(var(--typography-spacing-vertical));
-    padding-top: 15px;
-    padding-bottom: 15px;
-    background: var(--secondary);
-    color: var(--secondary-inverse);
-    text-align: center;
-    border-radius: 7px;
+.register-status {
+  min-width: 20px;
+  min-height: 20px;
 }
 
-.row-title {
-    color: var(--primary);
-}
-
-.row {
-    text-align: center;
-}
-
-.material-symbols-outlined {
-    font-variation-settings:
-        'FILL'1,
-        'wght'700,
-        'GRAD'0,
-        'opsz'48
+.inscription-date {
+  white-space: nowrap;
 }

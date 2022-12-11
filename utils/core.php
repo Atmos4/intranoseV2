@@ -65,3 +65,13 @@ function check_auth($level)
     }
     return true;
 }
+
+/** Restrict access to authenticated users, and to a set of authorized users if provided arguments.
+ * Should be used as early as possible, to prevent unnecessary data loading.
+ */
+function restrict_access(...$permissions)
+{
+    if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
+        inject_in_template();
+    }
+}

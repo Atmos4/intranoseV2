@@ -1,3 +1,3 @@
 <?php
+restrict_access();
 page("Accueil");
-check_auth("USER");

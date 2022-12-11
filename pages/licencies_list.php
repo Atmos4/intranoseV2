@@ -1,8 +1,10 @@
 <?php
+restrict_access();
+
 require_once "database/licencie_data.php";
-page("Les licenciés");
-check_auth("USER");
 $licencies = get_all_licencies();
+
+page("Les licenciés");
 ?>
 <main class="container">
     <form method="get">

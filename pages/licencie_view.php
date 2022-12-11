@@ -1,10 +1,11 @@
 <?php
+restrict_access();
+
 require_once "database/licencie_data.php";
 $licencie = get_licencie(get_route_param('licencie_id'));
+$profile_picture = (file_exists("images/profile/" . $licencie['id'] . ".jpg")) ? "/images/profile/" . $licencie['id'] . ".jpg" : "/images/profile/none.jpg";
 
 page($licencie['prenom'] . " " . $licencie['nom'], "licencie.css");
-
-$profile_picture = (file_exists("images/profile/" . $licencie['id'] . ".jpg")) ? "/images/profile/" . $licencie['id'] . ".jpg" : "/images/profile/none.jpg";
 ?>
 <main class="container user-infos ">
     <a href="/les-licencies" class="return-link">Retour aux licenciés</a>
