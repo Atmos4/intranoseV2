@@ -1,10 +1,3 @@
-.return-link {
-  display: block;
-  margin-bottom: 10px;
-}
-.user-infos {
-  text-align: center;
-}
 .infos-table tr td:first-child {
   border-right: var(--border-width) solid var(--table-border-color);
 }

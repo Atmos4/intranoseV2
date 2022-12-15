@@ -1,0 +1,37 @@
+.register-status {
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.inscription-date {
+  display: grid;
+  grid: auto-flow / auto 1fr;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.inscription-date span {
+  border-bottom: none;
+}
+
+.inscription-row {
+  cursor: pointer;
+  position: relative;
+}
+/* hover effect, optimizing framerate and re-rendering
+with ::after component */
+.inscription-row::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  box-shadow: 0px 0px 8px var(--primary-hover);
+  transition: opacity 0.4s ease;
+}
+.inscription-row:hover::after {
+  opacity: 1;
+}

@@ -1,8 +1,7 @@
 <?php
-
 require_once "database/login_data.php";
-
 $validation_error = handle_login($_POST);
+
 page("Login", "login.css", false);
 ?>
 
@@ -14,14 +13,14 @@ page("Login", "login.css", false);
                 <input type="text" name="login" placeholder="Login" aria-label="Login" autocomplete="off" required>
                 <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
                 <?php if ($validation_error) : ?>
-                    <p class="error"><?= $validation_error ?></p>
+                    <del><?= $validation_error ?></del>
                 <?php endif ?>
-                <fieldset>
+                <!-- <fieldset>
                     <label for="remember">
                         <input type="checkbox" role="switch" id="remember" name="remember">
                         Se souvenir de moi
                     </label>
-                </fieldset>
+                </fieldset> -->
                 <button type="submit">Se connecter</button>
             </form>
         </div>

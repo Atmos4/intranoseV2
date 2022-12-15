@@ -16,7 +16,7 @@ function handle_login($post)
             $_SESSION['user_id'] = $user_data[0]['id'];
             $_SESSION['user_permission'] = $user_data[0]['perm'];
 
-            redirect("accueil");
+            redirect("/");
         } else {
             return "Utilisateur non trouvé";
         }

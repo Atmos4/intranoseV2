@@ -1,16 +1,15 @@
 <?php
+restrict_access();
 
 require_once "database/profil_data.php";
-
-page("Mon profil");
-check_auth("USER");
-
 //might be changed later for admins
 $id = $_SESSION['user_id'];
 
 [$validation_result, $validation_color] = change_profil_data($_POST, $id);
 $user_data = get_user_data();
 $messageEmail = "";
+
+page("Mon profil");
 ?>
 
 <main class="container">
@@ -19,11 +18,9 @@ $messageEmail = "";
         <p class=<?= $validation_color ?>><?= $validation_result ?></p>
     <?php endif ?>
 
-
     <h2>Identité</h2>
 
     <div class="grid">
-
         <label for="firstname">
             Prénom
             <input type="text" id="prenom" name="prenom" value=<?= $user_data["prenom"] ?> disabled>
@@ -33,11 +30,9 @@ $messageEmail = "";
             Nom
             <input type="text" id="nom" name="nom" value=<?= $user_data["nom"] ?> disabled>
         </label>
-
     </div>
 
     <div class="grid">
-
         <label for="numlicense">
             Numéro de license
             <input type="text" id="numlicense" name="numlicense" value=<?= $user_data["num_lic"] ?> disabled>
@@ -56,20 +51,15 @@ $messageEmail = "";
         </fieldset>
     </div>
 
-
     <hr>
 
+    <h2 id="mon-compte">Compte</h2>
 
     <form method="post">
-
-
-        <h2 id="mon-compte">Compte</h2>
-
         <div class="grid">
             <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
             <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-login'">Changer le login</button>
         </div>
-
 
         <div class="grid">
             <label for="email">
@@ -88,12 +78,9 @@ $messageEmail = "";
 
     <hr>
 
-
     <h2> Infos perso </h2>
 
-
     <form method="post">
-
         <label for="sportident">
             SportIdent
             <input type="text" id="sportident" name="sportident" value=<?= $user_data["sportident"] ?> required>
@@ -110,7 +97,6 @@ $messageEmail = "";
         </details>
 
         <div class="grid">
-
             <label for="codePostal">
                 Code postal
                 <input type="text" id="codePostal" name="codePostal" value=<?= $user_data["cp"] ?> required>
@@ -120,11 +106,9 @@ $messageEmail = "";
                 Ville
                 <input type="text" id="ville" name="ville" value=<?= $user_data["ville"] ?> required>
             </label>
-
         </div>
 
         <div class="grid">
-
             <label for="portable">
                 Telephone portable
                 <input type="text" id="portable" name="portable" value="<?= $user_data["telport"] ?>" required>
@@ -134,11 +118,8 @@ $messageEmail = "";
                 Telephone fixe
                 <input type="text" id="fixe" name="fixe" value="<?= $user_data["tel"] ?>" required>
             </label>
-
         </div>
 
         <button type="submit" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
-
     </form>
-
 </main>
