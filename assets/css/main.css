@@ -2,9 +2,9 @@
 /* Can be forced with data-theme="light" */
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
-  --primary: hsl(123, 78%, 48%);
-  --primary-hover: hsl(121, 78%, 43%);
-  --primary-focus: hsla(123, 78%, 48%, 0.125);
+  --primary: hsl(123, 78%, 38%);
+  --primary-hover: hsl(121, 78%, 33%);
+  --primary-focus: hsla(123, 78%, 38%, 0.125);
   --primary-inverse: #fff;
 }
 

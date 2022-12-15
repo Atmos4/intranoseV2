@@ -23,22 +23,30 @@ function is_registered($deplacement, $id_runner)
     } else return false;
 }
 
-function get_deplacement_by_id($deplacement_id)
+function get_deplacement_by_id($deplacement_id, $runner_id)
 {
     return fetch_single(
-        "SELECT * FROM deplacements 
+        "SELECT deplacements.*, depl.* FROM deplacements 
+        LEFT JOIN inscriptions_depl as depl
+            ON depl.id_depl = deplacements.did 
+            AND depl.id_runner = ?
         WHERE did = ?
         ORDER BY depart DESC LIMIT 1;",
+        $runner_id,
         $deplacement_id
     );
 }
 
-function get_courses_by_deplacement_id($deplacement_id)
+function get_courses_by_deplacement_id($deplacement_id, $runner_id)
 {
     return fetch(
-        "SELECT * FROM courses 
-        WHERE id_depl = ?
-        ORDER BY date ASC",
+        "SELECT courses.*, inscriptions_courses.present as present FROM courses 
+        LEFT JOIN inscriptions_courses 
+            ON inscriptions_courses.id_course = courses.cid 
+            AND inscriptions_courses.id_runner = ?
+        WHERE courses.id_depl = ?
+        ORDER BY date ASC;",
+        $runner_id,
         $deplacement_id
     );
 }
