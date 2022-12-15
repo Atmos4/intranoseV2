@@ -18,11 +18,9 @@ page("Mon profil");
         <p class=<?= $validation_color ?>><?= $validation_result ?></p>
     <?php endif ?>
 
-
     <h2>Identité</h2>
 
     <div class="grid">
-
         <label for="firstname">
             Prénom
             <input type="text" id="prenom" name="prenom" value=<?= $user_data["prenom"] ?> disabled>
@@ -32,11 +30,9 @@ page("Mon profil");
             Nom
             <input type="text" id="nom" name="nom" value=<?= $user_data["nom"] ?> disabled>
         </label>
-
     </div>
 
     <div class="grid">
-
         <label for="numlicense">
             Numéro de license
             <input type="text" id="numlicense" name="numlicense" value=<?= $user_data["num_lic"] ?> disabled>
@@ -55,20 +51,15 @@ page("Mon profil");
         </fieldset>
     </div>
 
-
     <hr>
 
+    <h2 id="mon-compte">Compte</h2>
 
     <form method="post">
-
-
-        <h2 id="mon-compte">Compte</h2>
-
         <div class="grid">
             <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le mot de passe</button>
             <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-login'">Changer le login</button>
         </div>
-
 
         <div class="grid">
             <label for="email">
@@ -87,12 +78,9 @@ page("Mon profil");
 
     <hr>
 
-
     <h2> Infos perso </h2>
 
-
     <form method="post">
-
         <label for="sportident">
             SportIdent
             <input type="text" id="sportident" name="sportident" value=<?= $user_data["sportident"] ?> required>
@@ -109,7 +97,6 @@ page("Mon profil");
         </details>
 
         <div class="grid">
-
             <label for="codePostal">
                 Code postal
                 <input type="text" id="codePostal" name="codePostal" value=<?= $user_data["cp"] ?> required>
@@ -119,11 +106,9 @@ page("Mon profil");
                 Ville
                 <input type="text" id="ville" name="ville" value=<?= $user_data["ville"] ?> required>
             </label>
-
         </div>
 
         <div class="grid">
-
             <label for="portable">
                 Telephone portable
                 <input type="text" id="portable" name="portable" value="<?= $user_data["telport"] ?>" required>
@@ -133,11 +118,8 @@ page("Mon profil");
                 Telephone fixe
                 <input type="text" id="fixe" name="fixe" value="<?= $user_data["tel"] ?>" required>
             </label>
-
         </div>
 
         <button type="submit" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
-
     </form>
-
 </main>

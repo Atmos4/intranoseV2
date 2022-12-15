@@ -36,17 +36,12 @@
   --switch-checked-background-color: var(--primary);
 }
 
-.page-title {
+.center {
   text-align: center;
 }
-
-form p.error,
-a.destructive {
-  color: red;
-}
-
-p.success {
-  color:hsl(123, 78%, 48%);
+/* Disable article margin top because what's the point */
+article {
+  margin-top: 0;
 }
 
 /* Nav bar */
@@ -74,4 +69,9 @@ p.success {
   #main-menu.toggled ul:not(.responsive) li {
     padding: 7px;
   }
+}
+.return-link {
+  display: block;
+  width: fit-content;
+  margin-bottom: 10px;
 }

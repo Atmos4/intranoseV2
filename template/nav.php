@@ -1,6 +1,6 @@
 <?php
 $nav_routes = [
-    "/accueil" => "Accueil",
+    //"/accueil" => "Accueil",
     "/mes-inscriptions" => "Mes inscriptions",
     "/les-licencies" => "Les licenciés",
     "/mon-profil" => "Mon profil"

@@ -7,13 +7,16 @@ $db_password = "";
 global $database;
 $database = new PDO("mysql:dbname=" . $db_name . ";host=" . $db_host . ";charset=UTF8", $db_user, $db_password);
 
-// DB
-/** Get global database */
+/** Get global database
+ * @return PDO
+ */
 function db()
 {
     return $GLOBALS['database'];
 }
-/** perform a SQL query */
+/** perform a SQL query
+ * @return PDOStatement|false
+ */
 function query_db($sql_query, ...$args)
 {
     if ($args) {
@@ -24,10 +27,23 @@ function query_db($sql_query, ...$args)
         return db()->query($sql_query);
     }
 }
-/** Calls query_db() and unwraps the result */
+/** Calls query_db() and unwraps the result.
+ * @return array a list of DB entities
+ */
 function fetch($sql, ...$args)
 {
     return query_db($sql, ...$args)->fetchAll();
+}
+/** Calls fetch() and throws if there isn't a single element.
+ * @return array a single DB entity.
+ */
+function fetch_single($sql, ...$args)
+{
+    $result = fetch($sql, ...$args);
+    if (count($result) != 1) {
+        inject_in_template();
+    }
+    return $result[0];
 }
 
 // HELPER METHODS

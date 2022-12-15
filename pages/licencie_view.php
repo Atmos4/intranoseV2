@@ -2,14 +2,14 @@
 restrict_access();
 
 require_once "database/licencie_data.php";
-$licencie = get_licencie(get_route_param('licencie_id'));
+$licencie = get_licencie(get_route_param('licencie_id', true));
 $profile_picture = (file_exists("images/profile/" . $licencie['id'] . ".jpg")) ? "/images/profile/" . $licencie['id'] . ".jpg" : "/images/profile/none.jpg";
 
 page($licencie['prenom'] . " " . $licencie['nom'], "licencie.css");
 ?>
-<main class="container user-infos ">
-    <a href="/les-licencies" class="return-link">Retour aux licenciés</a>
-    <article class="grid">
+<main class="container">
+    <a href="/les-licencies" class="return-link secondary"><i class="fas fa-caret-left"></i> Retour</a>
+    <article class="grid center">
         <figure>
             <img src="<?= $profile_picture ?>">
             <figcaption><?= $licencie['prenom'] . " " . $licencie['nom'] ?></figcaption>

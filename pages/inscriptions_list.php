@@ -23,19 +23,34 @@ page("Mes inscriptions", "inscriptions.css");
             <tbody>
 
                 <?php foreach ($deplacements as $deplacement) : ?>
-                    <tr onclick="window.location.href = '/mes-inscriptions/details/<?= $deplacement['did'] ?>'">
+                    <tr class="inscription-row" onclick="window.location.href = '/mes-inscriptions/details/<?= $deplacement['did'] ?>'">
                         <?php if (is_registered($deplacement, $user_id)) : ?>
-                            <td><img class="register-status" src="/assets/icon/check-32x32.png" /></td>
+                            <td><ins><i class="fas fa-check"></i></ins></td>
                         <?php else : ?>
-                            <td><img class="register-status" src="/assets/icon/cross-32x32.png" /></td>
+                            <td><del><i class="fas fa-xmark"></i></del></td>
                         <?php endif ?>
                         <td><b><?= $deplacement['nom'] ?></b></td>
                         <td>
-                            <div class="inscription-date"><?= $deplacement['depart'] ?></div>
-                            <div class="inscription-date"><?= $deplacement['arrivee'] ?></div>
+                            <div class="inscription-date">
+                                <?php include "components/start_icon.php" ?>
+                                <div>
+                                    <span data-tooltip="Départ" data-placement="right"><?= $deplacement['depart'] ?></span>
+                                </div>
+
+                                <?php include "components/finish_icon.php" ?>
+                                <div>
+                                    <span data-tooltip="Retour" data-placement="right"><?= $deplacement['arrivee'] ?></span>
+                                </div>
+                            </div>
                         </td>
 
-                        <td><?= $deplacement['limite'] ?></td>
+                        <td>
+                            <div class="inscription-date">
+
+                                <!-- <i class="fas fa-warning"></i> -->
+                                <div><?= $deplacement['limite'] ?></div>
+                            </div>
+                        </td>
                     </tr>
                 <?php endforeach ?>
             </tbody>

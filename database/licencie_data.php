@@ -12,15 +12,11 @@ function get_all_licencies()
 /** Get a user,  */
 function get_licencie($id)
 {
-    $data = fetch(
+    return fetch_single(
         "SELECT li.*, cat.name as category_name
         FROM licencies li 
         LEFT JOIN categories cat ON cat.cid = li.categorie 
         WHERE id = ? LIMIT 1",
         $id
     );
-    if (!count($data)) {
-        inject_in_template();
-    }
-    return $data[0];
 }
