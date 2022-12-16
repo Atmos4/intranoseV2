@@ -43,6 +43,15 @@
 article {
   margin-top: 0;
 }
+del {
+  text-decoration: none;
+}
+.success {
+  color: var(--ins-color);
+}
+.error {
+  color: var(--del-color);
+}
 
 /* Nav bar */
 #main-menu {
@@ -70,8 +79,8 @@ article {
     padding: 7px;
   }
 }
-.return-link {
-  display: block;
-  width: fit-content;
+.page-actions {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
 }

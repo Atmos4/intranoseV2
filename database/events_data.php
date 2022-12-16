@@ -1,7 +1,7 @@
 <?php
 
 /** Get the courses */
-function get_deplacements()
+function get_events()
 {
     return fetch(
         "SELECT * FROM deplacements 
@@ -23,7 +23,7 @@ function is_registered($deplacement, $id_runner)
     } else return false;
 }
 
-function get_deplacement_by_id($deplacement_id, $runner_id)
+function get_event_by_id($deplacement_id, $runner_id)
 {
     return fetch_single(
         "SELECT deplacements.*, depl.* FROM deplacements 
@@ -37,7 +37,7 @@ function get_deplacement_by_id($deplacement_id, $runner_id)
     );
 }
 
-function get_courses_by_deplacement_id($deplacement_id, $runner_id)
+function get_competitions_by_event_id($deplacement_id, $runner_id)
 {
     return fetch(
         "SELECT courses.*, inscriptions_courses.present as present FROM courses 

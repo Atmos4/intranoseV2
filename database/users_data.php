@@ -1,7 +1,7 @@
 <?php
 
 /** Get all active users */
-function get_all_licencies()
+function get_all_users()
 {
     return fetch(
         "SELECT * FROM licencies 
@@ -10,7 +10,7 @@ function get_all_licencies()
     );
 }
 /** Get a user,  */
-function get_licencie($id)
+function get_user($id)
 {
     return fetch_single(
         "SELECT li.*, cat.name as category_name

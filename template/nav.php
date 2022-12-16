@@ -1,8 +1,8 @@
 <?php
 $nav_routes = [
     //"/accueil" => "Accueil",
-    "/mes-inscriptions" => "Mes inscriptions",
-    "/les-licencies" => "Les licenciés",
+    "/evenements" => "Événements",
+    "/licencies" => "Les licenciés",
     "/mon-profil" => "Mon profil"
 ];
 ?>
@@ -11,9 +11,14 @@ $nav_routes = [
     <ul class="responsive icon">
         <li>
             <a href="javascript:void(0);" onclick="toggleNav()">
-                Menu
+                <i class="fas fa-bars"></i>
             </a>
         </li>
+    </ul>
+    <ul>
+        <?php foreach ($nav_routes as $route => $nav_title) : ?>
+            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
+        <?php endforeach ?>
     </ul>
     <ul>
         <li>
@@ -26,13 +31,6 @@ $nav_routes = [
                 </ul>
             </details>
         </li>
-    </ul>
-    <ul>
-        <?php foreach ($nav_routes as $route => $nav_title) : ?>
-            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
-        <?php endforeach ?>
-    </ul>
-    <ul>
         <li><a class="contrast" href="/logout">Déconnexion</a></li>
     </ul>
 

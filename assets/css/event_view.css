@@ -1,0 +1,59 @@
+article header > .row {
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+@media screen and (max-width: 768px) {
+  tr.display {
+    display: grid;
+    grid:
+      "icon name name"
+      "icon date place" / auto auto 1fr;
+    border-bottom: var(--border-width) solid var(--table-border-color);
+  }
+
+  table td {
+    border-bottom: none;
+  }
+  table .competition-name {
+    grid-area: name;
+    padding-bottom: 0;
+  }
+  table .competition-date {
+    grid-area: date;
+  }
+  table .competition-place {
+    grid-area: place;
+  }
+  table .competition-entry {
+    grid-area: icon;
+    align-self: center;
+    padding-bottom: 0;
+  }
+}
+
+textarea {
+  resize: none;
+}
+
+/* Conditional text display */
+.entry-switch:checked ~ del {
+  display: none;
+}
+.entry-switch:checked ~ ins {
+  display: inline;
+}
+.entry-switch:not(:checked) ~ del {
+  display: inline;
+}
+.entry-switch:not(:checked) ~ ins {
+  display: none;
+}
+#conditionalText {
+  display: none;
+}
+#conditionalForm.hidden {
+  display: none;
+}
+#conditionalForm.hidden ~ #conditionalText {
+  display: block;
+}

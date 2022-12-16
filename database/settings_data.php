@@ -138,7 +138,7 @@ function change_login($post, $id)
     }
 }
 
-function change_profil_data($post, $id)
+function change_user_data($post, $id)
 {
     //Check from which form it is coming
     if (isset($post['submitEMail'])) {

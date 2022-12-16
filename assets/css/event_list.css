@@ -1,13 +1,24 @@
-.course-date span {
+.event-date span {
   border-bottom: none;
 }
-.inscription-row {
+.event-date,
+.event-limit {
+  white-space: nowrap;
+}
+.event-date > *,
+.event-limit > * {
+  margin-right: 0.5rem;
+}
+.event-limit {
+  text-align: right;
+}
+.event-row {
   cursor: pointer;
   position: relative;
 }
 /* hover effect, optimizing framerate and re-rendering
 with ::after component */
-.inscription-row::after {
+.event-row::after {
   content: "";
   position: absolute;
   z-index: -1;
@@ -19,7 +30,7 @@ with ::after component */
   box-shadow: 0px 0px 8px var(--primary-hover);
   transition: opacity 0.4s ease;
 }
-.inscription-row:hover::after {
+.event-row:hover::after {
   opacity: 1;
 }
 
@@ -27,58 +38,43 @@ with ::after component */
   table tr {
     display: grid;
     grid:
-      "icon name date"
-      "limite limite date" /auto 1fr auto;
+      "icon name name"
+      "date date limit" / auto 1fr;
     border-bottom: var(--border-width) solid var(--table-border-color);
     align-items: center;
   }
   table td {
     border-bottom: none;
   }
-  table .course-name {
+  table .event-entry {
+    grid-area: icon;
+    padding-bottom: 0;
+  }
+  table .event-name {
     grid-area: name;
     padding-bottom: 0;
   }
-  table .course-date {
+  table .event-date {
     grid-area: date;
-    align-items: center;
   }
-  table .course-limite {
-    grid-area: limite;
+  table .event-limit {
+    grid-area: limit;
   }
-  table .course-entry {
-    grid-area: icon;
-    align-self: center;
-    padding-bottom: 0;
-  }
-  .header-responsive{
+  .header-responsive {
     display: none;
-  }
-  .inscription-date div{
-    display: grid;
-    grid: auto-flow / auto auto;
-    align-items: center;
-    gap: 4px;
-  }
-  .course-date{
-    font-size: 13px;
-  }
-  .course-limite{
-    font-size: 13px;
   }
 }
 
 @media (min-width: 768px) {
-  .responsive-description{
+  .responsive-description {
     display: none;
   }
 
-  .course-date div{
+  .competition-date div {
     display: grid;
     grid: auto-flow / auto 1fr;
     align-items: center;
     gap: 10px;
     white-space: nowrap;
   }
-
 }
