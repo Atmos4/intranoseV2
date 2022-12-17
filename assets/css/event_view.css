@@ -1,6 +1,9 @@
-article header > .row {
+header > .row {
   justify-content: center;
   margin-bottom: 2rem;
+}
+header > .row > .col-sm-6 {
+  width: fit-content;
 }
 @media screen and (max-width: 768px) {
   tr.display {

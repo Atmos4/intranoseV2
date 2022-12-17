@@ -1,6 +1,6 @@
 <?php
 
-require_once "database/settings_data.php";
+require_once "database/settings.api.php";
 
 page("Changement de login");
 check_auth("USER");
@@ -9,9 +9,8 @@ $id = $_SESSION['user_id'];
 
 [$validation_result, $validation_color] = change_login($_POST, $id);
 ?>
-<a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-<h2 class="center">Changement de login</h2>
 
+<a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 <?php if ($validation_result) : ?>
     <p class=<?= $validation_color ?>><?= $validation_result ?></p>
 <?php endif ?>

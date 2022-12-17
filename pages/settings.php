@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 
-require_once "database/settings_data.php";
+require_once "database/settings.api.php";
 //might be changed later for admins
 $id = $_SESSION['user_id'];
 

@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 
-require_once "database/events_data.php";
+require_once "database/events.api.php";
 $event = get_event_by_id(get_route_param('id_depl', true), $_SESSION['user_id']);
 $competitions = get_competitions_by_event_id($event['did'], $_SESSION['user_id']);
 
@@ -19,19 +19,19 @@ page($event['nom'], "event_view.css");
 </div>
 <article>
     <header class="center">
-        <h3><?= $event['nom'] ?></h3>
         <div class="row">
-            <div class="col-auto">
+            <div class="col-sm-6">
                 <?php include "components/start_icon.php" ?>
-                <span data-tooltip="Départ"><?= " " . $event['depart'] ?></span>
+
+                <span><?= "Départ : " . $event['depart'] ?></span>
             </div>
-            <div class="col-auto">
+            <div class="col-sm-6">
                 <?php include "components/finish_icon.php" ?>
-                <span data-tooltip="Arrivée"><?= " " . $event['arrivee'] ?></span>
+                <span><?= "Retour : " . $event['arrivee'] ?></span>
             </div>
-            <div class="col-auto">
-                <i class="fas fa-warning"></i>
-                <span data-tooltip="Date limite"><?= " " . $event['limite'] ?></span>
+            <div>
+                <i class="fas fa-clock"></i>
+                <span><?= "Date limite : " . $event['limite'] ?></span>
             </div>
         </div>
 

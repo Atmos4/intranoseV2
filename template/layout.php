@@ -43,6 +43,7 @@ $has_nav = $GLOBALS['nav'] ?? "";
         require_root("template/nav.php");
     } ?>
     <main class="container">
+        <h2 class="center"><?= $GLOBALS['title'] ?></h2>
         <?= $content ?>
     </main>
 

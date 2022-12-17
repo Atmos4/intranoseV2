@@ -1,10 +1,11 @@
 <?php
 $nav_routes = [
     //"/accueil" => "Accueil",
-    "/evenements" => "Événements",
-    "/licencies" => "Les licenciés",
-    "/mon-profil" => "Mon profil"
+    "/evenements" => ["Événements", "fa-calendar"],
+    "/licencies" => ["Les licenciés", "fa-users"],
+    "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
+$icons = [];
 ?>
 
 <nav class="container-fluid" id="main-menu">
@@ -17,7 +18,7 @@ $nav_routes = [
     </ul>
     <ul>
         <?php foreach ($nav_routes as $route => $nav_title) : ?>
-            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
+            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i class="fas <?= $nav_title[1] ?>"></i><?= " " . $nav_title[0] ?></a></li>
         <?php endforeach ?>
     </ul>
     <ul>

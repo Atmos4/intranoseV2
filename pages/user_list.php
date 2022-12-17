@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 
-require_once "database/users_data.php";
+require_once "database/users.api.php";
 $users = get_all_users();
 
 page("Les licenciés");

@@ -1,13 +1,12 @@
 <?php
 restrict_access();
 
-require_once "database/users_data.php";
+require_once "database/users.api.php";
 $user = get_user(get_route_param('user_id', true));
 $profile_picture = (file_exists("images/profile/" . $user['id'] . ".jpg")) ? "/images/profile/" . $user['id'] . ".jpg" : "/images/profile/none.jpg";
 
 page($user['prenom'] . " " . $user['nom'], "user_view.css");
 ?>
-<h2 class="center"><?= $user['prenom'] . " " . $user['nom'] ?></h2>
 <div class="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 </div>

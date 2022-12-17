@@ -1,6 +1,6 @@
 <?php
 
-require_once "database/settings_data.php";
+require_once "database/settings.api.php";
 
 page("Changement de mot de passe");
 check_auth("USER");
@@ -11,7 +11,6 @@ $id = $_SESSION['user_id'];
 $user_data = get_user_data();
 ?>
 <a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-<h2 class="center">Changement de mot de passe</h2>
 <form method="post">
     <?php if ($validation_result) : ?>
         <p class=<?= $validation_color ?>><?= $validation_result ?></p>

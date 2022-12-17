@@ -1,12 +1,11 @@
 <?php
-require_once "database/login_data.php";
+require_once "database/login.api.php";
 $validation_error = handle_login($_POST);
 
 page("Login", "login.css", false);
 ?>
 <article class="grid">
     <div>
-        <h1>Intranose</h1>
         <form method="post">
             <input type="text" name="login" placeholder="Login" aria-label="Login" autocomplete="off" required>
             <input type="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>

@@ -1,11 +1,11 @@
 <?php
 restrict_access();
 
-require_once "database/events_data.php";
+require_once "database/events.api.php";
 $events = get_events();
 $user_id = $_SESSION["user_id"];
 
-page("Mes inscriptions", "event_list.css");
+page("Événements", "event_list.css");
 ?>
 
 <table role="grid">
