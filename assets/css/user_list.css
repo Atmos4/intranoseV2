@@ -1,0 +1,57 @@
+tbody > tr {
+  cursor: pointer;
+  position: relative;
+}
+/* hover effect, optimizing framerate and re-rendering
+  with ::after component */
+tbody > tr::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  box-shadow: 0px 0px 8px var(--primary-hover);
+  transition: opacity var(--transition);
+}
+tbody > tr:hover::after {
+  opacity: 1;
+}
+@media screen and (max-width: 768px) {
+  tr {
+    display: grid;
+    grid:
+      "lastname firstname phone"
+      "email email email" / auto 1fr;
+    border-bottom: var(--border-width) solid var(--table-border-color);
+    align-items: center;
+  }
+  td {
+    border-bottom: none;
+    align-items: center;
+  }
+  td.lastname {
+    grid-area: lastname;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+  td.firstname {
+    grid-area: firstname;
+    padding-left: 0.5rem;
+    padding-bottom: 0;
+  }
+  td.email {
+    grid-area: email;
+    text-align: end;
+  }
+  td.phone-number {
+    grid-area: phone;
+    text-align: end;
+    padding-bottom: 0;
+  }
+  thead {
+    display: none;
+  }
+}

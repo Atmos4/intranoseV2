@@ -1,19 +1,25 @@
 <?php
 $nav_routes = [
     //"/accueil" => "Accueil",
-    "/mes-inscriptions" => "Mes inscriptions",
-    "/les-licencies" => "Les licenciés",
-    "/mon-profil" => "Mon profil"
+    "/evenements" => ["Événements", "fa-calendar"],
+    "/licencies" => ["Les licenciés", "fa-users"],
+    "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
+$icons = [];
 ?>
 
 <nav class="container-fluid" id="main-menu">
     <ul class="responsive icon">
         <li>
             <a href="javascript:void(0);" onclick="toggleNav()">
-                Menu
+                <i class="fas fa-bars"></i>
             </a>
         </li>
+    </ul>
+    <ul>
+        <?php foreach ($nav_routes as $route => $nav_title) : ?>
+            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i class="fas <?= $nav_title[1] ?>"></i><?= " " . $nav_title[0] ?></a></li>
+        <?php endforeach ?>
     </ul>
     <ul>
         <li>
@@ -26,14 +32,7 @@ $nav_routes = [
                 </ul>
             </details>
         </li>
-    </ul>
-    <ul>
-        <?php foreach ($nav_routes as $route => $nav_title) : ?>
-            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><?= $nav_title ?></a></li>
-        <?php endforeach ?>
-    </ul>
-    <ul>
-        <li><a class="contrast" href="/logout">Déconnexion</a></li>
+        <li><a class="contrast destructive" href="/logout">Déconnexion</a></li>
     </ul>
 
 </nav>

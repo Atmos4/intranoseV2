@@ -4,6 +4,7 @@ $title = $GLOBALS['title'] ?? "";
 $title .= " | Intranose";
 $description = $GLOBALS['description'] ?? "";
 $content = $GLOBALS['content'] ?? "";
+$has_nav = $GLOBALS['nav'] ?? "";
 
 ?>
 <!doctype html>
@@ -37,7 +38,16 @@ $content = $GLOBALS['content'] ?? "";
 </head>
 
 <body>
-    <?= $content ?>
+    <?php
+    if ($has_nav) {
+        require_root("template/nav.php");
+    } ?>
+    <main class="container">
+        <?php if ($GLOBALS['display_title'] !== false) : ?>
+            <h2 class="center"><?= $GLOBALS['display_title'] ?? $GLOBALS['title'] ?></h2>
+        <?php endif ?>
+        <?= $content ?>
+    </main>
 
     <script src="/assets/js/nav.js"></script>
 </body>

@@ -58,16 +58,17 @@ function require_root($path)
 {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
 }
-/** Setup page */
-function page($page_title, $page_css = null, $with_nav = true, $page_description = null)
+/** Setup page
+ * @param string|false|null $page_display_title
+ */
+function page($page_title, $page_css = null, $with_nav = true, $page_display_title = null, $page_description = null)
 {
-    global $title, $description, $css;
+    global $title, $description, $css, $nav, $display_title;
     $title = $page_title;
     $description = $page_description;
+    $nav = $with_nav;
+    $display_title = $page_display_title;
     $css = "/assets/css/" . $page_css;
-    if ($with_nav) {
-        require_root("template/nav.php");
-    }
 }
 /** Checks authentication and authorization stored in session */
 function check_auth($level)
