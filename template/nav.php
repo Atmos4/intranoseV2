@@ -32,7 +32,7 @@ $icons = [];
                 </ul>
             </details>
         </li>
-        <li><a class="contrast" href="/logout">Déconnexion</a></li>
+        <li><a class="contrast destructive" href="/logout">Déconnexion</a></li>
     </ul>
 
 </nav>

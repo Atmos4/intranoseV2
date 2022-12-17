@@ -18,14 +18,14 @@ with ::after component */
 .event-row::after {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   opacity: 0;
   box-shadow: 0px 0px 8px var(--primary-hover);
-  transition: opacity 0.4s ease;
+  transition: opacity var(--transition);
 }
 .event-row:hover::after {
   opacity: 1;

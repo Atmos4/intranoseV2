@@ -62,7 +62,6 @@ page("Inscription - " . $event['nom'], "event_view.css");
             <table role="grid">
                 <?php foreach ($competitions as $competition) : ?>
                     <tr class="display">
-                        <td class="competition-entry"><i class="fas fa-arrow-right"></i></td>
                         <td class="competition-name"><b><?= $competition['nom'] ?></b></td>
                         <td class="competition-date"><?= $competition['date'] ?></td>
                         <td class="competition-place"><?= $competition['lieu'] ?></td>

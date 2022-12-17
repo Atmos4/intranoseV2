@@ -60,6 +60,13 @@ del {
 #main-menu .responsive {
   display: none;
 }
+#main-menu > ul > li:hover > a {
+  background-color: var(--dropdown-hover-background-color);
+  color: var(--primary-hover);
+}
+#main-menu li:hover a.destructive {
+  color: var(--del-color);
+}
 @media screen and (max-width: 768px) {
   #main-menu {
     float: left;
