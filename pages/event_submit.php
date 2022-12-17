@@ -17,7 +17,7 @@ page("Inscription - " . $event['nom'], "event_view.css");
                 <div class="col-sm-6">
                     <?php include "components/start_icon.php" ?>
 
-                    <span><?= "Départ - " . $event['depart'] ?></span>
+                    <span><?= "Départ - " . date_create($event['depart'])->format("d M y") ?></span>
                 </div>
                 <div class="col-sm-6">
                     <?php include "components/finish_icon.php" ?>
