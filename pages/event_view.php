@@ -23,15 +23,15 @@ page($event['nom'], "event_view.css");
             <div class="col-sm-6">
                 <?php include "components/start_icon.php" ?>
 
-                <span><?= "Départ : " . $event['depart'] ?></span>
+                <span><?= "Départ : " . format_date($event['depart']) ?></span>
             </div>
             <div class="col-sm-6">
                 <?php include "components/finish_icon.php" ?>
-                <span><?= "Retour : " . $event['arrivee'] ?></span>
+                <span><?= "Retour : " . format_date($event['arrivee']) ?></span>
             </div>
             <div>
                 <i class="fas fa-clock"></i>
-                <span><?= "Date limite : " . $event['limite'] ?></span>
+                <span><?= "Date limite : " . format_date($event['limite']) ?></span>
             </div>
         </div>
 
@@ -79,7 +79,7 @@ page($event['nom'], "event_view.css");
                     <?php endif;  ?>
                 </td>
                 <td class="competition-name"><b><?= $competition['nom'] ?></b></td>
-                <td class="competition-date"><?= $competition['date'] ?></td>
+                <td class="competition-date"><?= format_date($competition['date']) ?></td>
                 <td class="competition-place"><?= $competition['lieu'] ?></td>
             </tr>
         <?php endforeach ?>
