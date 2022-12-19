@@ -1,13 +1,10 @@
 <?php
+restrict_access();
 
 require_once "database/settings.api.php";
+[$validation_result, $validation_color] = change_login($_POST, $_SESSION['user_id']);
 
 page("Changement de login");
-check_auth("USER");
-
-$id = $_SESSION['user_id'];
-
-[$validation_result, $validation_color] = change_login($_POST, $id);
 ?>
 
 <a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
