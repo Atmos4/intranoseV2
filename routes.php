@@ -11,6 +11,7 @@ any('/mon-profil', 'pages/settings.php');
 any('/mon-profil/changement-mdp', 'pages/settings_password_change.php');
 any('/mon-profil/changement-login', 'pages/settings_login_change.php');
 get('/evenements', 'pages/event_list.php');
+any('/evenements/nouveau', 'pages/event_new.php');
 get('/evenements/$id_depl', 'pages/event_view.php');
 get('/evenements/$id_depl/inscription', 'pages/event_submit.php');
 get('/licencies', 'pages/user_list.php');

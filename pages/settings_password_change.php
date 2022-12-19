@@ -1,14 +1,10 @@
 <?php
-
+restrict_access();
 require_once "database/settings.api.php";
+[$validation_result, $validation_color] = change_password($_POST, $_SESSION['user_id']);
+$user_data = get_user_data();
 
 page("Changement de mot de passe");
-check_auth("USER");
-
-$id = $_SESSION['user_id'];
-
-[$validation_result, $validation_color] = change_password($_POST, $id);
-$user_data = get_user_data();
 ?>
 <a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 <form method="post">

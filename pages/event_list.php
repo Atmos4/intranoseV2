@@ -9,6 +9,7 @@ page("Événements", "event_list.css");
 ?>
 
 <table role="grid">
+    <a role="button" href="/evenements/nouveau" class="secondary"><i class="fas fa-plus"></i> Ajouter</a>
     <thead class=header-responsive>
         <tr>
             <th></th>

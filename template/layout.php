@@ -1,7 +1,7 @@
 <?php
 // Recover global variables with $GLOBALS, because including the file puts them out of scope
-$title = $GLOBALS['title'] ?? "";
-$title .= " | Intranose";
+$title = $GLOBALS['title'] ?? null;
+$display_title = $GLOBALS['display_title'] ?? null;
 $description = $GLOBALS['description'] ?? "";
 $content = $GLOBALS['content'] ?? "";
 $has_nav = $GLOBALS['nav'] ?? "";
@@ -13,7 +13,7 @@ $has_nav = $GLOBALS['nav'] ?? "";
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $title ?></title>
+    <title><?= implode(" | ", array_filter([$title, "Intranose"])) ?></title>
     <meta name="description" content="<?= $description ?>">
 
     <!-- Favicon -->
@@ -43,8 +43,8 @@ $has_nav = $GLOBALS['nav'] ?? "";
         require_root("template/nav.php");
     } ?>
     <main class="container">
-        <?php if ($GLOBALS['display_title'] !== false) : ?>
-            <h2 class="center"><?= $GLOBALS['display_title'] ?? $GLOBALS['title'] ?></h2>
+        <?php if ($display_title !== false) : ?>
+            <h2 class="center"><?= $display_title ?? $title ?></h2>
         <?php endif ?>
         <?= $content ?>
     </main>
