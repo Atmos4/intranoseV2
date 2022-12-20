@@ -34,7 +34,11 @@ function any($route, $path_to_include)
 {
     route($route, $path_to_include);
 }
-function inject_in_template($path_to_include = "pages/404.php")
+function force_404()
+{
+    render();
+}
+function render($path_to_include = "pages/404.php")
 {
     ob_start();
     include_once $path_to_include;
@@ -53,7 +57,7 @@ function route($route, $path_to_include)
         }
     }
     if ($route == "/404") {
-        inject_in_template($path_to_include);
+        render($path_to_include);
     }
 
     $request_url = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
@@ -64,7 +68,7 @@ function route($route, $path_to_include)
     array_shift($route_parts);
     array_shift($request_url_parts);
     if ($route_parts[0] == '' && count($request_url_parts) == 0) {
-        inject_in_template($path_to_include);
+        render($path_to_include);
     }
     if (count($route_parts) != count($request_url_parts)) {
         return;
@@ -86,18 +90,14 @@ function route($route, $path_to_include)
         call_user_func_array($callback, $parameters);
         exit();
     }
-    inject_in_template($path_to_include);
+    render($path_to_include);
 }
 function get_route_param($param, $numeric = true)
 {
     if (empty($GLOBALS[$param]) or ($numeric and !is_numeric($GLOBALS[$param]))) {
-        inject_in_template();
+        force_404();
     }
     return $GLOBALS[$param];
-}
-function out($text)
-{
-    echo htmlspecialchars($text);
 }
 function set_csrf()
 {
