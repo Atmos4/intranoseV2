@@ -45,7 +45,7 @@ function fetch_single($sql, ...$args)
 {
     $result = fetch($sql, ...$args);
     if (count($result) != 1) {
-        inject_in_template();
+        force_404();
     }
     return $result[0];
 }
@@ -62,10 +62,8 @@ function require_root($path)
 {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
 }
-/** Setup page
- * @param string|false|null $page_display_title
- */
-function page($page_title, $page_css = null, $with_nav = true, $page_display_title = null, $page_description = null)
+/** Setup page, initializes a bunch of globals */
+function page(string $page_title, string $page_css = null, bool $with_nav = true, string $page_display_title = null, string $page_description = null)
 {
     global $title, $description, $css, $nav, $display_title;
     $title = $page_title;
@@ -75,14 +73,16 @@ function page($page_title, $page_css = null, $with_nav = true, $page_display_tit
     $css = "/assets/css/" . $page_css;
 }
 /** Checks authentication and authorization stored in session */
-function check_auth($level)
+function check_auth(...$levels)
 {
     if (!isset($_SESSION['user_permission'])) {
         redirect("login");
     }
     $ulevel = $_SESSION['user_permission'];
-    if ($level != $ulevel) {
-        return false;
+    foreach ($levels as $level) {
+        if ($level != $ulevel) {
+            return false;
+        }
     }
     return true;
 }
@@ -93,7 +93,7 @@ function check_auth($level)
 function restrict_access(...$permissions)
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
-        inject_in_template();
+        force_404();
     }
 }
 
