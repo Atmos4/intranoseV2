@@ -39,7 +39,7 @@ function fetch($sql, ...$args)
     return query_db($sql, ...$args)->fetchAll();
 }
 /** Calls fetch() and throws if there isn't a single element.
- * @return entity a single DB entity.
+ * @return array a single DB entity.
  */
 function fetch_single($sql, ...$args)
 {
@@ -99,18 +99,13 @@ function restrict_access(...$permissions)
 
 /**
  * Format a date.
- * @param string|int|DateTime $date The date either as a string (2022-12-25), a timestamp, or a DateTime
- * @return formatted_date A string in the format: 25 Déc 2022
+ * @param string|int|DateTime $date The date either as a string, a timestamp or a DateTime.
+ * @return string The date formatted
  */
 function format_date($date)
 {
-    //return formatter()->format(date_create($date));
-    $FORMAT = "d M Y";
     if (gettype($date) === "string") {
-        return date_create($date)->format($FORMAT);
-    } else if (gettype($date) === "integer") {
-        return date($FORMAT, $date);
-    } else {
-        return $date->format($FORMAT);
+        $date = date_create($date);
     }
+    return formatter()->format($date);
 }
