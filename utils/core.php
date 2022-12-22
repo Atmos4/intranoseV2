@@ -4,15 +4,19 @@ $db_name = "nose42_intra";
 $db_user = "root";
 $db_password = "";
 
-global $database;
+global $database, $formatter;
 $database = new PDO("mysql:dbname=" . $db_name . ";host=" . $db_host . ";charset=UTF8", $db_user, $db_password);
+$formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
-/** Get global database
- * @return PDO
- */
-function db()
+/** Get global database */
+function db(): PDO
 {
     return $GLOBALS['database'];
+}
+/** Get global formatter */
+function formatter(): IntlDateFormatter
+{
+    return $GLOBALS['formatter'];
 }
 /** perform a SQL query
  * @return PDOStatement|false
@@ -91,4 +95,17 @@ function restrict_access(...$permissions)
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
         inject_in_template();
     }
+}
+
+/**
+ * Format a date.
+ * @param string|int|DateTime $date The date either as a string, a timestamp or a DateTime.
+ * @return string The date formatted
+ */
+function format_date($date)
+{
+    if (gettype($date) === "string") {
+        $date = date_create($date);
+    }
+    return formatter()->format($date);
 }

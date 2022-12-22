@@ -29,10 +29,11 @@ page("Événements", "event_list.css");
                 </td>
                 <td class="event-name"><b><?= $event['nom'] ?></b></td>
                 <td class="event-date">
-                    <span><?= $event['depart'] ?></span><i class="fas fa-arrow-right"></i><span><?= $event['arrivee'] ?></span>
+                    <span><?= format_date($event['depart']) ?></span><i class="fas fa-arrow-right"></i><span><?= format_date($event['arrivee']) ?></span>
                 </td>
                 <td class="event-limit">
-                    <i class="fas fa-clock"></i><span><?= $event['limite'] ?></span>
+                    <span><?= format_date($event['limite']) ?></span>
+                    <i class="fas fa-clock"></i>
                 </td>
             </tr>
         <?php endforeach ?>
