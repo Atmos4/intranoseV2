@@ -9,9 +9,6 @@ tr.delimiter {
 .event-limit > * {
   margin-right: 0.5rem;
 }
-.event-limit {
-  text-align: right;
-}
 .event-limit.warning {
   color: orange;
 }

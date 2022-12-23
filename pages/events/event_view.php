@@ -33,12 +33,11 @@ page($event['nom'], "event_view.css");
 <article>
     <header class="center">
         <div class="row">
-            <div class="col-sm-6">
+            <div>
                 <?php include "components/start_icon.php" ?>
-
                 <span><?="Départ : " . format_date($event['depart']) ?></span>
             </div>
-            <div class="col-sm-6">
+            <div>
                 <?php include "components/finish_icon.php" ?>
                 <span><?="Retour : " . format_date($event['arrivee']) ?></span>
             </div>

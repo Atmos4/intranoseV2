@@ -20,8 +20,13 @@ if ($event_id) {
 $v = validate($post);
 $event_name = $v->string("event_name")->label("Nom de l'événement")->placeholder()->required();
 $start_date = $v->date("start_date")->label("Date de départ")->required();
-$end_date = $v->date("end_date")->label("Date de retour")->required()->after($start_date->value);
-$limit_date = $v->date("limit_date")->label("Deadline")->required()->before($start_date->value);
+$end_date = $v->date("end_date")
+    ->label("Date de retour")->required()
+    ->after($start_date->value, "Doit être après le départ");
+$limit_date = $v->date("limit_date")
+    ->label("Deadline")->required()
+    ->before(date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ")
+    ->after(date("Y-m-d"), "Doit être après aujourd'hui");
 
 if (!empty($_POST) && $v->valid()) {
     create_or_edit_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event_id);
