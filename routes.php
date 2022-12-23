@@ -5,17 +5,24 @@ require_once __DIR__ . '/utils/core.php';
 
 get('/', 'index.php');
 any('/login', 'pages/login.php');
-// Disabling home page for now, we don't really need it yet
-// get('/accueil', 'pages/accueil.php');
-any('/mon-profil', 'pages/settings.php');
-any('/mon-profil/changement-mdp', 'pages/settings_password_change.php');
-any('/mon-profil/changement-login', 'pages/settings_login_change.php');
-get('/evenements', 'pages/event_list.php');
-any('/evenements/nouveau', 'pages/event_new.php');
-get('/evenements/$id_depl', 'pages/event_view.php');
-get('/evenements/$id_depl/inscription', 'pages/event_submit.php');
-get('/licencies', 'pages/user_list.php');
-get('/licencies/$user_id', 'pages/user_view.php');
+
+// Events
+get('/evenements', 'pages/events/event_list.php');
+any('/evenements/nouveau', 'pages/events/event_edit.php');
+any('/evenements/$event_id/modifier', 'pages/events/event_edit.php');
+get('/evenements/$event_id', 'pages/events/event_view.php');
+any('/evenements/$event_id/inscription', 'pages/events/event_register.php');
+any('/evenements/$event_id/publier', 'pages/events/event_publish.php');
+any('/evenements/$event_id/supprimer', 'pages/events/event_delete.php');
+
+// Settings
+any('/mon-profil', 'pages/settings/settings.php');
+any('/mon-profil/changement-mdp', 'pages/settings/settings_password_change.php');
+any('/mon-profil/changement-login', 'pages/settings/settings_login_change.php');
+
+// Users
+get('/licencies', 'pages/users/user_list.php');
+get('/licencies/$user_id', 'pages/users/user_view.php');
 
 // Logout
 get('/logout', function () {

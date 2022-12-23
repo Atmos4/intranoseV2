@@ -1,4 +1,7 @@
 <?php
+// LOCAL ENV ONLY: set to true to errors on force_404 router redirects
+$DEBUG = false;
+
 session_start();
 function get($route, $path_to_include)
 {
@@ -34,8 +37,12 @@ function any($route, $path_to_include)
 {
     route($route, $path_to_include);
 }
-function force_404()
+function force_404($msg = null)
 {
+    global $DEBUG;
+    if ($DEBUG) {
+        echo $msg;
+    }
     render();
 }
 function render($path_to_include = "pages/404.php")
@@ -92,13 +99,27 @@ function route($route, $path_to_include)
     }
     render($path_to_include);
 }
-function get_route_param($param, $numeric = true)
+/**
+ * Returns a named route parameter
+ * @param mixed $param Route parameter
+ * @param mixed $strict If the parameter is required
+ * @param mixed $numeric If the parameter needs to be numeric, defaults to true
+ * @return string|int|null
+ */
+function get_route_param($param, $strict = true, $numeric = true)
 {
-    if (empty($GLOBALS[$param]) or ($numeric and !is_numeric($GLOBALS[$param]))) {
-        force_404();
+    if (empty($GLOBALS[$param])) {
+        if ($strict) {
+            force_404("Route parameter {$param} was not found");
+        }
+        return null;
+    }
+    if ($numeric and !is_numeric($GLOBALS[$param])) {
+        force_404("Route parameter {$param} is not numeric");
     }
     return $GLOBALS[$param];
 }
+/** CSRF protection */
 function set_csrf()
 {
     if (!isset($_SESSION["csrf"])) {

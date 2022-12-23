@@ -1,3 +1,6 @@
+del {
+  text-decoration: none;
+}
 header > .row {
   justify-content: center;
   margin-bottom: 2rem;

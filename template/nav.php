@@ -17,8 +17,10 @@ $icons = [];
         </li>
     </ul>
     <ul>
-        <?php foreach ($nav_routes as $route => $nav_title) : ?>
-            <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i class="fas <?= $nav_title[1] ?>"></i><?= " " . $nav_title[0] ?></a></li>
+        <?php foreach ($nav_routes as $route => $nav_title): ?>
+        <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a
+                class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i
+                    class="fas <?= $nav_title[1] ?>"></i><?=" " . $nav_title[0] ?></a></li>
         <?php endforeach ?>
     </ul>
     <ul>
@@ -32,7 +34,7 @@ $icons = [];
                 </ul>
             </details>
         </li>
-        <li><a class="contrast destructive" href="/logout">Déconnexion</a></li>
+        <li><a class="contrast disconnect" href="/logout">Déconnexion</a></li>
     </ul>
 
 </nav>

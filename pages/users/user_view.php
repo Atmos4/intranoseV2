@@ -2,7 +2,7 @@
 restrict_access();
 
 require_once "database/users.api.php";
-$user = get_user(get_route_param('user_id', true));
+$user = get_user(get_route_param('user_id'));
 $profile_picture = (file_exists("images/profile/" . $user['id'] . ".jpg")) ? "/images/profile/" . $user['id'] . ".jpg" : "/images/profile/none.jpg";
 
 page($user['prenom'] . " " . $user['nom'], "user_view.css");
@@ -26,12 +26,12 @@ page($user['prenom'] . " " . $user['nom'], "user_view.css");
         <tr>
             <td>Adresse</td>
             <td> <?= join(
-                        "<br/>",
-                        [
-                            $user['adresse1'] . " " . $user['adresse2'],
-                            $user['cp'] . " " . $user['ville']
-                        ]
-                    ) ?></td>
+    "<br/>",
+    [
+        $user['adresse1'] . " " . $user['adresse2'],
+        $user['cp'] . " " . $user['ville']
+    ]
+) ?></td>
         </tr>
         <tr>
             <td>Fixe</td>
