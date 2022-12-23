@@ -3,9 +3,11 @@
 /** Sanitize the input of a form. Preferable to do on all fields because of form/request forging */
 function clean($data)
 {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
+    if ($data != null) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+    }
     return $data;
 }
 
@@ -18,9 +20,7 @@ function validate($post)
 /** Simple validation class */
 class Validator
 {
-    /**
-     * @var array[Field]
-     */
+    /** @var Field[] */
     public array $fields = [];
     public bool $empty;
 
@@ -56,8 +56,8 @@ class Validator
     {
         $errors = "";
         foreach ($this->fields as $field) {
-            foreach ($field->errors as $error)
-                $errors .= "<label for=\"$field->key\" class=\"error\">$field->label : $error</label>";
+            if ($field->error)
+                $errors .= "<label for=\"$field->key\" class=\"error\">$field->label : $field->error</label>";
         }
         return $errors . "<br/><br/>";
     }
@@ -97,7 +97,7 @@ class Field
     public string $key;
     public string $label;
     public mixed $value;
-    public array $errors;
+    public ?string $error;
     /** Access to the validator for recursion and decorator pattern */
     public ?Validator $context;
 
@@ -106,7 +106,7 @@ class Field
         $this->key = $key;
         $this->value = $value;
         $this->context = $context;
-        $this->errors = [];
+        $this->error = null;
         $this->label = "";
     }
 
@@ -134,14 +134,14 @@ class Field
     }
 
     /** Adds a validation error */
-    protected function add_error($err)
+    protected function set_error($err)
     {
-        $this->errors[] = $err;
+        $this->error = $err;
     }
 
     function valid()
     {
-        return empty($this->errors);
+        return !$this->error;
     }
 
     /** Outputs a variable (Decorator pattern) */
@@ -154,7 +154,7 @@ class Field
     /** Helper method to skip logic when $_POST is empty */
     protected function skip()
     {
-        return $this->context->empty;
+        return $this->context->empty || $this->error;
     }
 
     /** Makes the field required */
@@ -163,7 +163,7 @@ class Field
         if ($this->skip())
             return $this;
         if (!$this->value) {
-            $this->add_error($msg ?? "Requis");
+            $this->set_error($msg ?? "Requis");
         }
         return $this;
     }
@@ -191,7 +191,7 @@ class NumberField extends Field
     function check($msg = null)
     {
         if (!preg_match("/^[\d]*$/", $this->value)) {
-            $this->add_error($msg ?? "Format invalide");
+            $this->set_error($msg ?? "Format invalide");
         }
     }
 
@@ -206,7 +206,7 @@ class NumberField extends Field
         if ($this->skip())
             return $this;
         if ($this->value > $count) {
-            $this->add_error($msg ?? "Trop grand");
+            $this->set_error($msg ?? "Trop grand");
         }
         return $this;
     }
@@ -217,7 +217,7 @@ class NumberField extends Field
         if ($this->skip())
             return $this;
         if ($this->value < $count) {
-            $this->add_error($msg ?? "Trop petit");
+            $this->set_error($msg ?? "Trop petit");
         }
         return $this;
     }
@@ -228,7 +228,7 @@ class DateField extends Field
     function check($msg = null)
     {
         if (!preg_match("/^[\d-]*$/", $this->value)) {
-            $this->add_error($msg ?? "Format invalide");
+            $this->set_error($msg ?? "Format invalide");
         }
     }
 
@@ -237,28 +237,24 @@ class DateField extends Field
         return parent::render("type = date");
     }
 
-    /** Set upper date limit
-     * @todo better naming?
-     */
+    /** Set upper date limit */
     function before(string $date, string $msg = null)
     {
         if ($this->skip())
             return $this;
         if (strtotime($this->value) > strtotime($date)) {
-            $this->add_error($msg ?? "Trop tard");
+            $this->set_error($msg ?? "Trop tard");
         }
         return $this;
     }
 
-    /** Set lower date limit
-     * @todo better naming?
-     */
+    /** Set lower date limit */
     function after(string $date, string $msg = null)
     {
         if ($this->skip())
             return $this;
         if (strtotime($this->value) < strtotime($date)) {
-            $this->add_error($msg ?? "Trop tôt");
+            $this->set_error($msg ?? "Trop tôt");
         }
         return $this;
     }
@@ -278,7 +274,7 @@ class StringField extends Field
     function check($msg = null)
     {
         if (!preg_match("/^[\w\sÀ-ÿ]*$/", $this->value)) {
-            $this->add_error($msg ?? "Format invalide");
+            $this->set_error($msg ?? "Format invalide");
         }
     }
 
@@ -293,7 +289,7 @@ class StringField extends Field
         if ($this->skip())
             return $this;
         if (strlen($this->value) > $count) {
-            $this->add_error($msg ?? "Trop long");
+            $this->set_error($msg ?? "Trop long");
         }
         return $this;
     }
@@ -303,7 +299,7 @@ class StringField extends Field
         if ($this->skip())
             return $this;
         if (strlen($this->value) < $count) {
-            $this->add_error($msg ?? "Trop court");
+            $this->set_error($msg ?? "Trop court");
         }
         return $this;
     }
