@@ -1,3 +1,6 @@
+tr.delimiter {
+  background-color: var(--card-sectionning-background-color) !important;
+}
 .event-date,
 .event-limit {
   white-space: nowrap;
@@ -9,6 +12,13 @@
 .event-limit {
   text-align: right;
 }
+.event-limit.warning {
+  color: orange;
+}
+.event-limit.passed {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
 .event-row {
   cursor: pointer;
   position: relative;
@@ -17,6 +27,7 @@
 with ::after component */
 .event-row::after {
   content: "";
+  pointer-events: none;
   position: absolute;
   z-index: 1;
   top: 0;

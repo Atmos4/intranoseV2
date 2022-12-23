@@ -8,6 +8,11 @@ global $database, $formatter;
 $database = new PDO("mysql:dbname=" . $db_name . ";host=" . $db_host . ";charset=UTF8", $db_user, $db_password);
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
+// Time zone and locale
+date_default_timezone_set("Europe/Paris");
+setlocale(LC_ALL, "French");
+//ini_set('display_errors', 1);
+
 /** Get global database */
 function db(): PDO
 {
@@ -45,7 +50,7 @@ function fetch_single($sql, ...$args)
 {
     $result = fetch($sql, ...$args);
     if (count($result) != 1) {
-        force_404();
+        force_404("Expected single DB entity, got {${count($result)}}.");
     }
     return $result[0];
 }
@@ -80,11 +85,11 @@ function check_auth(...$levels)
     }
     $ulevel = $_SESSION['user_permission'];
     foreach ($levels as $level) {
-        if ($level != $ulevel) {
-            return false;
+        if ($level == $ulevel) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 /** Restrict access to authenticated users, and to a set of authorized users if provided arguments.
@@ -93,7 +98,7 @@ function check_auth(...$levels)
 function restrict_access(...$permissions)
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
-        force_404();
+        force_404("Access for {$_SESSION['user_permission']} is restricted for this page. ");
     }
 }
 

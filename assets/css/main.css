@@ -39,18 +39,24 @@
 .center {
   text-align: center;
 }
+.row.center {
+  justify-content: center;
+}
 /* Disable article margin top because what's the point */
 article {
   margin-top: 0;
 }
-del {
-  text-decoration: none;
-}
 .success {
   color: var(--ins-color);
 }
-.error {
+.error,
+a:not([type="button"]).destructive {
   color: var(--del-color);
+}
+a[type="button"].destructive,
+button.destructive {
+  background-color: var(--del-color);
+  border-color: var(--del-color);
 }
 
 /* Nav bar */
@@ -64,7 +70,7 @@ del {
   background-color: var(--dropdown-hover-background-color);
   color: var(--primary-hover);
 }
-#main-menu li:hover a.destructive {
+#main-menu li:hover a.disconnect {
   color: var(--del-color);
 }
 @media screen and (max-width: 768px) {
