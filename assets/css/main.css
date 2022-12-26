@@ -53,6 +53,10 @@ article {
 a:not([type="button"]).destructive {
   color: var(--del-color);
 }
+label.error:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
 a[type="button"].destructive,
 button.destructive {
   background-color: var(--del-color);
