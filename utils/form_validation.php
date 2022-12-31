@@ -238,9 +238,9 @@ class DateField extends Field
     }
 
     /** Set upper date limit */
-    function before(string $date, string $msg = null)
+    function before(string|null $date, string $msg = null)
     {
-        if ($this->skip())
+        if ($this->skip() || !$date)
             return $this;
         if (strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
@@ -249,9 +249,9 @@ class DateField extends Field
     }
 
     /** Set lower date limit */
-    function after(string $date, string $msg = null)
+    function after(string|null $date, string $msg = null)
     {
-        if ($this->skip())
+        if ($this->skip() || !$date)
             return $this;
         if (strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");

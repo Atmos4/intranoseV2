@@ -1,11 +1,12 @@
 <?php
-$db_host = "localhost";
-$db_name = "nose42_intra";
-$db_user = "root";
-$db_password = "";
+/** Returns an env variable */
+function env(string $key)
+{
+    return $GLOBALS[$key] ?? null;
+}
 
 global $database, $formatter;
-$database = new PDO("mysql:dbname=" . $db_name . ";host=" . $db_host . ";charset=UTF8", $db_user, $db_password);
+$database = new PDO("mysql:dbname=" . env("db_name") . ";host=" . env("db_host") . ";charset=UTF8", env("db_user"), env("db_password"));
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
 // Time zone and locale
@@ -18,13 +19,24 @@ function db(): PDO
 {
     return $GLOBALS['database'];
 }
-/** Get global formatter */
-function formatter(): IntlDateFormatter
+
+/** Get global formatter.
+ * See {@see format_date()}
+ * @param string|null $format When provided, sets custom global formatting, scoped to the entire script (the current page)
+ * @return IntlDateFormatter The global formatter object
+ */
+function formatter(string $format = null): IntlDateFormatter
 {
-    return $GLOBALS['formatter'];
+    global $formatter;
+    if ($format) {
+        $formatter->setPattern($format);
+    }
+    return $formatter;
 }
-/** perform a SQL query
- * @return PDOStatement|false
+/** Perform a SQL query
+ * @param mixed $sql_query the SQL query.
+ * @param array $args A list of arguments
+ * @return PDOStatement|bool
  */
 function query_db($sql_query, ...$args)
 {
@@ -43,7 +55,7 @@ function fetch($sql, ...$args)
 {
     return query_db($sql, ...$args)->fetchAll();
 }
-/** Calls fetch() and throws if there isn't a single element.
+/** Calls fetch() and redirects to 404 if the result was not single
  * @return array a single DB entity.
  */
 function fetch_single($sql, ...$args)
@@ -107,10 +119,10 @@ function restrict_access(...$permissions)
  * @param string|int|DateTime $date The date either as a string, a timestamp or a DateTime.
  * @return string The date formatted
  */
-function format_date($date)
+function format_date($date, string $format = null)
 {
     if (gettype($date) === "string") {
         $date = date_create($date);
     }
-    return formatter()->format($date);
+    return formatter($format)->format($date);
 }

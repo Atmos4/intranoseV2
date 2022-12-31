@@ -1,6 +1,7 @@
 <?php
 restrict_access();
 
+formatter("d MMM");
 require_once "database/events.api.php";
 $user_id = $_SESSION["user_id"];
 $events = get_events($user_id);
