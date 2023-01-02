@@ -1,5 +1,6 @@
 <?php
 restrict_access();
+$can_edit = check_auth("COACH", "STAFF", "ROOT", "COACHSTAFF");
 
 require_once "database/events.api.php";
 $event = get_event_by_id(get_route_param('event_id'), $_SESSION['user_id']);
@@ -24,7 +25,7 @@ page($event['nom'], "event_view.css");
     </a>
     <?php endif ?>
 
-    <?php if (check_auth("COACH", "STAFF", "ROOT", "COACHSTAFF")): ?>
+    <?php if ($can_edit): ?>
     <a href="/evenements/<?= $event['did'] ?>/modifier" class="secondary">
         <i class="fas fa-pen"></i> Modifier
     </a>
@@ -79,7 +80,12 @@ page($event['nom'], "event_view.css");
         </p>
         <?php endif; ?>
     </div>
+    <?php if ($can_edit) { ?>
+    <a role="button" href="/evenements/<?= $event['did'] ?>/ajouter-course">Ajouter une course</a>
+    <?php }
+    if (count($competitions)) { ?>
     <h4>Courses : </h4>
+    <?php } ?>
     <table role="grid">
         <?php foreach ($competitions as $competition): ?>
         <tr class="display">

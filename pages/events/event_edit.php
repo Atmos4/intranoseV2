@@ -2,6 +2,7 @@
 restrict_access("ROOT", "STAFF", "COACH", "COACHSTAFF");
 
 require_once "database/events.api.php";
+require_once "utils/form_validation.php";
 
 $event_id = get_route_param("event_id", false);
 $post = $_POST;

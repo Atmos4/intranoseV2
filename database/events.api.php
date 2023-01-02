@@ -1,5 +1,4 @@
 <?php
-require_once "utils/form_validation.php";
 
 /** Get events */
 function get_events($user_id)
@@ -52,7 +51,7 @@ function get_event_by_id($event_id, $user_id = null)
     }
 }
 
-function get_competitions_by_event_id($event_id, $user_id)
+function get_competitions_by_event_id($event_id, $user_id = null)
 {
     return fetch(
         "SELECT courses.*, inscriptions_courses.present as present FROM courses 
@@ -81,8 +80,6 @@ function create_or_edit_event(string $event_name, string $start_date, string $en
             $limit_date,
             $event_id
         );
-        if ($result)
-            redirect("/evenements/$event_id");
     } else {
         $result = query_db("INSERT INTO deplacements(nom,depart,arrivee,limite)
             VALUES(?,?,?,?);",
@@ -91,13 +88,19 @@ function create_or_edit_event(string $event_name, string $start_date, string $en
             $end_date,
             $limit_date
         );
-        if ($result)
-            redirect("/evenements");
     }
+    if ($result)
+        redirect("/evenements/$event_id");
 }
 
 function delete_event($event_id)
 {
+    $courses = get_competitions_by_event_id($event_id);
+    foreach ($courses as $c) {
+        query_db("DELETE FROM inscriptions_courses WHERE id_course=?;", $c["cid"]);
+    }
+    query_db("DELETE FROM courses WHERE id_depl=?;", $event_id);
+    query_db("DELETE FROM inscriptions_depl WHERE id_depl=?;", $event_id);
     return query_db("DELETE FROM deplacements WHERE did=? LIMIT 1", $event_id);
 }
 function publish_event($event_id, $state)

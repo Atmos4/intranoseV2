@@ -273,7 +273,7 @@ class StringField extends Field
 
     function check($msg = null)
     {
-        if (!preg_match("/^[\w\sÀ-ÿ]*$/", $this->value)) {
+        if (!preg_match("/^[-\w\sÀ-ÿ]*$/", $this->value)) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
