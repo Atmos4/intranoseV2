@@ -62,7 +62,7 @@ function fetch_single($sql, ...$args)
 {
     $result = fetch($sql, ...$args);
     if (count($result) != 1) {
-        force_404("Expected single DB entity, got {${count($result)}}.");
+        force_404("Expected 1 DB entity, got " . count($result));
     }
     return $result[0];
 }

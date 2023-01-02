@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/env.php';
-require_once __DIR__ . '/utils/router.php';
 require_once __DIR__ . '/utils/core.php';
+require_once __DIR__ . '/utils/router.php';
 
 get('/', 'index.php');
 any('/login', 'pages/login.php');
@@ -11,6 +11,8 @@ any('/login', 'pages/login.php');
 get('/evenements', 'pages/events/event_list.php');
 any('/evenements/nouveau', 'pages/events/event_edit.php');
 any('/evenements/$event_id/modifier', 'pages/events/event_edit.php');
+any('/evenements/$event_id/ajouter-course', 'pages/events/competition_edit.php');
+any('/evenements/$event_id/course/$competition_id', 'pages/events/competition_edit.php');
 get('/evenements/$event_id', 'pages/events/event_view.php');
 any('/evenements/$event_id/inscription', 'pages/events/event_register.php');
 any('/evenements/$event_id/publier', 'pages/events/event_publish.php');

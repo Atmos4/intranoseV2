@@ -1,7 +1,4 @@
 <?php
-// LOCAL ENV ONLY: set to true to errors on force_404 router redirects
-$DEBUG = false;
-
 session_start();
 function get($route, $path_to_include)
 {
@@ -39,8 +36,7 @@ function any($route, $path_to_include)
 }
 function force_404($msg = null)
 {
-    global $DEBUG;
-    if ($DEBUG) {
+    if (env('debug_mode')) {
         echo $msg;
     }
     render();

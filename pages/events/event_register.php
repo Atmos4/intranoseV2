@@ -61,6 +61,8 @@ page("Inscription - " . $event['nom'], "event_view.css");
                 </label>
                 <textarea name="event_comments"></textarea>
             </fieldset>
+
+            <?php if (count($competitions)): ?>
             <h4>Courses : </h4>
             <table role="grid">
                 <?php foreach ($competitions as $competition): ?>
@@ -85,6 +87,7 @@ page("Inscription - " . $event['nom'], "event_view.css");
                 </tr>
                 <?php endforeach ?>
             </table>
+            <?php endif ?>
         </div>
         <p id="conditionalText">Inscris-toi pour une vraie partie de plaisir !</p>
     </article>
