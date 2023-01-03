@@ -184,11 +184,15 @@ class Field
     {
         return $this->context?->date($key, $msg) ?? new DateField($key);
     }
+
+    function check(string $msg = null)
+    {
+    }
 }
 
 class NumberField extends Field
 {
-    function check($msg = null)
+    function check(string $msg = null)
     {
         if (!preg_match("/^[\d]*$/", $this->value)) {
             $this->set_error($msg ?? "Format invalide");
@@ -225,7 +229,7 @@ class NumberField extends Field
 
 class DateField extends Field
 {
-    function check($msg = null)
+    function check(string $msg = null)
     {
         if (!preg_match("/^[\d-]*$/", $this->value)) {
             $this->set_error($msg ?? "Format invalide");
@@ -271,9 +275,10 @@ class StringField extends Field
         return $this;
     }
 
-    function check($msg = null)
+    function check(string $msg = null)
     {
-        if (!preg_match("/^[-\w\sÀ-ÿ]*$/", $this->value)) {
+        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value)) {
+            echo $this->value;
             $this->set_error($msg ?? "Format invalide");
         }
     }
