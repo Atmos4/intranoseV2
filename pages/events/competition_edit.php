@@ -11,16 +11,15 @@ if ($competition_id) {
     $competition = get_competition($competition_id);
     if (empty($_POST)) {
         $post = [
-            "name" => $competition["nom"],
+            "name" => htmlspecialchars_decode($competition["nom"], ENT_QUOTES),
             "date" => $competition["date"],
-            "location" => $competition["lieu"],
-            "limit_date" => $competition["limite"]
+            "location" => htmlspecialchars_decode($competition["lieu"])
         ];
     }
 }
 
 $v = validate($post);
-$name = $v->string("event_name")->label("Nom de la course")->placeholder()->required();
+$name = $v->string("name")->label("Nom de la course")->placeholder()->required();
 $date = $v->date("date")->label("Date")->required();
 $location = $v->string("location")->label("Lieu")->required();
 
@@ -39,10 +38,16 @@ page($competition_id ? "{$competition["nom"]} : Modifier" : "Ajouter une course"
     <article class="row">
         <?= $v->render_errors() ?>
         <?= $name->render() ?>
-        <?= $date->render() ?>
-        <?= $location->render() ?>
+        <div class="col-md-6">
+            <?= $date->render() ?>
+        </div>
+        <div class="col-md-6">
+            <?= $location->render() ?>
+        </div>
         <div>
-            <button type="submit"><?= $competition_id ? "Modifier" : "Créer" ?></button>
+            <button type="submit">
+                <?= $competition_id ? "Modifier" : "Créer" ?>
+            </button>
         </div>
     </article>
 </form>

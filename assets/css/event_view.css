@@ -18,6 +18,7 @@ header > .row > .col-sm-6 {
   }
 
   table td {
+    display: flex;
     border-bottom: none;
   }
   table .competition-name {
@@ -33,7 +34,6 @@ header > .row > .col-sm-6 {
   table .competition-entry {
     grid-area: icon;
     align-self: center;
-    padding-bottom: 0;
   }
 }
 

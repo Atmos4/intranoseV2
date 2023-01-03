@@ -7,7 +7,8 @@ $users = get_all_users();
 page("Les licenciés", "user_list.css");
 ?>
 <form method="get">
-    <input type="search" id="search-users" name="search" placeholder="Rechercher..." onkeyup="searchTable('search-users','users-table')">
+    <input type="search" id="search-users" name="search" placeholder="Rechercher..."
+        onkeyup="searchTable('search-users','users-table')">
 </form>
 <table id="users-table">
     <thead>
@@ -19,14 +20,20 @@ page("Les licenciés", "user_list.css");
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($users as $user) : ?>
-            <tr onclick="window.location.href = '/licencies/<?= $user['id'] ?>'">
-                <td class="lastname"><?= $user['nom'] ?></td>
-                <td class="firstname"><?= $user['prenom'] ?></td>
+        <?php foreach ($users as $user): ?>
+            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $user['id'] ?>'">
+                <td class="lastname">
+                    <?= $user['nom'] ?>
+                </td>
+                <td class="firstname">
+                    <?= $user['prenom'] ?>
+                </td>
                 <td class="email"><?= $user['email'] ?></td>
-                <td class="phone-number"><?= $user['telport'] == "" ? $user['tel'] : $user['telport'] ?></td>
+                <td class="phone-number">
+                    <?= $user['telport'] == "" ? $user['tel'] : $user['telport'] ?>
+                </td>
             </tr>
-        <?php endforeach ?>
+            <?php endforeach ?>
     </tbody>
 </table>
 
