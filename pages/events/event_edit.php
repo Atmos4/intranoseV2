@@ -5,21 +5,18 @@ require_once "database/events.api.php";
 require_once "utils/form_validation.php";
 
 $event_id = get_route_param("event_id", false);
-$post = $_POST;
 if ($event_id) {
     $event = get_event_by_id($event_id, $_SESSION['user_id']);
-    if (empty($_POST)) {
-        $post = [
-            "event_name" => htmlspecialchars_decode($event["nom"], ENT_QUOTES),
-            "start_date" => $event["depart"],
-            "end_date" => $event["arrivee"],
-            "limit_date" => $event["limite"]
-        ];
-    }
+    $event_mapping = [
+        "event_name" => htmlspecialchars_decode($event["nom"], ENT_QUOTES),
+        "start_date" => $event["depart"],
+        "end_date" => $event["arrivee"],
+        "limit_date" => $event["limite"]
+    ];
 }
 
-$v = validate($post);
-$event_name = $v->string("event_name")->label("Nom de l'événement")->placeholder()->required();
+$v = validate($event_mapping ?? []);
+$event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
 $start_date = $v->date("start_date")->label("Date de départ")->required();
 $end_date = $v->date("end_date")
     ->label("Date de retour")->required()
@@ -46,7 +43,7 @@ if (!empty($_FILES) && $v2->valid()) {
 page($event_id ? "{$event["nom"]} : Modifier" : "Créer un événement");
 ?>
 <form method="post">
-    <div class="page-actions">
+    <div id="page-actions">
         <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
             <i class="fas fa-caret-left"></i> Retour
         </a>

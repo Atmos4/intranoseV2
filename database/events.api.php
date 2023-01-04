@@ -1,5 +1,7 @@
 <?php
 
+require_once "database/models/events.db.php";
+
 /** Get events */
 function get_events($user_id)
 {
@@ -54,7 +56,7 @@ function get_event_by_id($event_id, $user_id = null)
 function get_competitions_by_event_id($event_id, $user_id = null)
 {
     return fetch(
-        "SELECT courses.*, inscriptions_courses.present as present FROM courses 
+        "SELECT courses.*, inscriptions_courses.* FROM courses 
         LEFT JOIN inscriptions_courses 
             ON inscriptions_courses.id_course = courses.cid 
             AND inscriptions_courses.id_runner = ?
