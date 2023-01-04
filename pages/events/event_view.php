@@ -13,7 +13,7 @@ $has_file = $event['circu'] != 0;
 
 page($event['nom'], "event_view.css");
 ?>
-<div class="page-actions">
+<div id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
     <?php if ($event['open'] && $event['limite'] > date("Y-m-d")): ?>
