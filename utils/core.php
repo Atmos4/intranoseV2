@@ -6,7 +6,7 @@ function env(string $key)
 }
 
 global $database, $formatter;
-$database = new PDO("mysql:dbname=" . env("db_name") . ";host=" . env("db_host") . ";charset=UTF8", env("db_user"), env("db_password"));
+$database = new PDO("mysql:dbname=" . env("db_name") . ";host=" . env("db_host") . ";charset=utf8mb4", env("db_user"), env("db_password"));
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
 // Time zone and locale

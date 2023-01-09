@@ -13,7 +13,9 @@ $has_nav = $GLOBALS['nav'] ?? "";
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= implode(" | ", array_filter([$title, "Intranose"])) ?></title>
+    <title>
+        <?= implode(" | ", array_filter([$title, "Intranose"])) ?>
+    </title>
     <meta name="description" content="<?= $description ?>">
 
     <!-- Favicon -->
@@ -25,14 +27,15 @@ $has_nav = $GLOBALS['nav'] ?? "";
     <meta name="msapplication-TileColor" content="#00a300">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- FontAwesome Kit -->
-    <script src="https://kit.fontawesome.com/e8f21c5038.js" crossorigin="anonymous"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/assets/css/solid.min.css">
 
     <!-- Pico.css -->
     <link rel="stylesheet" href="/assets/css/pico.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
-    <?php if (!empty($GLOBALS['css'])) : ?>
+    <?php if (!empty($GLOBALS['css'])): ?>
         <link rel="stylesheet" href="<?= $GLOBALS['css'] ?>">
     <?php endif ?>
 </head>
@@ -43,7 +46,7 @@ $has_nav = $GLOBALS['nav'] ?? "";
         require_root("template/nav.php");
     } ?>
     <main class="container">
-        <?php if ($display_title !== false) : ?>
+        <?php if ($display_title !== false): ?>
             <h2 class="center"><?= $display_title ?? $title ?></h2>
         <?php endif ?>
         <?= $content ?>
