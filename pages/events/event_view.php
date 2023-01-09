@@ -55,7 +55,7 @@ page($event['nom'], "event_view.css");
 
         <?php if ($has_file): ?>
             <div class="file-button">
-                <a href="/download?id=<?= $event["circu"] ?>" , role="button" , class="">
+                <a href="/download?id=<?= $event["circu"] ?>" role="button">
                     <div>
                         <i class="fa-solid fa-file"></i>
                     </div>
