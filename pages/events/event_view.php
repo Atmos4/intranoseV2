@@ -57,10 +57,10 @@ page($event['nom'], "event_view.css");
             <div class="file-button">
                 <a href="/download?id=<?= $event["circu"] ?>" role="button">
                     <div>
-                        <i class="fa-solid fa-file"></i>
+                        <i class="fas fa-paperclip"></i>
                     </div>
                     <div>
-                        <b>Circulaire</b>
+                        <b>Informations</b>
                     </div>
                 </a>
             </div>
