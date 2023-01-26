@@ -90,6 +90,13 @@ class Validator
         $this->fields[$key]->check($msg);
         return $this->fields[$key];
     }
+
+    function upload(string $key, string $msg = null): UploadField
+    {
+        $this->fields[$key] = new UploadField($key, $this->value($key), $this);
+        $this->fields[$key]->check($msg);
+        return $this->fields[$key];
+    }
 }
 
 class Field
@@ -183,6 +190,11 @@ class Field
     function date(string $key, string $msg = "")
     {
         return $this->context?->date($key, $msg) ?? new DateField($key);
+    }
+
+    function upload(string $key, string $msg = "")
+    {
+        return $this->context?->upload($key, $msg) ?? new UploadField($key);
     }
 
     function check(string $msg = null)
@@ -307,5 +319,81 @@ class StringField extends Field
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
+    }
+}
+
+class UploadField extends Field
+{
+    public string $target_dir = "uploads/";
+
+    function check(string $msg = null)
+    {
+        if (isset($_FILES[$this->key])) {
+            if ($_FILES[$this->key]["name"] != '') {
+                $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
+                $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                $this->check_file_exists($target_file);
+                $this->check_file_size();
+                $this->check_format($fileType);
+            } else {
+                $this->set_error("Choisissez un fichier");
+            }
+
+        }
+    }
+
+    function render(string $attrs = "")
+    {
+        return parent::render("type = file");
+    }
+
+    function check_file_exists(string $target_file)
+    {
+        // Check if file already exists in the repo
+        if (file_exists($target_file)) {
+            $this->set_error("Le fichier existe déjà.");
+        }
+    }
+
+    function check_file_size()
+    {
+        // Check file size
+        if ($_FILES[$this->key]["size"] > 500000) {
+            $this->set_error("Fichier trop lourd.");
+        }
+    }
+
+    function check_format(string $fileType)
+    {
+        // Allow certain file formats
+        if (
+            $fileType != "jpg" && $fileType != "png" && $fileType != "jpeg"
+            && $fileType != "gif" && $fileType != "pdf"
+        ) {
+            $this->set_error("Seuls les formats JPG, PNG, JPEG, GIF et PDF sont acceptés.");
+        }
+    }
+
+    function save_file()
+    {
+        $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
+        if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
+            return "Fichier enregistré";
+        }
+    }
+
+    function get_type()
+    {
+        return $_FILES[$this->key]["type"];
+    }
+
+    function get_size()
+    {
+        return $_FILES[$this->key]["size"];
+    }
+
+    function get_name()
+    {
+        return $_FILES[$this->key]["name"];
     }
 }

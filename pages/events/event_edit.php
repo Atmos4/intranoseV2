@@ -28,8 +28,19 @@ $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
     ->before(date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ");
 
+$v2 = validate($post);
+$file_upload = $v2->upload("file_upload")->label("Circulaire");
+
 if (!empty($_POST) && $v->valid()) {
-    create_or_edit_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event_id);
+    $success = create_or_edit_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event_id);
+}
+
+if (!empty($_FILES) && $v2->valid()) {
+    $date = date('Y-m-d h:i:s');
+    if (set_file($event_id, $file_upload->get_name(), $date, $file_upload->get_size(), $file_upload->get_type())) {
+        $success = $file_upload->save_file();
+    }
+
 }
 
 page($event_id ? "{$event["nom"]} : Modifier" : "Créer un événement");
@@ -37,33 +48,55 @@ page($event_id ? "{$event["nom"]} : Modifier" : "Créer un événement");
 <form method="post">
     <div class="page-actions">
         <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
-            <i class="fas fa-xmark"></i> Annuler
+            <i class="fas fa-caret-left"></i> Retour
         </a>
         <?php if ($event_id):
-        if (!$event['open']): ?>
+            if (!$event['open']): ?>
                 <a href="/evenements/<?= $event_id ?>/supprimer" class="destructive">
                     <i class="fas fa-trash"></i> Supprimer
                 </a>
-                <?php elseif ($event['open']): ?>
+            <?php elseif ($event['open']): ?>
                 <a href="/evenements/<?= $event_id ?>/publier" class="destructive">
                     <i class="fas fa-calendar-minus"></i> Retirer
                 </a>
-                <?php endif; endif; ?>
+            <?php endif; endif; ?>
     </div>
-    <article class="row">
-        <?= $v->render_errors() ?>
-        <?= $event_name->render() ?>
-        <div class="col-sm-6 col-lg-4">
-            <?= $start_date->render() ?>
-        </div>
-        <div class="col-sm-6 col-lg-4">
-            <?= $end_date->render() ?>
-        </div>
-        <div class="col-lg-4"><?= $limit_date->render() ?></div>
-        <div>
-            <button type="submit">
-                <?= $event_id ? "Modifier" : "Créer" ?>
-            </button>
-        </div>
-    </article>
+    <article>
+        <header>
+            <div class="row">
+                <?= $v->render_errors() ?>
+                <?= $v2->render_errors() ?>
+                <?php if (isset($success)): ?>
+                    <p class="success">
+                        <?= $success ?>
+                    </p>
+                <?php endif; ?>
+                <?= $event_name->render() ?>
+                <div class="col-sm-6 col-lg-4">
+                    <?= $start_date->render() ?>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <?= $end_date->render() ?>
+                </div>
+                <div class="col-lg-4">
+                    <?= $limit_date->render() ?>
+                </div>
+                <div>
+                    <button type="submit">
+                        <?= $event_id ? "Modifier" : "Créer" ?>
+                    </button>
+                </div>
+            </div>
+        </header>
 </form>
+<form method="post" enctype="multipart/form-data">
+    <div class="center">
+        <?= $file_upload->render() ?>
+    </div>
+    <div>
+        <button type="submit">
+            Enregistrer
+        </button>
+    </div>
+</form>
+</article>
