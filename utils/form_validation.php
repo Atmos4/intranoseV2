@@ -67,7 +67,9 @@ class Validator
             if ($field->error)
                 $errors .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
         }
-        return $errors . "<br/><br/>";
+        if ($errors != "") {
+            return $errors . "<br/><br/>";
+        }
     }
 
     function render_field(string $key)
@@ -433,7 +435,7 @@ class UploadField extends Field
     function check_file_size()
     {
         // Check file size
-        if ($_FILES[$this->key]["size"] > 500000) {
+        if ($_FILES[$this->key]["size"] > 1000000) {
             $this->set_error("Fichier trop lourd.");
         }
     }
@@ -470,5 +472,14 @@ class UploadField extends Field
     function get_name()
     {
         return $_FILES[$this->key]["name"];
+    }
+
+    function set_target_dir(string $directory)
+    {
+        if (!is_dir($directory)) {
+            mkdir($directory);
+        }
+        $this->target_dir = $directory;
+        return $this;
     }
 }

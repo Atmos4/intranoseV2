@@ -2,4 +2,7 @@
 !/images/profile/none.jpg
 env.php
 /uploads/*
+!/uploads/shared_docs/
+/uploads/shared_docs/*
+!/uploads/shared_docs/*.php
 !/uploads/*.php
