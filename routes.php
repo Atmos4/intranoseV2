@@ -28,6 +28,10 @@ any('/mon-profil/changement-login', 'pages/settings/settings_login_change.php');
 get('/licencies', 'pages/users/user_list.php');
 get('/licencies/$user_id', 'pages/users/user_view.php');
 
+// Shared documents
+any('/documents', 'pages/shared_documents/shared_documents.php');
+get('/download_shared_files', 'uploads/shared_docs/download_shared_file.php');
+
 // Logout
 get('/logout', function () {
     session_destroy();
