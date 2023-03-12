@@ -12,7 +12,7 @@ function clean($data)
 }
 
 /** Factory method for the validator */
-function validate($post)
+function validate($post = [])
 {
     return new Validator($post);
 }
