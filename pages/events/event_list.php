@@ -18,9 +18,9 @@ function render_event($event)
     } elseif ($diff->days < 7) {
         $td_class = "warning";
         $tooltip_content = "data-tooltip=\""
-            . ($diff->days == 0 ? 
+            . ($diff->days == 0 ?
                 $diff->format("Plus que %h heures!") :
-                $diff->format("Dans %d jours"))
+                $diff->format("Dans %d jour" . ($diff->days != 1 && "s")))
             . "\"";
     } ?>
 
@@ -28,13 +28,13 @@ function render_event($event)
         <td class="event-entry">
 
             <?php if (array_key_exists('present', $event)):
-            if ($event["present"]): ?>
+                if ($event["present"]): ?>
                     <ins><i class="fas fa-check"></i></ins>
-                    <?php else: ?>
+                <?php else: ?>
                     <del><i class="fas fa-xmark"></i></del>
-                    <?php endif; else: ?>
+                <?php endif; else: ?>
                 <i class="fas fa-file"></i>
-                <?php endif; ?>
+            <?php endif; ?>
 
         </td>
         <td class="event-name"><b>
@@ -43,7 +43,9 @@ function render_event($event)
         <td class="event-date">
             <span>
                 <?= format_date($event['depart']) ?>
-            </span><i class="fas fa-arrow-right"></i><span><?= format_date($event['arrivee']) ?></span>
+            </span><i class="fas fa-arrow-right"></i><span>
+                <?= format_date($event['arrivee']) ?>
+            </span>
         </td>
         <td class="event-limit <?= $td_class ?>">
             <i class="fas fa-clock"></i><span <?= $tooltip_content ?>>
@@ -84,11 +86,11 @@ function render_event($event)
             <tr class="delimiter">
                 <td colspan="4">Événements publiés</td>
             </tr>
-            <?php endif ?>
+        <?php endif ?>
 
         <?php foreach ($events as $event) {
-        render_event($event);
-    } ?>
+            render_event($event);
+        } ?>
 
     </tbody>
 </table>

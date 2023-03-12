@@ -25,11 +25,13 @@ $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
     ->before(date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ");
 
-$v2 = validate($post);
+$v2 = validate();
 $file_upload = $v2->upload("file_upload")->label("Circulaire");
 
 if (!empty($_POST) && $v->valid()) {
     $success = create_or_edit_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event_id);
+    if (is_numeric($success))
+        redirect("/evenements/$success");
 }
 
 if (!empty($_FILES) && $v2->valid()) {

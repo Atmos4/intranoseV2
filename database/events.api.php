@@ -82,17 +82,19 @@ function create_or_edit_event(string $event_name, string $start_date, string $en
             $limit_date,
             $event_id
         );
+        if ($result)
+            // TODO: Refactor this, not very good error handling
+            return "Evénement modifié";
     } else {
-        $result = query_db("INSERT INTO deplacements(nom,depart,arrivee,limite)
+        query_db("INSERT INTO deplacements(nom,depart,arrivee,limite)
             VALUES(?,?,?,?);",
             $event_name,
             $start_date,
             $end_date,
             $limit_date
         );
+        return db()->lastInsertId();
     }
-    if ($result)
-        return "Evénement " . ($event_id ? "modifié" : "créé");
 }
 
 function delete_event($event_id)
