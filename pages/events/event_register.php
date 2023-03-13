@@ -11,7 +11,7 @@ $user = get_user($id);
 
 $event = Event::single_from_db(get_route_param('event_id'), $_SESSION['user_id']);
 $competitions = get_competitions_by_event_id($event->id, $_SESSION['user_id']);
-$event_form_values = $event->entry->to_form();
+$event_form_values = $event->entry?->to_form();
 
 foreach ($competitions as $competition) {
     $event_form_values["competition_{$competition['cid']}_entry"] = $competition['present'];

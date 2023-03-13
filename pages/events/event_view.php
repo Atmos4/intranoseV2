@@ -18,7 +18,7 @@ page($event['nom'], "event_view.css");
 <div id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
-    <?php if ($event['open'] && $event['limite'] > date("Y-m-d")): ?>
+    <?php if ($event['open'] && $event['limite'] >= date("Y-m-d")): ?>
         <a href="/evenements/<?= $event['did'] ?>/inscription">
             <i class="fas fa-pen-to-square"></i> Inscription
         </a>
