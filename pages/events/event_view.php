@@ -84,20 +84,23 @@ page($event['nom'], "event_view.css");
             </b>
         </div>
     </header>
-    <div class="grid">
-        <?php if ($has_entry): ?>
+    <?php if ($has_entry): ?>
+        <div class="grid">
             <p>
                 <?= ConditionalIcon($is_transported, "Transport avec le club") ?>
             </p>
             <p>
                 <?= ConditionalIcon($is_hosted, "Hébergement avec le club") ?>
             </p>
-        <?php endif; ?>
-    </div>
-    <label><small><i>Remarques:</i></small></label>
-    <p>
-        <?= $event["comment"] ?>
-    </p>
+        </div>
+
+        <?php if ($event["comment"]): ?>
+            <label><small><i>Remarques:</i></small></label>
+            <p>
+                <?= $event["comment"] ?>
+            </p>
+        <?php endif;
+    endif; ?>
 
     <?php if (count($competitions)): ?>
         <h4>Courses : </h4>
@@ -118,19 +121,21 @@ page($event['nom'], "event_view.css");
                         <?= $competition['lieu'] ?>
                     </td>
                 </tr>
-                <tr class="edit">
-                    <td colspan="4">
-                        <div class="row">
-                            <div class="col-auto">
-                                <?= $competition["surclasse"] ? ConditionalIcon($competition["surclasse"], "Surclassé") : "" ?>
+                <?php if ($competition["present"] || $competition["rmq"]): ?>
+                    <tr class="edit">
+                        <td colspan="4">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <?= $competition["surclasse"] ? ConditionalIcon($competition["surclasse"], "Surclassé") : "" ?>
+                                </div>
+                                <div class="col-auto">
+                                    <?= $competition["rmq"] ?>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <?= $competition["rmq"] ?>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+                        </td>
+                    </tr>
+                <?php endif;
+            endforeach; ?>
         </table>
     <?php endif; ?>
 
