@@ -101,14 +101,14 @@ function toggleNav() {
 }
 
 window.onscroll = function () {
-  myFunction();
+  stickyHeader();
 };
 
 // Get the header
 var header = document.getElementById("page-actions");
 
 // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
-function myFunction() {
+function stickyHeader() {
   if (header) {
     var sticky = header.offsetTop + header.offsetHeight;
     if (window.pageYOffset > sticky) {
