@@ -1,6 +1,7 @@
 <?php
 
 require_once "database/models/events.db.php";
+require_once "database/models/races.db.php";
 
 /** Get events */
 function get_events($user_id)
@@ -66,7 +67,6 @@ function get_competitions_by_event_id($event_id, $user_id = null)
         $event_id
     );
 }
-
 
 function create_or_edit_event(string $event_name, string $start_date, string $end_date, string $limit_date, int $event_id = null)
 {
