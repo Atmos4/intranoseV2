@@ -20,7 +20,7 @@ function render_event($event)
         $tooltip_content = "data-tooltip=\""
             . ($diff->days == 0 ?
                 $diff->format("Plus que %h heures!") :
-                $diff->format("Dans %d jour" . ($diff->days != 1 && "s")))
+                $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")))
             . "\"";
     } ?>
 

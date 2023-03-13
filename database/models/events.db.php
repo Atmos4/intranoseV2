@@ -150,14 +150,14 @@ class EventEntry
         }
     }
 
-    static function to_form(?EventEntry $entry)
+    function to_form()
     {
         return
             [
-                "event_entry" => $entry?->present ?? null,
-                "event_transport" => $entry?->transport ?? null,
-                "event_accomodation" => $entry?->accomodation ?? null,
-                "event_comment" => $entry?->comment ?? null,
+                "event_entry" => $this?->present ?? null,
+                "event_transport" => $this?->transport ?? null,
+                "event_accomodation" => $this?->accomodation ?? null,
+                "event_comment" => $this?->comment ?? null,
             ];
     }
 }

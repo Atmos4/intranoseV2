@@ -11,7 +11,7 @@ $user = get_user($id);
 
 $event = Event::single_from_db(get_route_param('event_id'), $_SESSION['user_id']);
 $competitions = get_competitions_by_event_id($event->id, $_SESSION['user_id']);
-$event_form_values = EventEntry::to_form($event->entry);
+$event_form_values = $event->entry->to_form();
 
 foreach ($competitions as $competition) {
     $event_form_values["competition_{$competition['cid']}_entry"] = $competition['present'];
@@ -55,6 +55,7 @@ if ($v->valid()) {
             $competition["comment"]->value,
         )->save_in_db();
     }
+    redirect("/evenements/$event->id");
 }
 
 page("Inscription - " . $event->name, "event_view.css");
