@@ -1,4 +1,7 @@
 <?php
+/** Creates a icon with optional text after
+ * - `$condition = true` => green checkmark
+ * - `$condition = false` => red X */
 function ConditionalIcon(bool $condition, string $text = "")
 {
     if ($condition): ?>
