@@ -9,7 +9,9 @@ function ConditionalIcon(bool $condition, string $text = "")
     <?php else: ?>
         <del><i class="fas fa-xmark"></i></del>
     <?php endif; ?>
-    <span class="space-before">
-        <?= $text ?>
-    </span>
+    <?php if (!!$text): ?>
+        <span class="space-before">
+            <?= $text ?>
+        </span>
+    <?php endif ?>
 <?php } ?>
