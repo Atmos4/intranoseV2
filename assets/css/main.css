@@ -67,6 +67,9 @@ button.destructive {
   background-color: var(--del-color);
   border-color: var(--del-color);
 }
+.space-before {
+  margin-left: 0.5em;
+}
 
 /* Nav bar */
 #main-menu {

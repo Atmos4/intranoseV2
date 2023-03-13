@@ -96,7 +96,7 @@ function create_or_edit_event(string $event_name, string $start_date, string $en
         return db()->lastInsertId();
     }
 }
-
+/** Deletes an event, all races connected and all entries */
 function delete_event($event_id)
 {
     $courses = get_competitions_by_event_id($event_id);
@@ -107,6 +107,7 @@ function delete_event($event_id)
     query_db("DELETE FROM inscriptions_depl WHERE id_depl=?;", $event_id);
     return query_db("DELETE FROM deplacements WHERE did=? LIMIT 1", $event_id);
 }
+/** Publish an event so that everyone can see it and register */
 function publish_event($event_id, $state)
 {
     return query_db("UPDATE deplacements SET open=? WHERE did=? LIMIT 1", $state, $event_id);
