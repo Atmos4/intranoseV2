@@ -24,15 +24,15 @@ class Validator
     public array $fields = [];
     public bool $empty;
 
-    public function __construct(array $post)
+    public function __construct(array $form_values)
     {
-        if (empty($_POST)) {
+        if (empty($_POST) and empty($_FILES)) {
             $this->empty = true;
         } else {
             $this->empty = false;
-            $post = $_POST;
+            $form_values = $_POST;
         }
-        foreach ($post as $key => $value) {
+        foreach ($form_values as $key => $value) {
             $this->fields[$key] = new Field($key, $value);
         }
     }
@@ -454,9 +454,16 @@ class UploadField extends Field
     function save_file()
     {
         $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-        if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
-            return "Fichier enregistré";
+        if (file_exists($target_file)) {
+            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
+                return "Fichier modifié";
+            }
+        } else {
+            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
+                return "Fichier enregistré";
+            }
         }
+
     }
 
     function get_type()
