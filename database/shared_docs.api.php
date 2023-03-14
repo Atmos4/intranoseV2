@@ -9,24 +9,34 @@ function create_shared_docs_table()
             date DATETIME,
             size SMALLINT,
             mime VARCHAR(64)
+            CONSTRAINT UF UNIQUE (path,mime)
         )");
     }
 }
 
 function set_shared_file($path, $date, $size, $mime)
 {
-    $result = query_db(
-        "INSERT INTO shared_documents(path, date, size, mime) VALUES (?,?,?,?) 
-        ON DUPLICATE KEY UPDATE path = ?, date= ?, size = ?, mime = ?;",
-        $path,
-        $date,
-        $size,
-        $mime,
-        $path,
-        $date,
-        $size,
-        $mime
-    );
+    $test_file_exists = fetch("SELECT * FROM shared_documents WHERE path = ? AND mime = ?;", $path, $mime);
+    if (empty($test_file_exists)) {
+        $result = query_db(
+            "INSERT INTO shared_documents(path, date, size, mime)
+            VALUE(?,?,?,?);",
+            $path,
+            $date,
+            $size,
+            $mime
+        );
+    } else {
+        $result = query_db(
+            "UPDATE shared_documents SET path=?, date=?, size=?, mime=? WHERE path=? AND mime=?",
+            $path,
+            $date,
+            $size,
+            $mime,
+            $path,
+            $mime
+        );
+    }
     return $result;
 }
 

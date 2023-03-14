@@ -5,18 +5,19 @@ require_once "database/shared_docs.api.php";
 require_once "utils/form_validation.php";
 
 $id = $_SESSION['user_id'];
-$post = $_POST;
 
 create_shared_docs_table();
 
 
-$v2 = validate($post);
-$file_upload = $v2->upload("file_upload")->set_target_dir("uploads/shared_docs/");
+$v = validate();
+$file_upload = $v->upload("file_upload")->set_target_dir("uploads/shared_docs/");
 
-if (!empty($_FILES) && $v2->valid()) {
+if (!empty($_FILES) && $v->valid()) {
     $date = date('Y-m-d h:i:s');
     if (set_shared_file($file_upload->get_name(), $date, $file_upload->get_size(), $file_upload->get_type())) {
         $success = $file_upload->save_file();
+    } else {
+        $error = "Problème à l'enregistrement";
     }
 }
 
@@ -37,13 +38,16 @@ page("Documents partagés");
 
 ?>
 
-
-
     <h3>Ajouter un document</h3>
-    <?= $v2->render_errors() ?>
+    <?= $v->render_errors() ?>
     <?php if (isset($success)): ?>
         <p class="success">
             <?= $success ?>
+        </p>
+    <?php endif; ?>
+    <?php if (isset($error)): ?>
+        <p class="error">
+            <?= $error ?>
         </p>
     <?php endif; ?>
     <form method="post" enctype="multipart/form-data">
