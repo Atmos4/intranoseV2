@@ -10,7 +10,7 @@ create_shared_docs_table();
 
 
 $v = validate();
-$file_upload = $v->upload("file_upload")->set_target_dir("uploads/shared_docs/");
+$file_upload = $v->upload("file_upload")->set_target_dir("uploads/shared_docs/")->label("Téléchargement");
 
 if (!empty($_FILES) && $v->valid()) {
     $date = date('Y-m-d h:i:s');
