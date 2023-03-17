@@ -20,6 +20,7 @@ $connection = DriverManager::getConnection([
     'password' => env("db_password"),
     'dbname' => env("orm_db_name"),
     'host' => env("db_host"),
+    'charset' => 'utf8mb4'
 ], $config);
 
 global $database, $formatter, $entityManager;

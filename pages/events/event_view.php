@@ -11,31 +11,27 @@ require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
 $event = get_event_data(get_route_param('event_id'), $_SESSION['user_id']);
-var_dump($event->name);
-return;
 
-$has_entry = isset($event['present']) && $event['present'] == 1;
-$is_transported = isset($event['transport']) && $event['transport'] == 1;
-$is_hosted = isset($event['heberg']) && $event['heberg'] == 1;
-$has_file = $event['circu'] != 0;
+$entry = $event->entries[0] ?? null;
+$has_file = false; //$event-> != 0;
 
-page($event['nom'], "event_view.css");
+page($event->name, "event_view.css");
 ?>
 <div id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
-    <?php if ($event['open'] && $event['limite'] >= date("Y-m-d")): ?>
-        <a href="/evenements/<?= $event['did'] ?>/inscription">
+    <?php if ($event->open && $event->deadline >= date_create("Y-m-d")): ?>
+        <a href="/evenements/<?= $event->id ?>/inscription">
             <i class="fas fa-pen-to-square"></i> Inscription
         </a>
-    <?php elseif (!$event['open']): ?>
-        <a href="/evenements/<?= $event['did'] ?>/publier">
+    <?php elseif (!$event->open): ?>
+        <a href="/evenements/<?= $event->id ?>/publier">
             <i class="fas fa-paper-plane"></i> Publier
         </a>
     <?php endif ?>
 
     <?php if ($can_edit): ?>
-        <a href="/evenements/<?= $event['did'] ?>/modifier" class="secondary">
+        <a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
             <i class="fas fa-pen"></i> Modifier
         </a>
     <?php endif ?>
@@ -46,96 +42,97 @@ page($event['nom'], "event_view.css");
             <div>
                 <?php include "components/start_icon.php" ?>
                 <span>
-                    <?= "Départ : " . format_date($event['depart']) ?>
+                    <?= "Départ : " . format_date($event->start_date) ?>
                 </span>
             </div>
             <div>
                 <?php include "components/finish_icon.php" ?>
                 <span>
-                    <?= "Retour : " . format_date($event['arrivee']) ?>
+                    <?= "Retour : " . format_date($event->end_date) ?>
                 </span>
             </div>
             <div>
                 <i class="fas fa-clock"></i>
                 <span>
-                    <?= "Date limite : " . format_date($event['limite']) ?>
+                    <?= "Date limite : " . format_date($event->deadline) ?>
                 </span>
             </div>
         </div>
 
-        <?php if ($has_file): ?>
-            <div class="file-button">
-                <a href="/download?id=<?= $event["circu"] ?>" role="button">
-                    <div>
-                        <i class="fas fa-paperclip"></i>
-                    </div>
-                    <div>
-                        <b>Informations</b>
-                    </div>
-                </a>
-            </div>
-        <?php endif ?>
+        <?php /* if ($has_file): ?>
+         <div class="file-button">
+         <a href="/download?id=<?= $event["circu"] ?>" role="button">
+         <div>
+         <i class="fas fa-paperclip"></i>
+         </div>
+         <div>
+         <b>Informations</b>
+         </div>
+         </a>
+         </div>
+         <?php endif */?>
 
         <div>
             <b>
-                <?php if (isset($event['present']) && $event['present'] == 1): ?>
+                <?php if ($entry && $entry->present): ?>
                     <ins><i class="fas fa-check"></i>
                         <span>Je participe</span></ins>
                 <?php else: ?>
                     <del><i class="fas fa-xmark"></i>
                         <span>
-                            <?= isset($event['present']) ? "Je ne participe pas" : "Pas inscrit" ?>
+                            <?= $entry ? "Je ne participe pas" : "Pas inscrit" ?>
                         </span></del>
                 <?php endif; ?>
             </b>
         </div>
     </header>
-    <?php if ($has_entry): ?>
+    <?php if ($entry): ?>
         <div class="grid">
             <p>
-                <?= ConditionalIcon($is_transported, "Transport avec le club") ?>
+                <?= ConditionalIcon($entry->transport, "Transport avec le club") ?>
             </p>
             <p>
-                <?= ConditionalIcon($is_hosted, "Hébergement avec le club") ?>
+                <?= ConditionalIcon($entry->accomodation, "Hébergement avec le club") ?>
             </p>
         </div>
 
-        <?php if ($event["comment"]): ?>
+        <?php if ($entry->comment): ?>
             <label><small><i>Remarques:</i></small></label>
             <p>
-                <?= $event["comment"] ?>
+                <?= $entry->comment ?>
             </p>
         <?php endif;
     endif; ?>
 
-    <?php if (count($competitions)): ?>
+    <?php if (count($event->races)): ?>
         <h4>Courses : </h4>
         <table role="grid">
 
-            <?php foreach ($competitions as $competition): ?>
-                <tr class="display <?= $can_edit ? "clickable" : "" ?>" <?= $can_edit ? "onclick=\"window.location.href = '/evenements/{$event['did']}/course/{$competition['cid']}'\"" : "" ?>>
+            <?php foreach ($event->races as $race):
+                $race_entry = $race->entries[0] ?? null; ?>
+                <tr class="display <?= $can_edit ? "clickable" : "" ?>" <?= $can_edit ? "onclick=\"window.location.href = '/evenements/{$event->id}/course/{$race->id}'\"" : "" ?>>
                     <td class="competition-entry">
-                        <?= ConditionalIcon(isset($competition['present']) && $competition['present'] == 1) ?>
+                        <?= ConditionalIcon($race_entry && $race_entry->present) ?>
                     </td>
                     <td class="competition-name"><b>
-                            <?= $competition['nom'] ?>
+                            <?= $race->name ?>
                         </b></td>
                     <td class="competition-date">
-                        <?= format_date($competition['date']) ?>
+                        <?= format_date($race->date) ?>
                     </td>
                     <td class="competition-place">
-                        <?= $competition['lieu'] ?>
+                        <?= $race->place ?>
                     </td>
                 </tr>
-                <?php if ($competition["present"] || $competition["rmq"]): ?>
+                <?php if ($race_entry && ($race_entry->present || $race_entry->comment)): ?>
                     <tr class="edit">
                         <td colspan="4">
                             <div class="row">
                                 <div class="col-auto">
-                                    <?= $competition["surclasse"] ? ConditionalIcon($competition["surclasse"], "Surclassé") : "" ?>
+                                    <?= $race_entry->upgraded ? ConditionalIcon($race_entry->upgraded, "Surclassé") : "" ?>
                                 </div>
                                 <div class="col-auto">
-                                    <?= $competition["rmq"] ?>
+                                    <?= $race_entry->comment ?>
                                 </div>
                             </div>
                         </td>
@@ -147,7 +144,7 @@ page($event['nom'], "event_view.css");
 
     <?php if ($can_edit): ?>
         <p>
-            <a role=button class="secondary" href="/evenements/<?= $event['did'] ?>/ajouter-course">
+            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-course">
                 <i class="fas fa-plus"></i> Ajouter une course</a>
         </p>
     <?php endif; ?>

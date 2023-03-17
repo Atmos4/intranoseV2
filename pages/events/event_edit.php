@@ -45,7 +45,7 @@ if (!empty($_FILES) && $v2->valid()) {
 
 }
 
-page($event_id ? "{$event["nom"]} : Modifier" : "Créer un événement");
+page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 ?>
 <form method="post">
     <div id="page-actions">
@@ -53,11 +53,11 @@ page($event_id ? "{$event["nom"]} : Modifier" : "Créer un événement");
             <i class="fas fa-caret-left"></i> Retour
         </a>
         <?php if ($event_id):
-            if (!$event['open']): ?>
+            if (!$event->open): ?>
                 <a href="/evenements/<?= $event_id ?>/supprimer" class="destructive">
                     <i class="fas fa-trash"></i> Supprimer
                 </a>
-            <?php elseif ($event['open']): ?>
+            <?php elseif ($event->open): ?>
                 <a href="/evenements/<?= $event_id ?>/publier" class="destructive">
                     <i class="fas fa-calendar-minus"></i> Retirer
                 </a>

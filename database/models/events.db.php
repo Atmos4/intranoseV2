@@ -90,9 +90,9 @@ class Event
     {
         return [
             "event_name" => $this->name,
-            "start_date" => $this->start_date,
-            "end_date" => $this->end_date,
-            "limit_date" => $this->deadline
+            "start_date" => date_format($this->start_date, "Y-m-d"),
+            "end_date" => date_format($this->end_date, "Y-m-d"),
+            "limit_date" => date_format($this->deadline, "Y-m-d")
 
         ];
     }

@@ -31,43 +31,28 @@ function map_gender(string $g): Gender
     return Gender::W;
 }
 
-// $users = fetch('SELECT * FROM licencies WHERE valid=1 and invisible=0');
-// foreach ($users as $user) {
-//     $newUser = new User();
-//     $newUser->last_name = $user['nom'];
-//     $newUser->first_name = $user['prenom'];
-//     $newUser->login = $user['login'];
-//     $newUser->password = password_hash($user["prenom"], PASSWORD_DEFAULT);
-//     $newUser->address = $user['adresse1'];
-//     $newUser->postal_code = $user['cp'];
-//     $newUser->city = $user['ville'];
-//     $newUser->sportident = $user['sportident'];
-//     $newUser->licence = $user['num_lic'];
-//     $newUser->nose_email = $user['email'];
-//     $newUser->real_email = $user['realmail'];
-//     $newUser->phone = $user['telport'];
-//     $newUser->permission = map_permission($user['perm']);
-//     $newUser->gender = map_gender($user['sexe']);
-//     $newUser->birthdate = date_create($user['ddn']);
-//     em()->persist($newUser);
-// }
-
-// $event = new Event();
-// $event->name = "Test événement 3";
-// $event->open = true;
-// em()->persist($event);
-
-// $user = em()->find(User::class, 11);
-
-// $entry = new EventEntry();
-// $entry->user = $user;
-// $entry->event = $event;
-
-// $entry->comment = "Hello world 2";
-
-// em()->persist($entry);
+$users = fetch('SELECT * FROM licencies WHERE valid=1 and invisible=0');
+foreach ($users as $user) {
+    $newUser = new User();
+    $newUser->last_name = $user['nom'];
+    $newUser->first_name = $user['prenom'];
+    $newUser->login = $user['login'];
+    $newUser->password = password_hash($user["prenom"], PASSWORD_DEFAULT);
+    $newUser->address = $user['adresse1'];
+    $newUser->postal_code = $user['cp'];
+    $newUser->city = $user['ville'];
+    $newUser->sportident = $user['sportident'];
+    $newUser->licence = $user['num_lic'];
+    $newUser->nose_email = $user['email'];
+    $newUser->real_email = $user['realmail'];
+    $newUser->phone = $user['telport'];
+    $newUser->permission = map_permission($user['perm']);
+    $newUser->gender = map_gender($user['sexe']);
+    $newUser->birthdate = date_create($user['ddn']);
+    em()->persist($newUser);
+}
 
 em()->flush();
-// $count = count($users);
+$count = count($users);
 
-echo "OK";
+echo "Inserted $count users";
