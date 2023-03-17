@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\Command;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+
+require_once 'env.php';
+require_once 'utils/core.php';
+
+$config = new ConfigurationArray([
+    'table_storage' => [
+        'table_name' => 'doctrine_migration_versions',
+        'version_column_name' => 'version',
+        'version_column_length' => 191,
+        'executed_at_column_name' => 'executed_at',
+        'execution_time_column_name' => 'execution_time',
+    ],
+
+    'migrations_paths' => [
+        'intranose\Migrations' => 'database/migrations',
+    ],
+
+    'all_or_nothing' => true,
+    'transactional' => true,
+    'check_database_platform' => true,
+]);
+
+$deps = DependencyFactory::fromEntityManager($config, new ExistingEntityManager(em()));
+
+$commands = [
+    new Command\ExecuteCommand($deps),
+    new Command\GenerateCommand($deps),
+    new Command\MigrateCommand($deps),
+    new Command\DiffCommand($deps),
+];
+ConsoleRunner::run(new SingleManagerProvider(em()), $commands);

@@ -1,18 +1,22 @@
 <?php
-restrict_access("ROOT", "STAFF", "COACH", "COACHSTAFF");
+restrict_access(
+    Permission::COACH,
+    Permission::STAFF,
+    Permission::ROOT,
+    Permission::COACHSTAFF
+);
 
 require_once "database/events.api.php";
 require_once "utils/form_validation.php";
 
-$event_id = get_route_param("event_id", false);
+$event_id = get_route_param("event_id", strict: false);
 if ($event_id) {
-    $event = get_event_by_id($event_id, $_SESSION['user_id']);
-    $event_mapping = [
-        "event_name" => htmlspecialchars_decode($event["nom"], ENT_QUOTES),
-        "start_date" => $event["depart"],
-        "end_date" => $event["arrivee"],
-        "limit_date" => $event["limite"]
-    ];
+    $event = em()->find(Event::class, $event_id);
+    if ($event == null) {
+        echo "Error: the event with id $event_id does not exist";
+        return;
+    }
+    $event_mapping = $event->to_form();
 }
 
 $v = validate($event_mapping ?? []);
@@ -29,9 +33,8 @@ $v2 = validate();
 $file_upload = $v2->upload("file_upload")->label("Circulaire");
 
 if (!empty($_POST) && $v->valid()) {
-    $success = create_or_edit_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event_id);
-    if (is_numeric($success))
-        redirect("/evenements/$success");
+    $success = persist_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event ?? null);
+    redirect("/evenements/$success");
 }
 
 if (!empty($_FILES) && $v2->valid()) {

@@ -1,11 +1,29 @@
 <?php
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+
+require_once "vendor/autoload.php";
+
 /** Returns an env variable */
 function env(string $key)
 {
     return $GLOBALS[$key] ?? null;
 }
 
-global $database, $formatter;
+$config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
+
+// TODO: temporary strings here for ORM connection. Replace with proper ones.
+$connection = DriverManager::getConnection([
+    'driver' => 'pdo_mysql',
+    'user' => env("db_user"),
+    'password' => env("db_password"),
+    'dbname' => env("orm_db_name"),
+    'host' => env("db_host"),
+], $config);
+
+global $database, $formatter, $entityManager;
+$entityManager = new EntityManager($connection, $config);
 $database = new PDO("mysql:dbname=" . env("db_name") . ";host=" . env("db_host") . ";charset=utf8mb4", env("db_user"), env("db_password"));
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
@@ -18,6 +36,11 @@ setlocale(LC_ALL, "French");
 function db(): PDO
 {
     return $GLOBALS['database'];
+}
+
+function em(): EntityManager
+{
+    return $GLOBALS['entityManager'];
 }
 
 /** Get global formatter.
@@ -89,7 +112,9 @@ function page(string $page_title, string $page_css = null, bool $with_nav = true
     $display_title = $page_display_title;
     $css = "/assets/css/" . $page_css;
 }
-/** Checks authentication and authorization stored in session */
+/** Checks authentication and authorization stored in session
+ * @param Permission[] $levels
+ */
 function check_auth(...$levels)
 {
     if (!isset($_SESSION['user_permission'])) {
@@ -106,6 +131,7 @@ function check_auth(...$levels)
 
 /** Restrict access to authenticated users, and to a set of authorized users if provided arguments.
  * Should be used as early as possible, to prevent unnecessary data loading.
+ * @param Permission[] $permissions
  */
 function restrict_access(...$permissions)
 {
