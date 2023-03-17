@@ -91,7 +91,7 @@ function route($route, $path_to_include)
     // Callback function
     if (is_callable($callback)) {
         call_user_func_array($callback, $parameters);
-        exit();
+        exit;
     }
     render($path_to_include);
 }

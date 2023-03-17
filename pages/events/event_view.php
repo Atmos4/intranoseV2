@@ -1,12 +1,18 @@
 <?php
 restrict_access();
-$can_edit = check_auth("COACH", "STAFF", "ROOT", "COACHSTAFF");
+$can_edit = check_auth(
+    Permission::COACH,
+    Permission::STAFF,
+    Permission::ROOT,
+    Permission::COACHSTAFF
+);
 
 require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
-$event = get_event_by_id(get_route_param('event_id'), $_SESSION['user_id']);
-$competitions = get_competitions_by_event_id($event['did'], $_SESSION['user_id']);
+$event = get_event_data(get_route_param('event_id'), $_SESSION['user_id']);
+var_dump($event->name);
+return;
 
 $has_entry = isset($event['present']) && $event['present'] == 1;
 $is_transported = isset($event['transport']) && $event['transport'] == 1;

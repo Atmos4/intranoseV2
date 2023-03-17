@@ -1,0 +1,19 @@
+{
+    "name": "atmos4/intranose-v2",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "doctrine/orm": "^2.11.0",
+        "symfony/cache": "^5.4",
+        "doctrine/migrations": "^3.6"
+    },
+    "autoload": {
+        "classmap": ["database/models/"]
+    },
+    "authors": [
+        {
+            "name": "Atmos4",
+            "email": "artrist.perrin@gmail.com"
+        }
+    ]
+}

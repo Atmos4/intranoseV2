@@ -1,86 +1,41 @@
 <?php
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
 
+#[Entity, Table(name: 'event_entries')]
 class EventEntry
 {
-    public string $event_id;
-    public string $user_id;
-    public bool $present;
-    public bool $transport;
-    public bool $accomodation;
-    public string $date;
-    public string $comment;
+    #[Id, ManyToOne(targetEntity: User::class)]
+    public User|null $user = null;
 
-    function __construct(
-        $event_id,
-        $user_id,
-        $present,
-        $transport,
-        $accomodation,
-        $date,
-        $comment
-    )
-    {
-        $this->event_id = $event_id;
-        $this->user_id = $user_id;
-        $this->present = $present;
-        $this->transport = $transport;
-        $this->accomodation = $accomodation;
-        $this->date = $date;
-        $this->comment = $comment;
-    }
+    #[Id, ManyToOne(targetEntity: Event::class)]
+    public Event|null $event = null;
 
-    static function create(
-        $event_id,
-        $user_id,
-        $present,
-        $transport,
-        $accomodation,
-        $date,
-        $comment
-    )
-    {
-        return new EventEntry(
-            $event_id,
-            $user_id,
-            $present ?? false,
-            $transport ?? false,
-            $accomodation ?? false,
-            $date,
-            $comment
-        );
-    }
+    #[Column]
+    public bool $present = false;
 
-    private function exists_in_db(): bool
-    {
-        $existing = fetch("SELECT present FROM inscriptions_depl WHERE id_depl=? AND id_runner = ?", $this->event_id, $this->user_id);
-        return !!count($existing);
-    }
+    #[Column]
+    public bool $transport = false;
 
-    function save_in_db()
+    #[Column]
+    public bool $accomodation = false;
+
+    #[Column]
+    public DateTime $date;
+
+    #[Column]
+    public string $comment = "";
+
+    function __construct()
     {
-        if ($this->exists_in_db()) {
-            query_db(
-                "UPDATE inscriptions_depl SET present=?,transport=?, heberg=?, date=?, comment=? WHERE id_depl=? AND id_runner=?",
-                $this->present,
-                $this->transport,
-                $this->accomodation,
-                $this->date,
-                $this->comment,
-                $this->event_id,
-                $this->user_id
-            );
-        } else {
-            query_db(
-                "INSERT INTO inscriptions_depl(id_depl, id_runner, present, transport, heberg, date, comment) VALUES(?,?,?,?,?,?,?)",
-                $this->event_id,
-                $this->user_id,
-                $this->present,
-                $this->transport,
-                $this->accomodation,
-                $this->date,
-                $this->comment
-            );
-        }
+        $this->date = date_create();
     }
 
     function to_form()
@@ -95,26 +50,124 @@ class EventEntry
     }
 }
 
+#[Entity(repositoryClass: EventRepository::class), Table(name: 'events')]
 class Event
 {
-    public string $id;
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string $name = "";
+
+    #[Column]
+    public DateTime $start_date;
+
+    #[Column]
+    public DateTime $end_date;
+
+    #[Column]
+    public DateTime $deadline;
+
+    #[Column]
+    public bool $open = false;
+
+    /** @var Collection<int, EventEntry> */
+    #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event')]
+    public Collection $entries;
+
+    /** @var Collection<int, Race> */
+    #[OneToMany(targetEntity: Race::class, mappedBy: 'event')]
+    public Collection $races;
+
+    function __construct()
+    {
+        $this->start_date = date_create();
+        $this->end_date = date_create();
+        $this->deadline = date_create();
+    }
+
+    function to_form()
+    {
+        return [
+            "event_name" => $this->name,
+            "start_date" => $this->start_date,
+            "end_date" => $this->end_date,
+            "limit_date" => $this->deadline
+
+        ];
+    }
+}
+
+class EventRepository extends EntityRepository
+{
+
+    /** @return EventDto[] */
+    function listAllOpen($user_id)
+    {
+        $events = $this->getEntityManager()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
+                " LEFT JOIN ev.entries en LEFT JOIN en.user u" .
+                " WHERE ev.open = 1 AND (u.id IS NULL OR u.id = ?1)" .
+                " ORDER BY ev.start_date DESC")
+            ->setParameter(1, $user_id)
+            ->getArrayResult();
+
+        return EventDto::fromEventList($events);
+    }
+
+    function getById($event_id, $user_id = 0)
+    {
+        return $this->getEntityManager()
+            ->createQuery("SELECT ev, en FROM Event ev LEFT JOIN ev.entries en LEFT JOIN en.user u" .
+                " WHERE ev.id = :eid AND (u.id IS NULL OR u.id = :uid)")
+            ->setParameters(['eid' => $event_id, 'uid' => $user_id])
+            ->getSingleResult();
+    }
+
+    function listDrafts()
+    {
+        $events = $this->getEntityManager()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
+                " WHERE ev.open = 0" .
+                " ORDER BY ev.start_date DESC")
+            ->getArrayResult();
+        return EventDto::fromEventList($events);
+    }
+}
+
+// class EventEntryDto
+// {
+//     public bool $transport = false;
+//     public bool $accomodation = false;
+//     public string $comment = "";
+
+//     function __construct($transport, $accomodation, $comment)
+//     {
+//         $this->transport = $transport;
+//         $this->accomodation = $accomodation;
+//         $this->comment = $comment;
+//     }
+// }
+
+class EventDto
+{
+    public int $id;
     public string $name;
-    public string $start;
-    public string $end;
-    public string $deadline;
+    public DateTime $start;
+    public DateTime $end;
+    public DateTime $deadline;
     public bool $open;
-    public string $file_id;
-    public ?EventEntry $entry;
+    public bool|null $registered;
+    // public EventEntryDto|null $entry = null;
 
     function __construct(
-        string $id,
-        string $name,
-        string $start,
-        string $end,
-        string $deadline,
-        bool $open,
-        string $file_id,
-        ?EventEntry $entry
+        $id,
+        $name,
+        $start,
+        $end,
+        $deadline,
+        $open,
+        $registered,
     )
     {
         $this->id = $id;
@@ -123,52 +176,25 @@ class Event
         $this->end = $end;
         $this->deadline = $deadline;
         $this->open = $open;
-        $this->file_id = $file_id;
-        $this->entry = $entry;
+        $this->registered = $registered;
     }
 
-    static function single_from_db(string $event_id, ?string $user_id = null): Event
+    /** @return EventDto[] */
+    static function fromEventList(array $events)
     {
-        $entry = null;
-        if ($user_id) {
-            $result = fetch_single(
-                "SELECT deplacements.*, depl.* FROM deplacements 
-                LEFT JOIN inscriptions_depl as depl
-                    ON depl.id_depl = deplacements.did 
-                    AND depl.id_runner = ?
-                WHERE did = ?
-                ORDER BY depart DESC LIMIT 1;",
-                $user_id,
-                $event_id
-            );
+        $result = [];
+        foreach ($events as $event) {
 
-            $entry = $result["id_depl"] ? new EventEntry(
-                $result["id_depl"],
-                $result["id_runner"],
-                $result["present"],
-                $result["transport"],
-                $result["heberg"],
-                $result["date"],
-                $result["comment"]
-            ) : null;
-
-        } else {
-            $result = fetch_single("SELECT * FROM deplacements
-            WHERE did = ?
-            ORDER BY depart DESC LIMIT 1;",
-                $event_id
+            $result[] = new EventDto(
+                $event['id'],
+                $event['name'],
+                $event['start_date'],
+                $event['end_date'],
+                $event['deadline'],
+                $event['open'],
+                isset($event['present']) ? $event['present'] : null
             );
         }
-
-        return new Event(
-            $event_id,
-            htmlspecialchars_decode($result["nom"], ENT_QUOTES),
-            $result["depart"],
-            $result["arrivee"],
-            $result["limite"],
-            $result["open"],
-            $result["circu"],
-            $entry
-        );
+        return $result;
     }
 }

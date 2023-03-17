@@ -4,8 +4,11 @@ require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/utils/core.php';
 require_once __DIR__ . '/utils/router.php';
 
-get('/', 'index.php');
+get('/', 'pages/index.php');
 any('/login', 'pages/login.php');
+
+// Developement
+get('/seed-db', 'pages/seed_db.php');
 
 // Events
 get('/evenements', 'pages/events/event_list.php');
