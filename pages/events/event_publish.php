@@ -1,27 +1,52 @@
 <?php
-restrict_access("COACH", "STAFF", "ROOT", "COACHSTAFF");
+restrict_access(
+    Permission::COACH,
+    Permission::STAFF,
+    Permission::ROOT,
+    Permission::COACHSTAFF
+);
 
 require_once("database/events.api.php");
 $event_id = get_route_param("event_id");
-$event = get_event_by_id($event_id);
-
-if (!empty($_POST) and isset($_POST['publish'])) {
-    $result = publish_event($event_id, $event['open'] ? 0 : 1);
-    if ($result) {
-        redirect("/evenements/$event_id");
-    }
+$event = em()->find(Event::class, $event_id);
+if (!$event) {
+    echo "the event of id $event_id doesn't exist";
+    return;
 }
 
-page(($event['open'] ? "Retirer" : "Publier") . " - {$event['nom']}");
+if (!empty($_POST) and isset($_POST['publish'])) {
+    $event->open = !$event->open;
+    em()->persist($event);
+    em()->flush();
+    redirect("/evenements/$event->id");
+}
+
+page(($event->open ? "Retirer" : "Publier") . " - {$event->name}", page_display_title: "Attention");
 ?>
 <form method="post">
     <div class="row center">
-        <p>Sûr de vouloir <?= $event['open'] ? "retirer" : "publier" ?> l'événement <?= $event['nom'] ?>?</p>
+        <p>Sûr de vouloir
+            <?= $event->open ? "retirer" : "publier" ?> l'événement <br />
+            <strong>
+                <?= $event->name ?>
+            </strong><br />
+            <i class="fa fa-question"></i>
+
+        </p>
+        <p>
+            <?php if ($event->open): ?>
+                L'événement sera alors invisible et fermé aux inscriptions.
+            <?php else: ?>
+                L'événement sera alors visible et ouvert aux inscriptions.
+            <?php endif ?>
+        </p>
         <div class="col-auto">
             <a class="secondary" role="button" href="/evenements/<?= $event_id ?>">Annuler</a>
         </div>
         <div class="col-auto">
-            <button type="submit" name="publish" value="true"><?= $event['open'] ? "Retirer" : "Publier" ?></button>
+            <button type="submit" <?= $event->open ? " class='contrast'" : "" ?> name="publish" value="true">
+                <?= $event->open ? "Retirer" : "Publier" ?>
+            </button>
         </div>
     </div>
 </form>

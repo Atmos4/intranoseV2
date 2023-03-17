@@ -2,7 +2,7 @@
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 
-function get_event_data($event_id, $user_id = null): Event
+function get_event_data($event_id, $user_id = null): Event|null
 {
     $qb = em()->createQueryBuilder();
     $qb->select('e', 'ee')
@@ -19,6 +19,7 @@ function get_event_data($event_id, $user_id = null): Event
             ->getSingleResult();
     } catch (NoResultException) {
         force_404("this event does not exist");
+        return null;
     }
 }
 
