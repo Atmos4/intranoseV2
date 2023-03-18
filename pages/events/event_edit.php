@@ -10,13 +10,22 @@ require_once "database/events.api.php";
 require_once "utils/form_validation.php";
 
 $event_id = get_route_param("event_id", strict: false);
+
 if ($event_id) {
     $event = em()->find(Event::class, $event_id);
     if ($event == null) {
         echo "Error: the event with id $event_id does not exist";
         return;
     }
-    $event_mapping = $event->to_form();
+    $event_mapping = [
+        "event_name" => $event->name,
+        "start_date" => date_format($event->start_date, "Y-m-d"),
+        "end_date" => date_format($event->end_date, "Y-m-d"),
+        "limit_date" => date_format($event->deadline, "Y-m-d")
+
+    ];
+} else {
+    $event = new Event();
 }
 
 $v = validate($event_mapping ?? []);
@@ -33,8 +42,10 @@ $v2 = validate();
 $file_upload = $v2->upload("file_upload")->label("Circulaire");
 
 if (!empty($_POST) && $v->valid()) {
-    $success = persist_event($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $event ?? null);
-    redirect("/evenements/$success");
+    $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value);
+    em()->persist($event);
+    em()->flush();
+    redirect("/evenements/$event->id");
 }
 
 if (!empty($_FILES) && $v2->valid()) {
@@ -91,14 +102,15 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
             </div>
         </header>
 </form>
-<form method="post" enctype="multipart/form-data">
-    <div class="center">
-        <?= $file_upload->render() ?>
-    </div>
-    <div>
-        <button type="submit">
-            Enregistrer
-        </button>
-    </div>
-</form>
+<?php /*
+ <form method="post" enctype="multipart/form-data">
+ <div class="center">
+ <?= $file_upload->render() ?>
+ </div>
+ <div>
+ <button type="submit">
+ Enregistrer
+ </button>
+ </div>
+ </form> */?>
 </article>
