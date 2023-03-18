@@ -1,11 +1,18 @@
 <?php
 restrict_access();
+$can_edit = check_auth(
+    Permission::COACH,
+    Permission::STAFF,
+    Permission::ROOT,
+    Permission::COACHSTAFF
+);
 
 formatter("d MMM");
 require_once "database/events.api.php";
 $user_id = $_SESSION["user_id"];
 $events = em()->getRepository(Event::class)->listAllOpen($user_id);
-$draft_events = em()->getRepository(Event::class)->listDrafts();
+if ($can_edit)
+    $draft_events = em()->getRepository(Event::class)->listDrafts();
 
 page("Événements", "event_list.css");
 
@@ -58,41 +65,45 @@ function render_event(EventDto $event)
 
 <?php } ?>
 
-<?php if (check_auth(Permission::COACH, Permission::STAFF, Permission::ROOT, Permission::COACHSTAFF)): ?>
+<?php if ($can_edit): ?>
     <p class="center">
         <a role="button" href="/evenements/nouveau" class="secondary"><i class="fas fa-plus"></i> Ajouter un événement</a>
     </p>
 <?php endif ?>
 
 <table role="grid">
-    <thead class=header-responsive>
-        <tr>
-            <th></th>
-            <th>Nom</th>
-            <th colspan=2>Dates</th>
-        </tr>
-    </thead>
-    <tbody>
-
-        <?php
-        // Draft events
-        if (count($draft_events)): ?>
-            <tr class="delimiter">
-                <td colspan="4">Événements en attentes</td>
+    <?php if (count($events) || ($can_edit && count($draft_events))): ?>
+        <thead class=header-responsive>
+            <tr>
+                <th></th>
+                <th>Nom</th>
+                <th colspan=2>Dates</th>
             </tr>
+        </thead>
+        <tbody>
+
             <?php
-            foreach ($draft_events as $draft_event) {
-                render_event($draft_event);
+            // Draft events
+            if ($can_edit && count($draft_events)): ?>
+                <tr class="delimiter">
+                    <td colspan="4">Événements en attentes</td>
+                </tr>
+                <?php
+                foreach ($draft_events as $draft_event) {
+                    render_event($draft_event);
+                } ?>
+
+                <tr class="delimiter">
+                    <td colspan="4">Événements publiés</td>
+                </tr>
+            <?php endif ?>
+
+            <?php foreach ($events as $event) {
+                render_event($event);
             } ?>
 
-            <tr class="delimiter">
-                <td colspan="4">Événements publiés</td>
-            </tr>
-        <?php endif ?>
-
-        <?php foreach ($events as $event) {
-            render_event($event);
-        } ?>
-
-    </tbody>
+        </tbody>
+    <?php else: ?>
+        <p class="center">Pas d'événement pour le moment 😴</p>
+    <?php endif ?>
 </table>

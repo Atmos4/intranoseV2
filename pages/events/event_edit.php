@@ -61,7 +61,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 <form method="post">
     <div id="page-actions">
         <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
-            <i class="fas fa-caret-left"></i> Retour
+            <i class="fas fa-caret-left"></i> Annuler
         </a>
         <?php if ($event_id):
             if (!$event->open): ?>
