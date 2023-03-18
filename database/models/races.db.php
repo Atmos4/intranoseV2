@@ -32,6 +32,17 @@ class RaceEntry
     #[Column]
     public string $comment = "";
 
+    function set($user, $race, $present, $upgraded, $licence, $sport_ident, $comment)
+    {
+        $this->user = $user;
+        $this->race = $race;
+        $this->present = $present;
+        $this->upgraded = $upgraded;
+        $this->licence = $licence;
+        $this->sport_ident = $sport_ident;
+        $this->comment = $comment;
+    }
+
 // private function exists_in_db(): bool
 // {
 //     $existing = fetch("SELECT present FROM inscriptions_courses WHERE id_course=? AND id_runner = ?", $this->race_id, $this->user_id);

@@ -26,10 +26,10 @@ page(($event->open ? "Retirer" : "Publier") . " - {$event->name}", page_display_
 <form method="post">
     <div class="row center">
         <p>Sûr de vouloir
-            <?= $event->open ? "retirer" : "publier" ?> l'événement <br />
+            <?= $event->open ? "retirer" : "publier" ?> l'événement
             <strong>
                 <?= $event->name ?>
-            </strong><br />
+            </strong>
             <i class="fa fa-question"></i>
 
         </p>

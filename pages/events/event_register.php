@@ -4,57 +4,74 @@ restrict_access();
 $id = $_SESSION['user_id'];
 
 require_once "database/events.api.php";
-require_once "database/users.api.php";
 require_once "utils/form_validation.php";
 
-$user = get_user($id);
+$user = em()->find(User::class, $id);
 
-$event = Event::single_from_db(get_route_param('event_id'), $_SESSION['user_id']);
-$competitions = get_competitions_by_event_id($event->id, $_SESSION['user_id']);
-$event_form_values = $event->entry?->to_form();
+$event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
+$event_entry = $event->entries[0] ?? null;
+$form_values = [];
 
-foreach ($competitions as $competition) {
-    $event_form_values["competition_{$competition['cid']}_entry"] = $competition['present'];
-    $event_form_values["competition_{$competition['cid']}_ranked_up"] = $competition['surclasse'];
-    $event_form_values["competition_{$competition['cid']}_comment"] = $competition['rmq'];
+if ($event_entry) {
+    $form_values = [
+        "event_present" => $event_entry->present,
+        "event_transport" => $event_entry->transport,
+        "event_accomodation" => $event_entry->accomodation,
+        "event_comment" => $event_entry->comment,
+        "event_comment_noentry" => $event_entry->comment,
+    ];
 }
 
+foreach ($event->races as $index => $race) {
+    $race_entry = $race->entries[0] ?? null;
+    if ($race_entry) {
+        $form_values["race_{$index}_entry"] = $race_entry->present;
+        $form_values["race_{$index}_ranked_up"] = $race_entry->upgraded;
+        $form_values["race_{$index}_comment"] = $race_entry->comment;
+    }
+}
 
-$v = validate($event_form_values ?? []);
-$event_entry = $v->switch("event_entry")->set_labels("Je participe", "Pas inscrit");
+$v = validate($form_values ?? []);
+$event_present = $v->switch("event_present")->set_labels("Je participe", "Pas inscrit");
 $transport = $v->switch("event_transport")->label("Transport");
 $accomodation = $v->switch("event_accomodation")->label("Hébergement");
 $event_comment = $v->text("event_comment")->area()->label("Remarques");
-$competition_rows = [];
-foreach ($competitions as $competition) {
-    $competition_rows[$competition['cid']] = $competition;
-    $competition_rows[$competition['cid']]["entry"] = $v->switch("competition_{$competition['cid']}_entry")->set_labels("Je cours", "Je ne cours pas");
-    $competition_rows[$competition['cid']]["ranked_up"] = $v->switch("competition_{$competition['cid']}_ranked_up")->label("Surclassé");
-    $competition_rows[$competition['cid']]["comment"] = $v->text("competition_{$competition['cid']}_comment")->area()->label("Remarques");
+$event_comment_noentry = $v->text("event_comment_noentry")->area()->label("Remarque");
+$race_rows = [];
+foreach ($event->races as $index => $race) {
+    $race_rows[$index]["entry"] = $v->switch("race_{$index}_entry")->set_labels("Je cours", "Je ne cours pas");
+    $race_rows[$index]["ranked_up"] = $v->switch("race_{$index}_ranked_up")->label("Surclassé");
+    $race_rows[$index]["comment"] = $v->text("race_{$index}_comment")->area()->label("Remarque");
 }
 
 if ($v->valid()) {
-    EventEntry::create(
-        $event->id,
-        $id,
-        $event_entry->value,
-        $event_entry->value && $transport->value,
-        $event_entry->value && $accomodation->value,
-        date("Y-m-d H-m-s"),
-        $event_comment->value,
-    )->save_in_db();
+    $event_entry ??= new EventEntry();
+    $event_entry->set(
+        $user,
+        $event,
+        $event_present->value,
+        $event_present->value && $transport->value,
+        $event_present->value && $accomodation->value,
+        date_create(),
+        $event_present->value ? $event_comment->value : $event_comment_noentry->value,
+    );
+    em()->persist($event_entry);
 
-    foreach ($competition_rows as $race_id => $competition) {
-        RaceEntry::create(
-            $race_id,
-            $id,
-            $event_entry->value && $competition["entry"]->value,
-            $event_entry->value && $competition["ranked_up"]->value,
-            $user["num_lic"],
-            $user["sportident"],
-            $competition["comment"]->value,
-        )->save_in_db();
+    foreach ($event->races as $index => $race) {
+        $race_entry = $race->entries[0] ?? new RaceEntry();
+        $race_form = $race_rows[$index];
+        $race_entry->set(
+            $user,
+            $race,
+            $event_present->value && $race_form["entry"]->value,
+            $event_present->value && $race_form["ranked_up"]->value,
+            $user->licence,
+            $user->sportident,
+            $race_form["comment"]->value,
+        );
+        em()->persist($race_entry);
     }
+    em()->flush();
     redirect("/evenements/$event->id");
 }
 
@@ -73,13 +90,13 @@ page("Inscription - " . $event->name, "event_view.css");
                     <?php include "components/start_icon.php" ?>
 
                     <span>
-                        <?= "Départ - " . format_date($event->start) ?>
+                        <?= "Départ - " . format_date($event->start_date) ?>
                     </span>
                 </div>
                 <div class="col-sm-6">
                     <?php include "components/finish_icon.php" ?>
                     <span>
-                        <?= "Retour - " . format_date($event->end) ?>
+                        <?= "Retour - " . format_date($event->end_date) ?>
                     </span>
                 </div>
                 <div>
@@ -92,12 +109,12 @@ page("Inscription - " . $event->name, "event_view.css");
 
             <fieldset>
                 <b>
-                    <?= $event_entry->render("onchange=\"toggleDisplay(this,'eventForm')\"") ?>
+                    <?= $event_present->render("onchange=\"toggleDisplay(this,'eventForm')\"") ?>
                 </b>
             </fieldset>
         </header>
 
-        <div id="eventForm" <?= $event_entry->value ?: "class='hidden'" ?>>
+        <div id="eventForm" <?= $event_present->value ?: "class='hidden'" ?>>
 
             <fieldset class="row">
                 <div class="col-sm-6">
@@ -111,29 +128,30 @@ page("Inscription - " . $event->name, "event_view.css");
                 <?= $event_comment->render() ?>
             </fieldset>
 
-            <?php if (count($competition_rows)): ?>
+            <?php if (count($event->races)): ?>
                 <h4>Courses : </h4>
                 <table role="grid">
-                    <?php foreach ($competition_rows as $competition_id => $competition): ?>
+                    <?php foreach ($event->races as $index => $race):
+                        $race_form = $race_rows[$index]; ?>
                         <tr class="display">
-                            <td class="competition-name"><b>
-                                    <?= $competition['nom'] ?>
+                            <td class="race-name"><b>
+                                    <?= $race->name ?>
                                 </b></td>
-                            <td class="competition-date">
-                                <?= format_date($competition['date']) ?>
+                            <td class="race-date">
+                                <?= format_date($race->date) ?>
                             </td>
-                            <td class="competition-place">
-                                <?= $competition['lieu'] ?>
+                            <td class="race-place">
+                                <?= $race->place ?>
                             </td>
                         </tr>
                         <tr class="edit">
                             <td colspan="3">
                                 <fieldset class="row">
-                                    <?= $competition["entry"]->render("onchange=\"toggleDisplay(this,'competitionForm$competition_id')\"") ?>
-                                    <div id="competitionForm<?= $competition_id ?>" <?= $competition['entry']->value ?: " class=hidden" ?>>
-                                        <?= $competition["ranked_up"]->render() ?>
+                                    <?= $race_form["entry"]->render("onchange=\"toggleDisplay(this,'raceForm$index')\"") ?>
+                                    <div id="raceForm<?= $index ?>" <?= $race_form['entry']->value ?: " class=hidden" ?>>
+                                        <?= $race_form["ranked_up"]->render() ?>
                                     </div>
-                                    <?= $competition["comment"]->render() ?>
+                                    <?= $race_form["comment"]->render() ?>
                                 </fieldset>
                             </td>
                         </tr>
@@ -141,7 +159,12 @@ page("Inscription - " . $event->name, "event_view.css");
                 </table>
             <?php endif ?>
         </div>
-        <p id="conditionalText">Inscris-toi pour une vraie partie de plaisir !</p>
+        <div id="conditionalText">
+            <p>Inscris-toi pour une vraie partie de plaisir !</p>
+            <fieldset>
+                <?= $event_comment_noentry->render() ?>
+            </fieldset>
+        </div>
     </article>
 </form>
 

@@ -1,28 +1,6 @@
 <?php
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr\Join;
 
-function get_event_data($event_id, $user_id = null): Event|null
-{
-    $qb = em()->createQueryBuilder();
-    $qb->select('e', 'ee')
-        ->from(Event::class, 'e')
-        ->leftJoin('e.entries', 'ee')
-        ->leftJoin('ee.user', 'eu', Join::WITH, 'eu.id = :uid')
-        ->leftJoin('e.races', 'r')
-        ->leftJoin('r.entries', 're')
-        ->leftJoin('re.user', 'ru', Join::WITH, 'ru.id = :uid')
-        ->where('e.id = :eid')
-        ->setParameters(['eid' => $event_id, 'uid' => $user_id]);
-    try {
-        return $qb->getQuery()
-            ->getSingleResult();
-    } catch (NoResultException) {
-        force_404("this event does not exist");
-        return null;
-    }
-}
-
+// TODO: remove
 function get_file($id)
 {
     return fetch_single(

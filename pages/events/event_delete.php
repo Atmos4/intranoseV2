@@ -28,16 +28,18 @@ page("Confirmation de suppression");
 <form method="post">
     <div class="row center">
         <p>Sûr de vouloir supprimer cet événement?</p>
-        <ul>
-            <li>
+        <p class="row">
+            <span>
+                <i class="fa fa-chevron-right"></i>
                 Courses:
                 <?= count($event->races) ?>
-            </li>
-            <li>
+            </span>
+            <span>
+                <i class="fa fa-chevron-right"></i>
                 Inscriptions:
                 <?= count($event->entries) ?>
-            </li>
-        </ul>
+            </span>
+        </p>
         <div class="col-auto">
             <a class="secondary" role="button" href="/evenements/<?= $event_id ?>">Annuler</a>
         </div>
