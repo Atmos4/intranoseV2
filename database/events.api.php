@@ -23,24 +23,6 @@ function get_event_data($event_id, $user_id = null): Event|null
     }
 }
 
-function persist_event(
-    string $event_name,
-    string $start_date,
-    string $end_date,
-    string $limit_date,
-    Event|null $event = null
-): int
-{
-    $event ??= new Event();
-    $event->name = $event_name;
-    $event->start_date = date_create($start_date);
-    $event->end_date = date_create($end_date);
-    $event->deadline = date_create($limit_date);
-    em()->persist($event);
-    em()->flush();
-    return $event->id;
-}
-
 function get_file($id)
 {
     return fetch_single(

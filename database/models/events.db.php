@@ -72,11 +72,11 @@ class Event
     public bool $open = false;
 
     /** @var Collection<int, EventEntry> */
-    #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event')]
+    #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $entries;
 
     /** @var Collection<int, Race> */
-    #[OneToMany(targetEntity: Race::class, mappedBy: 'event')]
+    #[OneToMany(targetEntity: Race::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $races;
 
     function __construct()
@@ -86,15 +86,18 @@ class Event
         $this->deadline = date_create();
     }
 
-    function to_form()
+    function set(
+        $name,
+        $start_date,
+        $end_date,
+        $deadline
+    )
     {
-        return [
-            "event_name" => $this->name,
-            "start_date" => date_format($this->start_date, "Y-m-d"),
-            "end_date" => date_format($this->end_date, "Y-m-d"),
-            "limit_date" => date_format($this->deadline, "Y-m-d")
 
-        ];
+        $this->name = $name;
+        $this->start_date = date_create($start_date);
+        $this->end_date = date_create($end_date);
+        $this->deadline = date_create($deadline);
     }
 }
 

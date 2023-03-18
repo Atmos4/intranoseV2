@@ -86,6 +86,14 @@ class Race
     #[ManyToOne(targetEntity: Event::class, inversedBy: "races")]
     public Event|null $event = null;
 
-    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "race")]
+    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "race", cascade: ["remove"])]
     public Collection $entries;
+
+    function set_values(string $name, DateTime $date, string $place, Event $event)
+    {
+        $this->name = $name;
+        $this->place = $place;
+        $this->date = $date;
+        $this->event = $event;
+    }
 }
