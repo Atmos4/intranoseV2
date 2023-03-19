@@ -80,7 +80,7 @@ page("Inscription - " . $event->name, "event_view.css");
 <form id="mainForm" method="post">
     <div id="page-actions">
         <a href="/evenements/<?= $event->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-        <a href="#" onclick="document.getElementById('mainForm').submit()">Enregistrer</a>
+        <div><button type="submit" role="button">Enregistrer</button></div>
     </div>
     <article>
         <header class="center">

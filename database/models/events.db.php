@@ -14,10 +14,10 @@ use Doctrine\ORM\Query\Expr\Join;
 #[Entity, Table(name: 'event_entries')]
 class EventEntry
 {
-    #[Id, ManyToOne(targetEntity: User::class)]
+    #[Id, ManyToOne]
     public User|null $user = null;
 
-    #[Id, ManyToOne(targetEntity: Event::class)]
+    #[Id, ManyToOne]
     public Event|null $event = null;
 
     #[Column]

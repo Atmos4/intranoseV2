@@ -128,9 +128,11 @@ page($event->name, "event_view.css");
                     <tr class="edit">
                         <td colspan="4">
                             <div class="row">
-                                <div class="col-auto">
-                                    <?= $race_entry->upgraded ? ConditionalIcon($race_entry->upgraded, "Surclassé") : "" ?>
-                                </div>
+                                <?php if ($race_entry->upgraded): ?>
+                                    <div class="col-auto">
+                                        <ins>Surclassé</ins><br />
+                                    </div>
+                                <?php endif ?>
                                 <div class="col-auto">
                                     <?= $race_entry->comment ?>
                                 </div>
