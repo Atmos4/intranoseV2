@@ -11,10 +11,10 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'race_entries')]
 class RaceEntry
 {
-    #[Id, ManyToOne(targetEntity: User::class)]
+    #[Id, ManyToOne]
     public User|null $user = null;
 
-    #[Id, ManyToOne(targetEntity: Race::class)]
+    #[Id, ManyToOne]
     public Race|null $race = null;
 
     #[Column]
@@ -94,7 +94,7 @@ class Race
     #[Column]
     public string $place;
 
-    #[ManyToOne(targetEntity: Event::class, inversedBy: "races")]
+    #[ManyToOne]
     public Event|null $event = null;
 
     #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "race", cascade: ["remove"])]

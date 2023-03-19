@@ -110,7 +110,13 @@ button.destructive {
 #page-actions {
   display: flex;
   justify-content: space-between;
-  height: 2rem;
+  align-items: flex-end;
+  height: fit-content;
+  padding: 0.5rem;
+}
+#page-actions button {
+  margin: 0;
+  padding: 0.5em 1em;
 }
 #page-actions.sticky {
   position: fixed;
@@ -119,7 +125,11 @@ button.destructive {
   right: 0;
   padding: 1rem;
   background-color: var(--background-color);
-  height: 3.5rem;
+  align-items: center;
+  height: fit-content;
+}
+#page-actions:has(button).sticky {
+  padding: 0.5rem;
 }
 
 /* table hover effect */
