@@ -149,8 +149,8 @@ class EventRepository extends EntityRepository
     {
         $events = $this->getEntityManager()
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en LEFT JOIN en.user u" .
-                " WHERE ev.open = 1 AND (u.id IS NULL OR u.id = ?1)" .
+                " LEFT JOIN ev.entries en LEFT JOIN en.user u WITH u.id = ?1" .
+                " WHERE ev.open = 1" .
                 " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
