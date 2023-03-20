@@ -12,9 +12,9 @@ function clean($data)
 }
 
 /** Factory method for the validator */
-function validate($post = [])
+function validate($post = [], string|null $action = null)
 {
-    return new Validator($post);
+    return new Validator($post, $action);
 }
 
 /** Simple validation class */
@@ -23,12 +23,14 @@ class Validator
     /** @var Field[] */
     public array $fields = [];
     public bool $empty;
+    public string|null $action;
 
-    public function __construct(array $form_values)
+    public function __construct(array $form_values, $action = null)
     {
+        $this->action = $action;
         if (empty($_POST) and empty($_FILES)) {
             $this->empty = true;
-        } else {
+        } elseif (!$action || $_POST['action'] == $action) {
             $this->empty = false;
             $form_values = $_POST;
         }
@@ -47,7 +49,7 @@ class Validator
         if ($key) {
             return $this->get_field($key)->valid();
         }
-        if ($this->empty) {
+        if ($this->empty || !is_csrf_valid()) {
             return false;
         }
         return array_reduce($this->fields, function ($valid, Field $field) {
@@ -62,13 +64,21 @@ class Validator
 
     function render_errors()
     {
-        $errors = "";
+        $result = "";
+
+        // Add form action name
+        if ($this->action)
+            $result = "<input type=\"hidden\" name=\"action\" value=\"$this->action\">";
+
+        // Add csrf
+        $result .= set_csrf();
+
         foreach ($this->fields as $field) {
             if ($field->error)
-                $errors .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
+                $result .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
         }
-        if ($errors != "") {
-            return $errors . "<br/><br/>";
+        if ($result != "") {
+            return $result . "<br/><br/>";
         }
     }
 

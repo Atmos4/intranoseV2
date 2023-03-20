@@ -17,7 +17,7 @@ $user_identity = [
     "gender" => $user->gender->value
 ];
 
-$v_identity = validate($user_identity);
+$v_identity = validate($user_identity, "identity_form");
 $last_name = $v_identity->text("last_name")->label("Prénom")->placeholder()->required();
 $first_name = $v_identity->text("first_name")->label("Nom")->placeholder()->required();
 $licence = $v_identity->number("licence")->label("Numéro de licence")->required();
@@ -28,7 +28,7 @@ $user_email = [
     "nose_email" => $user->nose_email,
 ];
 
-$v_email = validate($user_email);
+$v_email = validate($user_email, "email_form");
 $real_email = $v_email->email("real_email")->label("Addresse mail perso")->placeholder()->required();
 $nose_email = $v_email->email("nose_email")->label("Addresse mail nose")->placeholder()->required();
 
@@ -40,7 +40,7 @@ $user_perso = [
     "phone" => $user->phone
 ];
 
-$v_perso = validate($user_perso);
+$v_perso = validate($user_perso, "infos_form");
 $sportident = $v_perso->number("sportident")->label("Numéro SportIdent")->required();
 $address = $v_perso->text("address")->label("Adresse")->placeholder()->required();
 $postal_code = $v_perso->number("postal_code")->label("Code postal")->required();
@@ -48,26 +48,26 @@ $city = $v_perso->text("city")->label("Ville")->placeholder()->required();
 $phone = $v_perso->phone("phone")->label("Nuémro de téléphone")->placeholder()->required();
 
 
-// if (isset($_POST['submitIdentity']) && $v_identity->valid()) {
-//     $user->set_identity($last_name->value, $first_name->value, $licence->value, $gender->value);
-//     em()->persist($user);
-//     em()->flush();
-//     $validation_result = "Identité mise à jour !";
-// }
+if ($v_identity->valid()) {
+    $user->set_identity($last_name->value, $first_name->value, $licence->value, $gender->value);
+    em()->persist($user);
+    em()->flush();
+    $validation_result = "Identité mise à jour !";
+}
 
-// if (isset($_POST['submitEmail']) and $v_email->valid()) {
-//     $user->set_email($real_email->value, $nose_email->value);
-//     em()->persist($user);
-//     em()->flush();
-//     $validation_result = "Emails mis à jour !";
-// }
+if ($v_email->valid()) {
+    $user->set_email($real_email->value, $nose_email->value);
+    em()->persist($user);
+    em()->flush();
+    $validation_result = "Emails mis à jour !";
+}
 
-// if (isset($_POST['submitInfos']) and $v_perso->valid()) {
-//     $user->set_perso($sportident->value, $address->value, $postal_code->value, $city->value, $phone->value);
-//     em()->persist($user);
-//     em()->flush();
-//     $validation_result = "Infos perso mises à jour !";
-// }
+if ($v_perso->valid()) {
+    $user->set_perso($sportident->value, $address->value, $postal_code->value, $city->value, $phone->value);
+    em()->persist($user);
+    em()->flush();
+    $validation_result = "Infos perso mises à jour !";
+}
 
 
 page("Mon profil");
@@ -81,9 +81,9 @@ page("Mon profil");
 
 <h2>Identité</h2>
 
-<?= $v_identity->render_errors() ?>
 
 <form method="post">
+    <?= $v_identity->render_errors() ?>
     <div class="grid">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
@@ -101,9 +101,9 @@ page("Mon profil");
 
 <h2 id="mon-compte">Compte</h2>
 
-<?= $v_email->render_errors() ?>
 
 <form method="post">
+    <?= $v_email->render_errors() ?>
     <div class="grid">
         <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le
             mot de passe</button>
@@ -123,9 +123,9 @@ page("Mon profil");
 
 <h2> Infos perso </h2>
 
-<?= $v_perso->render_errors() ?>
 
 <form method="post">
+    <?= $v_perso->render_errors() ?>
     <?= $sportident->render() ?>
     <?= $address->render() ?>
 
