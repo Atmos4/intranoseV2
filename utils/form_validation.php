@@ -22,18 +22,17 @@ class Validator
 {
     /** @var Field[] */
     public array $fields = [];
-    public bool $empty;
+    public bool $empty = true;
     public string|null $action;
 
     public function __construct(array $form_values, $action = null)
     {
         $this->action = $action;
-        if (empty($_POST) and empty($_FILES)) {
-            $this->empty = true;
-        } elseif (!$action || $_POST['action'] == $action) {
+        if ((!empty($_POST) or !empty($_FILES)) and (!$action or $_POST['action'] == $action)) {
             $this->empty = false;
             $form_values = $_POST;
         }
+
         foreach ($form_values as $key => $value) {
             $this->fields[$key] = new Field($key, $value);
         }
@@ -49,7 +48,7 @@ class Validator
         if ($key) {
             return $this->get_field($key)->valid();
         }
-        if ($this->empty || !is_csrf_valid()) {
+        if ($this->empty || !is_csrf_valid() || $_POST['action'] != $this->action) {
             return false;
         }
         return array_reduce($this->fields, function ($valid, Field $field) {
@@ -74,10 +73,11 @@ class Validator
         $result .= set_csrf();
 
         foreach ($this->fields as $field) {
-            if ($field->error)
+            if ($field->error) {
                 $result .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
+            }
         }
-        if ($result != "") {
+        if (!$this->empty and !$this->valid()) {
             return $result . "<br/><br/>";
         }
     }
@@ -139,6 +139,15 @@ class Validator
         $this->fields[$key]->check($msg);
         return $this->fields[$key];
     }
+
+    function password(string $key, string $msg = null): PasswordField
+    {
+        $this->fields[$key] = new PasswordField($key, $this->value($key), $this);
+        $this->fields[$key]->check($msg);
+        return $this->fields[$key];
+    }
+
+
 }
 
 class Field
@@ -212,8 +221,9 @@ class Field
     /** Makes the field required */
     function required(string $msg = null)
     {
-        if ($this->skip())
+        if ($this->skip()) {
             return $this;
+        }
         if (!$this->value) {
             $this->set_error($msg ?? "Requis");
         }
@@ -250,6 +260,11 @@ class Field
     function phone(string $key, string $msg = "")
     {
         return $this->context?->phone($key, $msg) ?? new PhoneField($key);
+    }
+
+    function password(string $key, string $msg = "")
+    {
+        return $this->context?->password($key, $msg) ?? new PasswordField($key);
     }
 
     function check(string $msg = null)
@@ -572,6 +587,35 @@ class PhoneField extends Field
     {
         $placeholder = $this->placeholder ?? $this->label;
         return parent::render("type =\"tel\" placeholder=\"$placeholder\"");
+    }
+}
+
+class PasswordField extends Field
+{
+
+    function check(string $msg = null)
+    {
+        if (isset($this->value)) {
+            if (!$this->error) {
+                echo $this->error;
+                if (strlen($this->value) <= '8') {
+                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins 8 caractères");
+                } elseif (!preg_match("#[0-9]+#", $this->value)) {
+                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins un chiffre");
+                } elseif (!preg_match("#[A-Z]+#", $this->value)) {
+                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins une lettre majuscule");
+                } elseif (!preg_match("#[a-z]+#", $this->value)) {
+                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins une lettre minuscule");
+                }
+            }
+
+        }
+
+    }
+
+    function render(string $attrs = "")
+    {
+        return parent::render("type =\"password\"");
     }
 }
 
