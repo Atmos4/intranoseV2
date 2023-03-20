@@ -68,8 +68,7 @@ class User
         $first_name,
         $licence,
         $gender
-    )
-    {
+    ) {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
         $this->licence = $licence;
@@ -79,8 +78,7 @@ class User
     function set_email(
         $real_email,
         $nose_email
-    )
-    {
+    ) {
         $this->real_email = $real_email;
         $this->nose_email = $nose_email;
     }
@@ -91,8 +89,7 @@ class User
         $postal_code,
         $city,
         $phone
-    )
-    {
+    ) {
         $this->sportident = $sportident;
         $this->address = $address;
         $this->postal_code = $postal_code;
@@ -102,9 +99,14 @@ class User
 
     function set_password(
         $password
-    )
-    {
+    ) {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    function set_login(
+        $login
+    ) {
+        $this->login = $login;
     }
 }
 
