@@ -215,7 +215,7 @@ class Field
     }
 
     /** Adds a validation error */
-    protected function set_error($err)
+    public function set_error($err)
     {
         $this->error = $err;
     }
