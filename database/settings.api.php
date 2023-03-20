@@ -1,70 +1,8 @@
 <?php
 
-function get_user_data()
-{
-    return fetch("SELECT * FROM licencies WHERE id = ? LIMIT 1;", $_SESSION['user_id'])[0];
-}
-
 function get_user_login($id)
 {
     return fetch("SELECT login FROM licencies WHERE id=? LIMIT 1;", $id)[0];
-}
-
-function change_email($post, $id)
-{
-    if (isset($post["email"]) and isset($post["emailnose"])) {
-        $email = $post["email"];
-        $emailnose = $post["emailnose"];
-        query_db(
-            "UPDATE licencies 
-        SET 
-            realmail=?,
-            email=?
-        WHERE
-            id = ? ;",
-            $email,
-            $emailnose,
-            $id
-        );
-        return ["Mails mis à jour !", "success"];
-    }
-}
-
-function change_infos($post, $id)
-{
-
-    if (isset($post["sportident"])) {
-        $sportident = $post["sportident"];
-        $adresse = $post["adresse"];
-        $adresse2 = $post["adresse2"];
-        $codepostal = $post["codePostal"];
-        $ville = $post["ville"];
-        $fixe = $post["fixe"];
-        $portable = $post["portable"];
-
-        query_db(
-            "UPDATE licencies 
-            SET
-                sportident = ?,
-                adresse1=?,
-                adresse2=?,
-                cp=?,
-                ville=?,
-                tel=?,
-                telport=?
-            WHERE
-                id = ?;",
-            $sportident,
-            $adresse,
-            $adresse2,
-            $codepostal,
-            $ville,
-            $fixe,
-            $portable,
-            $id
-        );
-        return ["Infos mises à jour !", "success"];
-    }
 }
 
 function change_password($post, $id)
@@ -135,22 +73,5 @@ function change_login($post, $id)
             return ["Déjà utilisé", "error"];
         }
         return ["Mauvais login", "error"];
-    }
-}
-
-function change_user_data($post, $id)
-{
-    //Check from which form it is coming
-    if (isset($post['submitEMail'])) {
-        return change_email($post, $id);
-    }
-    if (isset($post['submitInfos'])) {
-        return change_infos($post, $id);
-    }
-    if (isset($post['submitPassword'])) {
-        return change_password($post, $id);
-    }
-    if (isset($post['submitLogin'])) {
-        return change_login($post, $id);
     }
 }

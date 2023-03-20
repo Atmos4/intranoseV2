@@ -115,6 +115,20 @@ class Validator
         $this->fields[$key]->check($msg);
         return $this->fields[$key];
     }
+
+    function email(string $key, string $msg = null): EmailField
+    {
+        $this->fields[$key] = new EmailField($key, $this->value($key), $this);
+        $this->fields[$key]->check($msg);
+        return $this->fields[$key];
+    }
+
+    function phone(string $key, string $msg = null): PhoneField
+    {
+        $this->fields[$key] = new PhoneField($key, $this->value($key), $this);
+        $this->fields[$key]->check($msg);
+        return $this->fields[$key];
+    }
 }
 
 class Field
@@ -216,6 +230,16 @@ class Field
     function upload(string $key, string $msg = "")
     {
         return $this->context?->upload($key, $msg) ?? new UploadField($key);
+    }
+
+    function email(string $key, string $msg = "")
+    {
+        return $this->context?->email($key, $msg) ?? new EmailField($key);
+    }
+
+    function phone(string $key, string $msg = "")
+    {
+        return $this->context?->phone($key, $msg) ?? new PhoneField($key);
     }
 
     function check(string $msg = null)
@@ -490,3 +514,94 @@ class UploadField extends Field
         return $this;
     }
 }
+
+class EmailField extends Field
+{
+    public ?string $placeholder = "";
+
+    /** Defines the placeholder. Call the method without params to use the label as placeholder */
+    function placeholder(string $text = null)
+    {
+        $this->placeholder = $text;
+        return $this;
+    }
+
+    function check(string $msg = null)
+    {
+        if (!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+            $this->set_error($msg ?? "Format d'email invalide");
+        }
+    }
+
+    function render(string $attrs = "")
+    {
+        $placeholder = $this->placeholder ?? $this->label;
+        return parent::render("type =\"email\" placeholder=\"$placeholder\"");
+    }
+}
+
+class PhoneField extends Field
+{
+    public ?string $placeholder = "";
+
+    /** Defines the placeholder. Call the method without params to use the label as placeholder */
+    function placeholder(string $text = null)
+    {
+        $this->placeholder = $text;
+        return $this;
+    }
+
+    function check(string $msg = null)
+    {
+        if (!preg_match('/^[0-9]{10}+$/', $this->value)) {
+            $this->set_error($msg ?? "Format de numéro de téléphone invalide");
+        }
+    }
+
+    function render(string $attrs = "")
+    {
+        $placeholder = $this->placeholder ?? $this->label;
+        return parent::render("type =\"tel\" placeholder=\"$placeholder\"");
+    }
+}
+
+
+
+/*
+class RadioField extends Field
+{
+public string $checked_id = 0;
+function set_text_list(array $list)
+{
+$this->text_list = $list;
+return $this;
+}
+function set_checked_id(int $checked_id)
+{
+return $this->checked_id = $checked_id;
+}
+function render(string $attrs = "")
+{
+$render_string = "<fieldset>";
+foreach($text_list as $text){
+$render_string .= "<legend>Sexe</legend>
+<label for="homme">
+<input type="radio" id="homme" name="sexe" value="H" <?php echo ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?> disabled>
+Homme
+</label>";
+}
+return "<fieldset>"
+. (foreach ($text_list as $text) {})."
+<legend>Sexe</legend>
+<label for="homme">
+<input type="radio" id="homme" name="sexe" value="H" <?php echo ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?> disabled>
+Homme
+</label>
+<label for="dame">
+<input type="radio" id="dame" name="sexe" value="D" <?php echo ($user->gender == Gender::W) ? 'checked="checked"' : ''; ?> disabled>
+Dame
+</label>
+</fieldset>";
+}
+}
+*/
