@@ -24,6 +24,8 @@ class Validator
     public array $fields = [];
     public bool $empty = true;
     public string|null $action;
+    public string|null $success = null;
+
 
     public function __construct(array $form_values, $action = null)
     {
@@ -45,10 +47,15 @@ class Validator
 
     function valid(string $key = null)
     {
+        if (isset($_POST['action'])) {
+            $action_check = ($_POST['action'] != $this->action);
+        } else {
+            $action_check = false;
+        }
         if ($key) {
             return $this->get_field($key)->valid();
         }
-        if ($this->empty || !is_csrf_valid() || $_POST['action'] != $this->action) {
+        if ($this->empty || !is_csrf_valid() || $action_check) {
             return false;
         }
         return array_reduce($this->fields, function ($valid, Field $field) {
@@ -67,7 +74,7 @@ class Validator
 
         // Add form action name
         if ($this->action)
-            $result = "<input type=\"hidden\" name=\"action\" value=\"$this->action\">";
+            $result .= "<input type=\"hidden\" name=\"action\" value=\"$this->action\">";
 
         // Add csrf
         $result .= set_csrf();
@@ -79,6 +86,19 @@ class Validator
         }
         if (!$this->empty and !$this->valid()) {
             return $result . "<br/><br/>";
+        }
+        return $result;
+    }
+
+    function set_success($success)
+    {
+        $this->success = $success;
+    }
+
+    function render_success()
+    {
+        if ($this->valid()) {
+            return "<ins>$this->success</ins><br/><br/>";
         }
     }
 
@@ -230,7 +250,6 @@ class Field
         return $this;
     }
 
-
     /** Enables Decorator pattern */
     function number(string $key, string $msg = "")
     {
@@ -276,7 +295,7 @@ class NumberField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match("/^[\d]*$/", $this->value)) {
+        if (!preg_match("/^[\d]*$/", $this->value ?? "")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -313,7 +332,7 @@ class DateField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match("/^[\d-]*$/", $this->value)) {
+        if (!preg_match("/^[\d-]*$/", $this->value ?? "")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -366,7 +385,7 @@ class StringField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value)) {
+        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value ?? "")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -410,7 +429,7 @@ class SwitchField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match('/^\d*$/', $this->value)) {
+        if (!preg_match('/^\d*$/', $this->value ?? "")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -442,7 +461,7 @@ class TextAreaField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value)) {
+        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value ?? "")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -578,7 +597,7 @@ class PhoneField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match('/^[0-9]{10}+$/', $this->value)) {
+        if (!preg_match("/^[0-9]{10}$/", $this->value ?? "")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
     }
@@ -590,32 +609,46 @@ class PhoneField extends Field
     }
 }
 
-class PasswordField extends Field
+class PasswordField extends StringField
 {
-
-    function check(string $msg = null)
+    function secure()
     {
-        if (isset($this->value)) {
-            if (!$this->error) {
-                echo $this->error;
-                if (strlen($this->value) <= '8') {
-                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins 8 caractères");
-                } elseif (!preg_match("#[0-9]+#", $this->value)) {
-                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins un chiffre");
-                } elseif (!preg_match("#[A-Z]+#", $this->value)) {
-                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins une lettre majuscule");
-                } elseif (!preg_match("#[a-z]+#", $this->value)) {
-                    $this->set_error($msg ?? "Votre mot de passe doit contenir au moins une lettre minuscule");
-                }
-            }
+        return $this->with_lowercase()->with_uppercase()->with_number()->min_length(8);
+    }
 
+    function with_number(string $msg = null)
+    {
+        if ($this->skip())
+            return $this;
+        if (!preg_match("#[0-9]+#", $this->value ?? "")) {
+            $this->set_error($msg ?? "Doit contenir au moins un chiffre");
         }
+        return $this;
+    }
 
+    function with_uppercase(string $msg = null)
+    {
+        if ($this->skip())
+            return $this;
+        if (!preg_match("#[A-Z]+#", $this->value ?? "")) {
+            $this->set_error($msg ?? "Doit contenir au moins une lettre majuscule");
+        }
+        return $this;
+    }
+
+    function with_lowercase(string $msg = null)
+    {
+        if ($this->skip())
+            return $this;
+        if (!preg_match("#[a-z]+#", $this->value ?? "")) {
+            $this->set_error($msg ?? "Doit contenir au moins une lettre minuscule");
+        }
+        return $this;
     }
 
     function render(string $attrs = "")
     {
-        return parent::render("type =\"password\"");
+        return Field::render("type =\"password\"");
     }
 }
 

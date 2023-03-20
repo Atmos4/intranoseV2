@@ -45,28 +45,28 @@ $sportident = $v_perso->number("sportident")->label("Numéro SportIdent")->requi
 $address = $v_perso->text("address")->label("Adresse")->placeholder()->required();
 $postal_code = $v_perso->number("postal_code")->label("Code postal")->required();
 $city = $v_perso->text("city")->label("Ville")->placeholder()->required();
-$phone = $v_perso->phone("phone")->label("Nuémro de téléphone")->placeholder()->required();
+$phone = $v_perso->phone("phone")->label("Numéro de téléphone")->placeholder()->required();
 
 
 if ($v_identity->valid()) {
     $user->set_identity($last_name->value, $first_name->value, $licence->value, $gender->value == 'M' ? Gender::M : Gender::W);
     em()->persist($user);
     em()->flush();
-    $validation_result_id = "Identité mise à jour !";
+    $v_identity->set_success("Identité mise à jour !");
 }
 
 if ($v_email->valid()) {
     $user->set_email($real_email->value, $nose_email->value);
     em()->persist($user);
     em()->flush();
-    $validation_result_email = "Emails mis à jour !";
+    $v_email->set_success("Emails mis à jour !");
 }
 
 if ($v_perso->valid()) {
     $user->set_perso($sportident->value, $address->value, $postal_code->value, $city->value, $phone->value);
     em()->persist($user);
     em()->flush();
-    $validation_result_perso = "Infos perso mises à jour !";
+    $v_perso->set_success("Infos perso mises à jour !");
 }
 
 
@@ -76,12 +76,10 @@ page("Mon profil");
 
 <h2 id="identity">Identité</h2>
 <?php //TODO : validation result in validator?>
-<ins>
-    <?= $validation_result_id ?? "" ?>
-</ins>
 
 <form method="post" action="#identity">
     <?= $v_identity->render_errors() ?>
+    <?= $v_identity->render_success() ?>
     <div class="grid">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
@@ -99,12 +97,9 @@ page("Mon profil");
 
 <h2 id="mon-compte">Compte</h2>
 
-<ins>
-    <?= $validation_result_email ?? "" ?>
-</ins>
-
 <form method="post" action="#mon-compte">
     <?= $v_email->render_errors() ?>
+    <?= $v_email->render_success() ?>
     <div class="grid">
         <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le
             mot de passe</button>
@@ -124,12 +119,9 @@ page("Mon profil");
 
 <h2 id="infos-perso"> Infos perso </h2>
 
-<ins>
-    <?= $validation_result_perso ?? "" ?>
-</ins>
-
 <form method="post" action="#infos-perso">
     <?= $v_perso->render_errors() ?>
+    <?= $v_perso->render_success() ?>
     <?= $sportident->render() ?>
     <?= $address->render() ?>
 
