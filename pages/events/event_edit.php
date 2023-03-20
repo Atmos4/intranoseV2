@@ -36,7 +36,7 @@ $end_date = $v->date("end_date")
     ->after($start_date->value, "Doit être après le départ");
 $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
-    ->before(date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ");
+    ->before(date_create($start_date->value ?? "")->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ");
 
 $v2 = validate();
 $file_upload = $v2->upload("file_upload")->label("Circulaire");

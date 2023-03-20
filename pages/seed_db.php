@@ -45,7 +45,7 @@ foreach ($users as $user) {
     $newUser->licence = $user['num_lic'];
     $newUser->nose_email = $user['email'];
     $newUser->real_email = $user['realmail'];
-    $newUser->phone = $user['telport'];
+    $newUser->phone = preg_replace("/[^0-9]/", "", $user['telport']);
     $newUser->permission = map_permission($user['perm']);
     $newUser->gender = map_gender($user['sexe']);
     $newUser->birthdate = date_create($user['ddn']);

@@ -9,8 +9,8 @@ $user = em()->find(User::class, $user_id);
 
 $v = validate();
 $current_pass = $v->password("current_pass")->label("Mot de passe actuel")->required();
-$new_pass = $v->password("new_pass")->label("Nouveau mot de passe")->required();
-$confirm_pass = $v->password("confirm_pass")->label("Confirmation")->required();
+$new_pass = $v->password("new_pass")->label("Nouveau mot de passe")->required()->secure();
+$confirm_pass = $v->password("confirm_pass")->label("Confirmation")->required()->secure();
 
 $check_confirm = ($new_pass->value == $confirm_pass->value);
 
