@@ -121,7 +121,7 @@ function set_csrf()
     if (!isset($_SESSION["csrf"])) {
         $_SESSION["csrf"] = bin2hex(random_bytes(50));
     }
-    echo '<input type="hidden" name="csrf" value="' . $_SESSION["csrf"] . '">';
+    return '<input type="hidden" name="csrf" value="' . $_SESSION["csrf"] . '">';
 }
 function is_csrf_valid()
 {
