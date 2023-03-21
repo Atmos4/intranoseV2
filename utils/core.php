@@ -138,7 +138,7 @@ function restrict_access(...$permissions)
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
         $permission = $_SESSION['user_permission'] ?? "non authenticated user";
-        force_404("Access for {$permission} is restricted for this page. ");
+        force_404("Access for {$permission->value} is restricted for this page. ");
     }
 }
 
