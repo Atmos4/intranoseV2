@@ -46,7 +46,7 @@ page($race_id ? "{$race->name} : Modifier" : "Ajouter une course");
         </a>
     </div>
     <article class="row">
-        <?= $v->render_errors() ?>
+        <?= $v->render_validation() ?>
         <?= $name->render() ?>
         <div class="col-md-6">
             <?= $date->render() ?>

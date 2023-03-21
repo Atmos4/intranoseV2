@@ -84,7 +84,7 @@ page("Inscription - " . $event->name, "event_view.css");
     </div>
     <article>
         <header class="center">
-            <?= $v->render_errors() ?>
+            <?= $v->render_validation() ?>
             <div class="row">
                 <div class="col-sm-6">
                     <?php include "components/start_icon.php" ?>

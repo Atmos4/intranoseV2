@@ -47,15 +47,11 @@ class Validator
 
     function valid(string $key = null)
     {
-        if (isset($_POST['action'])) {
-            $action_check = ($_POST['action'] != $this->action);
-        } else {
-            $action_check = false;
-        }
         if ($key) {
             return $this->get_field($key)->valid();
         }
-        if ($this->empty || !is_csrf_valid() || $action_check) {
+
+        if ($this->empty || !is_csrf_valid()) {
             return false;
         }
         return array_reduce($this->fields, function ($valid, Field $field) {
@@ -68,7 +64,7 @@ class Validator
         return $this->fields[$key] ?? new Field($key);
     }
 
-    function render_errors()
+    function render_validation()
     {
         $result = "";
 
@@ -84,8 +80,11 @@ class Validator
                 $result .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
             }
         }
-        if (!$this->empty and !$this->valid()) {
-            return $result . "<br/><br/>";
+        if (!$this->empty) {
+            if ($this->valid()) {
+                $result .= "<ins>$this->success</ins>";
+            }
+            $result .= "<br/><br/>";
         }
         return $result;
     }
@@ -95,76 +94,63 @@ class Validator
         $this->success = $success;
     }
 
-    function render_success()
-    {
-        if ($this->valid()) {
-            return "<ins>$this->success</ins><br/><br/>";
-        }
-    }
-
     function render_field(string $key)
     {
         return $this->get_field($key)->render();
     }
 
+    /** 
+     * Magic function to create a certain field type
+     */
+    private function create($key, $field, $msg)
+    {
+        $this->fields[$key] = new $field($key, $this->value($key), $this);
+        $this->fields[$key]->check($msg);
+        return $this->fields[$key];
+    }
+
     /** Creates new number field */
     function number(string $key, string $msg = null): NumberField
     {
-        $this->fields[$key] = new NumberField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, NumberField::class, $msg);
     }
 
     /** Creates new text field */
     function text(string $key, string $msg = null): StringField
     {
-        $this->fields[$key] = new StringField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, StringField::class, $msg);
     }
 
     /** Creates new date field */
     function date(string $key, string $msg = null): DateField
     {
-        $this->fields[$key] = new DateField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, DateField::class, $msg);
     }
 
     /** Creates new date field */
     function switch (string $key, string $msg = null): SwitchField
     {
-        $this->fields[$key] = new SwitchField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, SwitchField::class, $msg);
     }
 
     function upload(string $key, string $msg = null): UploadField
     {
-        $this->fields[$key] = new UploadField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, UploadField::class, $msg);
     }
 
     function email(string $key, string $msg = null): EmailField
     {
-        $this->fields[$key] = new EmailField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, EmailField::class, $msg);
     }
 
     function phone(string $key, string $msg = null): PhoneField
     {
-        $this->fields[$key] = new PhoneField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, PhoneField::class, $msg);
     }
 
     function password(string $key, string $msg = null): PasswordField
     {
-        $this->fields[$key] = new PasswordField($key, $this->value($key), $this);
-        $this->fields[$key]->check($msg);
-        return $this->fields[$key];
+        return $this->create($key, PasswordField::class, $msg);
     }
 
 
@@ -178,6 +164,8 @@ class Field
     public ?string $error;
     /** Access to the validator for recursion and decorator pattern */
     public ?Validator $context;
+
+    public bool $disabled = false;
 
     function __construct(string $key, mixed $value = null, $context = null)
     {
@@ -211,7 +199,10 @@ class Field
      */
     function render(string $attrs = "")
     {
-        return "<label for=\"$this->key\">$this->label<input $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" " . ($this->valid() ? "" : " aria-invalid=true") . "></label>";
+        return "<label for=\"$this->key\">$this->label<input $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+            . ($this->valid() ? "" : " aria-invalid=true")
+            . ($this->disabled ? " disabled" : "")
+            . "></label>";
     }
 
     /** Adds a validation error */
@@ -232,58 +223,29 @@ class Field
         return $this;
     }
 
-    /** Helper method to skip logic when $_POST is empty */
-    protected function skip()
+    protected function isset(): bool
     {
-        return $this->context->empty || $this->error;
+        return !$this->context->empty && !$this->error;
+    }
+
+    function disabled()
+    {
+        $this->disabled = true;
+        return $this;
+    }
+
+    protected function test(string $preg)
+    {
+        return preg_match($preg, $this->value ?? "");
     }
 
     /** Makes the field required */
     function required(string $msg = null)
     {
-        if ($this->skip()) {
-            return $this;
-        }
-        if (!$this->value) {
+        if ($this->isset() && !$this->value) {
             $this->set_error($msg ?? "Requis");
         }
         return $this;
-    }
-
-    /** Enables Decorator pattern */
-    function number(string $key, string $msg = "")
-    {
-        return $this->context?->number($key, $msg) ?? new NumberField($key);
-    }
-    /** Enables Decorator pattern */
-    function string(string $key, string $msg = "")
-    {
-        return $this->context?->text($key, $msg) ?? new StringField($key);
-    }
-    /** Enables Decorator pattern */
-    function date(string $key, string $msg = "")
-    {
-        return $this->context?->date($key, $msg) ?? new DateField($key);
-    }
-
-    function upload(string $key, string $msg = "")
-    {
-        return $this->context?->upload($key, $msg) ?? new UploadField($key);
-    }
-
-    function email(string $key, string $msg = "")
-    {
-        return $this->context?->email($key, $msg) ?? new EmailField($key);
-    }
-
-    function phone(string $key, string $msg = "")
-    {
-        return $this->context?->phone($key, $msg) ?? new PhoneField($key);
-    }
-
-    function password(string $key, string $msg = "")
-    {
-        return $this->context?->password($key, $msg) ?? new PasswordField($key);
     }
 
     function check(string $msg = null)
@@ -295,7 +257,7 @@ class NumberField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match("/^[\d]*$/", $this->value ?? "")) {
+        if (!$this->test("/^[\d]*$/")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -308,9 +270,7 @@ class NumberField extends Field
     /** Set upper limit for the number field */
     function max(int $count, string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if ($this->value > $count) {
+        if ($this->isset() && $this->value > $count) {
             $this->set_error($msg ?? "Trop grand");
         }
         return $this;
@@ -319,9 +279,7 @@ class NumberField extends Field
     /** Set lower limit for the number field */
     function min(int $count, string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if ($this->value < $count) {
+        if ($this->isset() && $this->value < $count) {
             $this->set_error($msg ?? "Trop petit");
         }
         return $this;
@@ -332,7 +290,7 @@ class DateField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match("/^[\d-]*$/", $this->value ?? "")) {
+        if (!$this->test("/^[\d-]*$/")) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -345,9 +303,7 @@ class DateField extends Field
     /** Set upper date limit */
     function before(string|null $date, string $msg = null)
     {
-        if ($this->skip() || !$date)
-            return $this;
-        if (strtotime($this->value) > strtotime($date)) {
+        if ($this->isset() && $date && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
         }
         return $this;
@@ -356,9 +312,7 @@ class DateField extends Field
     /** Set lower date limit */
     function after(string|null $date, string $msg = null)
     {
-        if ($this->skip() || !$date)
-            return $this;
-        if (strtotime($this->value) < strtotime($date)) {
+        if ($this->isset() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
         }
         return $this;
@@ -385,7 +339,7 @@ class StringField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value ?? "")) {
+        if (!$this->test('/^[\w\sÀ-ÿ\p{P}-]*$/')) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -403,9 +357,7 @@ class StringField extends Field
 
     function max_length(int $count, string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if (strlen($this->value) > $count) {
+        if ($this->isset() && strlen($this->value) > $count) {
             $this->set_error($msg ?? "Trop long");
         }
         return $this;
@@ -413,9 +365,7 @@ class StringField extends Field
 
     function min_length(int $count, string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if (strlen($this->value) < $count) {
+        if ($this->isset() && strlen($this->value) < $count) {
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
@@ -429,7 +379,7 @@ class SwitchField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match('/^\d*$/', $this->value ?? "")) {
+        if (!$this->test('/\D*$/')) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -461,7 +411,7 @@ class TextAreaField extends Field
 {
     function check(string $msg = null)
     {
-        if (!preg_match('/^[\w\sÀ-ÿ\p{P}-]*$/', $this->value ?? "")) {
+        if (!$this->test('/^[\w\sÀ-ÿ\p{P}-]*$/')) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
@@ -598,7 +548,7 @@ class PhoneField extends Field
     function check(string $msg = null)
     {
         /** The regex now match for exactly 10 numbers with or without spaces */
-        if (!preg_match("/^(\d\s*?){10}$/", $this->value ?? "")) {
+        if (!$this->test("/^(\d\s*?){10}$/")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
     }
@@ -612,6 +562,19 @@ class PhoneField extends Field
 
 class PasswordField extends StringField
 {
+    public bool $new = false;
+
+    function check(string|null $msg = null)
+    {
+        return true;
+    }
+
+    function set_new()
+    {
+        $this->new = true;
+        return $this;
+    }
+
     function secure()
     {
         return $this->with_lowercase()->with_uppercase()->with_number()->min_length(8);
@@ -619,9 +582,7 @@ class PasswordField extends StringField
 
     function with_number(string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if (!preg_match("#[0-9]+#", $this->value ?? "")) {
+        if ($this->isset() && !$this->test("/[0-9]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins un chiffre");
         }
         return $this;
@@ -629,9 +590,7 @@ class PasswordField extends StringField
 
     function with_uppercase(string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if (!preg_match("#[A-Z]+#", $this->value ?? "")) {
+        if ($this->isset() && !$this->test("/[A-Z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre majuscule");
         }
         return $this;
@@ -639,9 +598,7 @@ class PasswordField extends StringField
 
     function with_lowercase(string $msg = null)
     {
-        if ($this->skip())
-            return $this;
-        if (!preg_match("#[a-z]+#", $this->value ?? "")) {
+        if ($this->isset() && !$this->test("/[a-z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre minuscule");
         }
         return $this;
@@ -649,7 +606,7 @@ class PasswordField extends StringField
 
     function render(string $attrs = "")
     {
-        return Field::render("type =\"password\"");
+        return Field::render("type =\"password\" autocomplete=\"" . ($this->new ? "new-password" : "current-password") . "\"");
     }
 }
 
