@@ -21,7 +21,7 @@ $v_identity = validate($user_identity, "identity_form");
 $last_name = $v_identity->text("last_name")->label("Prénom")->placeholder()->required();
 $first_name = $v_identity->text("first_name")->label("Nom")->placeholder()->required();
 $licence = $v_identity->number("licence")->label("Numéro de licence")->required();
-$gender = $v_identity->text("gender")->label("Sexe")->placeholder()->required();
+$gender = $v_identity->text("gender")->label("Sexe");
 
 $user_email = [
     "real_email" => $user->real_email,
@@ -49,7 +49,7 @@ $phone = $v_perso->phone("phone")->label("Numéro de téléphone")->placeholder(
 
 
 if ($v_identity->valid()) {
-    $user->set_identity($last_name->value, $first_name->value, $licence->value, $gender->value == 'M' ? Gender::M : Gender::W);
+    $user->set_identity($last_name->value, $first_name->value, $licence->value, $_POST["sexe"] == 'M' ? Gender::M : Gender::W);
     em()->persist($user);
     em()->flush();
     $v_identity->set_success("Identité mise à jour !");
@@ -75,7 +75,6 @@ page("Mon profil");
 
 
 <h2 id="identity">Identité</h2>
-<?php //TODO : validation result in validator?>
 
 <form method="post" action="#identity">
     <?= $v_identity->render_errors() ?>
@@ -87,7 +86,17 @@ page("Mon profil");
 
     <div class="grid">
         <?= $licence->render() ?>
-        <?= $gender->render() ?>
+        <fieldset>
+            <legend>Sexe</legend>
+            <label for="homme">
+                <input type="radio" id="homme" name="sexe" value=<?= Gender::M->value ?> <?= ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?>>
+                Homme
+            </label>
+            <label for="dame">
+                <input type="radio" id="dame" name="sexe" value=<?= Gender::W->value ?> <?= ($user->gender == Gender::W) ? 'checked="checked"' : ''; ?>>
+                Dame
+            </label>
+        </fieldset>
     </div>
 
     <button type="submit" name="submitIdentity" class=col-md-4>Mettre à jour l'identité</button>
