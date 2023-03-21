@@ -1,16 +1,21 @@
 <?php
 restrict_access();
-$can_edit = check_auth(
+$can_edit_permissions = [
     Permission::COACH,
     Permission::STAFF,
     Permission::ROOT,
     Permission::COACHSTAFF
-);
+];
 
 require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
 $event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
+if (!$event->open) {
+    restrict_access(...$can_edit_permissions);
+}
+
+$can_edit = check_auth(...$can_edit_permissions);
 
 $entry = $event->entries[0] ?? null;
 $has_file = false; //$event-> != 0;
@@ -74,15 +79,19 @@ page($event->name, "event_view.css");
 
         <div class="row">
             <b>
-                <?php if ($entry && $entry->present): ?>
-                    <ins><i class="fas fa-check"></i>
-                        <span>Je participe</span></ins>
+                <?php if ($event->open): ?>
+                    <?php if ($entry && $entry->present): ?>
+                        <ins><i class="fas fa-check"></i>
+                            <span>Je participe</span></ins>
+                    <?php else: ?>
+                        <del><i class="fas fa-xmark"></i>
+                            <span>
+                                <?= $entry ? "Je ne participe pas" : "Pas inscrit" ?>
+                            </span></del>
+                    <?php endif; ?>
                 <?php else: ?>
-                    <del><i class="fas fa-xmark"></i>
-                        <span>
-                            <?= $entry ? "Je ne participe pas" : "Pas inscrit" ?>
-                        </span></del>
-                <?php endif; ?>
+                    <del>Pas encore publié</del>
+                <?php endif ?>
             </b>
         </div>
     </header>
