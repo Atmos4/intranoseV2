@@ -597,7 +597,8 @@ class PhoneField extends Field
 
     function check(string $msg = null)
     {
-        if (!preg_match("/^[0-9]{10}$/", $this->value ?? "")) {
+        /** The regex now match for exactly 10 numbers with or without spaces */
+        if (!preg_match("/^(\d\s*?){10}$/", $this->value ?? "")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
     }

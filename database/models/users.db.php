@@ -94,7 +94,7 @@ class User
         $this->address = $address;
         $this->postal_code = $postal_code;
         $this->city = $city;
-        $this->$phone = $phone;
+        $this->$phone = preg_replace("/[^0-9]/", "", $phone);
     }
 
     function set_password(
