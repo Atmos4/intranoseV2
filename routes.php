@@ -26,6 +26,7 @@ get('/download', 'uploads/download_file.php');
 any('/mon-profil', 'pages/settings/settings.php');
 any('/mon-profil/changement-mdp', 'pages/settings/settings_password_change.php');
 any('/mon-profil/changement-login', 'pages/settings/settings_login_change.php');
+any('/mon-profil/$user_id', 'pages/settings/settings.php');
 
 // Users
 get('/licencies', 'pages/users/user_list.php');

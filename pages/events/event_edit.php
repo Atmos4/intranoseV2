@@ -77,8 +77,8 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
     <article>
         <header>
             <div class="row">
-                <?= $v->render_errors() ?>
-                <?= $v2->render_errors() ?>
+                <?= $v->render_validation() ?>
+                <?= $v2->render_validation() ?>
                 <?php if (isset($success)): ?>
                     <p class="success">
                         <?= $success ?>

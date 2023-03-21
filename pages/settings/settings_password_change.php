@@ -1,6 +1,5 @@
 <?php
 restrict_access();
-require_once "database/settings.api.php";
 require_once "utils/form_validation.php";
 
 $user_id = $_SESSION['user_id'];
@@ -8,8 +7,8 @@ $user = em()->find(User::class, $user_id);
 
 $v = validate();
 $current_pass = $v->password("current_pass")->label("Mot de passe actuel")->required();
-$new_pass = $v->password("new_pass")->label("Nouveau mot de passe")->required()->secure();
-$confirm_pass = $v->password("confirm_pass")->label("Confirmation")->required()->secure();
+$new_pass = $v->password("new_pass")->set_new()->label("Nouveau mot de passe")->required()->secure();
+$confirm_pass = $v->password("confirm_pass")->set_new()->label("Confirmation")->required();
 
 $check_confirm = ($new_pass->value == $confirm_pass->value);
 
@@ -34,8 +33,7 @@ page("Changement de mot de passe");
 <a href="/mon-profil#mon-compte" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 <form method="post">
 
-    <?= $v->render_errors() ?>
-    <?= $v->render_success() ?>
+    <?= $v->render_validation() ?>
 
     <?= $current_pass->render() ?>
 

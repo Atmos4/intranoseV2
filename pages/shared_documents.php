@@ -39,7 +39,7 @@ page("Documents partagés");
 ?>
 
     <h3>Ajouter un document</h3>
-    <?= $v->render_errors() ?>
+    <?= $v->render_validation() ?>
     <?php if (isset($success)): ?>
         <p class="success">
             <?= $success ?>
