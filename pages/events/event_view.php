@@ -31,7 +31,7 @@ page($event->name, "event_view.css");
         </a>
     <?php endif ?>
 
-    <?php if ($event->open && $event->deadline >= date_create("Y-m-d")): ?>
+    <?php if ($event->open && $event->deadline >= date_create("today")): ?>
         <a href="/evenements/<?= $event->id ?>/inscription">
             <i class="fas fa-pen-to-square"></i> Inscription
         </a>
