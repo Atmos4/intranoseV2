@@ -509,16 +509,8 @@ class UploadField extends Field
     }
 }
 
-class EmailField extends Field
+class EmailField extends StringField
 {
-    public ?string $placeholder = "";
-
-    /** Defines the placeholder. Call the method without params to use the label as placeholder */
-    function placeholder(string $text = null)
-    {
-        $this->placeholder = $text;
-        return $this;
-    }
 
     function check(string $msg = null)
     {
@@ -530,25 +522,17 @@ class EmailField extends Field
     function render(string $attrs = "")
     {
         $placeholder = $this->placeholder ?? $this->label;
-        return parent::render("type =\"email\" placeholder=\"$placeholder\"");
+        return Field::render("type =\"email\" placeholder=\"$placeholder\"");
     }
 }
 
-class PhoneField extends Field
+class PhoneField extends StringField
 {
-    public ?string $placeholder = "";
-
-    /** Defines the placeholder. Call the method without params to use the label as placeholder */
-    function placeholder(string $text = null)
-    {
-        $this->placeholder = $text;
-        return $this;
-    }
 
     function check(string $msg = null)
     {
-        /** The regex now match for exactly 10 numbers with or without spaces */
-        if (!$this->test("/^(\d\s*?){10}$/")) {
+        /** The regex now match for between 9 and 14 numbers with an optional + in the begining */
+        if (!$this->test("/^[+]?(\d\s*?){9,14}$/")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
     }
@@ -556,7 +540,7 @@ class PhoneField extends Field
     function render(string $attrs = "")
     {
         $placeholder = $this->placeholder ?? $this->label;
-        return parent::render("type =\"tel\" placeholder=\"$placeholder\"");
+        return Field::render("type =\"tel\" placeholder=\"$placeholder\"");
     }
 }
 
@@ -609,44 +593,3 @@ class PasswordField extends StringField
         return Field::render("type =\"password\" autocomplete=\"" . ($this->new ? "new-password" : "current-password") . "\"");
     }
 }
-
-
-
-/*
-class RadioField extends Field
-{
-public string $checked_id = 0;
-function set_text_list(array $list)
-{
-$this->text_list = $list;
-return $this;
-}
-function set_checked_id(int $checked_id)
-{
-return $this->checked_id = $checked_id;
-}
-function render(string $attrs = "")
-{
-$render_string = "<fieldset>";
-foreach($text_list as $text){
-$render_string .= "<legend>Sexe</legend>
-<label for="homme">
-<input type="radio" id="homme" name="sexe" value="H" <?php echo ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?> disabled>
-Homme
-</label>";
-}
-return "<fieldset>"
-. (foreach ($text_list as $text) {})."
-<legend>Sexe</legend>
-<label for="homme">
-<input type="radio" id="homme" name="sexe" value="H" <?php echo ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?> disabled>
-Homme
-</label>
-<label for="dame">
-<input type="radio" id="dame" name="sexe" value="D" <?php echo ($user->gender == Gender::W) ? 'checked="checked"' : ''; ?> disabled>
-Dame
-</label>
-</fieldset>";
-}
-}
-*/
