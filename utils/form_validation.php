@@ -112,55 +112,69 @@ class Validator
     /** Creates new number field */
     function number(string $key, string $msg = null): NumberField
     {
-        return $this->create($key, NumberField::class, $msg);
+        return $this->create($key, NumberField::class, $msg)->type(FieldType::Number);
     }
 
     /** Creates new text field */
     function text(string $key, string $msg = null): StringField
     {
-        return $this->create($key, StringField::class, $msg);
+        return $this->create($key, StringField::class, $msg)->type(FieldType::Text);
     }
 
     /** Creates new date field */
     function date(string $key, string $msg = null): DateField
     {
-        return $this->create($key, DateField::class, $msg);
+        return $this->create($key, DateField::class, $msg)->type(FieldType::Date);
     }
 
     /** Creates new date field */
     function switch (string $key, string $msg = null): SwitchField
     {
-        return $this->create($key, SwitchField::class, $msg);
+        return $this->create($key, SwitchField::class, $msg)->type(FieldType::Checkbox);
     }
 
     function upload(string $key, string $msg = null): UploadField
     {
-        return $this->create($key, UploadField::class, $msg);
+        return $this->create($key, UploadField::class, $msg)->type(FieldType::File);
     }
 
     function email(string $key, string $msg = null): EmailField
     {
-        return $this->create($key, EmailField::class, $msg);
+        return $this->create($key, EmailField::class, $msg)->type(FieldType::Email);
     }
 
     function phone(string $key, string $msg = null): PhoneField
     {
-        return $this->create($key, PhoneField::class, $msg);
+        return $this->create($key, PhoneField::class, $msg)->type(FieldType::Phone);
     }
 
     function password(string $key, string $msg = null): PasswordField
     {
-        return $this->create($key, PasswordField::class, $msg);
+        return $this->create($key, PasswordField::class, $msg)->type(FieldType::Password);
     }
 
 
+}
+
+enum FieldType: string
+{
+    case Text = "text";
+    case Date = "date";
+    case Number = "number";
+    case Email = "email";
+    case Phone = "phone";
+    case Password = "password";
+    case Checkbox = "checkbox";
+    case File = "file";
 }
 
 class Field
 {
     public string $key;
     public string $label;
+    public FieldType $type = FieldType::Text;
     public mixed $value;
+    public string $autocomplete = "off";
     public ?string $error;
     /** Access to the validator for recursion and decorator pattern */
     public ?Validator $context;
@@ -199,8 +213,9 @@ class Field
      */
     function render(string $attrs = "")
     {
-        return "<label for=\"$this->key\">$this->label<input $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+        return "<label for=\"$this->key\">$this->label<input type=\"{$this->type->value}\" $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
             . ($this->valid() ? "" : " aria-invalid=true")
+            . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
             . "></label>";
     }
@@ -223,7 +238,7 @@ class Field
         return $this;
     }
 
-    protected function isset(): bool
+    protected function should_test(): bool
     {
         return !$this->context->empty && !$this->error;
     }
@@ -242,7 +257,7 @@ class Field
     /** Makes the field required */
     function required(string $msg = null)
     {
-        if ($this->isset() && !$this->value) {
+        if ($this->should_test() && !$this->value) {
             $this->set_error($msg ?? "Requis");
         }
         return $this;
@@ -250,6 +265,27 @@ class Field
 
     function check(string $msg = null)
     {
+    }
+
+    /** Add a condition that if false will set the according error message */
+    function condition(bool $condition, string $error_msg)
+    {
+        if ($this->should_test() and !$condition) {
+            $this->set_error($error_msg);
+        }
+    }
+
+    function type(FieldType $type): object
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /** See more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete */
+    function autocomplete($autocomplete = "")
+    {
+        $this->autocomplete = $autocomplete;
+        return $this;
     }
 }
 
@@ -262,15 +298,10 @@ class NumberField extends Field
         }
     }
 
-    function render(string $attrs = "")
-    {
-        return parent::render("type = number");
-    }
-
     /** Set upper limit for the number field */
     function max(int $count, string $msg = null)
     {
-        if ($this->isset() && $this->value > $count) {
+        if ($this->should_test() && $this->value > $count) {
             $this->set_error($msg ?? "Trop grand");
         }
         return $this;
@@ -279,7 +310,7 @@ class NumberField extends Field
     /** Set lower limit for the number field */
     function min(int $count, string $msg = null)
     {
-        if ($this->isset() && $this->value < $count) {
+        if ($this->should_test() && $this->value < $count) {
             $this->set_error($msg ?? "Trop petit");
         }
         return $this;
@@ -295,15 +326,10 @@ class DateField extends Field
         }
     }
 
-    function render(string $attrs = "")
-    {
-        return parent::render("type = date");
-    }
-
     /** Set upper date limit */
     function before(string|null $date, string $msg = null)
     {
-        if ($this->isset() && $date && strtotime($this->value) > strtotime($date)) {
+        if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
         }
         return $this;
@@ -312,7 +338,7 @@ class DateField extends Field
     /** Set lower date limit */
     function after(string|null $date, string $msg = null)
     {
-        if ($this->isset() && $date && strtotime($this->value) < strtotime($date)) {
+        if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
         }
         return $this;
@@ -351,13 +377,13 @@ class StringField extends Field
                 . "<textarea name=\"$this->key\" id=\"$this->key\"" . ($this->valid() ? "" : " aria-invalid=true") . ">$this->value</textarea>";
         } else {
             $placeholder = $this->placeholder ?? $this->label;
-            return parent::render("type = text placeholder=\"$placeholder\"");
+            return parent::render("placeholder=\"$placeholder\" $attrs");
         }
     }
 
     function max_length(int $count, string $msg = null)
     {
-        if ($this->isset() && strlen($this->value) > $count) {
+        if ($this->should_test() && strlen($this->value) > $count) {
             $this->set_error($msg ?? "Trop long");
         }
         return $this;
@@ -365,7 +391,7 @@ class StringField extends Field
 
     function min_length(int $count, string $msg = null)
     {
-        if ($this->isset() && strlen($this->value) < $count) {
+        if ($this->should_test() && strlen($this->value) < $count) {
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
@@ -407,16 +433,6 @@ class SwitchField extends Field
     }
 }
 
-class TextAreaField extends Field
-{
-    function check(string $msg = null)
-    {
-        if (!$this->test('/^[\w\sÀ-ÿ\p{P}-]*$/')) {
-            $this->set_error($msg ?? "Format invalide");
-        }
-    }
-}
-
 class UploadField extends Field
 {
     public string $target_dir = "uploads/";
@@ -435,11 +451,6 @@ class UploadField extends Field
             }
 
         }
-    }
-
-    function render(string $attrs = "")
-    {
-        return parent::render("type = file");
     }
 
     function check_file_exists(string $target_file)
@@ -511,36 +522,22 @@ class UploadField extends Field
 
 class EmailField extends StringField
 {
-
     function check(string $msg = null)
     {
         if (!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             $this->set_error($msg ?? "Format d'email invalide");
         }
     }
-
-    function render(string $attrs = "")
-    {
-        $placeholder = $this->placeholder ?? $this->label;
-        return Field::render("type =\"email\" placeholder=\"$placeholder\"");
-    }
 }
 
 class PhoneField extends StringField
 {
-
     function check(string $msg = null)
     {
         /** The regex now match for between 9 and 14 numbers with an optional + in the begining */
         if (!$this->test("/^[+]?(\d\s*?){9,14}$/")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
-    }
-
-    function render(string $attrs = "")
-    {
-        $placeholder = $this->placeholder ?? $this->label;
-        return Field::render("type =\"tel\" placeholder=\"$placeholder\"");
     }
 }
 
@@ -566,7 +563,7 @@ class PasswordField extends StringField
 
     function with_number(string $msg = null)
     {
-        if ($this->isset() && !$this->test("/[0-9]+/")) {
+        if ($this->should_test() && !$this->test("/[0-9]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins un chiffre");
         }
         return $this;
@@ -574,7 +571,7 @@ class PasswordField extends StringField
 
     function with_uppercase(string $msg = null)
     {
-        if ($this->isset() && !$this->test("/[A-Z]+/")) {
+        if ($this->should_test() && !$this->test("/[A-Z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre majuscule");
         }
         return $this;
@@ -582,14 +579,9 @@ class PasswordField extends StringField
 
     function with_lowercase(string $msg = null)
     {
-        if ($this->isset() && !$this->test("/[a-z]+/")) {
+        if ($this->should_test() && !$this->test("/[a-z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre minuscule");
         }
         return $this;
-    }
-
-    function render(string $attrs = "")
-    {
-        return Field::render("type =\"password\" autocomplete=\"" . ($this->new ? "new-password" : "current-password") . "\"");
     }
 }

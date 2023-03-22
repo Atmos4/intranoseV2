@@ -6,25 +6,18 @@ $user_id = $_SESSION['user_id'];
 $user = em()->find(User::class, $user_id);
 
 $v = validate();
-$current_pass = $v->password("current_pass")->label("Mot de passe actuel")->required();
-$new_pass = $v->password("new_pass")->set_new()->label("Nouveau mot de passe")->required()->secure();
-$confirm_pass = $v->password("confirm_pass")->set_new()->label("Confirmation")->required();
+$current_pass = $v->password("current-password")->label("Mot de passe actuel")->required()->autocomplete("current-password");
+$new_pass = $v->password("new-password")->autocomplete("new-password")->label("Nouveau mot de passe")->required()->secure();
+$confirm_pass = $v->password("confirm-password")->autocomplete("new-passord")->label("Confirmation")->required();
 
-$check_confirm = ($new_pass->value == $confirm_pass->value);
+$current_pass->condition(password_verify($current_pass->value, $user->password), "Mauvais mot de passe");
+$confirm_pass->condition($new_pass->value == $confirm_pass->value, "Les deux mots de passes ne correspondent pas");
 
 if (!empty($_POST) and $v->valid()) {
-    if ($check_confirm) {
-        if (password_verify($current_pass->value, $user->password)) {
-            $user->set_password($new_pass->value);
-            em()->persist($user);
-            em()->flush();
-            $v->set_success("Mot de passe mis à jour !");
-        } else {
-            $current_pass->set_error("Mauvais mot de passe");
-        }
-    } else {
-        $confirm_pass->set_error("Les deux mots de passes ne correspondent pas");
-    }
+    $user->set_password($new_pass->value);
+    em()->persist($user);
+    em()->flush();
+    $v->set_success("Mot de passe mis à jour !");
 }
 
 
