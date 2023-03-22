@@ -27,10 +27,13 @@ $user_identity = [
 $v_identity = validate($user_identity, "identity_form");
 $last_name = $v_identity->text("last_name")->label("Prénom")->placeholder()->required();
 $first_name = $v_identity->text("first_name")->label("Nom")->placeholder()->required();
-$licence = $v_identity->number("licence")->label("Numéro de licence")->required();
+$licence = $v_identity->number("licence")->label("Numéro de licence");
 
 if (!$admin) {
     $licence->disabled();
+    $licence->value ??= $user->licence;
+} else {
+    $licence->required();
 }
 
 $gender = $v_identity->text("gender")->label("Sexe");
