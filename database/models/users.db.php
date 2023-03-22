@@ -63,49 +63,36 @@ class User
         $this->birthdate = date_create();
     }
 
-    function set_identity(
-        $last_name,
-        $first_name,
-        $licence,
-        $gender
-    ) {
+    function set_identity($last_name, $first_name, $licence, $gender)
+    {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
         $this->licence = $licence;
         $this->gender = $gender;
     }
 
-    function set_email(
-        $real_email,
-        $nose_email
-    ) {
+    function set_email($real_email, $nose_email)
+    {
         $this->real_email = $real_email;
         $this->nose_email = $nose_email;
     }
 
-    function set_perso(
-        $sportident,
-        $address,
-        $postal_code,
-        $city,
-        $phone
-    ) {
+    function set_perso($sportident, $address, $postal_code, $city, $phone)
+    {
         $this->sportident = $sportident;
         $this->address = $address;
         $this->postal_code = $postal_code;
         $this->city = $city;
-        $this->$phone = preg_replace("/[^0-9]/", "", $phone);
+        $this->$phone = $phone;
     }
 
-    function set_password(
-        $password
-    ) {
+    function set_password($password)
+    {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    function set_login(
-        $login
-    ) {
+    function set_login($login)
+    {
         $this->login = $login;
     }
 }
