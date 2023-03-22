@@ -67,7 +67,8 @@ class User
     {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
-        $this->licence = $licence;
+        if ($licence)
+            $this->licence = $licence;
         $this->gender = $gender;
     }
 
