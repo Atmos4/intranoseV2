@@ -6,16 +6,15 @@ $user_id = $_SESSION['user_id'];
 $user = em()->find(User::class, $user_id);
 
 $v = validate();
-$current_login = $v->text("current_login")->label("Login actuel")->required();
+$current_login = $v->text("current_login")->label("Login actuel")->required()->autocomplete("username");
 $new_login = $v->text("new_login")->label("Nouveau login")->required()->min_length(3);
 
+$current_login->condition($user->login == $current_login->value, "Mauvais login");
 
 if (!empty($_POST) and $v->valid()) {
 
     $users_with_same_login = em()->getRepository(User::class)->findByLogin($new_login->value);
-    if ($user->login != $current_login->value) {
-        $current_login->set_error("Mauvais login");
-    } elseif (count($users_with_same_login)) {
+    if (count($users_with_same_login)) {
         $new_login->set_error("Ce login est déjà utilisé");
     } else {
         $user->set_login($new_login->value);
