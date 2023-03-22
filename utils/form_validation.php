@@ -81,10 +81,10 @@ class Validator
             }
         }
         if (!$this->empty) {
-            if ($this->valid()) {
+            if ($this->valid() && $this->success) {
                 $result .= "<ins>$this->success</ins>";
             }
-            $result .= "<br/><br/>";
+            $result .= "<br/>";
         }
         return $result;
     }
@@ -112,45 +112,45 @@ class Validator
     /** Creates new number field */
     function number(string $key, string $msg = null): NumberField
     {
-        return $this->create($key, NumberField::class, $msg)->type(FieldType::Number);
+        return $this->create($key, NumberField::class, $msg);
     }
 
     /** Creates new text field */
     function text(string $key, string $msg = null): StringField
     {
-        return $this->create($key, StringField::class, $msg)->type(FieldType::Text);
+        return $this->create($key, StringField::class, $msg);
     }
 
     /** Creates new date field */
     function date(string $key, string $msg = null): DateField
     {
-        return $this->create($key, DateField::class, $msg)->type(FieldType::Date);
+        return $this->create($key, DateField::class, $msg);
     }
 
     /** Creates new date field */
     function switch (string $key, string $msg = null): SwitchField
     {
-        return $this->create($key, SwitchField::class, $msg)->type(FieldType::Checkbox);
+        return $this->create($key, SwitchField::class, $msg);
     }
 
     function upload(string $key, string $msg = null): UploadField
     {
-        return $this->create($key, UploadField::class, $msg)->type(FieldType::File);
+        return $this->create($key, UploadField::class, $msg);
     }
 
     function email(string $key, string $msg = null): EmailField
     {
-        return $this->create($key, EmailField::class, $msg)->type(FieldType::Email);
+        return $this->create($key, EmailField::class, $msg);
     }
 
     function phone(string $key, string $msg = null): PhoneField
     {
-        return $this->create($key, PhoneField::class, $msg)->type(FieldType::Phone);
+        return $this->create($key, PhoneField::class, $msg);
     }
 
     function password(string $key, string $msg = null): PasswordField
     {
-        return $this->create($key, PasswordField::class, $msg)->type(FieldType::Password);
+        return $this->create($key, PasswordField::class, $msg);
     }
 
 
@@ -172,7 +172,7 @@ class Field
 {
     public string $key;
     public string $label;
-    public FieldType $type = FieldType::Text;
+    public FieldType $type;
     public mixed $value;
     public string $autocomplete = "off";
     public ?string $error;
@@ -188,6 +188,7 @@ class Field
         $this->context = $context;
         $this->error = null;
         $this->label = "";
+        $this->set_type();
     }
 
     /**
@@ -267,18 +268,17 @@ class Field
     {
     }
 
+    protected function set_type()
+    {
+        $this->type = FieldType::Text;
+    }
+
     /** Add a condition that if false will set the according error message */
     function condition(bool $condition, string $error_msg)
     {
         if ($this->should_test() and !$condition) {
             $this->set_error($error_msg);
         }
-    }
-
-    function type(FieldType $type): object
-    {
-        $this->type = $type;
-        return $this;
     }
 
     /** See more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete */
@@ -289,64 +289,9 @@ class Field
     }
 }
 
-class NumberField extends Field
-{
-    function check(string $msg = null)
-    {
-        if (!$this->test("/^[\d]*$/")) {
-            $this->set_error($msg ?? "Format invalide");
-        }
-    }
-
-    /** Set upper limit for the number field */
-    function max(int $count, string $msg = null)
-    {
-        if ($this->should_test() && $this->value > $count) {
-            $this->set_error($msg ?? "Trop grand");
-        }
-        return $this;
-    }
-
-    /** Set lower limit for the number field */
-    function min(int $count, string $msg = null)
-    {
-        if ($this->should_test() && $this->value < $count) {
-            $this->set_error($msg ?? "Trop petit");
-        }
-        return $this;
-    }
-}
-
-class DateField extends Field
-{
-    function check(string $msg = null)
-    {
-        if (!$this->test("/^[\d-]*$/")) {
-            $this->set_error($msg ?? "Format invalide");
-        }
-    }
-
-    /** Set upper date limit */
-    function before(string|null $date, string $msg = null)
-    {
-        if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
-            $this->set_error($msg ?? "Trop tard");
-        }
-        return $this;
-    }
-
-    /** Set lower date limit */
-    function after(string|null $date, string $msg = null)
-    {
-        if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
-            $this->set_error($msg ?? "Trop tôt");
-        }
-        return $this;
-    }
-}
-
 class StringField extends Field
 {
+
     public ?string $placeholder = "";
     public bool $is_textarea = false;
 
@@ -398,8 +343,79 @@ class StringField extends Field
     }
 }
 
+class NumberField extends Field
+{
+    function set_type()
+    {
+        $this->type = FieldType::Number;
+    }
+
+    function check(string $msg = null)
+    {
+        if (!$this->test("/^[\d]*$/")) {
+            $this->set_error($msg ?? "Format invalide");
+        }
+    }
+
+    /** Set upper limit for the number field */
+    function max(int $count, string $msg = null)
+    {
+        if ($this->should_test() && $this->value > $count) {
+            $this->set_error($msg ?? "Trop grand");
+        }
+        return $this;
+    }
+
+    /** Set lower limit for the number field */
+    function min(int $count, string $msg = null)
+    {
+        if ($this->should_test() && $this->value < $count) {
+            $this->set_error($msg ?? "Trop petit");
+        }
+        return $this;
+    }
+}
+
+class DateField extends Field
+{
+    function set_type()
+    {
+        $this->type = FieldType::Date;
+    }
+
+    function check(string $msg = null)
+    {
+        if (!$this->test("/^[\d-]*$/")) {
+            $this->set_error($msg ?? "Format invalide");
+        }
+    }
+
+    /** Set upper date limit */
+    function before(string|null $date, string $msg = null)
+    {
+        if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
+            $this->set_error($msg ?? "Trop tard");
+        }
+        return $this;
+    }
+
+    /** Set lower date limit */
+    function after(string|null $date, string $msg = null)
+    {
+        if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
+            $this->set_error($msg ?? "Trop tôt");
+        }
+        return $this;
+    }
+}
+
 class SwitchField extends Field
 {
+    function set_type()
+    {
+        $this->type = FieldType::Checkbox;
+    }
+
     public string $true_label = "";
     public string $false_label = "";
 
@@ -435,6 +451,11 @@ class SwitchField extends Field
 
 class UploadField extends Field
 {
+    function set_type()
+    {
+        $this->type = FieldType::File;
+    }
+
     public string $target_dir = "uploads/";
 
     function check(string $msg = null)
@@ -522,6 +543,11 @@ class UploadField extends Field
 
 class EmailField extends StringField
 {
+    function set_type()
+    {
+        $this->type = FieldType::Email;
+    }
+
     function check(string $msg = null)
     {
         if (!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
@@ -532,6 +558,11 @@ class EmailField extends StringField
 
 class PhoneField extends StringField
 {
+    function set_type()
+    {
+        $this->type = FieldType::Phone;
+    }
+
     function check(string $msg = null)
     {
         /** The regex now match for between 9 and 14 numbers with an optional + in the begining */
@@ -543,6 +574,11 @@ class PhoneField extends StringField
 
 class PasswordField extends StringField
 {
+    function set_type()
+    {
+        $this->type = FieldType::Password;
+    }
+
     public bool $new = false;
 
     function check(string|null $msg = null)
