@@ -1,6 +1,5 @@
 <?php
 restrict_access();
-require_once "utils/form_validation.php";
 $admin = check_auth(Permission::ROOT);
 
 $user_id = get_route_param("user_id", false);
@@ -24,7 +23,7 @@ $user_identity = [
     "gender" => $user->gender->value
 ];
 
-$v_identity = validate($user_identity, "identity_form");
+$v_identity = new Validator($user_identity, "identity_form");
 $last_name = $v_identity->text("last_name")->label("Prénom")->placeholder()->required();
 $first_name = $v_identity->text("first_name")->label("Nom")->placeholder()->required();
 $licence = $v_identity->number("licence")->label("Numéro de licence");
@@ -43,7 +42,7 @@ $user_email = [
     "nose_email" => $user->nose_email,
 ];
 
-$v_email = validate($user_email, "email_form");
+$v_email = new Validator($user_email, "email_form");
 $real_email = $v_email->email("real_email")->label("Addresse mail perso")->placeholder()->required();
 $nose_email = $v_email->email("nose_email")->label("Addresse mail nose")->placeholder()->required();
 
@@ -55,7 +54,7 @@ $user_perso = [
     "phone" => $user->phone
 ];
 
-$v_perso = validate($user_perso, "infos_form");
+$v_perso = new Validator($user_perso, "infos_form");
 $sportident = $v_perso->number("sportident")->label("Numéro SportIdent")->required();
 $address = $v_perso->text("address")->label("Adresse")->placeholder()->required();
 $postal_code = $v_perso->number("postal_code")->label("Code postal")->required();

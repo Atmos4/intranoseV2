@@ -8,7 +8,7 @@
         "doctrine/migrations": "^3.6"
     },
     "autoload": {
-        "classmap": ["database/models/"]
+        "classmap": ["database/models/", "components/form/"]
     },
     "authors": [
         {

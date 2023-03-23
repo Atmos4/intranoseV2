@@ -1,11 +1,10 @@
 <?php
 restrict_access();
-require_once "utils/form_validation.php";
 
 $user_id = $_SESSION['user_id'];
 $user = em()->find(User::class, $user_id);
 
-$v = validate();
+$v = new Validator();
 $current_login = $v->text("current_login")->label("Login actuel")->required()->autocomplete("username");
 $new_login = $v->text("new_login")->label("Nouveau login")->required()->min_length(3);
 

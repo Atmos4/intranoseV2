@@ -2,14 +2,13 @@
 restrict_access("ROOT", "STAFF", "COACH", "COACHSTAFF");
 
 require_once "database/shared_docs.api.php";
-require_once "utils/form_validation.php";
 
 $id = $_SESSION['user_id'];
 
 create_shared_docs_table();
 
 
-$v = validate();
+$v = new Validator();
 $file_upload = $v->upload("file_upload")->set_target_dir("uploads/shared_docs/")->label("Téléchargement");
 
 if (!empty($_FILES) && $v->valid()) {
