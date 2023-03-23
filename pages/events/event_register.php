@@ -4,7 +4,6 @@ restrict_access();
 $id = $_SESSION['user_id'];
 
 require_once "database/events.api.php";
-require_once "utils/form_validation.php";
 
 $user = em()->find(User::class, $id);
 
@@ -36,7 +35,7 @@ foreach ($event->races as $index => $race) {
     }
 }
 
-$v = validate($form_values ?? []);
+$v = new Validator($form_values ?? []);
 $event_present = $v->switch("event_present")->set_labels("Je participe", "Pas inscrit");
 $transport = $v->switch("event_transport")->label("Transport");
 $accomodation = $v->switch("event_accomodation")->label("Hébergement");

@@ -1,22 +1,4 @@
 <?php
-
-/** Sanitize the input of a form. Preferable to do on all fields because of form/request forging */
-function clean($data)
-{
-    if ($data != null) {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-    }
-    return $data;
-}
-
-/** Factory method for the validator */
-function validate($post = [], string|null $action = null)
-{
-    return new Validator($post, $action);
-}
-
 /** Simple validation class */
 class Validator
 {
@@ -27,7 +9,7 @@ class Validator
     public string|null $success = null;
 
 
-    public function __construct(array $form_values, $action = null)
+    function __construct(array $form_values = [], $action = null)
     {
         $this->action = $action;
         if ((!empty($_POST) or !empty($_FILES)) and (!$action or $_POST['action'] == $action)) {

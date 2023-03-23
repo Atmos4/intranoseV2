@@ -1,11 +1,13 @@
 <?php
 restrict_access();
-
-require_once "database/users.api.php";
-$user = get_user(get_route_param('user_id'));
-$profile_picture = (file_exists("images/profile/" . $user['id'] . ".jpg")) ? "/images/profile/" . $user['id'] . ".jpg" : "/images/profile/none.jpg";
-
-page($user['prenom'] . " " . $user['nom'], "user_view.css");
+$user = em()->find(User::class, get_route_param('user_id'));
+if (!$user) {
+    force_404("this user doesn't exist");
+}
+$profile_picture = (file_exists("images/profile/" . $user->id . ".jpg")) ?
+    "/images/profile/" . $user->id . ".jpg"
+    : "/images/profile/none.jpg";
+page($user->first_name . " " . $user->last_name, "user_view.css");
 ?>
 <div id="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
@@ -16,14 +18,10 @@ page($user['prenom'] . " " . $user['nom'], "user_view.css");
     </figure>
     <table class="infos-table">
         <tr>
-            <td>Catégorie</td>
-            <td>
-                <?= $user['category_name'] ?>
-            </td>
-        </tr>
-        <tr>
             <td>Email</td>
-            <td> <?= $user['email'] ?></td>
+            <td>
+                <?= $user->nose_email ?>
+            </td>
         </tr>
         <tr>
             <td>Adresse</td>
@@ -31,30 +29,28 @@ page($user['prenom'] . " " . $user['nom'], "user_view.css");
                 <?= join(
                     "<br/>",
                     [
-                        $user['adresse1'] . " " . $user['adresse2'],
-                        $user['cp'] . " " . $user['ville']
+                        $user->address,
+                        "$user->postal_code $user->city"
                     ]
                 ) ?>
             </td>
         </tr>
         <tr>
-            <td>Fixe</td>
-            <td> <?= $user['tel'] ?></td>
-        </tr>
-        <tr>
-            <td>Portable </td>
+            <td>Téléphone</td>
             <td>
-                <?= $user['telport'] ?>
+                <?= $user->phone ?: "" ?>
             </td>
         </tr>
         <tr>
             <td>Licence</td>
-            <td><?= $user['num_lic'] ?></td>
+            <td>
+                <?= $user->licence ?>
+            </td>
         </tr>
         <tr>
             <td>Sport Ident</td>
             <td>
-                <?= $user['sportident'] ?>
+                <?= $user->sportident ?: "" ?>
             </td>
         </tr>
     </table>

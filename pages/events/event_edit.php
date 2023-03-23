@@ -7,7 +7,6 @@ restrict_access(
 );
 
 require_once "database/events.api.php";
-require_once "utils/form_validation.php";
 
 $event_id = get_route_param("event_id", strict: false);
 
@@ -28,7 +27,7 @@ if ($event_id) {
     $event = new Event();
 }
 
-$v = validate($event_mapping ?? []);
+$v = new Validator($event_mapping ?? []);
 $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
 $start_date = $v->date("start_date")->label("Date de départ")->required();
 $end_date = $v->date("end_date")
@@ -38,7 +37,7 @@ $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
     ->before(date_create($start_date->value ?? "")->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d"), "Doit être avant le jour de départ");
 
-$v2 = validate();
+$v2 = new Validator();
 $file_upload = $v2->upload("file_upload")->label("Circulaire");
 
 if (!empty($_POST) && $v->valid()) {

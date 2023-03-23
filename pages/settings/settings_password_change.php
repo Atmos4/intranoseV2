@@ -1,14 +1,13 @@
 <?php
 restrict_access();
-require_once "utils/form_validation.php";
 
 $user_id = $_SESSION['user_id'];
 $user = em()->find(User::class, $user_id);
 
-$v = validate();
-$current_pass = $v->password("current-password")->label("Mot de passe actuel")->required()->autocomplete("current-password");
-$new_pass = $v->password("new-password")->autocomplete("new-password")->label("Nouveau mot de passe")->required()->secure();
-$confirm_pass = $v->password("confirm-password")->autocomplete("new-passord")->label("Confirmation")->required();
+$v = new Validator();
+$current_pass = $v->password("current_password")->label("Mot de passe actuel")->required()->autocomplete("current-password");
+$new_pass = $v->password("new_password")->autocomplete("new-password")->label("Nouveau mot de passe")->required()->secure();
+$confirm_pass = $v->password("confirm_password")->autocomplete("new-passord")->label("Confirmation")->required();
 
 $current_pass->condition(password_verify($current_pass->value, $user->password), "Mauvais mot de passe");
 $confirm_pass->condition($new_pass->value == $confirm_pass->value, "Les deux mots de passes ne correspondent pas");

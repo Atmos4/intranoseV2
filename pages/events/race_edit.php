@@ -6,8 +6,6 @@ restrict_access(
     Permission::COACHSTAFF
 );
 
-require_once "utils/form_validation.php";
-
 $event_id = get_route_param("event_id");
 $race_id = get_route_param("race_id", false);
 $event = em()->find(Event::class, $event_id);
@@ -25,7 +23,7 @@ if ($race_id) {
     $race = new Race();
 }
 
-$v = validate($form_values ?? []);
+$v = new Validator($form_values ?? []);
 $name = $v->text("name")->label("Nom de la course")->placeholder()->required();
 $date = $v->date("date")->label("Date")->required();
 $place = $v->text("place")->label("Lieu")->required();

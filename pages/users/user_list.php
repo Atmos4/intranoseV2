@@ -1,9 +1,6 @@
 <?php
 restrict_access();
-
-require_once "database/users.api.php";
-$users = get_all_users();
-
+$users = em()->getRepository(User::class)->findBy([], ['last_name' => 'ASC', 'first_name' => 'ASC']);
 page("Les licenciés", "user_list.css");
 ?>
 <form method="get">
@@ -21,19 +18,21 @@ page("Les licenciés", "user_list.css");
     </thead>
     <tbody>
         <?php foreach ($users as $user): ?>
-            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $user['id'] ?>'">
+            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $user->id ?>'">
                 <td class="lastname">
-                    <?= $user['nom'] ?>
+                    <?= $user->last_name ?>
                 </td>
                 <td class="firstname">
-                    <?= $user['prenom'] ?>
+                    <?= $user->first_name ?>
                 </td>
-                <td class="email"><?= $user['email'] ?></td>
+                <td class="email">
+                    <?= $user->nose_email ?>
+                </td>
                 <td class="phone-number">
-                    <?= $user['telport'] == "" ? $user['tel'] : $user['telport'] ?>
+                    <?= $user->phone ?>
                 </td>
             </tr>
-            <?php endforeach ?>
+        <?php endforeach ?>
     </tbody>
 </table>
 
