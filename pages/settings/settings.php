@@ -1,15 +1,13 @@
 <?php
 restrict_access();
-$admin = check_auth(Permission::ROOT);
 
 $user_id = get_route_param("user_id", false);
 if ($user_id) {
-    restrict_access(Permission::ROOT);
-} else {
-    $user_id = $_SESSION['user_id'];
+    restrict_access(Access::$EDIT_USERS);
 }
+$can_visit = check_auth(Access::$EDIT_USERS);
 
-$user = em()->find(User::class, $user_id);
+$user = em()->find(User::class, $user_id ?? $_SESSION['user_id']);
 if (!$user) {
     echo "This user doesn't exist";
     return;
@@ -28,11 +26,11 @@ $last_name = $v_identity->text("last_name")->label("Prénom")->placeholder()->re
 $first_name = $v_identity->text("first_name")->label("Nom")->placeholder()->required();
 $licence = $v_identity->number("licence")->label("Numéro de licence");
 
-if (!$admin) {
+if ($can_visit) {
+    $licence->required();
+} else {
     $licence->disabled();
     $licence->value ??= $user->licence;
-} else {
-    $licence->required();
 }
 
 $gender = $v_identity->text("gender")->label("Sexe");
@@ -85,7 +83,11 @@ if ($v_perso->valid()) {
 
 page("Mon profil");
 ?>
-
+<div id="page-actions">
+    <?php if ($can_visit && $user_id): ?>
+        <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+    <?php endif ?>
+</div>
 
 <h2 id="identity">Identité</h2>
 

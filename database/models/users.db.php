@@ -118,3 +118,9 @@ enum Permission: string
     case GUEST = 'GUEST';
     case ROOT = 'ROOT';
 }
+
+class Access
+{
+    public static $EDIT_USERS = [Permission::COACHSTAFF, Permission::STAFF, Permission::ROOT];
+    public static $ADD_EVENTS = [Permission::COACHSTAFF, Permission::STAFF, Permission::ROOT, Permission::COACH];
+}

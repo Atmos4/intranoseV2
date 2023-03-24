@@ -11,6 +11,10 @@ page($user->first_name . " " . $user->last_name, "user_view.css");
 ?>
 <div id="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+
+    <?php if (check_auth(Access::$EDIT_USERS)): ?>
+        <a href="/licencies/<?= $user->id ?>/modifier" class="contrast">Modifier</a>
+    <?php endif ?>
 </div>
 <article class="grid center">
     <figure>

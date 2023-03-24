@@ -1,5 +1,5 @@
 <?php
-restrict_access("ROOT", "STAFF", "COACH", "COACHSTAFF");
+restrict_access(Access::$ADD_EVENTS);
 
 require_once "database/shared_docs.api.php";
 
