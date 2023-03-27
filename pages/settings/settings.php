@@ -40,6 +40,25 @@ $user_email = [
     "nose_email" => $user->nose_email,
 ];
 
+$v_login = new Validator(action: "login_form");
+$current_login = $v_login->text("current_login")->placeholder("Login actuel")->required()->autocomplete("username");
+$new_login = $v_login->text("new_login")->placeholder("Nouveau login")->required()->min_length(3);
+$current_login->condition($user->login == $current_login->value, "Mauvais login");
+
+$v_password = new Validator(action: "password_form");
+$current_password = $v_password->password("current_password")
+    ->placeholder("Mot de passe actuel")
+    ->required()
+    ->autocomplete("current-password");
+$new_password = $v_password->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
+$confirm_password = $v_password->password("confirm_password")
+    ->autocomplete("new-password")
+    ->placeholder("Confirmer le mot de passe")
+    ->required()
+    ->secure();
+$current_password->condition(password_verify($current_password->value, $user->password), "Mauvais mot de passe");
+$confirm_password->condition($new_password->value == $confirm_password->value, "Les deux mots de passe sont différents");
+
 $v_email = new Validator($user_email, "email_form");
 $real_email = $v_email->email("real_email")->label("Addresse mail perso")->placeholder()->required();
 $nose_email = $v_email->email("nose_email")->label("Addresse mail nose")->placeholder()->required();
@@ -64,6 +83,25 @@ if ($v_identity->valid()) {
     em()->persist($user);
     em()->flush();
     $v_identity->set_success("Identité mise à jour !");
+}
+
+if ($v_login->valid()) {
+    $users_with_same_login = em()->getRepository(User::class)->findByLogin($new_login->value);
+    if (count($users_with_same_login)) {
+        $new_login->set_error("Ce login est déjà utilisé");
+    } else {
+        $user->set_login($new_login->value);
+        em()->persist($user);
+        em()->flush();
+        $v_login->set_success("Login mis à jour !");
+    }
+}
+
+if ($v_password->valid()) {
+    $user->set_password($new_password->value);
+    em()->persist($user);
+    em()->flush();
+    $v_password->set_success("Mot de passe mis à jour !");
 }
 
 if ($v_email->valid()) {
@@ -113,28 +151,41 @@ page("Mon profil");
         </fieldset>
     </div>
 
-    <button type="submit" name="submitIdentity" class=col-md-4>Mettre à jour l'identité</button>
+    <button type="submit" class="outline" name="submitIdentity" class=col-md-4>Mettre à jour
+        l'identité</button>
 </form>
 
 <hr>
 
-<h2 id="mon-compte">Compte</h2>
+<div class="row">
+    <form method="post" class="col-sm-12 col-md-6">
+        <h2 id="login">Login</h2>
+        <?= $v_login->render_validation() ?>
+        <?= $current_login->render() ?>
+        <?= $new_login->render() ?>
+        <input type="submit" class="outline" name="submitLogin" value="Mettre à jour">
+    </form>
+    <form method="post" action="#password" class="col-sm-12 col-md-6">
+        <h2 id="password">Mot de passe</h2>
 
-<form method="post" action="#mon-compte">
+        <input type="hidden" autocomplete="username" name="username" value="<?= $user->login ?>">
+        <?= $v_password->render_validation() ?>
+        <?= $current_password->render() ?>
+        <?= $new_password->render() ?>
+        <?= $confirm_password->render() ?>
+        <input type="submit" class="outline" name="submitPassword" value="Mettre à jour">
+    </form>
+</div>
+
+<hr>
+
+<h2 id="emails">Emails</h2>
+
+<form method="post" action="#emails">
     <?= $v_email->render_validation() ?>
-    <div class="grid">
-        <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-mdp'">Changer le
-            mot de passe</button>
-        <button type=button class="secondary" onclick="window.location.href = '/mon-profil/changement-login'">Changer le
-            login</button>
-    </div>
-
-    <div class="grid">
-        <?= $real_email->render() ?>
-        <?= $nose_email->render() ?>
-    </div>
-
-    <button type="submit" name="submitEMail" class=col-md-4>Mettre à jour les mails</button>
+    <?= $real_email->render() ?>
+    <?= $nose_email->render() ?>
+    <button type="submit" class="outline" name="submitEMail" class=col-md-4>Mettre à jour les mails</button>
 </form>
 
 <hr>
@@ -154,5 +205,5 @@ page("Mon profil");
 
     <?= $phone->render() ?>
 
-    <button type="submit" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
+    <button type="submit" class="outline" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
 </form>

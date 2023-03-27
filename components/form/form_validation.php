@@ -265,6 +265,7 @@ class Field
         if ($this->should_test() and !$condition) {
             $this->set_error($error_msg);
         }
+        return $this;
     }
 
     /** See more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete */
