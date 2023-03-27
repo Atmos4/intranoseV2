@@ -10,9 +10,9 @@ $can_edit = check_auth(
 formatter("d MMM");
 require_once "database/events.api.php";
 $user_id = $_SESSION["user_id"];
-$events = em()->getRepository(Event::class)->listAllOpen($user_id);
+$events = Event::listAllOpen($user_id);
 if ($can_edit)
-    $draft_events = em()->getRepository(Event::class)->listDrafts();
+    $draft_events = Event::listDrafts();
 
 page("Événements", "event_list.css");
 

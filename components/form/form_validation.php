@@ -59,7 +59,9 @@ class Validator
 
         foreach ($this->fields as $field) {
             if ($field->error) {
-                $result .= "<label for=\"$field->key\" class=\"error\">{$field->get_label()} : $field->error</label>";
+                $label = $field->get_label();
+                $result .= "<label for=\"$field->key\" class=\"error\">" .
+                    ($label ? "{$field->get_label()} : " : "") . "$field->error</label>";
             }
         }
         if (!$this->empty) {
@@ -160,8 +162,8 @@ class Field
     public ?string $error;
     /** Access to the validator for recursion and decorator pattern */
     public ?Validator $context;
-
     public bool $disabled = false;
+    public bool $required = false;
 
     function __construct(string $key, mixed $value = null, $context = null)
     {
@@ -200,6 +202,7 @@ class Field
             . ($this->valid() ? "" : " aria-invalid=true")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
+            . ($this->required ? " required" : "")
             . "></label>";
     }
 
@@ -240,6 +243,7 @@ class Field
     /** Makes the field required */
     function required(string $msg = null)
     {
+        $this->required = true;
         if ($this->should_test() && !$this->value) {
             $this->set_error($msg ?? "Requis");
         }

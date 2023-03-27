@@ -1,6 +1,5 @@
 <?php
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -59,8 +58,7 @@ class EventEntry
         $accomodation,
         $date,
         $comment
-    )
-    {
+    ) {
         $this->user = $user;
         $this->event = $event;
         $this->present = $present ?? false;
@@ -71,7 +69,7 @@ class EventEntry
     }
 }
 
-#[Entity(repositoryClass: EventRepository::class), Table(name: 'events')]
+#[Entity, Table(name: 'events')]
 class Event
 {
     #[Id, Column, GeneratedValue]
@@ -112,8 +110,7 @@ class Event
         $start_date,
         $end_date,
         $deadline
-    )
-    {
+    ) {
         $this->name = $name;
         $this->start_date = date_create($start_date);
         $this->end_date = date_create($end_date);
@@ -123,13 +120,11 @@ class Event
     static function getWithGraphData($event_id, $user_id = null): Event|null
     {
         $qb = em()->createQueryBuilder();
-        $qb->select('e', 'ee')
+        $qb->select('e', 'ee', 'r', 're')
             ->from(Event::class, 'e')
-            ->leftJoin('e.entries', 'ee')
-            ->leftJoin('ee.user', 'eu', Join::WITH, 'eu.id = :uid')
+            ->leftJoin('e.entries', 'ee', Join::WITH, 'ee.user = :uid')
             ->leftJoin('e.races', 'r')
-            ->leftJoin('r.entries', 're')
-            ->leftJoin('re.user', 'ru', Join::WITH, 'ru.id = :uid')
+            ->leftJoin('r.entries', 're', Join::WITH, 're.user = :uid')
             ->where('e.id = :eid')
             ->setParameters(['eid' => $event_id, 'uid' => $user_id]);
         try {
@@ -140,16 +135,13 @@ class Event
             return null;
         }
     }
-}
 
-class EventRepository extends EntityRepository
-{
     /** @return EventDto[] */
-    function listAllOpen($user_id)
+    static function listAllOpen($user_id)
     {
-        $events = $this->getEntityManager()
+        $events = em()
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en LEFT JOIN en.user u WITH u.id = ?1" .
+                " LEFT JOIN ev.entries en WITH en.user = ?1" .
                 " WHERE ev.open = 1" .
                 " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
@@ -158,18 +150,18 @@ class EventRepository extends EntityRepository
         return EventDto::fromEventList($events);
     }
 
-    function getById($event_id, $user_id = 0)
+    static function getById($event_id, $user_id = 0)
     {
-        return $this->getEntityManager()
+        return em()
             ->createQuery("SELECT ev, en FROM Event ev LEFT JOIN ev.entries en LEFT JOIN en.user u" .
                 " WHERE ev.id = :eid AND (u.id IS NULL OR u.id = :uid)")
             ->setParameters(['eid' => $event_id, 'uid' => $user_id])
             ->getSingleResult();
     }
 
-    function listDrafts()
+    static function listDrafts()
     {
-        $events = $this->getEntityManager()
+        $events = em()
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
                 " WHERE ev.open = 0" .
                 " ORDER BY ev.start_date DESC")
@@ -196,8 +188,7 @@ class EventDto
         $deadline,
         $open,
         $registered,
-    )
-    {
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->start = $start;

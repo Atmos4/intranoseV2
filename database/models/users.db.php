@@ -1,13 +1,11 @@
 <?php
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
-#[Entity(repositoryClass: UserRepository::class), Table(name: 'users')]
+#[Entity, Table(name: 'users')]
 class User
 {
     #[Id, Column, GeneratedValue]
@@ -96,6 +94,12 @@ class User
     {
         $this->login = $login;
     }
+
+    static function getByLogin($login): User
+    {
+        $result = em()->getRepository(User::class)->findByLogin($login);
+        return count($result) ? $result[0] : new User();
+    }
 }
 
 
@@ -113,13 +117,4 @@ enum Permission: string
     case COACHSTAFF = 'COACHSTAFF';
     case GUEST = 'GUEST';
     case ROOT = 'ROOT';
-}
-
-class UserRepository extends EntityRepository
-{
-    function getByLogin($login): User
-    {
-        $result = $this->findByLogin($login);
-        return count($result) ? $result[0] : new User();
-    }
 }
