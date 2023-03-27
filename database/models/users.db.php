@@ -1,6 +1,4 @@
 <?php
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -119,9 +117,4 @@ enum Permission: string
     case COACHSTAFF = 'COACHSTAFF';
     case GUEST = 'GUEST';
     case ROOT = 'ROOT';
-}
-
-class UserRepository extends EntityRepository
-{
-
 }
