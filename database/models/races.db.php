@@ -1,4 +1,5 @@
 <?php
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -16,6 +17,9 @@ class RaceEntry
 
     #[Id, ManyToOne]
     public Race|null $race = null;
+
+    #[ManyToOne]
+    public Category|null $category = null;
 
     #[Column]
     public bool $present = false;
@@ -42,41 +46,6 @@ class RaceEntry
         $this->sport_ident = $sport_ident;
         $this->comment = $comment;
     }
-
-// private function exists_in_db(): bool
-// {
-//     $existing = fetch("SELECT present FROM inscriptions_courses WHERE id_course=? AND id_runner = ?", $this->race_id, $this->user_id);
-//     return !!count($existing);
-// }
-
-// function save_in_db()
-// {
-//     if ($this->exists_in_db()) {
-//         query_db(
-//             "UPDATE inscriptions_courses SET present=?,surclasse=?, licence=?, si=?, id_cat=?, rmq=? WHERE id_course=? AND id_runner=?",
-//             $this->present,
-//             $this->upgraded,
-//             $this->licence,
-//             $this->sport_ident,
-//             0,
-//             $this->comment,
-//             $this->race_id,
-//             $this->user_id
-//         );
-//     } else {
-//         query_db(
-//             "INSERT INTO inscriptions_courses(id_course, id_runner, present,surclasse, licence, si, id_cat, rmq) VALUES(?,?,?,?,?,?,?,?)",
-//             $this->race_id,
-//             $this->user_id,
-//             $this->present,
-//             $this->upgraded,
-//             $this->licence,
-//             $this->sport_ident,
-//             0,
-//             $this->comment
-//         );
-//     }
-// }
 }
 
 #[Entity, Table(name: 'races')]
@@ -99,6 +68,16 @@ class Race
 
     #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "race", cascade: ["remove"])]
     public Collection $entries;
+
+    /** @var Collection<int, Category> categories */
+    #[OneToMany(targetEntity: Category::class, mappedBy: "race", cascade: ["remove"])]
+    public Collection $categories;
+
+    function __construct()
+    {
+        $this->entries = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
 
     function set_values(string $name, DateTime $date, string $place, Event $event)
     {

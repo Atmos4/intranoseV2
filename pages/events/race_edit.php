@@ -22,6 +22,9 @@ $v = new Validator($form_values ?? []);
 $name = $v->text("name")->label("Nom de la course")->placeholder()->required();
 $date = $v->date("date")->label("Date")->required();
 $place = $v->text("place")->label("Lieu")->required();
+$categories = $v->text("categories")->area()
+    ->label("Catégories")
+    ->placeholder("Ajouter les différentes catégories séparées par un point-virgule");
 
 if (!empty($_POST) && $v->valid()) {
     $race->set_values($name->value, date_create($date->value), $place->value, $event);
@@ -46,6 +49,9 @@ page($race_id ? "{$race->name} : Modifier" : "Ajouter une course");
         </div>
         <div class="col-md-6">
             <?= $place->render() ?>
+        </div>
+        <div class="col-12">
+            <?= $categories->render() ?>
         </div>
         <div>
             <button type="submit">
