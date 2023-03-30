@@ -80,9 +80,9 @@ class User
     {
         $this->sportident = $sportident;
         $this->address = $address;
-        $this->postal_code = $postal_code;
+        $this->postal_code = intval($postal_code);
         $this->city = $city;
-        $this->$phone = $phone;
+        $this->$phone = intval($phone);
     }
 
     function set_password($password)

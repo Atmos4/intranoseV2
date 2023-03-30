@@ -198,12 +198,15 @@ class Field
      */
     function render(string $attrs = "")
     {
-        return "<label for=\"$this->key\">$this->label<input type=\"{$this->type->value}\" $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+        $result = "<input type=\"{$this->type->value}\" $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
             . ($this->valid() ? "" : " aria-invalid=true")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
-            . ($this->required ? " required" : "")
-            . "></label>";
+            . ($this->required ? " required" : "") . ">";
+        if ($this->label) {
+            $result = "<label for=\"$this->key\">{$this->label}{$result}</label>";
+        }
+        return $result;
     }
 
     /** Adds a validation error */
@@ -330,7 +333,7 @@ class StringField extends Field
     }
 }
 
-class NumberField extends Field
+class NumberField extends StringField
 {
     function set_type()
     {
@@ -553,7 +556,7 @@ class PhoneField extends StringField
     function check(string $msg = null)
     {
         /** The regex now match for between 9 and 14 numbers with an optional + in the begining */
-        if (!$this->test("/^[+]?(\d\s*?){9,14}$/")) {
+        if ($this->should_test() && $this->required && !$this->test("/^[+]?(\d\s*?){9,14}$/")) {
             $this->set_error($msg ?? "Format de numéro de téléphone invalide");
         }
     }
