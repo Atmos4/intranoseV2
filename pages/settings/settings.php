@@ -33,14 +33,16 @@ $last_name = $v_identity->text("last_name")->label("Nom")->placeholder()->requir
 $first_name = $v_identity->text("first_name")->label("Prénom")->placeholder()->required();
 $licence = $v_identity->number("licence")->label("Numéro de licence");
 $real_email = $v_identity->email("real_email")->label("Addresse mail perso")->placeholder()->required();
-$nose_email = $v_identity->email("nose_email")->label("Addresse mail nose")->placeholder()->required();
+$nose_email = $v_identity->email("nose_email")->label("Addresse mail nose")->placeholder();
 $gender = $v_identity->text("gender")->label("Sexe");
 
 if ($is_visiting) {
     $licence->required();
+    $nose_email->required();
 } else {
     $licence->disabled();
     $licence->value ??= $user->licence;
+    $nose_email->disabled();
 }
 
 if ($v_identity->valid()) {
@@ -126,7 +128,7 @@ if (!$can_reset_credentials) {
         ->placeholder("Confirmer le mot de passe")
         ->required()
         ->secure();
-    $current_password->condition(password_verify($current_password->value, $user->password), "Mauvais mot de passe");
+    $current_password->condition(password_verify($current_password->value ?? "", $user->password), "Mauvais mot de passe");
     $confirm_password->condition($new_password->value == $confirm_password->value, "Les deux mots de passe sont différents");
 }
 
