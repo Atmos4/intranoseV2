@@ -1,10 +1,5 @@
 <?php
-restrict_access(
-    Permission::COACH,
-    Permission::STAFF,
-    Permission::ROOT,
-    Permission::COACHSTAFF
-);
+restrict_access(Access::$ADD_EVENTS);
 
 require_once "database/events.api.php";
 

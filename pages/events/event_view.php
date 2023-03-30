@@ -1,21 +1,15 @@
 <?php
 restrict_access();
-$can_edit_permissions = [
-    Permission::COACH,
-    Permission::STAFF,
-    Permission::ROOT,
-    Permission::COACHSTAFF
-];
 
 require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
 $event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
 if (!$event->open) {
-    restrict_access(...$can_edit_permissions);
+    restrict_access(Access::$ADD_EVENTS);
 }
 
-$can_edit = check_auth(...$can_edit_permissions);
+$can_edit = check_auth(Access::$ADD_EVENTS);
 
 $entry = $event->entries[0] ?? null;
 $has_file = false; //$event-> != 0;

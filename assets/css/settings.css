@@ -1,0 +1,7 @@
+.align-end {
+  display: flex;
+  flex-direction: column;
+}
+.align-end > *:last-child {
+  margin-top: auto;
+}

@@ -113,10 +113,11 @@ function page(string $page_title, string $page_css = null, bool $with_nav = true
     $display_title = $page_display_title;
     $css = "/assets/css/" . $page_css;
 }
+
 /** Checks authentication and authorization stored in session
  * @param Permission[] $levels
  */
-function check_auth(...$levels)
+function check_auth($levels = [])
 {
     if (!isset($_SESSION['user_permission'])) {
         redirect("login");
@@ -134,11 +135,11 @@ function check_auth(...$levels)
  * Should be used as early as possible, to prevent unnecessary data loading.
  * @param Permission[] $permissions
  */
-function restrict_access(...$permissions)
+function restrict_access($permissions = [])
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
-        $permission = $_SESSION['user_permission'] ?? "non authenticated user";
-        force_404("Access for {$permission->value} is restricted for this page. ");
+        $permission = $_SESSION['user_permission']?->value ?? "non authenticated user";
+        force_404("Access for {$permission} is restricted for this page. ");
     }
 }
 

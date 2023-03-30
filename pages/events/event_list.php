@@ -1,11 +1,6 @@
 <?php
 restrict_access();
-$can_edit = check_auth(
-    Permission::COACH,
-    Permission::STAFF,
-    Permission::ROOT,
-    Permission::COACHSTAFF
-);
+$can_edit = check_auth(Access::$ADD_EVENTS);
 
 formatter("d MMM");
 require_once "database/events.api.php";

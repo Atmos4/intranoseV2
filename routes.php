@@ -9,6 +9,7 @@ any('/login', 'pages/login.php');
 
 // Developement
 get('/seed-db', 'pages/seed_db.php');
+get('/reset-pw/$user_id', 'pages/reset_pw.php');
 
 // Events
 get('/evenements', 'pages/events/event_list.php');
@@ -24,9 +25,8 @@ get('/download', 'uploads/download_file.php');
 
 // Settings
 any('/mon-profil', 'pages/settings/settings.php');
-any('/mon-profil/changement-mdp', 'pages/settings/settings_password_change.php');
-any('/mon-profil/changement-login', 'pages/settings/settings_login_change.php');
-any('/mon-profil/$user_id', 'pages/settings/settings.php');
+// Settings/users
+any('/licencies/$user_id/modifier', 'pages/settings/settings.php');
 
 // Users
 get('/licencies', 'pages/users/user_list.php');

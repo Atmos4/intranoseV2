@@ -1,10 +1,5 @@
 <?php
-restrict_access(
-    Permission::COACH,
-    Permission::STAFF,
-    Permission::ROOT,
-    Permission::COACHSTAFF
-);
+restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id");
 $race_id = get_route_param("race_id", false);
