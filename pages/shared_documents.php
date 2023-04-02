@@ -1,35 +1,32 @@
 <?php
-restrict_access(Access::$ADD_EVENTS);
+restrict_access();
 
 require_once "database/shared_docs.api.php";
 
-$id = $_SESSION['user_id'];
-
-create_shared_docs_table();
-
 
 $v = new Validator();
-$file_upload = $v->upload("file_upload")->set_target_dir("uploads/shared_docs/")->label("Téléchargement");
+$file_upload = $v->upload("file_upload")->files_errors()->mime_type()->file_name();
 
-if (!empty($_FILES) && $v->valid()) {
-    $date = date('Y-m-d h:i:s');
-    if (set_shared_file($file_upload->get_name(), $date, $file_upload->get_size(), $file_upload->get_type())) {
-        $success = $file_upload->save_file();
-    } else {
-        $error = "Problème à l'enregistrement";
-    }
+
+if ($v->valid()) {
+    $shared_file = em()->getRepository(SharedFile::class)->findOneBy(['path' => $file_upload->file_name]);
+    $shared_file ??= new SharedFile();
+    $shared_file->set($file_upload->file_name, $file_upload->file_type);
+    $file_upload->save_file();
+    em()->persist($shared_file);
+    em()->flush();
 }
 
-$shared_files = get_shared_files();
+$shared_files = em()->getRepository(SharedFile::class)->findAll();
 
 function render_documents($shared_doc)
 { ?>
-    <tr class="event-row clickable" onclick="window.location.href = '/download_shared_files?id=<?= $shared_doc['id'] ?>'">
+    <tr class="event-row clickable" onclick="window.location.href = '/download?id=<?= $shared_doc->id ?>'">
         <td>
             <i class="fas fa-file"></i>
         </td>
         <td>
-            <?= $shared_doc["path"] ?>
+            <?= $shared_doc->path ?>
         </td>
     <?php }
 
@@ -38,25 +35,17 @@ page("Documents partagés");
 ?>
 
     <h3>Ajouter un document</h3>
-    <?= $v->render_validation() ?>
-    <?php if (isset($success)): ?>
-        <p class="success">
-            <?= $success ?>
-        </p>
-    <?php endif; ?>
-    <?php if (isset($error)): ?>
-        <p class="error">
-            <?= $error ?>
-        </p>
-    <?php endif; ?>
     <form method="post" enctype="multipart/form-data">
-        <div class="center">
-            <?= $file_upload->render() ?>
-        </div>
-        <div>
-            <button type="submit">
-                Enregistrer
-            </button>
+        <?= $v->render_validation() ?>
+        <div class="row">
+            <div class="col-auto">
+                <?= $file_upload->render() ?>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="outline">
+                    Enregistrer
+                </button>
+            </div>
         </div>
     </form>
     </article>
@@ -64,17 +53,21 @@ page("Documents partagés");
     <h3>Documents enregistrés</h3>
 
     <table role="grid">
-        <thead class=header-responsive>
-            <tr>
-                <th></th>
-                <th>Nom du fichier</th>
-            </tr>
-        </thead>
-        <tbody>
+        <?php if (count($shared_files)): ?>
+            <thead class=header-responsive>
+                <tr>
+                    <th></th>
+                    <th>Nom du fichier</th>
+                </tr>
+            </thead>
+            <tbody>
 
-            <?php foreach ($shared_files as $shared_file) {
-                render_documents($shared_file);
-            } ?>
+                <?php foreach ($shared_files as $shared_file) {
+                    render_documents($shared_file);
+                } ?>
 
-        </tbody>
+            </tbody>
+        <?php else: ?>
+            <p class="center">Pas de fichiers pour le moment 🫠</p>
+        <?php endif ?>
     </table>

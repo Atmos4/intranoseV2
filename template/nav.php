@@ -5,7 +5,7 @@ $nav_routes = [
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
-if (in_array($_SESSION['user_permission'], ["ROOT", "STAFF", "COACH", "COACHSTAFF"])) {
+if (in_array($_SESSION['user_permission'], [Permission::COACH, Permission::STAFF, Permission::ROOT, Permission::COACHSTAFF])) {
     $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
 }
 ;
@@ -25,7 +25,7 @@ $icons = [];
             <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a
                     class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i
                         class="fas <?= $nav_title[1] ?>"></i>
-                    <?=" " . $nav_title[0] ?>
+                    <?= " " . $nav_title[0] ?>
                 </a></li>
         <?php endforeach ?>
     </ul>

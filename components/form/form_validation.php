@@ -66,7 +66,7 @@ class Validator
         }
         if (!$this->empty) {
             if ($this->valid() && $this->success) {
-                $result .= "<ins>$this->success</ins>";
+                $result .= "<ins>$this->success</ins><br></br>";
             }
             $result .= "<br/>";
         }
@@ -462,78 +462,98 @@ class UploadField extends Field
     }
 
     public string $target_dir = "uploads/";
+    public string $target_file = '';
+    public string $file_type;
+    public string $file_name = '';
 
     function check(string $msg = null)
     {
+        var_dump($_FILES);
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
-                $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-                $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-                $this->check_file_exists($target_file);
-                $this->check_file_size();
-                $this->check_format($fileType);
-            } else {
-                $this->set_error("Choisissez un fichier");
+                $this->file_name = $_FILES[$this->key]["name"] ?? "";
+                $this->target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
+                $this->file_type = strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION));
+                if (
+                    !isset($_FILES[$this->key]['error']) ||
+                    is_array($_FILES[$this->key]['error'])
+                ) {
+                    $this->set_error('Paramètres incorrects.');
+                }
+
             }
-
         }
     }
 
-    function check_file_exists(string $target_file)
+    function files_errors()
     {
-        // Check if file already exists in the repo
-        if (file_exists($target_file)) {
-            $this->set_error("Le fichier existe déjà.");
+        // Check $_FILES['upfile']['error'] value.
+        if ($this->should_test()) {
+            switch ($_FILES[$this->key]['error']) {
+                case UPLOAD_ERR_OK:
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $this->set_error("Choisissez un fichier");
+                    break;
+                case UPLOAD_ERR_INI_SIZE:
+                    $this->set_error("Fichier trop lourd.");
+                    break;
+                case UPLOAD_ERR_FORM_SIZE:
+                    $this->set_error("Fichier trop lourd.");
+                    break;
+                default:
+                    $this->set_error("Erreur inconnue.");
+            }
         }
+        return $this;
     }
 
-    function check_file_size()
+    function mime_type()
     {
-        // Check file size
-        if ($_FILES[$this->key]["size"] > 1000000) {
-            $this->set_error("Fichier trop lourd.");
+        if ($this->should_test()) {
+            // Allow certain file formats
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            if (
+                false === $ext = array_search(
+                    $finfo->file($_FILES[$this->key]['tmp_name']),
+                    array(
+                        'jpg' => 'image/jpeg',
+                        'png' => 'image/png',
+                        'gif' => 'image/gif',
+                        'doc' => 'application/msword',
+                        'pdf' => 'application/pdf',
+                    ),
+                    true
+                )
+            ) {
+                $this->set_error("Seuls les formats JPG, PNG, GIF, DOC et PDF sont acceptés.");
+            }
         }
+        return $this;
     }
 
-    function check_format(string $fileType)
+    function file_name()
     {
-        // Allow certain file formats
-        if (
-            $fileType != "jpg" && $fileType != "png" && $fileType != "jpeg"
-            && $fileType != "gif" && $fileType != "pdf"
-        ) {
-            $this->set_error("Seuls les formats JPG, PNG, JPEG, GIF et PDF sont acceptés.");
+        if ($this->should_test()) {
+            // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
+            if (!preg_match("`^[-0-9a-zA-ZÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
+                $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés.");
+            }
         }
+        return $this;
     }
 
     function save_file()
     {
-        $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-        if (file_exists($target_file)) {
-            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
-                return "Fichier modifié";
-            }
-        } else {
-            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
-                return "Fichier enregistré";
-            }
-        }
-
-    }
-
-    function get_type()
-    {
-        return $_FILES[$this->key]["type"];
-    }
-
-    function get_size()
-    {
-        return $_FILES[$this->key]["size"];
-    }
-
-    function get_name()
-    {
-        return $_FILES[$this->key]["name"];
+        $file_exists = file_exists($this->target_file);
+        if ($file_exists)
+            unlink($this->target_file);
+        $result = move_uploaded_file($_FILES[$this->key]["tmp_name"], $this->target_file);
+        if ($result)
+            $this->context->set_success($file_exists ? "Fichier modifié" : "Fichier enregistré");
+        else
+            $this->set_error("Problème à l'enregistrement.");
+        return $result;
     }
 
     function set_target_dir(string $directory)
