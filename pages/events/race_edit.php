@@ -28,9 +28,6 @@ $v = new Validator($form_values ?? []);
 $name = $v->text("name")->label("Nom de la course")->placeholder()->required();
 $date = $v->date("date")->label("Date")->required();
 $place = $v->text("place")->label("Lieu")->required();
-$categories = $v->text("categories")->area()
-    ->label("Catégories")
-    ->placeholder("Ajouter les différentes catégories séparées par un point-virgule");
 
 $category_rows = [];
 foreach ($race->categories as $index => $category) {
