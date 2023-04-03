@@ -23,17 +23,17 @@ header > .row > .col-sm-6 {
   table td {
     border-bottom: none;
   }
-  table .competition-name {
+  table .race-name {
     grid-area: name;
     padding-bottom: 0;
   }
-  table .competition-date {
+  table .race-date {
     grid-area: date;
   }
-  table .competition-place {
+  table .race-place {
     grid-area: place;
   }
-  table .competition-entry {
+  table .race-entry {
     grid-area: icon;
     align-self: center;
   }
@@ -48,22 +48,9 @@ textarea {
   resize: none;
 }
 
-/* Conditional text display */
-input[role="switch"]:checked ~ del {
-  display: none;
-}
-input[role="switch"]:checked ~ ins {
-  display: inline;
-}
-input[role="switch"]:not(:checked) ~ del {
-  display: inline;
-}
-input[role="switch"]:not(:checked) ~ ins {
-  display: none;
-}
 #conditionalText {
   display: none;
 }
-#eventForm.hidden ~ #conditionalText {
+.eventForm.hidden ~ #conditionalText {
   display: block;
 }

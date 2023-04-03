@@ -70,7 +70,7 @@ class Race
     public Collection $entries;
 
     /** @var Collection<int, Category> categories */
-    #[OneToMany(targetEntity: Category::class, mappedBy: "race", cascade: ["remove"])]
+    #[OneToMany(targetEntity: Category::class, mappedBy: "race", cascade: ["persist", "remove"])]
     public Collection $categories;
 
     function __construct()
@@ -79,7 +79,7 @@ class Race
         $this->categories = new ArrayCollection();
     }
 
-    function set_values(string $name, DateTime $date, string $place, Event $event)
+    function set(string $name, DateTime $date, string $place, Event $event)
     {
         $this->name = $name;
         $this->place = $place;

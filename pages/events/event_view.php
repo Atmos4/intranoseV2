@@ -16,17 +16,12 @@ $has_file = false; //$event-> != 0;
 
 page($event->name, "event_view.css");
 ?>
-<div id="page-actions">
+<nav id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
-    <?php if ($can_edit): ?>
-        <a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
-            <i class="fas fa-pen"></i> Modifier
-        </a>
-    <?php endif ?>
-
-    <?php if ($event->open && $event->deadline >= date_create("today")): ?>
-        <a href="/evenements/<?= $event->id ?>/inscription">
+    <?php if ($event->open && $event->deadline >= date_create("today")):
+        $is_entered = count($event->entries); ?>
+        <a href="/evenements/<?= $event->id ?>/inscription" <?= $is_entered ? "class=\"contrast\"" : "" ?>>
             <i class="fas fa-pen-to-square"></i> Inscription
         </a>
     <?php elseif (!$event->open): ?>
@@ -34,7 +29,30 @@ page($event->name, "event_view.css");
             <i class="fas fa-paper-plane"></i> Publier
         </a>
     <?php endif ?>
-</div>
+
+    <?php if ($can_edit): ?>
+        <li role="list" dir="rtl">
+            <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
+            <ul role="listbox">
+                <li><a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
+                        <i class="fas fa-pen"></i> Modifier
+                    </a></li>
+                <li>
+                    <?php if (!$event->open): ?>
+                        <a href="/evenements/<?= $event->id ?>/supprimer" class="destructive">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    <?php elseif ($event->open): ?>
+                        <a href="/evenements/<?= $event->id ?>/publier" class="destructive">
+                            <i class="fas fa-calendar-minus"></i> Retirer
+                        </a>
+                    <?php endif; ?>
+                </li>
+            </ul>
+        </li>
+
+    <?php endif ?>
+</nav>
 <article>
     <header class="center">
         <div class="row">
@@ -114,16 +132,16 @@ page($event->name, "event_view.css");
             <?php foreach ($event->races as $race):
                 $race_entry = $race->entries[0] ?? null; ?>
                 <tr class="display <?= $can_edit ? "clickable" : "" ?>" <?= $can_edit ? "onclick=\"window.location.href = '/evenements/{$event->id}/course/{$race->id}'\"" : "" ?>>
-                    <td class="competition-entry">
+                    <td class="race-entry">
                         <?= ConditionalIcon($race_entry && $race_entry->present) ?>
                     </td>
-                    <td class="competition-name"><b>
+                    <td class="race-name"><b>
                             <?= $race->name ?>
                         </b></td>
-                    <td class="competition-date">
+                    <td class="race-date">
                         <?= format_date($race->date) ?>
                     </td>
-                    <td class="competition-place">
+                    <td class="race-place">
                         <?= $race->place ?>
                     </td>
                 </tr>
@@ -131,14 +149,21 @@ page($event->name, "event_view.css");
                     <tr class="edit">
                         <td colspan="4">
                             <div class="row">
+                                <div class="col-auto">
+                                    <strong>
+                                        <?= $race_entry->category?->name ?>
+                                    </strong>
+                                </div>
                                 <?php if ($race_entry->upgraded): ?>
                                     <div class="col-auto">
                                         <ins>Surclassé</ins><br />
                                     </div>
                                 <?php endif ?>
-                                <div class="col-auto">
-                                    <?= $race_entry->comment ?>
-                                </div>
+                                <?php if ($race_entry->comment): ?>
+                                    <i>
+                                        <?= $race_entry->comment ?>
+                                    </i>
+                                <?php endif ?>
                             </div>
                         </td>
                     </tr>

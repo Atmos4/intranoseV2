@@ -21,7 +21,20 @@ class Category
     #[Column]
     public string $name = "";
 
+    #[Column]
+    public bool $removed = false;
+
     /** @var Collection<int,RaceEntry> entries */
     #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "category", cascade: ["remove"])]
     public Collection $entries;
+
+    /** @param Collection<int,Category> categories */
+    static function toSelectOptions($categories): array
+    {
+        $result = [];
+        foreach ($categories as $category) {
+            $result[$category->id] = $category->name;
+        }
+        return $result;
+    }
 }

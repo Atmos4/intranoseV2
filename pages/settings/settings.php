@@ -57,9 +57,9 @@ if ($v_identity->valid()) {
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil", "settings.css");
 ?>
 <?php if ($is_visiting): ?>
-    <div id="page-actions">
+    <nav id="page-actions">
         <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    </div>
+    </nav>
 <?php endif ?>
 
 <h2 id="identity">Identité</h2>

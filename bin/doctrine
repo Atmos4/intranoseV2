@@ -36,5 +36,7 @@ $commands = [
     new Command\GenerateCommand($deps),
     new Command\MigrateCommand($deps),
     new Command\DiffCommand($deps),
+    new Command\StatusCommand($deps),
+    new Command\ListCommand($deps),
 ];
 ConsoleRunner::run(new SingleManagerProvider(em()), $commands);
