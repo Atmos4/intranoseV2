@@ -109,8 +109,6 @@ button.destructive {
 }
 #page-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   height: fit-content;
   padding: 0.5rem;
 }
@@ -118,20 +116,19 @@ button.destructive {
   margin: 0;
   padding: 0.5em 1em;
 }
-#page-actions > li,
-#page-actions > a {
+#page-actions > :where(a, li) {
+  margin: 0;
   padding: 0.65em;
   text-decoration: none;
 }
-#page-actions > li:hover,
-#page-actions > a:hover {
+#page-actions > :where(a, li):hover {
   --background-color: var(--secondary-focus);
 }
 #page-actions > li > summary > i {
-  transition: rotate 0.2s;
+  transition: transform 0.2s;
 }
 #page-actions > li:hover > summary > i {
-  rotate: 90deg;
+  transform: rotate(90deg);
 }
 #page-actions.sticky {
   position: fixed;
