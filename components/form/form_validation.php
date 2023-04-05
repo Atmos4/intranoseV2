@@ -105,6 +105,11 @@ class Validator
         return $this->create($key, StringField::class, $msg);
     }
 
+    function textarea(string $key, string $msg = null): TextAreaField
+    {
+        return $this->create($key, TextAreaField::class, $msg);
+    }
+
     /** Creates new date field */
     function date(string $key, string $msg = null): DateField
     {
@@ -135,6 +140,11 @@ class Validator
     function password(string $key, string $msg = null): PasswordField
     {
         return $this->create($key, PasswordField::class, $msg);
+    }
+
+    function select(string $key): SelectField
+    {
+        return $this->create($key, SelectField::class, null);
     }
 
 
@@ -203,10 +213,15 @@ class Field
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
             . ($this->required ? " required" : "") . ">";
+        return $this->render_label($result);
+    }
+
+    protected function render_label($input_render)
+    {
         if ($this->label) {
-            $result = "<label for=\"$this->key\">{$this->label}{$result}</label>";
+            $input_render = "<label for=\"$this->key\">{$this->label}{$input_render}</label>";
         }
-        return $result;
+        return $input_render;
     }
 
     /** Adds a validation error */
@@ -283,18 +298,11 @@ class StringField extends Field
 {
 
     public ?string $placeholder = "";
-    public bool $is_textarea = false;
 
     /** Defines the placeholder. Call the method without params to use the label as placeholder */
     function placeholder(string $text = null)
     {
         $this->placeholder = $text;
-        return $this;
-    }
-
-    function area()
-    {
-        $this->is_textarea = true;
         return $this;
     }
 
@@ -307,13 +315,8 @@ class StringField extends Field
 
     function render(string $attrs = "")
     {
-        if ($this->is_textarea) {
-            return "<label for=\"$this->key\">$this->label</label>"
-                . "<textarea name=\"$this->key\" id=\"$this->key\"" . ($this->valid() ? "" : " aria-invalid=true") . ">$this->value</textarea>";
-        } else {
-            $placeholder = $this->placeholder ?? $this->label;
-            return parent::render("placeholder=\"$placeholder\" $attrs");
-        }
+        $placeholder = $this->placeholder ?? $this->label;
+        return parent::render("placeholder=\"$placeholder\" $attrs");
     }
 
     function max_length(int $count, string $msg = null)
@@ -330,6 +333,18 @@ class StringField extends Field
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
+    }
+}
+
+class TextAreaField extends StringField
+{
+    function render(string $attrs = "")
+    {
+        $placeholder = $this->placeholder ?? $this->label;
+        $result = "<textarea name=\"$this->key\" id=\"$this->key\" placeholder=\"$placeholder\""
+            . ($this->valid() ? "" : " aria-invalid=true")
+            . ">$this->value</textarea>";
+        return $this->render_label($result);
     }
 }
 
@@ -607,6 +622,48 @@ class PasswordField extends StringField
     {
         if ($this->should_test() && !$this->test("/[a-z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre minuscule");
+        }
+        return $this;
+    }
+}
+
+class SelectFieldOption
+{
+    public string $value = "";
+    public string $label = "";
+    public bool $selected = false;
+}
+
+class SelectField extends Field
+{
+    /** @var SelectFieldOption[] */
+    public array $options = [];
+
+    function render(string $attrs = "")
+    {
+        $required = $this->required ? " required" : "";
+        $result = "<select name=\"$this->key\"$required>";
+        foreach ($this->options as $option) {
+            $selected = $option->selected ? " selected" : "";
+            $result .= "<option value=\"$option->value\"$selected>$option->label</option>";
+        }
+        return $this->render_label($result . "</select>");
+    }
+
+    function option($value, $label)
+    {
+        $option = new SelectFieldOption();
+        $option->value = $value;
+        $option->label = $label;
+        $option->selected = $this->value == $value;
+        $this->options[] = $option;
+        return $this;
+    }
+
+    function options(array $options)
+    {
+        foreach ($options as $value => $label) {
+            $this->option($value, $label);
         }
         return $this;
     }

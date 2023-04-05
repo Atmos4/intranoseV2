@@ -120,11 +120,12 @@ class Event
     static function getWithGraphData($event_id, $user_id = null): Event|null
     {
         $qb = em()->createQueryBuilder();
-        $qb->select('e', 'ee', 'r', 're')
+        $qb->select('e', 'ee', 'r', 're', 'c')
             ->from(Event::class, 'e')
             ->leftJoin('e.entries', 'ee', Join::WITH, 'ee.user = :uid')
             ->leftJoin('e.races', 'r')
             ->leftJoin('r.entries', 're', Join::WITH, 're.user = :uid')
+            ->leftJoin('re.category', 'c')
             ->where('e.id = :eid')
             ->setParameters(['eid' => $event_id, 'uid' => $user_id]);
         try {

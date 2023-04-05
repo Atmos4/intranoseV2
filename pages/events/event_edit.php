@@ -53,48 +53,37 @@ if (!empty($_FILES) && $v2->valid()) {
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 ?>
 <form method="post">
-    <div id="page-actions">
+    <nav id="page-actions">
         <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
             <i class="fas fa-caret-left"></i> Annuler
         </a>
-        <?php if ($event_id):
-            if (!$event->open): ?>
-                <a href="/evenements/<?= $event_id ?>/supprimer" class="destructive">
-                    <i class="fas fa-trash"></i> Supprimer
-                </a>
-            <?php elseif ($event->open): ?>
-                <a href="/evenements/<?= $event_id ?>/publier" class="destructive">
-                    <i class="fas fa-calendar-minus"></i> Retirer
-                </a>
-            <?php endif; endif; ?>
-    </div>
+        <div>
+            <button type="submit">
+                <?= $event_id ? "Modifier" : "Créer" ?>
+            </button>
+        </div>
+    </nav>
     <article>
-        <header>
-            <div class="row">
-                <?= $v->render_validation() ?>
-                <?= $v2->render_validation() ?>
-                <?php if (isset($success)): ?>
-                    <p class="success">
-                        <?= $success ?>
-                    </p>
-                <?php endif; ?>
-                <?= $event_name->render() ?>
-                <div class="col-sm-6 col-lg-4">
-                    <?= $start_date->render() ?>
-                </div>
-                <div class="col-sm-6 col-lg-4">
-                    <?= $end_date->render() ?>
-                </div>
-                <div class="col-lg-4">
-                    <?= $limit_date->render() ?>
-                </div>
-                <div>
-                    <button type="submit">
-                        <?= $event_id ? "Modifier" : "Créer" ?>
-                    </button>
-                </div>
+        <div class="row">
+            <?= $v->render_validation() ?>
+            <?= $v2->render_validation() ?>
+            <?php if (isset($success)): ?>
+                <p class="success">
+                    <?= $success ?>
+                </p>
+            <?php endif; ?>
+            <?= $event_name->render() ?>
+            <div class="col-sm-6 col-lg-4">
+                <?= $start_date->render() ?>
             </div>
-        </header>
+            <div class="col-sm-6 col-lg-4">
+                <?= $end_date->render() ?>
+            </div>
+            <div class="col-lg-4">
+                <?= $limit_date->render() ?>
+            </div>
+        </div>
+    </article>
 </form>
 <?php /*
  <form method="post" enctype="multipart/form-data">

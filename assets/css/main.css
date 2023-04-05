@@ -109,8 +109,6 @@ button.destructive {
 }
 #page-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
   height: fit-content;
   padding: 0.5rem;
 }
@@ -118,18 +116,29 @@ button.destructive {
   margin: 0;
   padding: 0.5em 1em;
 }
+#page-actions > :where(a, li) {
+  margin: 0;
+  padding: 0.65em;
+  text-decoration: none;
+}
+#page-actions > :where(a, li):hover {
+  --background-color: var(--secondary-focus);
+}
+#page-actions > li > summary > i {
+  transition: transform 0.2s;
+}
+#page-actions > li:hover > summary > i {
+  transform: rotate(90deg);
+}
 #page-actions.sticky {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   background-color: var(--background-color);
   align-items: center;
   height: fit-content;
-}
-#page-actions:has(button).sticky {
-  padding: 0.5rem;
 }
 
 /* table hover effect */
@@ -154,4 +163,20 @@ tbody > tr.clickable::after {
 }
 tbody > tr.clickable:hover::after {
   opacity: 1;
+}
+
+/* Conditional text display */
+input[role="switch"]:checked ~ del {
+  display: none;
+  text-decoration: none;
+}
+input[role="switch"]:checked ~ ins {
+  display: inline;
+}
+input[role="switch"]:not(:checked) ~ del {
+  display: inline;
+  text-decoration: none;
+}
+input[role="switch"]:not(:checked) ~ ins {
+  display: none;
 }
