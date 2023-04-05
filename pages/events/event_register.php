@@ -102,7 +102,7 @@ function getToggleClass($selector, $initialState)
     return $selector . ($initialState ? "" : " hidden");
 }
 
-page("Inscription - " . $event->name, "event_view.css");
+page("Inscription - " . $event->name)->css("event_view.css");
 ?>
 <form id="mainForm" method="post">
     <nav id="page-actions">

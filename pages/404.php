@@ -1,6 +1,4 @@
-<?php
-page("Tanké", null, false, false);
-?>
+<?php page("Tanké")->disableNav()->heading(false) ?>
 <article>
     <hgroup>
         <h1>404</h1>

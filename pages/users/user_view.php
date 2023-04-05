@@ -7,7 +7,7 @@ if (!$user) {
 $profile_picture = (file_exists("images/profile/" . $user->id . ".jpg")) ?
     "/images/profile/" . $user->id . ".jpg"
     : "/images/profile/none.jpg";
-page($user->first_name . " " . $user->last_name, "user_view.css");
+page($user->first_name . " " . $user->last_name)->css("user_view.css");
 ?>
 <nav id="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>

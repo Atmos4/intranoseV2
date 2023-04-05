@@ -9,7 +9,7 @@ $events = Event::listAllOpen($user_id);
 if ($can_edit)
     $draft_events = Event::listDrafts();
 
-page("Événements", "event_list.css");
+page("Événements")->css("event_list.css");
 
 function render_event(EventDto $event)
 {

@@ -1,12 +1,4 @@
-<?php
-// Recover global variables with $GLOBALS, because including the file puts them out of scope
-$title = $GLOBALS['title'] ?? null;
-$display_title = $GLOBALS['display_title'] ?? null;
-$description = $GLOBALS['description'] ?? "";
-$content = $GLOBALS['content'] ?? "";
-$has_nav = $GLOBALS['nav'] ?? "";
-
-?>
+<?php $page = Page::getInstance(); ?>
 <!doctype html>
 <html lang="en">
 
@@ -14,9 +6,9 @@ $has_nav = $GLOBALS['nav'] ?? "";
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        <?= implode(" | ", array_filter([$title, "Intranose"])) ?>
+        <?= implode(" | ", array_filter([$page->title, "Intranose"])) ?>
     </title>
-    <meta name="description" content="<?= $description ?>">
+    <meta name="description" content="<?= $page->description ?>">
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
@@ -35,21 +27,23 @@ $has_nav = $GLOBALS['nav'] ?? "";
     <link rel="stylesheet" href="/assets/css/pico.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
-    <?php if (!empty($GLOBALS['css'])): ?>
-        <link rel="stylesheet" href="<?= $GLOBALS['css'] ?>">
+    <?php if ($page->css): ?>
+        <link rel="stylesheet" href="<?= $page->css ?>">
     <?php endif ?>
 </head>
 
 <body>
     <?php
-    if ($has_nav) {
+    if ($page->nav) {
         require_root("template/nav.php");
     } ?>
     <main class="container">
-        <?php if ($display_title !== false): ?>
-            <h2 class="center"><?= $display_title ?? $title ?></h2>
+        <?php if ($page->heading !== false): ?>
+            <h2 class="center">
+                <?= $page->heading ?: $page->title ?>
+            </h2>
         <?php endif ?>
-        <?= $content ?>
+        <?= $page->content ?>
     </main>
 
     <script src="/assets/js/nav.js"></script>

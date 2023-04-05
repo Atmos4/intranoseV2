@@ -45,8 +45,7 @@ function render($path_to_include = "pages/404.php")
 {
     ob_start();
     include_once $path_to_include;
-    global $content;
-    $content = ob_get_clean();
+    Page::getInstance()->setContent(ob_get_clean());
     require_root("template/layout.php");
     exit();
 }

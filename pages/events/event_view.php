@@ -14,7 +14,7 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 $entry = $event->entries[0] ?? null;
 $has_file = false; //$event-> != 0;
 
-page($event->name, "event_view.css");
+page($event->name)->css("event_view.css");
 ?>
 <nav id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>

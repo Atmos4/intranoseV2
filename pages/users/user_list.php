@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 $users = em()->getRepository(User::class)->findBy([], ['last_name' => 'ASC', 'first_name' => 'ASC']);
-page("Les licenciés", "user_list.css");
+page("Les licenciés")->css("user_list.css");
 ?>
 <form method="get">
     <input type="search" id="search-users" name="search" placeholder="Rechercher..."

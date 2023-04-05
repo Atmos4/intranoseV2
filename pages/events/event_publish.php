@@ -16,7 +16,7 @@ if (!empty($_POST) and isset($_POST['publish'])) {
     redirect("/evenements/$event->id");
 }
 
-page(($event->open ? "Retirer" : "Publier") . " - {$event->name}", page_display_title: "Attention");
+page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Attention");
 ?>
 <form method="post">
     <div class="row center">

@@ -4,6 +4,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 
 require_once "vendor/autoload.php";
+require_once "utils/page.php";
 
 /** Returns an env variable */
 function env(string $key)
@@ -104,14 +105,9 @@ function require_root($path)
     require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
 }
 /** Setup page, initializes a bunch of globals */
-function page(string $page_title, string $page_css = null, bool $with_nav = true, string $page_display_title = null, string $page_description = null)
+function page(string $title, string $page_css = null, bool $with_nav = true, string $page_display_title = null, string $page_description = null)
 {
-    global $title, $description, $css, $nav, $display_title;
-    $title = $page_title;
-    $description = $page_description;
-    $nav = $with_nav;
-    $display_title = $page_display_title;
-    $css = "/assets/css/" . $page_css;
+    return Page::getInstance()->title($title);
 }
 
 /** Checks authentication and authorization stored in session

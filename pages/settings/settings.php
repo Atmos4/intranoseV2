@@ -54,7 +54,7 @@ if ($v_identity->valid()) {
 }
 
 
-page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil", "settings.css");
+page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
 <?php if ($is_visiting): ?>
     <nav id="page-actions">
