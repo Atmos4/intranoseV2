@@ -180,3 +180,26 @@ input[role="switch"]:not(:checked) ~ del {
 input[role="switch"]:not(:checked) ~ ins {
   display: none;
 }
+
+/* Controlled users */
+.control-notice {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  width: fit-content;
+  margin: 0 auto 2rem;
+  box-shadow: 0px 0px 8px orange;
+  border-radius: 10rem;
+}
+.control-notice > button {
+  display: grid;
+  place-content: center;
+  margin: 0;
+  padding: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+}

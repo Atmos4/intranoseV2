@@ -4,7 +4,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 
 require_once "vendor/autoload.php";
+
+session_start();
+
 require_once "utils/page.php";
+require_once "utils/user_control.php";
 
 /** Returns an env variable */
 function env(string $key)

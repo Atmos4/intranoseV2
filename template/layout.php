@@ -38,7 +38,12 @@
         require_root("template/nav.php");
     } ?>
     <main class="container">
-        <?php if ($page->heading !== false): ?>
+
+        <?php
+        if ($page->controlled) {
+            echo ControlNotice();
+        }
+        if ($page->heading !== false): ?>
             <h2 class="center">
                 <?= $page->heading ?: $page->title ?>
             </h2>

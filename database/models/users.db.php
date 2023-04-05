@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'users')]
 class User
 {
+    /** Current user singleton */
+    private static User|null $currentUser = null;
+
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
 
@@ -99,6 +102,15 @@ class User
     {
         $result = em()->getRepository(User::class)->findByLogin($login);
         return count($result) ? $result[0] : new User();
+    }
+
+    static function getCurrent(): User
+    {
+        if (isset($_SESSION['controlled_user_id'])) {
+            Page::getInstance()->controlled();
+        }
+        self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
+        return self::$currentUser;
     }
 }
 

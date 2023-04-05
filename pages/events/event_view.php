@@ -4,7 +4,7 @@ restrict_access();
 require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
-$event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
+$event = Event::getWithGraphData(get_route_param('event_id'), User::getCurrent()->id);
 if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }

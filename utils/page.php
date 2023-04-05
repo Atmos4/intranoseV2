@@ -10,6 +10,7 @@ class Page
     public bool $nav = true;
     public string|false $heading = "";
     public string $content = "";
+    public bool $controlled = false;
 
     /** singleton, so constructing and cloning should be prevented outside the object */
     protected function __construct()
@@ -48,6 +49,11 @@ class Page
     public function title(string $title)
     {
         $this->title = $title;
+        return $this;
+    }
+    public function controlled()
+    {
+        $this->controlled = true;
         return $this;
     }
     public function setContent($content)

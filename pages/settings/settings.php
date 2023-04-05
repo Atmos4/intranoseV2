@@ -11,11 +11,12 @@ if ($user_id) {
     $is_visiting = true;
 }
 
-$user = em()->find(User::class, $user_id ?? $_SESSION['user_id']);
+$user = em()->find(User::class, $user_id ?? User::getCurrent());
 if (!$user) {
     echo "This user doesn't exist";
     return;
 }
+$is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
 
 
