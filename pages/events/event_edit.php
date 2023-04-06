@@ -1,8 +1,6 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
 
-require_once "database/events.api.php";
-
 $event_id = get_route_param("event_id", strict: false);
 
 if ($event_id) {

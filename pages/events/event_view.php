@@ -1,7 +1,6 @@
 <?php
 restrict_access();
 
-require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
 $event = Event::getWithGraphData(get_route_param('event_id'), User::getCurrent()->id);
