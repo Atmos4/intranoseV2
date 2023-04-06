@@ -30,19 +30,12 @@ $connection = DriverManager::getConnection([
 
 global $database, $formatter, $entityManager;
 $entityManager = new EntityManager($connection, $config);
-$database = new PDO("mysql:dbname=" . env("db_name") . ";host=" . env("db_host") . ";charset=utf8mb4", env("db_user"), env("db_password"));
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
 // Time zone and locale
 date_default_timezone_set("Europe/Paris");
 setlocale(LC_ALL, "French");
 //ini_set('display_errors', 1);
-
-/** Get global database */
-function db(): PDO
-{
-    return $GLOBALS['database'];
-}
 
 function em(): EntityManager
 {
@@ -61,39 +54,6 @@ function formatter(string $format = null): IntlDateFormatter
         $formatter->setPattern($format);
     }
     return $formatter;
-}
-/** Perform a SQL query
- * @param mixed $sql_query the SQL query.
- * @param array $args A list of arguments
- * @return PDOStatement|bool
- */
-function query_db($sql_query, ...$args)
-{
-    if ($args) {
-        $request = db()->prepare($sql_query);
-        $request->execute($args);
-        return $request;
-    } else {
-        return db()->query($sql_query);
-    }
-}
-/** Calls query_db() and unwraps the result.
- * @return array a list of DB entities
- */
-function fetch($sql, ...$args)
-{
-    return query_db($sql, ...$args)->fetchAll();
-}
-/** Calls fetch() and redirects to 404 if the result was not single
- * @return array a single DB entity.
- */
-function fetch_single($sql, ...$args)
-{
-    $result = fetch($sql, ...$args);
-    if (count($result) != 1) {
-        force_404("Expected 1 DB entity, got " . count($result));
-    }
-    return $result[0];
 }
 
 // HELPER METHODS

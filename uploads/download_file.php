@@ -1,7 +1,5 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
-require_once "database/events.api.php";
-
 $file_id = $_GET['id'];
 
 $file = em()->find(SharedFile::class, $file_id);

@@ -1,12 +1,7 @@
 <?php
 restrict_access();
 
-$id = $_SESSION['user_id'];
-
-require_once "database/events.api.php";
-
 $user = User::getCurrent();
-
 $event = Event::getWithGraphData(get_route_param('event_id'), $user->id);
 
 if (!$event->open || $event->deadline < date_create("today")) {

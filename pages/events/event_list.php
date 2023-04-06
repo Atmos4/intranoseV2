@@ -3,7 +3,6 @@ restrict_access();
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
 formatter("d MMM");
-require_once "database/events.api.php";
 $user = User::getCurrent();
 $events = Event::listAllOpen($user->id);
 if ($can_edit)

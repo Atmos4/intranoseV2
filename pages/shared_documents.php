@@ -1,9 +1,6 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
 
-require_once "database/shared_docs.api.php";
-
-
 $v = new Validator();
 $file_upload = $v->upload("file_upload")->mime(UploadField::$FILE_MIME);
 
