@@ -203,3 +203,6 @@ input[role="switch"]:not(:checked) ~ ins {
   height: 1.5rem;
   border: none;
 }
+.control-notice ~ main {
+  padding-top: 0;
+}
