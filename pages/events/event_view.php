@@ -4,7 +4,7 @@ restrict_access();
 require_once "database/events.api.php";
 require_once "components/conditional_icon.php";
 
-$event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
+$event = Event::getWithGraphData(get_route_param('event_id'), User::getCurrent()->id);
 if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }
@@ -14,7 +14,7 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 $entry = $event->entries[0] ?? null;
 $has_file = false; //$event-> != 0;
 
-page($event->name, "event_view.css");
+page($event->name)->css("event_view.css");
 ?>
 <nav id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>

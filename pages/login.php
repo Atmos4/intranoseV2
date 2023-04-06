@@ -13,7 +13,7 @@ if ($v->valid()) {
     }
 }
 
-page("Login", "login.css", false, false);
+page("Login", false, false)->css("login.css")->disableNav()->heading(false);
 ?>
 <article>
     <form method="post">

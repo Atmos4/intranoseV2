@@ -1,39 +1,4 @@
 <?php
-session_start();
-function get($route, $path_to_include)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        route($route, $path_to_include);
-    }
-}
-function post($route, $path_to_include)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        route($route, $path_to_include);
-    }
-}
-function put($route, $path_to_include)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-        route($route, $path_to_include);
-    }
-}
-function patch($route, $path_to_include)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'PATCH') {
-        route($route, $path_to_include);
-    }
-}
-function delete($route, $path_to_include)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-        route($route, $path_to_include);
-    }
-}
-function any($route, $path_to_include)
-{
-    route($route, $path_to_include);
-}
 function force_404($msg = null)
 {
     if (env('debug_mode')) {
@@ -45,8 +10,7 @@ function render($path_to_include = "pages/404.php")
 {
     ob_start();
     include_once $path_to_include;
-    global $content;
-    $content = ob_get_clean();
+    Page::getInstance()->setContent(ob_get_clean());
     require_root("template/layout.php");
     exit();
 }

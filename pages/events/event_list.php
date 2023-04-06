@@ -4,12 +4,12 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 
 formatter("d MMM");
 require_once "database/events.api.php";
-$user_id = $_SESSION["user_id"];
-$events = Event::listAllOpen($user_id);
+$user = User::getCurrent();
+$events = Event::listAllOpen($user->id);
 if ($can_edit)
     $draft_events = Event::listDrafts();
 
-page("Événements", "event_list.css");
+page("Événements")->css("event_list.css");
 
 function render_event(EventDto $event)
 {

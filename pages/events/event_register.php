@@ -5,9 +5,9 @@ $id = $_SESSION['user_id'];
 
 require_once "database/events.api.php";
 
-$user = em()->find(User::class, $id);
+$user = User::getCurrent();
 
-$event = Event::getWithGraphData(get_route_param('event_id'), $_SESSION['user_id']);
+$event = Event::getWithGraphData(get_route_param('event_id'), $user->id);
 
 if (!$event->open || $event->deadline < date_create("today")) {
     force_404("this event is closed for entry");
@@ -102,7 +102,7 @@ function getToggleClass($selector, $initialState)
     return $selector . ($initialState ? "" : " hidden");
 }
 
-page("Inscription - " . $event->name, "event_view.css");
+page("Inscription - " . $event->name)->css("event_view.css");
 ?>
 <form id="mainForm" method="post">
     <nav id="page-actions">

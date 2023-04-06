@@ -61,7 +61,7 @@ if ($v->valid()) {
     redirect("/evenements/$event->id");
 }
 
-page($race_id ? "{$race->name} : Modifier" : "Ajouter une course", "race_edit.css");
+page($race_id ? "{$race->name} : Modifier" : "Ajouter une course")->css("race_edit.css");
 ?>
 <form method="post">
     <nav id="page-actions">

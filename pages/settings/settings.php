@@ -11,11 +11,12 @@ if ($user_id) {
     $is_visiting = true;
 }
 
-$user = em()->find(User::class, $user_id ?? $_SESSION['user_id']);
+$user = em()->find(User::class, $user_id ?? User::getCurrent());
 if (!$user) {
     echo "This user doesn't exist";
     return;
 }
+$is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
 
 
@@ -54,7 +55,7 @@ if ($v_identity->valid()) {
 }
 
 
-page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil", "settings.css");
+page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
 <?php if ($is_visiting): ?>
     <nav id="page-actions">
