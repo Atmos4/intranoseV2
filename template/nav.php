@@ -1,15 +1,12 @@
 <?php
 $nav_routes = [
-    //"/accueil" => "Accueil",
     "/evenements" => ["Événements", "fa-calendar"],
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
-if (check_auth(Access::$ADD_EVENTS)) {
-    $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
-}
-;
-$icons = [];
+/* if (check_auth(Access::$ADD_EVENTS)) {
+$nav_routes["/documents"] = ["Documents partagés", "fa-file"];
+} */
 ?>
 
 <nav class="container-fluid" id="main-menu">

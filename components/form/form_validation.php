@@ -490,7 +490,6 @@ class UploadField extends Field
 
     function check(string $msg = null)
     {
-        var_dump($_FILES);
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
                 // Check if the error field is ok 
@@ -498,11 +497,9 @@ class UploadField extends Field
                     !isset($_FILES[$this->key]['error']) ||
                     is_array($_FILES[$this->key]['error'])
                 ) {
-                    $this->set_error('Paramètres incorrects.');
-                }
-
-                // Check $_FILES['upfile']['error'] value.
-                if ($this->should_test()) {
+                    $this->set_error('Paramètres incorrects');
+                } else {
+                    // Check $_FILES['upfile']['error'] value.
                     switch ($_FILES[$this->key]['error']) {
                         case UPLOAD_ERR_OK:
                             break;
@@ -510,22 +507,25 @@ class UploadField extends Field
                             $this->set_error("Choisissez un fichier");
                             break;
                         case UPLOAD_ERR_INI_SIZE:
-                            $this->set_error("Fichier trop lourd.");
+                            $this->set_error("Fichier trop lourd");
                             break;
                         case UPLOAD_ERR_FORM_SIZE:
-                            $this->set_error("Fichier trop lourd.");
+                            $this->set_error("Fichier trop lourd");
                             break;
                         default:
-                            $this->set_error("Erreur inconnue.");
+                            $this->set_error("Erreur inconnue");
                     }
 
                     // Check if the name of the file is correct
                     // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
                     if (!preg_match("`^[-\d\wÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
-                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés.");
+                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés");
                     }
 
-
+                    // Check custom filesize here. 
+                    if ($_FILES[$this->key]['size'] > 1000000) {
+                        $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
+                    }
                 }
 
             }
@@ -545,7 +545,7 @@ class UploadField extends Field
                     true
                 )
             ) {
-                $this->set_error("Seuls les formats " . implode(", ", array_keys($this->allowed_mime)) . " sont acceptés.");
+                $this->set_error("Seuls les formats " . implode(", ", array_keys($this->allowed_mime)) . " sont acceptés");
             }
         }
         return $this;
@@ -560,7 +560,7 @@ class UploadField extends Field
         if ($result)
             $this->context->set_success($file_exists ? "Fichier modifié" : "Fichier enregistré");
         else
-            $this->set_error("Problème à l'enregistrement.");
+            $this->set_error("Problème à l'enregistrement");
         return $result;
     }
 
