@@ -14,7 +14,7 @@ final class Version20230401112501 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Adds a shared_documents table';
+        return 'Add shared_documents';
     }
 
     public function up(Schema $schema): void

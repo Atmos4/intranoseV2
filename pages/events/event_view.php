@@ -12,7 +12,6 @@ if (!$event->open) {
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
 $entry = $event->entries[0] ?? null;
-$has_file = false; //$event-> != 0;
 
 page($event->name)->css("event_view.css");
 ?>
@@ -76,18 +75,6 @@ page($event->name)->css("event_view.css");
             </div>
         </div>
 
-        <?php /* if ($has_file): ?>
-         <div class="file-button">
-         <a href="/download?id=<?= $event["circu"] ?>" role="button">
-         <div>
-         <i class="fas fa-paperclip"></i>
-         </div>
-         <div>
-         <b>Informations</b>
-         </div>
-         </a>
-         </div>
-         <?php endif */?>
 
         <div class="row">
             <b>
@@ -106,6 +93,11 @@ page($event->name)->css("event_view.css");
                 <?php endif ?>
             </b>
         </div>
+
+        <?php if ($event->bulletin_url): ?>
+            <a href="<?= $event->bulletin_url ?>" target="_blank"> <i class="fa fa-paperclip"></i> Bulletin
+                <i class="fa fa-external-link"></i></a>
+        <?php endif ?>
     </header>
 
     <?php if ($entry && $entry->present): ?>
