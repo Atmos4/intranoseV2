@@ -456,84 +456,112 @@ class SwitchField extends Field
 
 class UploadField extends Field
 {
+    public static $FILE_MIME = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'doc' => 'application/msword',
+        'pdf' => 'application/pdf'
+    ];
+    public static $IMAGE_MIME = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif'
+    ];
     function set_type()
     {
         $this->type = FieldType::File;
     }
 
     public string $target_dir = "uploads/";
+    public string $target_file = '';
+    public string $file_type;
+    public string $file_name = '';
+
+    public array $allowed_mime = array();
+
+    function __construct(string $key, mixed $value = null, $context = null)
+    {
+        parent::__construct($key, $value, $context);
+        $this->file_name = $_FILES[$this->key]["name"] ?? "";
+        $this->target_file = isset($_FILES[$this->key]) ? $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
+        $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
+    }
 
     function check(string $msg = null)
     {
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
-                $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-                $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-                $this->check_file_exists($target_file);
-                $this->check_file_size();
-                $this->check_format($fileType);
-            } else {
-                $this->set_error("Choisissez un fichier");
+                // Check if the error field is ok 
+                if (
+                    !isset($_FILES[$this->key]['error']) ||
+                    is_array($_FILES[$this->key]['error'])
+                ) {
+                    $this->set_error('Paramètres incorrects');
+                } else {
+                    // Check $_FILES['upfile']['error'] value.
+                    switch ($_FILES[$this->key]['error']) {
+                        case UPLOAD_ERR_OK:
+                            break;
+                        case UPLOAD_ERR_NO_FILE:
+                            $this->set_error("Choisissez un fichier");
+                            break;
+                        case UPLOAD_ERR_INI_SIZE:
+                            $this->set_error("Fichier trop lourd");
+                            break;
+                        case UPLOAD_ERR_FORM_SIZE:
+                            $this->set_error("Fichier trop lourd");
+                            break;
+                        default:
+                            $this->set_error("Erreur inconnue");
+                    }
+
+                    // Check if the name of the file is correct
+                    // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
+                    if (!preg_match("`^[-\d\wÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
+                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés");
+                    }
+
+                    // Check custom filesize here. 
+                    if ($_FILES[$this->key]['size'] > 1000000) {
+                        $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
+                    }
+                }
+
             }
-
         }
     }
 
-    function check_file_exists(string $target_file)
+    function mime(array $mimes)
     {
-        // Check if file already exists in the repo
-        if (file_exists($target_file)) {
-            $this->set_error("Le fichier existe déjà.");
+        if ($this->should_test()) {
+            $this->allowed_mime = $mimes;
+            // Allow certain file formats
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            if (
+                !array_search(
+                    $finfo->file($_FILES[$this->key]['tmp_name']),
+                    $this->allowed_mime,
+                    true
+                )
+            ) {
+                $this->set_error("Seuls les formats " . implode(", ", array_keys($this->allowed_mime)) . " sont acceptés");
+            }
         }
-    }
-
-    function check_file_size()
-    {
-        // Check file size
-        if ($_FILES[$this->key]["size"] > 1000000) {
-            $this->set_error("Fichier trop lourd.");
-        }
-    }
-
-    function check_format(string $fileType)
-    {
-        // Allow certain file formats
-        if (
-            $fileType != "jpg" && $fileType != "png" && $fileType != "jpeg"
-            && $fileType != "gif" && $fileType != "pdf"
-        ) {
-            $this->set_error("Seuls les formats JPG, PNG, JPEG, GIF et PDF sont acceptés.");
-        }
+        return $this;
     }
 
     function save_file()
     {
-        $target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-        if (file_exists($target_file)) {
-            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
-                return "Fichier modifié";
-            }
-        } else {
-            if (move_uploaded_file($_FILES[$this->key]["tmp_name"], $target_file)) {
-                return "Fichier enregistré";
-            }
-        }
-
-    }
-
-    function get_type()
-    {
-        return $_FILES[$this->key]["type"];
-    }
-
-    function get_size()
-    {
-        return $_FILES[$this->key]["size"];
-    }
-
-    function get_name()
-    {
-        return $_FILES[$this->key]["name"];
+        $file_exists = file_exists($this->target_file);
+        if ($file_exists)
+            unlink($this->target_file);
+        $result = move_uploaded_file($_FILES[$this->key]["tmp_name"], $this->target_file);
+        if ($result)
+            $this->context->set_success($file_exists ? "Fichier modifié" : "Fichier enregistré");
+        else
+            $this->set_error("Problème à l'enregistrement");
+        return $result;
     }
 
     function set_target_dir(string $directory)

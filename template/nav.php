@@ -1,15 +1,12 @@
 <?php
 $nav_routes = [
-    //"/accueil" => "Accueil",
     "/evenements" => ["Événements", "fa-calendar"],
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
-if (in_array($_SESSION['user_permission'], ["ROOT", "STAFF", "COACH", "COACHSTAFF"])) {
-    $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
-}
-;
-$icons = [];
+/* if (check_auth(Access::$ADD_EVENTS)) {
+$nav_routes["/documents"] = ["Documents partagés", "fa-file"];
+} */
 ?>
 
 <nav class="container-fluid" id="main-menu">
@@ -25,7 +22,7 @@ $icons = [];
             <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a
                     class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i
                         class="fas <?= $nav_title[1] ?>"></i>
-                    <?=" " . $nav_title[0] ?>
+                    <?= " " . $nav_title[0] ?>
                 </a></li>
         <?php endforeach ?>
     </ul>

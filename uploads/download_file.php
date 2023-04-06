@@ -1,14 +1,16 @@
 <?php
+restrict_access(Access::$ADD_EVENTS);
 require_once "database/events.api.php";
 
 $file_id = $_GET['id'];
 
-$file_infos = get_file($file_id);
+$file = em()->find(SharedFile::class, $file_id);
+$path = $file->path;
 
 
-header("Content-Type: " . $file_infos['mime']);
-header("Content-Disposition: attachment; filename=" . $file_infos['path']);
-header("Content-Length: " . filesize($file_infos['path']));
-readfile($file_infos["path"]);
+header("Content-Type: " . $file->mime);
+header("Content-Disposition: attachment; filename=" . $path);
+header("Content-Length: " . filesize($path));
+readfile($path);
 
 ?>
