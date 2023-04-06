@@ -90,6 +90,9 @@ class Event
     #[Column]
     public bool $open = false;
 
+    #[Column]
+    public string $bulletin_url = "";
+
     /** @var Collection<int, EventEntry> */
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $entries;
@@ -109,12 +112,14 @@ class Event
         $name,
         $start_date,
         $end_date,
-        $deadline
+        $deadline,
+        $bulletin_url
     ) {
         $this->name = $name;
         $this->start_date = date_create($start_date);
         $this->end_date = date_create($end_date);
         $this->deadline = date_create($deadline);
+        $this->bulletin_url = $bulletin_url;
     }
 
     static function getWithGraphData($event_id, $user_id = null): Event|null

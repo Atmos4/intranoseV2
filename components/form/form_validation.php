@@ -147,6 +147,11 @@ class Validator
         return $this->create($key, SelectField::class, null);
     }
 
+    function url(string $key): UrlField
+    {
+        return $this->create($key, UrlField::class, null);
+    }
+
 
 }
 
@@ -160,6 +165,7 @@ enum FieldType: string
     case Password = "password";
     case Checkbox = "checkbox";
     case File = "file";
+    case Url = "url";
 }
 
 class Field
@@ -694,5 +700,20 @@ class SelectField extends Field
             $this->option($value, $label);
         }
         return $this;
+    }
+}
+
+class UrlField extends StringField
+{
+    function set_type()
+    {
+        $this->type = FieldType::Url;
+    }
+
+    function check(string $msg = null)
+    {
+        if ($this->should_test() && $this->value && !filter_var($this->value, FILTER_VALIDATE_URL)) {
+            $this->set_error("Format de l'url invalide");
+        }
     }
 }
