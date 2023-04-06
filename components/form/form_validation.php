@@ -66,7 +66,7 @@ class Validator
         }
         if (!$this->empty) {
             if ($this->valid() && $this->success) {
-                $result .= "<ins>$this->success</ins><br></br>";
+                $result .= "<ins>$this->success</ins>";
             }
             $result .= "<br/>";
         }
@@ -456,6 +456,18 @@ class SwitchField extends Field
 
 class UploadField extends Field
 {
+    public static $FILE_MIME = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'doc' => 'application/msword',
+        'pdf' => 'application/pdf'
+    ];
+    public static $IMAGE_MIME = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif'
+    ];
     function set_type()
     {
         $this->type = FieldType::File;
@@ -466,14 +478,22 @@ class UploadField extends Field
     public string $file_type;
     public string $file_name = '';
 
+    public array $allowed_mime = array();
+
+    function __construct(string $key, mixed $value = null, $context = null)
+    {
+        parent::__construct($key, $value, $context);
+        $this->file_name = $_FILES[$this->key]["name"] ?? "";
+        $this->target_file = isset($_FILES[$this->key]) ? $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
+        $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
+    }
+
     function check(string $msg = null)
     {
         var_dump($_FILES);
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
-                $this->file_name = $_FILES[$this->key]["name"] ?? "";
-                $this->target_file = $this->target_dir . basename($_FILES[$this->key]["name"]);
-                $this->file_type = strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION));
+                // Check if the error field is ok 
                 if (
                     !isset($_FILES[$this->key]['error']) ||
                     is_array($_FILES[$this->key]['error'])
@@ -481,63 +501,51 @@ class UploadField extends Field
                     $this->set_error('Paramètres incorrects.');
                 }
 
+                // Check $_FILES['upfile']['error'] value.
+                if ($this->should_test()) {
+                    switch ($_FILES[$this->key]['error']) {
+                        case UPLOAD_ERR_OK:
+                            break;
+                        case UPLOAD_ERR_NO_FILE:
+                            $this->set_error("Choisissez un fichier");
+                            break;
+                        case UPLOAD_ERR_INI_SIZE:
+                            $this->set_error("Fichier trop lourd.");
+                            break;
+                        case UPLOAD_ERR_FORM_SIZE:
+                            $this->set_error("Fichier trop lourd.");
+                            break;
+                        default:
+                            $this->set_error("Erreur inconnue.");
+                    }
+
+                    // Check if the name of the file is correct
+                    // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
+                    if (!preg_match("`^[-\d\wÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
+                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés.");
+                    }
+
+
+                }
+
             }
         }
     }
 
-    function files_errors()
-    {
-        // Check $_FILES['upfile']['error'] value.
-        if ($this->should_test()) {
-            switch ($_FILES[$this->key]['error']) {
-                case UPLOAD_ERR_OK:
-                    break;
-                case UPLOAD_ERR_NO_FILE:
-                    $this->set_error("Choisissez un fichier");
-                    break;
-                case UPLOAD_ERR_INI_SIZE:
-                    $this->set_error("Fichier trop lourd.");
-                    break;
-                case UPLOAD_ERR_FORM_SIZE:
-                    $this->set_error("Fichier trop lourd.");
-                    break;
-                default:
-                    $this->set_error("Erreur inconnue.");
-            }
-        }
-        return $this;
-    }
-
-    function mime_type()
+    function mime(array $mimes)
     {
         if ($this->should_test()) {
+            $this->allowed_mime = $mimes;
             // Allow certain file formats
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             if (
-                false === $ext = array_search(
+                !array_search(
                     $finfo->file($_FILES[$this->key]['tmp_name']),
-                    array(
-                        'jpg' => 'image/jpeg',
-                        'png' => 'image/png',
-                        'gif' => 'image/gif',
-                        'doc' => 'application/msword',
-                        'pdf' => 'application/pdf',
-                    ),
+                    $this->allowed_mime,
                     true
                 )
             ) {
-                $this->set_error("Seuls les formats JPG, PNG, GIF, DOC et PDF sont acceptés.");
-            }
-        }
-        return $this;
-    }
-
-    function file_name()
-    {
-        if ($this->should_test()) {
-            // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
-            if (!preg_match("`^[-0-9a-zA-ZÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
-                $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés.");
+                $this->set_error("Seuls les formats " . implode(", ", array_keys($this->allowed_mime)) . " sont acceptés.");
             }
         }
         return $this;

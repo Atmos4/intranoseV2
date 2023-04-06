@@ -5,7 +5,7 @@ $nav_routes = [
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
-if (in_array($_SESSION['user_permission'], [Permission::COACH, Permission::STAFF, Permission::ROOT, Permission::COACHSTAFF])) {
+if (check_auth(Access::$ADD_EVENTS)) {
     $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
 }
 ;
