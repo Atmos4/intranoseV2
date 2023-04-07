@@ -1,8 +1,7 @@
 <?php
 
-require_once __DIR__ . '/env.php';
-require_once __DIR__ . '/utils/core.php';
-require_once __DIR__ . '/utils/router.php';
+require_once 'core/init.php';
+require_once 'core/router.php';
 
 route('/', 'pages/index.php');
 route('/login', 'pages/login.php');

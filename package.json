@@ -1,0 +1,14 @@
+{
+  "name": "intranose",
+  "version": "1.0.0",
+  "repository": "https://github.com/Atmos4/intranoseV2.git",
+  "author": "Atmos4 <artrist.perrin@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "setup": "composer install && yarn update:db",
+    "update": "yarn update:autoload && yarn update:db",
+    "update:db": "php bin/doctrine --no-interaction migrations:migrate",
+    "update:autoload": "composer dump-autoload",
+    "diff": "php bin/doctrine migrations:diff --allow-empty-diff"
+  }
+}

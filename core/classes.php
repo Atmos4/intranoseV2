@@ -1,18 +1,13 @@
 <?php
 
-class Page
+class Singleton
 {
-    private static self $instance;
+    private static $instances = [];
 
-    public string|false $title = "";
-    public string $description = "";
-    public string $css = "";
-    public bool $nav = true;
-    public string|false $heading = "";
-    public string $content = "";
-    public bool $controlled = false;
-
-    /** singleton, so constructing and cloning should be prevented outside the object */
+    /**
+     * The Singleton's constructor should always be private to prevent direct
+     * construction calls with the `new` operator.
+     */
     protected function __construct()
     {
     }
@@ -20,11 +15,23 @@ class Page
     {
     }
 
-    public static function getInstance(): Page
+    public static function getInstance(): static
     {
-        self::$instance ??= new static();
-        return self::$instance;
+        $cls = static::class;
+        self::$instances[$cls] ??= new static();
+        return self::$instances[$cls];
     }
+}
+
+class Page extends Singleton
+{
+    public string|false $title = "";
+    public string $description = "";
+    public string $css = "";
+    public bool $nav = true;
+    public string|false $heading = "";
+    public string $content = "";
+    public bool $controlled = false;
 
     public function css(string $css)
     {
@@ -59,5 +66,20 @@ class Page
     public function setContent($content)
     {
         $this->content = $content;
+    }
+}
+
+class Env extends Singleton
+{
+    private $hashmap;
+
+    protected function __construct()
+    {
+        $this->hashmap = include("env.php");
+    }
+
+    function getValue($key)
+    {
+        return $this->hashmap[$key] ?? "";
     }
 }

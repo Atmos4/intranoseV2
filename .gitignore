@@ -7,3 +7,4 @@ env.php
 !/uploads/shared_docs/*.php
 !/uploads/*.php
 /vendor/
+/node_modules
