@@ -69,7 +69,7 @@ function require_root($path)
     require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
 }
 /** Setup page */
-function page(string $title, string $page_css = null, bool $with_nav = true, string $page_display_title = null, string $page_description = null)
+function page(string $title)
 {
     return Page::getInstance()->title($title);
 }

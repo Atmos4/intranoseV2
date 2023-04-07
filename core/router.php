@@ -41,8 +41,7 @@ function route($route, $path_to_include)
         return;
     }
     $parameters = [];
-    for ($__i__ = 0; $__i__ < count($route_parts); $__i__++) {
-        $route_part = $route_parts[$__i__];
+    foreach ($route_parts as $__i__ => $route_part) {
         if (preg_match("/^[$]/", $route_part)) {
             $route_part = ltrim($route_part, '$');
             array_push($parameters, $request_url_parts[$__i__]);
