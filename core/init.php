@@ -7,13 +7,13 @@ require_once "vendor/autoload.php";
 
 session_start();
 
-require_once "utils/page.php";
-require_once "utils/user_control.php";
+require_once "core/classes.php";
+require_once "core/user_control.php";
 
 /** Returns an env variable */
 function env(string $key)
 {
-    return $GLOBALS[$key] ?? null;
+    return Env::getInstance()->getValue($key);
 }
 
 $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
@@ -23,7 +23,7 @@ $connection = DriverManager::getConnection([
     'driver' => 'pdo_mysql',
     'user' => env("db_user"),
     'password' => env("db_password"),
-    'dbname' => env("orm_db_name"),
+    'dbname' => env("db_name"),
     'host' => env("db_host"),
     'charset' => 'utf8mb4'
 ], $config);
@@ -68,7 +68,7 @@ function require_root($path)
 {
     require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
 }
-/** Setup page, initializes a bunch of globals */
+/** Setup page */
 function page(string $title, string $page_css = null, bool $with_nav = true, string $page_display_title = null, string $page_description = null)
 {
     return Page::getInstance()->title($title);

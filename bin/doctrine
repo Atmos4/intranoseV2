@@ -8,8 +8,7 @@ use Doctrine\Migrations\Tools\Console\Command;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
-require_once 'env.php';
-require_once 'utils/core.php';
+require_once 'core/init.php';
 
 $config = new ConfigurationArray([
     'table_storage' => [
