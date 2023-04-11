@@ -5,7 +5,7 @@ $v = new Validator([], "new_user_form");
 $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required();
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
 $licence = $v->number("licence")->label("Numéro de licence")->placeholder("Numéro de licence");
-$real_email = $v->email("real_email")->label("Addresse mail perso")->placeholder("Addresse mail perso")->required();
+$real_email = $v->email("real_email")->label("Addresse mail perso")->placeholder("Addresse mail perso")->unity()->required();
 $gender = $v->text("gender")->label("Sexe")->required();
 
 $sportident = $v->number("sportident")->label("Numéro SportIdent")->placeholder()->min_length(5);
@@ -18,7 +18,7 @@ if ($v->valid()) {
     $login = strtolower(substr($first_name->value, 0, 1) . $last_name->value);
     $list_login_numbers = User::getBySubstring($login);
     $max_number = $list_login_numbers ? (max($list_login_numbers) ? max($list_login_numbers) + 1 : 1) : 0;
-    $user_same_name = User::findByUsernameAndName($first_name->value, $last_name->value);
+    $user_same_name = User::findByFirstAndLastName($first_name->value, $last_name->value);
     $nose_email = strtolower($first_name->value . "." . $last_name->value) . (count($user_same_name) ?? '') . "@nose42.fr";
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, $licence->value, Gender::from($gender->value));

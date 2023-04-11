@@ -593,6 +593,14 @@ class EmailField extends StringField
             $this->set_error($msg ?? "Format d'email invalide");
         }
     }
+
+    function unity()
+    {
+        if ($this->should_test() && count(em()->getRepository(User::class)->findBy(['real_email' => $this->value]))) {
+            $this->set_error("Cet email existe déjà");
+        }
+        return $this;
+    }
 }
 
 class PhoneField extends StringField

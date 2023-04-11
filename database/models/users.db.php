@@ -137,7 +137,7 @@ class User
         return $user_numbers;
     }
 
-    static function findByUsernameAndName($firstname, $lastname)
+    static function findByFirstAndLastName($firstname, $lastname)
     {
         $query = em()->createQuery('SELECT u FROM User u WHERE u.first_name = :firstname AND u.last_name = :lastname')
             ->setParameter('firstname', $firstname)
