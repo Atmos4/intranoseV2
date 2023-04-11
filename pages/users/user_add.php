@@ -14,12 +14,12 @@ $postal_code = $v->number("postal_code")->label("Code postal")->placeholder();
 $city = $v->text("city")->label("Ville")->placeholder();
 $phone = $v->phone("phone")->label("Numéro de téléphone")->placeholder();
 
-
 if ($v->valid()) {
     $login = strtolower(substr($first_name->value, 0, 1) . $last_name->value);
     $list_login_numbers = User::getBySubstring($login);
     $max_number = $list_login_numbers ? (max($list_login_numbers) ? max($list_login_numbers) + 1 : 1) : 0;
-    $nose_email = strtolower($first_name->value . "." . $last_name->value) . ($max_number ?? '') . "@nose42.fr";
+    $user_same_name = User::findByUsernameAndName($first_name->value, $last_name->value);
+    $nose_email = strtolower($first_name->value . "." . $last_name->value) . (count($user_same_name) ?? '') . "@nose42.fr";
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, $licence->value, Gender::from($gender->value));
     $new_user->set_email($real_email->value, $nose_email);
