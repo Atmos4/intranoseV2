@@ -61,7 +61,8 @@ function render_event(EventDto $event)
 
 <?php if ($can_edit): ?>
     <p class="center">
-        <a role="button" href="/evenements/nouveau" class="secondary"><i class="fas fa-plus"></i> Ajouter un événement</a>
+        <a role="button" href="/evenements/nouveau" class="contrast outline"><i class="fas fa-plus"></i> Ajouter un
+            événement</a>
     </p>
 <?php endif ?>
 

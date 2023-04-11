@@ -81,11 +81,16 @@ class User
 
     function set_perso($sportident, $address, $postal_code, $city, $phone)
     {
-        $this->sportident = $sportident;
+        $this->sportident = $sportident ?: 0;
         $this->address = $address;
         $this->postal_code = intval($postal_code);
         $this->city = $city;
-        $this->$phone = intval($phone);
+        $normalized_phone = preg_replace('/[^0-9]/', '', $phone);
+        $normalized_phone = substr($normalized_phone, -9);
+        $final_phone = '+33' . $normalized_phone;
+        $this->phone = $final_phone;
+        var_dump($this->phone);
+        var_dump($this->city);
     }
 
     function set_password($password)
@@ -111,6 +116,25 @@ class User
         }
         self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
         return self::$currentUser;
+    }
+
+    static function getBySubstring($subString): array
+    {
+        // Returns all the numbers associated with a login $subString
+        $user_numbers = em()
+            ->createQuery("SELECT SUBSTRING(u.login, LENGTH(?1))
+            FROM User u
+            WHERE u.login LIKE ?1")
+            ->setParameter(1, $subString . '%')
+            ->getResult();
+
+
+        $user_numbers = array_map(function ($value) {
+            return $value[1] ? intval($value[1]) : null;
+        }, $user_numbers);
+
+        var_dump($user_numbers);
+        return $user_numbers;
     }
 }
 

@@ -29,7 +29,9 @@ route('/licencies/$user_id/modifier', 'pages/settings/settings.php');
 
 // Users
 route('/licencies', 'pages/users/user_list.php');
+route('/licencies/add', 'pages/users/user_add.php');
 route('/licencies/$user_id', 'pages/users/user_view.php');
+route('/licencies/$user_id/supprimer', 'pages/users/user_delete.php');
 
 // Shared documents
 // route('/documents', 'pages/shared_documents.php');

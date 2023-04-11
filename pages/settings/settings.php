@@ -127,8 +127,7 @@ if (!$can_reset_credentials) {
     $confirm_password = $v_password->password("confirm_password")
         ->autocomplete("new-password")
         ->placeholder("Confirmer le mot de passe")
-        ->required()
-        ->secure();
+        ->required();
     $current_password->condition(password_verify($current_password->value ?? "", $user->password), "Mauvais mot de passe");
     $confirm_password->condition($new_password->value == $confirm_password->value, "Les deux mots de passe sont différents");
 }

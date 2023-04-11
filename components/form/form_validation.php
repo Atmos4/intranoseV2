@@ -335,7 +335,7 @@ class StringField extends Field
 
     function min_length(int $count, string $msg = null)
     {
-        if ($this->should_test() && strlen($this->value) < $count) {
+        if ($this->should_test() && strlen($this->value ?? "") && strlen($this->value ?? "") < $count) {
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
@@ -589,7 +589,7 @@ class EmailField extends StringField
 
     function check(string $msg = null)
     {
-        if (!filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+        if ($this->should_test() && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             $this->set_error($msg ?? "Format d'email invalide");
         }
     }
