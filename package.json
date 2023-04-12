@@ -5,10 +5,12 @@
   "author": "Atmos4 <artrist.perrin@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "setup": "composer install && yarn update:db",
-    "update": "yarn update:autoload && yarn update:db",
-    "update:db": "php bin/doctrine --no-interaction migrations:migrate",
+    "setup": "composer install && yarn db:migrate",
+    "update:all": "yarn update:autoload && yarn db:migrate",
+    "db:migrate": "php bin/doctrine --no-interaction migrations:migrate",
     "update:autoload": "composer dump-autoload",
-    "diff": "php bin/doctrine migrations:diff --allow-empty-diff"
+    "db:diff": "php bin/doctrine migrations:diff --allow-empty-diff",
+    "db:execute": "php bin/doctrine migrations:execute",
+    "db:list": "php bin/doctrine migrations:list"
   }
 }

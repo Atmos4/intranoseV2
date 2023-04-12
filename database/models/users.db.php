@@ -1,8 +1,12 @@
 <?php
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'users')]
@@ -10,6 +14,9 @@ class User
 {
     /** Current user singleton */
     private static User|null $currentUser = null;
+
+    /** Main user singleton */
+    private static User|null $mainUser = null;
 
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
@@ -46,6 +53,12 @@ class User
 
     #[Column]
     public bool $active = false;
+
+    #[ManyToOne]
+    public Family|null $family = null;
+
+    #[Column]
+    public bool $family_leader = false;
 
     function __construct()
     {
@@ -90,6 +103,12 @@ class User
         return self::$currentUser;
     }
 
+    static function getMain(): User
+    {
+        self::$mainUser ??= em()->find(User::class, $_SESSION['user_id']);
+        return self::$mainUser;
+    }
+
     static function getBySubstring($subString): array
     {
         // Returns all the numbers associated with a login $subString
@@ -115,6 +134,25 @@ class User
             ->setParameter('lastname', $lastname);
 
         return $query->getResult();
+    }
+}
+
+#[Entity, Table(name: 'families')]
+class Family
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string $name = "";
+
+    /** @var Collection<int, User> members */
+    #[OneToMany(targetEntity: User::class, mappedBy: 'parent')]
+    public Collection $members;
+
+    function __construct()
+    {
+        $this->members = new ArrayCollection();
     }
 }
 
