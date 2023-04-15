@@ -55,17 +55,14 @@ article {
   color: var(--ins-color);
 }
 .error,
-a:not([type="button"]).destructive {
-  color: var(--del-color);
+.destructive {
+  --primary: var(--del-color);
+  --dropdown-color: var(--del-color);
+  --primary-hover: var(--del-color);
 }
 label.error:hover {
   cursor: pointer;
   text-decoration: underline;
-}
-a[type="button"].destructive,
-button.destructive {
-  background-color: var(--del-color);
-  border-color: var(--del-color);
 }
 .space-before {
   margin-left: 0.5em;
@@ -81,9 +78,6 @@ button.destructive {
 #main-menu > ul > li:hover > a {
   background-color: var(--dropdown-hover-background-color);
   color: var(--primary-hover);
-}
-#main-menu li:hover a.disconnect {
-  color: var(--del-color);
 }
 @media screen and (max-width: 768px) {
   #main-menu {
@@ -115,6 +109,7 @@ button.destructive {
 #page-actions button {
   margin: 0;
   padding: 0.5em 1em;
+  width: fit-content;
 }
 #page-actions > :where(a, li) {
   margin: 0;

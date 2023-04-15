@@ -26,15 +26,14 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
                 class="fas fa-caret-left"></i> Retour</a>
 
         <?php if ($can_edit_users): ?>
-            <div>
-                <button type="submit" class="outline">Contrôler</button>
-            </div>
+            <button type="submit" class="outline">Contrôler</button>
             <li role="list" dir="rtl">
                 <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
                 <ul role="listbox">
-                    <li><a href="/licencies/<?= $user->id ?>/modifier" class="secondary">
-                            <i class="fas fa-pen"></i> Modifier
-                        </a></li>
+                    <li><a href="/licencies/<?= $user->id ?>/modifier" class="contrast">Modifier</a></li>
+                    <li><a href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>"
+                            class="contrast">Gérer la famille</a>
+                    </li>
                     <?php if ($is_root): ?>
                         <li>
                             <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">

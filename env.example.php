@@ -14,5 +14,5 @@ return [
     // SQL Database password:
     "db_password" => "",
     // Keep this false for production:
-    "developement" => true
+    "development" => true
 ];

@@ -46,11 +46,9 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
         <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
             <i class="fas fa-caret-left"></i> Annuler
         </a>
-        <div>
-            <button type="submit">
-                <?= $event_id ? "Modifier" : "Créer" ?>
-            </button>
-        </div>
+        <button type="submit">
+            <?= $event_id ? "Modifier" : "Créer" ?>
+        </button>
     </nav>
     <article>
         <div class="row">

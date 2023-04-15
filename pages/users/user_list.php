@@ -1,5 +1,5 @@
 <?php
-restrict_access(Access::$EDIT_USERS);
+restrict_access();
 $can_add_user = check_auth(Access::$EDIT_USERS);
 $users = em()->getRepository(User::class)->findBy(['active' => "1"], ['last_name' => 'ASC', 'first_name' => 'ASC']);
 page("Les licenciés")->css("user_list.css");
@@ -11,6 +11,7 @@ page("Les licenciés")->css("user_list.css");
         <a role="button" href="/licencies/reactiver" class="contrast outline"><i class="fas fa-arrow-up"></i> Réactiver
             des
             licenciés</a>
+        <a role="button" href="/familles" class="contrast outline"><i class="fas fa-users"></i> Familles</a>
     </p>
 <?php endif ?>
 

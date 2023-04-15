@@ -94,6 +94,11 @@ class User
         return count($result) ? $result[0] : new User();
     }
 
+    static function get($user_id): User
+    {
+        return em()->find(User::class, $user_id);
+    }
+
     static function getCurrent(): User
     {
         if (isset($_SESSION['controlled_user_id'])) {
@@ -147,7 +152,7 @@ class Family
     public string $name = "";
 
     /** @var Collection<int, User> members */
-    #[OneToMany(targetEntity: User::class, mappedBy: 'parent')]
+    #[OneToMany(targetEntity: User::class, mappedBy: 'family')]
     public Collection $members;
 
     function __construct()
