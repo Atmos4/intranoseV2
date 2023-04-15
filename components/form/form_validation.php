@@ -335,7 +335,7 @@ class StringField extends Field
 
     function min_length(int $count, string $msg = null)
     {
-        if ($this->should_test() && strlen($this->value ?? "") && strlen($this->value ?? "") < $count) {
+        if ($this->should_test() && strlen($this->value ?? "") < $count) {
             $this->set_error($msg ?? "Trop court");
         }
         return $this;
@@ -592,14 +592,6 @@ class EmailField extends StringField
         if ($this->should_test() && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             $this->set_error($msg ?? "Format d'email invalide");
         }
-    }
-
-    function unity()
-    {
-        if ($this->should_test() && count(em()->getRepository(User::class)->findBy(['real_email' => $this->value]))) {
-            $this->set_error("Cet email existe déjà");
-        }
-        return $this;
     }
 }
 

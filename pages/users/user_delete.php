@@ -8,7 +8,7 @@ if (!$user) {
     return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
-    em()->remove($user);
+    $user->active = false;
     em()->flush();
     redirect("/licencies");
 }
@@ -17,12 +17,12 @@ page("Confirmation de suppression");
 ?>
 <form method="post">
     <div class="row center">
-        <p>Sûr de vouloir supprimer cet utilisateur?</p>
+        <p>Sûr de vouloir désactiver cet utilisateur ?</p>
         <div class="col-auto">
             <a class="secondary" role="button" href="/licencies">Annuler</a>
         </div>
         <div class="col-auto">
-            <button type="submit" name="delete" value="true" class="destructive">Supprimer</button>
+            <button type="submit" name="delete" value="true" class="destructive">Descativer</button>
         </div>
     </div>
 </form>

@@ -4,7 +4,9 @@ $login = $v->text("login")->placeholder("Login")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
 if ($v->valid()) {
     $user = User::getByLogin($login->value);
-    if (password_verify($password->value, $user->password)) {
+    if (!$user->active) {
+        $login->set_error("Votre compte est désactivé");
+    } else if (password_verify($password->value, $user->password)) {
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_permission'] = $user->permission;
         redirect("/");

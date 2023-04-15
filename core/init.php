@@ -101,6 +101,9 @@ function restrict_access($permissions = [])
         $permission = $_SESSION['user_permission']?->value ?? "non authenticated user";
         force_404("Access for {$permission} is restricted for this page. ");
     }
+    if (!em()->find(User::class, $_SESSION['user_id'])->active) {
+        force_404("Votre compte est inactif.");
+    }
 }
 
 /**

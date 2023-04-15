@@ -11,10 +11,20 @@ page("Les licenciés")->css("user_list.css");
     </p>
 <?php endif ?>
 
-<form method="get">
-    <input type="search" id="search-users" name="search" placeholder="Rechercher..."
-        onkeyup="searchTable('search-users','users-table')">
-</form>
+<input type="search" id="search-users" name="search" placeholder="Rechercher..." onkeyup="searchTable('users-table')"
+    onload="searchTable('users-table')">
+<fieldset>
+    <label for="active">
+        <input type="checkbox" id="active" name="active" checked onchange="searchTable('users-table')">
+        Licenciés actifs
+    </label>
+    <label for="inactive">
+        <input type="checkbox" id="inactive" name="inactive" onchange="searchTable('users-table')">
+        Licenciés inactifs
+    </label>
+</fieldset>
+
+
 <table id="users-table">
     <thead>
         <tr>
@@ -22,6 +32,7 @@ page("Les licenciés")->css("user_list.css");
             <th scope="col">Prénom</th>
             <th scope="col">Email</th>
             <th scope="col">Portable</th>
+            <th scope="col" class="hidden">Actif</th>
             <?php if ($can_add_user): ?>
                 <th scope="col"></th>
             <?php endif; ?>
@@ -42,7 +53,10 @@ page("Les licenciés")->css("user_list.css");
                 <td class="phone-number">
                     <?= $user->phone ?>
                 </td>
-                <?php if ($can_add_user): ?>
+                <td id="active-cell" class="">
+                    <?= $user->active ? "1" : "0" ?>
+                </td>
+                <?php if ($can_add_user && $user->active): ?>
                     <td class="">
                         <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
                             <i class="fas fa-trash"></i>

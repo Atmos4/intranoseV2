@@ -24,12 +24,6 @@ class User
     public Gender $gender = Gender::M;
 
     #[Column]
-    public int $licence = 0;
-
-    #[Column]
-    public int $sportident = 0;
-
-    #[Column]
     public string $login = "";
 
     #[Column]
@@ -37,15 +31,6 @@ class User
 
     #[Column]
     public Permission $permission = Permission::USER;
-
-    #[Column]
-    public string $address = "";
-
-    #[Column]
-    public int $postal_code = 0;
-
-    #[Column]
-    public string $city = "";
 
     #[Column]
     public DateTime $birthdate;
@@ -59,17 +44,18 @@ class User
     #[Column]
     public string $phone = "";
 
+    #[Column]
+    public bool $active = false;
+
     function __construct()
     {
         $this->birthdate = date_create();
     }
 
-    function set_identity($last_name, $first_name, $licence, $gender)
+    function set_identity($last_name, $first_name, $gender)
     {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
-        if ($licence)
-            $this->licence = $licence;
         $this->gender = $gender;
     }
 
@@ -77,20 +63,6 @@ class User
     {
         $this->real_email = $real_email;
         $this->nose_email = $nose_email;
-    }
-
-    function set_perso($sportident, $address, $postal_code, $city, $phone)
-    {
-        $this->sportident = $sportident ?: 0;
-        $this->address = $address;
-        $this->postal_code = intval($postal_code);
-        $this->city = $city;
-        $normalized_phone = preg_replace('/[^0-9]/', '', $phone);
-        $normalized_phone = substr($normalized_phone, -9);
-        $final_phone = '+33' . $normalized_phone;
-        $this->phone = $final_phone;
-        var_dump($this->phone);
-        var_dump($this->city);
     }
 
     function set_password($password)

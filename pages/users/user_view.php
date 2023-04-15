@@ -42,33 +42,9 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
                 </td>
             </tr>
             <tr>
-                <td>Adresse</td>
-                <td>
-                    <?= join(
-                        "<br/>",
-                        [
-                            $user->address,
-                            "$user->postal_code $user->city"
-                        ]
-                    ) ?>
-                </td>
-            </tr>
-            <tr>
                 <td>Téléphone</td>
                 <td>
                     <?= $user->phone ?: "" ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Licence</td>
-                <td>
-                    <?= $user->licence ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Sport Ident</td>
-                <td>
-                    <?= $user->sportident ?: "" ?>
                 </td>
             </tr>
         </table>
