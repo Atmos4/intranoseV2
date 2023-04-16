@@ -1,5 +1,5 @@
 <?php
-if (empty($_SESSION['user_id']) || !em()->find(User::class, $_SESSION['user_id'])->active) {
+if (empty($_SESSION['user_id'])) {
     redirect("login");
 } else {
     //redirect("accueil");

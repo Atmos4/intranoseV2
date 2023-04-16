@@ -21,13 +21,26 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
 <form method="post">
     <?= $v->render_validation() ?>
     <nav id="page-actions">
-        <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+        <a href=<?= $user->active ? "/licencies" : "/licencies/reactivate" ?> class="secondary"><i
+                class="fas fa-caret-left"></i> Retour</a>
 
         <?php if ($can_edit_users): ?>
             <div>
                 <button type="submit" class="outline">Contrôler</button>
             </div>
-            <a href="/licencies/<?= $user->id ?>/modifier" class="contrast">Modifier</a>
+            <li role="list" dir="rtl">
+                <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
+                <ul role="listbox">
+                    <li><a href="/licencies/<?= $user->id ?>/modifier" class="secondary">
+                            <i class="fas fa-pen"></i> Modifier
+                        </a></li>
+                    <li>
+                        <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                            <i class="fas fa-trash"></i> Désactiver
+                        </a>
+                    </li>
+                </ul>
+            </li>
         <?php endif ?>
     </nav>
     <article class="grid center">

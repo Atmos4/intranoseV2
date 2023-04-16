@@ -1,18 +1,7 @@
 function searchTable(tableId) {
   // Declare variables
-  let searchFilter,
-    activeValue,
-    inactiveValue,
-    table,
-    tr,
-    td,
-    i,
-    j,
-    txtValue,
-    shouldTraverse;
+  let searchFilter, table, tr, td, i, j, txtValue, shouldTraverse;
   searchFilter = document.getElementById("search-users").value.toUpperCase();
-  activeValue = document.getElementById("active").checked;
-  inactiveValue = document.getElementById("inactive").checked;
   table = document.getElementById(tableId).getElementsByTagName("tbody")[0];
   tr = table.getElementsByTagName("tr");
 
@@ -31,12 +20,6 @@ function searchTable(tableId) {
           tr[i].classList.add("hidden");
         }
       }
-    }
-    if (
-      (!activeValue && tds[4].textContent == 1) ||
-      (!inactiveValue && tds[4].textContent == 0)
-    ) {
-      tr[i].classList.add("hidden");
     }
   }
 }
