@@ -20,38 +20,36 @@ $is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
 
 
-$user_identity = [
+$user_infos = [
     "last_name" => $user->last_name,
     "first_name" => $user->first_name,
-    "licence" => $user->licence,
     "gender" => $user->gender->value,
     "real_email" => $user->real_email,
     "nose_email" => $user->nose_email,
+    "phone" => $user->phone
 ];
 
-$v_identity = new Validator($user_identity, "identity_form");
-$last_name = $v_identity->text("last_name")->label("Nom")->placeholder()->required();
-$first_name = $v_identity->text("first_name")->label("Prénom")->placeholder()->required();
-$licence = $v_identity->number("licence")->label("Numéro de licence");
-$real_email = $v_identity->email("real_email")->label("Addresse mail perso")->placeholder()->required();
-$nose_email = $v_identity->email("nose_email")->label("Addresse mail nose")->placeholder();
-$gender = $v_identity->text("gender")->label("Sexe");
+$v_infos = new Validator($user_infos, "identity_form");
+$last_name = $v_infos->text("last_name")->label("Nom")->placeholder()->required();
+$first_name = $v_infos->text("first_name")->label("Prénom")->placeholder()->required();
+$real_email = $v_infos->email("real_email")->label("Addresse mail perso")->placeholder()->required();
+$nose_email = $v_infos->email("nose_email")->label("Addresse mail nose")->placeholder();
+$gender = $v_infos->text("gender")->label("Sexe");
+$phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
 
 if ($is_visiting) {
-    $licence->required();
     $nose_email->required();
 } else {
-    $licence->disabled();
-    $licence->value ??= $user->licence;
     $nose_email->disabled();
 }
 
-if ($v_identity->valid()) {
-    $user->set_identity($last_name->value, $first_name->value, $licence->value, Gender::from($gender->value));
+if ($v_infos->valid()) {
+    $user->set_identity($last_name->value, $first_name->value, Gender::from($gender->value));
     $user->set_email($real_email->value, $nose_email->value);
+    $user->phone = $phone->value;
     em()->persist($user);
     em()->flush();
-    $v_identity->set_success("Identité mise à jour !");
+    $v_infos->set_success("Identité mise à jour !");
 }
 
 
@@ -63,10 +61,10 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </nav>
 <?php endif ?>
 
-<h2 id="identity">Identité</h2>
+<h2 id="identity">Infos</h2>
 
 <form method="post" action="#identity" class="row">
-    <?= $v_identity->render_validation() ?>
+    <?= $v_infos->render_validation() ?>
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
@@ -86,11 +84,12 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
         <?= $nose_email->render() ?>
-        <?= $licence->render() ?>
     </div>
 
+    <?= $phone->render() ?>
+
     <button type="submit" class="outline" name="submitIdentity" class=col-md-4>Mettre à jour
-        l'identité</button>
+        les infos</button>
 </form>
 <hr>
 
@@ -127,8 +126,7 @@ if (!$can_reset_credentials) {
     $confirm_password = $v_password->password("confirm_password")
         ->autocomplete("new-password")
         ->placeholder("Confirmer le mot de passe")
-        ->required()
-        ->secure();
+        ->required();
     $current_password->condition(password_verify($current_password->value ?? "", $user->password), "Mauvais mot de passe");
     $confirm_password->condition($new_password->value == $confirm_password->value, "Les deux mots de passe sont différents");
 }
@@ -170,48 +168,3 @@ if ($v_password->valid()) {
         </form>
     </div>
 <?php endif ?>
-
-<hr>
-
-<?php
-// INFORMATIONS
-$user_personal_infos = [
-    "sportident" => $user->sportident ?: "",
-    "address" => $user->address,
-    "postal_code" => $user->postal_code,
-    "city" => $user->city,
-    "phone" => $user->phone
-];
-
-$v_personal_infos = new Validator($user_personal_infos, "infos_form");
-$sportident = $v_personal_infos->number("sportident")->label("Numéro SportIdent")->placeholder()->min_length(5);
-$address = $v_personal_infos->text("address")->label("Adresse")->placeholder();
-$postal_code = $v_personal_infos->number("postal_code")->label("Code postal")->placeholder();
-$city = $v_personal_infos->text("city")->label("Ville")->placeholder();
-$phone = $v_personal_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
-
-
-if ($v_personal_infos->valid()) {
-    $user->set_perso($sportident->value, $address->value, $postal_code->value, $city->value, $phone->value);
-    em()->persist($user);
-    em()->flush();
-    $v_personal_infos->set_success("Infos perso mises à jour !");
-}
-?>
-<h2 id="infos-perso"> Infos perso </h2>
-
-<form method="post" action="#infos-perso">
-    <?= $v_personal_infos->render_validation() ?>
-    <?= $sportident->render() ?>
-    <?= $address->render() ?>
-
-
-    <div class="grid">
-        <?= $postal_code->render() ?>
-        <?= $city->render() ?>
-    </div>
-
-    <?= $phone->render() ?>
-
-    <button type="submit" class="outline" name="submitInfos" class=col-md-4>Mettre à jour les infos</button>
-</form>

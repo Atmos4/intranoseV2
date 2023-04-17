@@ -6,6 +6,7 @@ if (!$user) {
 }
 
 $can_edit_users = check_auth(Access::$EDIT_USERS);
+$is_root = check_auth([Permission::ROOT]);
 
 $v = new Validator(action: "control");
 if ($v->valid() && $can_edit_users) {
@@ -21,13 +22,28 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
 <form method="post">
     <?= $v->render_validation() ?>
     <nav id="page-actions">
-        <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+        <a href=<?= $user->active ? "/licencies" : "/licencies/reactivate" ?> class="secondary"><i
+                class="fas fa-caret-left"></i> Retour</a>
 
         <?php if ($can_edit_users): ?>
             <div>
                 <button type="submit" class="outline">Contrôler</button>
             </div>
-            <a href="/licencies/<?= $user->id ?>/modifier" class="contrast">Modifier</a>
+            <li role="list" dir="rtl">
+                <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
+                <ul role="listbox">
+                    <li><a href="/licencies/<?= $user->id ?>/modifier" class="secondary">
+                            <i class="fas fa-pen"></i> Modifier
+                        </a></li>
+                    <?php if ($is_root): ?>
+                        <li>
+                            <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                                <i class="fas fa-trash"></i> Désactiver
+                            </a>
+                        </li>
+                    <?php endif ?>
+                </ul>
+            </li>
         <?php endif ?>
     </nav>
     <article class="grid center">
@@ -42,33 +58,9 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
                 </td>
             </tr>
             <tr>
-                <td>Adresse</td>
-                <td>
-                    <?= join(
-                        "<br/>",
-                        [
-                            $user->address,
-                            "$user->postal_code $user->city"
-                        ]
-                    ) ?>
-                </td>
-            </tr>
-            <tr>
                 <td>Téléphone</td>
                 <td>
                     <?= $user->phone ?: "" ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Licence</td>
-                <td>
-                    <?= $user->licence ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Sport Ident</td>
-                <td>
-                    <?= $user->sportident ?: "" ?>
                 </td>
             </tr>
         </table>

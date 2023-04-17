@@ -24,12 +24,6 @@ class User
     public Gender $gender = Gender::M;
 
     #[Column]
-    public int $licence = 0;
-
-    #[Column]
-    public int $sportident = 0;
-
-    #[Column]
     public string $login = "";
 
     #[Column]
@@ -37,15 +31,6 @@ class User
 
     #[Column]
     public Permission $permission = Permission::USER;
-
-    #[Column]
-    public string $address = "";
-
-    #[Column]
-    public int $postal_code = 0;
-
-    #[Column]
-    public string $city = "";
 
     #[Column]
     public DateTime $birthdate;
@@ -59,17 +44,18 @@ class User
     #[Column]
     public string $phone = "";
 
+    #[Column]
+    public bool $active = false;
+
     function __construct()
     {
         $this->birthdate = date_create();
     }
 
-    function set_identity($last_name, $first_name, $licence, $gender)
+    function set_identity($last_name, $first_name, $gender)
     {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
-        if ($licence)
-            $this->licence = $licence;
         $this->gender = $gender;
     }
 
@@ -77,15 +63,6 @@ class User
     {
         $this->real_email = $real_email;
         $this->nose_email = $nose_email;
-    }
-
-    function set_perso($sportident, $address, $postal_code, $city, $phone)
-    {
-        $this->sportident = $sportident;
-        $this->address = $address;
-        $this->postal_code = intval($postal_code);
-        $this->city = $city;
-        $this->$phone = intval($phone);
     }
 
     function set_password($password)
@@ -111,6 +88,33 @@ class User
         }
         self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
         return self::$currentUser;
+    }
+
+    static function getBySubstring($subString): array
+    {
+        // Returns all the numbers associated with a login $subString
+        $user_numbers = em()
+            ->createQuery("SELECT SUBSTRING(u.login, LENGTH(?1))
+            FROM User u
+            WHERE u.login LIKE ?1")
+            ->setParameter(1, $subString . '%')
+            ->getResult();
+
+
+        $user_numbers = array_map(function ($value) {
+            return $value[1] ? intval($value[1]) : null;
+        }, $user_numbers);
+
+        return $user_numbers;
+    }
+
+    static function findByFirstAndLastName($firstname, $lastname)
+    {
+        $query = em()->createQuery('SELECT u FROM User u WHERE u.first_name = :firstname AND u.last_name = :lastname')
+            ->setParameter('firstname', $firstname)
+            ->setParameter('lastname', $lastname);
+
+        return $query->getResult();
     }
 }
 
