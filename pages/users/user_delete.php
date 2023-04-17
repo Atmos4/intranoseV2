@@ -1,5 +1,5 @@
 <?php
-restrict_access(Access::$EDIT_USERS);
+restrict_access([Permission::ROOT]);
 
 $user_id = get_route_param("user_id");
 $user = em()->find(USER::class, $user_id);

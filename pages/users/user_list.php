@@ -8,14 +8,16 @@ page("Les licenciés")->css("user_list.css");
 <?php if ($can_add_user): ?>
     <p class="center">
         <a role="button" href="/licencies/add" class="contrast outline"><i class="fas fa-plus"></i> Ajouter un licencié</a>
-        <a role="button" href="/licencies/reactivater" class="contrast outline"><i class="fas fa-arrow-up"></i> Réactiver
+        <a role="button" href="/licencies/reactiver" class="contrast outline"><i class="fas fa-arrow-up"></i> Réactiver
             des
             licenciés</a>
     </p>
 <?php endif ?>
 
-<input type="search" id="search-users" name="search" placeholder="Rechercher..." onkeyup="searchTable('users-table')"
-    onload="searchTable('users-table')">
+<form method="get">
+    <input type="search" id="search-users" name="search" placeholder="Rechercher..."
+        onkeyup="searchTable('search-users','users-table')">
+</form>
 
 
 <table id="users-table">

@@ -6,6 +6,7 @@ if (!$user) {
 }
 
 $can_edit_users = check_auth(Access::$EDIT_USERS);
+$is_root = check_auth([Permission::ROOT]);
 
 $v = new Validator(action: "control");
 if ($v->valid() && $can_edit_users) {
@@ -34,11 +35,13 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
                     <li><a href="/licencies/<?= $user->id ?>/modifier" class="secondary">
                             <i class="fas fa-pen"></i> Modifier
                         </a></li>
-                    <li>
-                        <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
-                            <i class="fas fa-trash"></i> Désactiver
-                        </a>
-                    </li>
+                    <?php if ($is_root): ?>
+                        <li>
+                            <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                                <i class="fas fa-trash"></i> Désactiver
+                            </a>
+                        </li>
+                    <?php endif ?>
                 </ul>
             </li>
         <?php endif ?>

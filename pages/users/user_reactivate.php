@@ -24,8 +24,7 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
         </div>
     </nav>
 
-    <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('users-table')"
-        onload="searchTable('users-table')">
+    <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('users-table')">
 
     <table id="users-table" class="reactivate">
         <thead>
@@ -33,6 +32,7 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                 <th scope="col"></th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
+                <th scope="col">Email Nose</th>
             </tr>
         </thead>
         <tbody>
@@ -46,6 +46,9 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                     </td>
                     <td class="firstname">
                         <?= $user->first_name ?>
+                    </td>
+                    <td class="firstname">
+                        <?= $user->nose_email ?>
                     </td>
                 </tr>
             <?php endforeach ?>

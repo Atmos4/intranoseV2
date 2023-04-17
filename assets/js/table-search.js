@@ -1,7 +1,8 @@
-function searchTable(tableId) {
+function searchTable(inputId, tableId) {
   // Declare variables
-  let searchFilter, table, tr, td, i, j, txtValue, shouldTraverse;
-  searchFilter = document.getElementById("search-users").value.toUpperCase();
+  let input, filter, table, tr, td, i, j, txtValue, shouldTraverse;
+  input = document.getElementById(inputId);
+  filter = input.value.toUpperCase();
   table = document.getElementById(tableId).getElementsByTagName("tbody")[0];
   tr = table.getElementsByTagName("tr");
 
@@ -13,7 +14,7 @@ function searchTable(tableId) {
       td = tds[j];
       if (shouldTraverse && td) {
         txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(searchFilter) > -1) {
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
           tr[i].classList.remove("hidden");
           shouldTraverse = false;
         } else {
