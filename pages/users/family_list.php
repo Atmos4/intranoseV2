@@ -11,6 +11,7 @@ page("Familles") ?>
         <tr class="clickable" onclick="window.location.href = '/famille/<?= $family->id ?>'">
             <td>
                 <?= $family->name ?>
+            </td>
         </tr>
     <?php endforeach;
     if (!$families): ?>

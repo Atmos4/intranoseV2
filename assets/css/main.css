@@ -125,6 +125,10 @@ label.error:hover {
 #page-actions > li:hover > summary > i {
   transform: rotate(90deg);
 }
+nav details[role="list"] summary,
+nav li[role="list"] a {
+  display: block;
+}
 #page-actions.sticky {
   position: fixed;
   top: 0;

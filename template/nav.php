@@ -4,7 +4,7 @@ $nav_routes = [
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
-$current_user = User::getCurrent();
+$main_user = User::getMain();
 /* if (check_auth(Access::$ADD_EVENTS)) {
 $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
 } */
@@ -26,20 +26,20 @@ $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
                     <?= " " . $nav_title[0] ?>
                 </a></li>
         <?php endforeach ?>
-        <?php if ($current_user->family_leader): ?>
-            <li>
-                <details role="list">
-                    <summary aria-haspopup="listbox" role="link" class="contrast">Famille</summary>
-                    <ul role="listbox">
-                        <?php foreach ($current_user->family->members as $member):
-                            if ($member !== $current_user): ?>
-                                <li><a>
-                                        <?= $member->first_name ?>
-                                    </a></li>
-                            <?php endif;
-                        endforeach ?>
-                    </ul>
-                </details>
+        <?php if ($main_user->family_leader): ?>
+            <li role="list">
+                <a aria-haspopup="listbox" class="contrast"><i class="fa fa-users"></i> Famille
+                </a>
+                <ul role="listbox">
+                    <?php foreach ($main_user->family->members as $member):
+                        if ($member !== $main_user): ?>
+                            <li><a href="/user-control/<?= $member->id ?>">
+                                    <?= $member->first_name ?>
+                                </a></li>
+                        <?php endif;
+                    endforeach ?>
+                    <li><a href="/famille/<?= $main_user->family->id ?>"><i class="fa fa-gear"></i> Gérer...</a></li>
+                </ul>
             </li>
         <?php endif ?>
     </ul>
