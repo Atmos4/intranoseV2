@@ -105,7 +105,6 @@ class User
             return $value[1] ? intval($value[1]) : null;
         }, $user_numbers);
 
-        var_dump($user_numbers);
         return $user_numbers;
     }
 
