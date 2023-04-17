@@ -22,9 +22,12 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
         <li role="list" dir="rtl">
             <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
             <ul role="listbox">
-                <li><a href="/licencies/<?= $user->id ?>/modifier" class="contrast">Modifier</a></li>
-                <li><a href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>"
-                        class="contrast">Gérer la famille</a>
+                <li><a href="/licencies/<?= $user->id ?>/modifier"><i class="fa fa-pen"></i> Modifier</a>
+                </li>
+                <li>
+                    <a href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>">
+                        <i class="fa fa-<?= $user->family ? "users" : "plus" ?>"></i> Famille
+                    </a>
                 </li>
                 <?php if ($is_root): ?>
                     <li>

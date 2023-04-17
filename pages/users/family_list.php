@@ -4,7 +4,7 @@ $families = em()->getRepository(Family::class)->findAll();
 page("Familles") ?>
 <nav id="page-actions">
     <a href="/licencies" class="secondary">
-        < Retour</a>
+        <i class="fa fa-caret-left"></i> Retour</a>
 </nav>
 <table>
     <?php foreach ($families as $family): ?>

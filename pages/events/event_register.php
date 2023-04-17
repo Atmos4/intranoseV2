@@ -78,8 +78,6 @@ if ($v->valid()) {
                 $race,
                 $race_present,
                 $race_present && $race_form["ranked_up"]->value,
-                $user->licence,
-                $user->sportident,
                 $race_present ? $race_form["comment"]->value : "",
             );
             $race_entry->category = $race_present ? $race_category_map[$race_form["category"]->value] : null;

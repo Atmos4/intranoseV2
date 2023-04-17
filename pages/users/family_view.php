@@ -36,8 +36,16 @@ $profile_picture = (file_exists("images/profile/" . $user->id)) ?
 page($family->name)->css("family_list.css") ?>
 <?php if (check_auth(Access::$EDIT_USERS)): ?>
     <nav id="page-actions">
-        <a href="/familles" class="secondary"><i class="fa fa-chevron-left"></i> Retour</a>
-        <a href="<?= $family->id ?>/supprimer" class="destructive outline">Supprimer la famille</a>
+        <a href="/familles" class="secondary"><i class="fa fa-caret-left"></i> Retour</a>
+        <li role="list" dir="rtl">
+            <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
+            <ul role="listbox">
+                <li>
+                    <a href="<?= $family->id ?>/supprimer" class="destructive outline">
+                        <i class="fa fa-trash"></i> Supprimer la famille
+                    </a>
+                </li>
+            </ul>
     </nav>
 <?php endif ?>
 <div class="row">
@@ -46,7 +54,8 @@ page($family->name)->css("family_list.css") ?>
             <article class="card">
                 <img src="<?= $profile_picture ?>">
                 <div>
-                    <?= "$f_member->first_name $f_member->last_name" ?><br>
+                    <a href="/licencies/<?= $f_member->id ?>"><?= "$f_member->first_name $f_member->last_name" ?></a>
+                    <br>
                     <?= $f_member->family_leader ? "Parent" : "Enfant" ?>
                 </div>
                 <nav>
@@ -59,14 +68,13 @@ page($family->name)->css("family_list.css") ?>
                                     </summary>
                                     <ul role="listbox">
                                         <li><a href="<?= "$family->id/change/$f_member->id" ?>" class="contrast">
-                                                <i
-                                                    class="fa <?= $f_member->family_leader ? "fa-arrow-down" : "fa-arrow-up" ?>"></i>
-                                                Changer
-                                                rôle
+                                                Changer rôle
+                                                <i class="fa fa-arrow-<?= $f_member->family_leader ? "down" : "up" ?>"></i>
                                             </a></li>
-                                        <li><a href="<?= "$family->id/supprimer/$f_member->id" ?>" class="destructive"><i
-                                                    class="fa fa-xmark"></i>
-                                                Retirer</a></li>
+                                        <li><a href="<?= "$family->id/supprimer/$f_member->id" ?>" class="destructive">
+                                                Retirer
+                                                <i class="fa fa-xmark"></i>
+                                            </a></li>
                                     </ul>
                                 </details>
                             <?php endif ?>

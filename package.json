@@ -9,8 +9,6 @@
     "update:all": "yarn update:autoload && yarn db:migrate",
     "db:migrate": "php bin/doctrine --no-interaction migrations:migrate",
     "update:autoload": "composer dump-autoload",
-    "db:diff": "php bin/doctrine migrations:diff --allow-empty-diff",
-    "db:execute": "php bin/doctrine migrations:execute",
-    "db:list": "php bin/doctrine migrations:list"
+    "db": "sh -c 'php bin/doctrine migrations:${0}'"
   }
 }

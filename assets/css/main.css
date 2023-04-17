@@ -134,6 +134,7 @@ nav li[role="list"] a {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 2;
   padding: 0.5rem 1rem;
   background-color: var(--background-color);
   align-items: center;

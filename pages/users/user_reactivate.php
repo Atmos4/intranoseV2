@@ -32,7 +32,6 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                 <th scope="col"></th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
-                <th scope="col">Email Nose</th>
             </tr>
         </thead>
         <tbody>
@@ -46,9 +45,6 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                     </td>
                     <td class="firstname">
                         <?= $user->first_name ?>
-                    </td>
-                    <td class="firstname">
-                        <?= $user->nose_email ?>
                     </td>
                 </tr>
             <?php endforeach ?>
