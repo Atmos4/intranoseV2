@@ -47,23 +47,22 @@ page("Nouveau licencié")->css("settings.css");
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
-        <fieldset>
-            <legend>Sexe</legend>
-            <label for="man">
-                <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?>>
-                Homme
-            </label>
-            <label for="woman">
-                <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?>>
-                Dame
-            </label>
-        </fieldset>
     </div>
 
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
+        <?= $phone->render() ?>
     </div>
 
-    <?= $phone->render() ?>
-
+    <fieldset>
+        <legend>Sexe</legend>
+        <label for="man">
+            <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?>>
+            Homme
+        </label>
+        <label for="woman">
+            <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?>>
+            Dame
+        </label>
+    </fieldset>
 </form>
