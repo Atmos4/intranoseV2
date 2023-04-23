@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Ramsey\Uuid\Uuid;
 
 #[Entity, Table(name: 'users')]
 class User
@@ -182,4 +183,53 @@ class Access
 {
     public static $EDIT_USERS = [Permission::COACHSTAFF, Permission::STAFF, Permission::ROOT];
     public static $ADD_EVENTS = [Permission::COACHSTAFF, Permission::STAFF, Permission::ROOT, Permission::COACH];
+}
+
+enum AccessTokenType: string
+{
+    case ACTIVATE = 'ACTIVATE';
+    case INVITE = 'INVITE';
+    case RESET_PASSWORD = 'RESET_PASSWORD';
+}
+
+#[Entity, Table(name: 'access_tokens')]
+class AccessToken
+{
+    #[Id]
+    #[Column(length: 36, unique: true)]
+    public string|null $id = null;
+
+    #[ManyToOne]
+    public User|null $user = null;
+
+    #[Column]
+    public DateTime $expiration;
+
+    #[Column(length: 20)]
+    public AccessTokenType $type;
+
+    function __construct(User $user, AccessTokenType $type, DateInterval $duration = new DateInterval('PT5M'))
+    {
+        $this->id = Uuid::uuid4();
+        $this->user = $user;
+        $this->type = $type;
+        $this->expiration = date_create()->add($duration);
+    }
+
+    static function retrieve(string $uuid): AccessToken
+    {
+        if (!Uuid::isValid($uuid)) {
+            force_404("invalid token");
+        }
+        $token = em()->find(AccessToken::class, $uuid);
+        if (!$token) {
+            force_404("token not found");
+        }
+        if (date_create() > $token->expiration) {
+            em()->remove($token);
+            em()->flush();
+            force_404("token expired");
+        }
+        return $token;
+    }
 }
