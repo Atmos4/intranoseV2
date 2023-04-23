@@ -1,8 +1,12 @@
 <?php
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'users')]
@@ -10,6 +14,9 @@ class User
 {
     /** Current user singleton */
     private static User|null $currentUser = null;
+
+    /** Main user singleton */
+    private static User|null $mainUser = null;
 
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
@@ -47,6 +54,12 @@ class User
     #[Column]
     public bool $active = false;
 
+    #[ManyToOne]
+    public Family|null $family = null;
+
+    #[Column]
+    public bool $family_leader = false;
+
     function __construct()
     {
         $this->birthdate = date_create();
@@ -81,6 +94,11 @@ class User
         return count($result) ? $result[0] : new User();
     }
 
+    static function get($user_id): User
+    {
+        return em()->find(User::class, $user_id);
+    }
+
     static function getCurrent(): User
     {
         if (isset($_SESSION['controlled_user_id'])) {
@@ -88,6 +106,12 @@ class User
         }
         self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
         return self::$currentUser;
+    }
+
+    static function getMain(): User
+    {
+        self::$mainUser ??= em()->find(User::class, $_SESSION['user_id']);
+        return self::$mainUser;
     }
 
     static function getBySubstring($subString): array
@@ -115,6 +139,25 @@ class User
             ->setParameter('lastname', $lastname);
 
         return $query->getResult();
+    }
+}
+
+#[Entity, Table(name: 'families')]
+class Family
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string $name = "";
+
+    /** @var Collection<int, User> members */
+    #[OneToMany(targetEntity: User::class, mappedBy: 'family')]
+    public Collection $members;
+
+    function __construct()
+    {
+        $this->members = new ArrayCollection();
     }
 }
 

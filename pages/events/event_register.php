@@ -78,8 +78,6 @@ if ($v->valid()) {
                 $race,
                 $race_present,
                 $race_present && $race_form["ranked_up"]->value,
-                $user->licence,
-                $user->sportident,
                 $race_present ? $race_form["comment"]->value : "",
             );
             $race_entry->category = $race_present ? $race_category_map[$race_form["category"]->value] : null;
@@ -102,7 +100,7 @@ page("Inscription - " . $event->name)->css("event_view.css");
 <form id="mainForm" method="post">
     <nav id="page-actions">
         <a href="/evenements/<?= $event->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-        <div><button type="submit" role="button">Enregistrer</button></div>
+        <button type="submit" role="button">Enregistrer</button>
     </nav>
     <article>
         <header class="center">

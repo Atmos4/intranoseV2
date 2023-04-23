@@ -4,6 +4,7 @@ $nav_routes = [
     "/licencies" => ["Les licenciés", "fa-users"],
     "/mon-profil" => ["Mon profil", "fa-gear"]
 ];
+$main_user = User::getMain();
 /* if (check_auth(Access::$ADD_EVENTS)) {
 $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
 } */
@@ -25,6 +26,22 @@ $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
                     <?= " " . $nav_title[0] ?>
                 </a></li>
         <?php endforeach ?>
+        <?php if ($main_user->family_leader): ?>
+            <li role="list">
+                <a aria-haspopup="listbox" class="contrast"><i class="fa fa-users"></i> Famille
+                </a>
+                <ul role="listbox">
+                    <?php foreach ($main_user->family->members as $member):
+                        if ($member !== $main_user): ?>
+                            <li><a href="/user-control/<?= $member->id ?>">
+                                    <?= $member->first_name ?>
+                                </a></li>
+                        <?php endif;
+                    endforeach ?>
+                    <li><a href="/famille/<?= $main_user->family->id ?>"><i class="fa fa-gear"></i> Gérer...</a></li>
+                </ul>
+            </li>
+        <?php endif ?>
     </ul>
     <ul>
         <li>
@@ -37,7 +54,7 @@ $nav_routes["/documents"] = ["Documents partagés", "fa-file"];
                 </ul>
             </details>
         </li>
-        <li><a class="contrast disconnect" href="/logout">Déconnexion</a></li>
+        <li><a class="destructive" href="/logout">Déconnexion</a></li>
     </ul>
 
 </nav>

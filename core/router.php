@@ -1,7 +1,7 @@
 <?php
 function force_404($msg = null)
 {
-    if (env('debug_mode')) {
+    if (env('developement')) {
         echo $msg;
     }
     render();

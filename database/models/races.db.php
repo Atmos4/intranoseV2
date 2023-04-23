@@ -28,22 +28,14 @@ class RaceEntry
     public bool $upgraded = false;
 
     #[Column]
-    public int $licence = 0;
-
-    #[Column]
-    public int $sport_ident = 0;
-
-    #[Column]
     public string $comment = "";
 
-    function set($user, $race, $present, $upgraded, $licence, $sport_ident, $comment)
+    function set($user, $race, $present, $upgraded, $comment)
     {
         $this->user = $user;
         $this->race = $race;
         $this->present = $present;
         $this->upgraded = $upgraded;
-        $this->licence = $licence;
-        $this->sport_ident = $sport_ident;
         $this->comment = $comment;
     }
 }

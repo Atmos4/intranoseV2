@@ -6,7 +6,7 @@ require_once 'core/router.php';
 route('/', 'pages/index.php');
 route('/login', 'pages/login.php');
 
-// Developement
+// Development
 route('/seed-db', 'pages/seed_db.php');
 route('/reset-pw/$user_id', 'pages/reset_pw.php');
 
@@ -33,6 +33,14 @@ route('/licencies/add', 'pages/users/user_add.php');
 route('/licencies/reactiver', 'pages/users/user_reactivate.php');
 route('/licencies/$user_id', 'pages/users/user_view.php');
 route('/licencies/$user_id/supprimer', 'pages/users/user_delete.php');
+route('/licencies/$user_id/creer-famille', 'pages/users/family_create.php');
+route('/familles', 'pages/users/family_list.php');
+route('/famille/$family_id', 'pages/users/family_view.php');
+route('/famille/$family_id/supprimer', 'pages/users/family_remove.php');
+route('/famille/$family_id/change/$member_id', 'pages/users/family_change.php');
+route('/famille/$family_id/supprimer/$member_id', 'pages/users/family_remove.php');
+
+route('/user-control/$user_id', 'pages/users/take_user_control.php');
 
 // Shared documents
 // route('/documents', 'pages/shared_documents.php');

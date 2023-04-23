@@ -68,11 +68,9 @@ page($race_id ? "{$race->name} : Modifier" : "Ajouter une course")->css("race_ed
         <a href="/evenements/<?= $event_id ?>" class="secondary">
             <i class="fas fa-xmark"></i> Annuler
         </a>
-        <div>
-            <button type="submit">
-                <?= $race_id ? "Modifier" : "Créer" ?>
-            </button>
-        </div>
+        <button type="submit">
+            <?= $race_id ? "Modifier" : "Créer" ?>
+        </button>
     </nav>
     <article class="row">
         <?= $v->render_validation() ?>
