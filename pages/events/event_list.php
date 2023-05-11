@@ -60,10 +60,10 @@ function render_event(EventDto $event)
 <?php } ?>
 
 <?php if ($can_edit): ?>
-    <p class="center">
-        <a role="button" href="/evenements/nouveau" class="contrast outline"><i class="fas fa-plus"></i> Ajouter un
+    <nav id="page-actions">
+        <a href="/evenements/nouveau"><i class="fas fa-plus"></i> Ajouter un
             événement</a>
-    </p>
+    </nav>
 <?php endif ?>
 
 <table role="grid">
