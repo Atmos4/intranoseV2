@@ -8,7 +8,7 @@ page("Familles") ?>
 </nav>
 <table>
     <?php foreach ($families as $family): ?>
-        <tr class="clickable" onclick="window.location.href = '/famille/<?= $family->id ?>'">
+        <tr class="clickable" tabindex="0" onclick="window.location.href = '/famille/<?= $family->id ?>'">
             <td>
                 <?= $family->name ?>
             </td>
