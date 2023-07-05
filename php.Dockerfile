@@ -1,13 +1,18 @@
 FROM php:8.1-apache
 
 RUN apt-get update && \
-    apt-get install -y libicu-dev && \
+    apt-get install -y libicu-dev libzip-dev zip unzip && \
     docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-configure intl && \
     docker-php-ext-install intl && \
-    docker-php-ext-install opcache
+    docker-php-ext-install opcache && \
+    docker-php-ext-install zip 
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+RUN docker-php-ext-enable intl
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer self-update
+
 
 WORKDIR /var/www/html
 COPY . .

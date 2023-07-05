@@ -5,6 +5,8 @@ services:
       - "80:80"
     build: 
       dockerfile: php.Dockerfile
+    volumes:
+      - .:/var/www/html/
   mysql:
     ports:
       - "3306:3306"
