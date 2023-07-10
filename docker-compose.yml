@@ -7,6 +7,7 @@ services:
       dockerfile: php.Dockerfile
     volumes:
       - .:/var/www/html/
+      - /var/www/html/vendor
   mysql:
     ports:
       - "3306:3306"

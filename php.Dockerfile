@@ -16,8 +16,8 @@ RUN composer self-update
 
 WORKDIR /var/www/html
 COPY . .
-
 RUN composer install
+RUN composer dump-autoload
 
 # Authorize the .htaccess to execute
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
