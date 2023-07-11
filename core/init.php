@@ -21,10 +21,10 @@ $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/
 // TODO: temporary strings here for ORM connection. Replace with proper ones.
 $connection = DriverManager::getConnection([
     'driver' => 'pdo_mysql',
-    'user' => env("db_user"),
-    'password' => env("db_password"),
-    'dbname' => env("db_name"),
-    'host' => env("db_host"),
+    'user' => getenv("DB_USER"),
+    'password' => getenv("DB_PASSWORD"),
+    'dbname' => getenv("DB_NAME"),
+    'host' => getenv("DB_HOST"),
     'charset' => 'utf8mb4'
 ], $config);
 

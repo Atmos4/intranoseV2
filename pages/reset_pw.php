@@ -1,5 +1,5 @@
 <?php
-if (!env('developement')) {
+if (!getenv('DEVELOPEMENT')) {
     force_404("Not in dev environement");
 }
 
