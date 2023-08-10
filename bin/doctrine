@@ -39,6 +39,7 @@ $commands = [
     new Command\ListCommand($deps),
     new Command\RollupCommand($deps),
     new Command\VersionCommand($deps),
+    new Command\LatestCommand($deps),
 
 ];
 ConsoleRunner::run(new SingleManagerProvider(em()), $commands);
