@@ -18,7 +18,7 @@ function env(string $key)
 
 $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
 
-// TODO: temporary strings here for ORM connection. Replace with proper ones.
+// ORM
 $connection = DriverManager::getConnection([
     'driver' => 'pdo_mysql',
     'user' => env("db_user"),
@@ -28,7 +28,7 @@ $connection = DriverManager::getConnection([
     'charset' => 'utf8mb4'
 ], $config);
 
-global $database, $formatter, $entityManager;
+global $formatter, $entityManager;
 $entityManager = new EntityManager($connection, $config);
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
 
@@ -89,6 +89,13 @@ function check_auth($levels = [])
         }
     }
     return false;
+}
+
+function restrict_dev()
+{
+    if (!env('developement')) {
+        force_404("Not in dev environement");
+    }
 }
 
 /** Restrict access to authenticated users, and to a set of authorized users if provided arguments.

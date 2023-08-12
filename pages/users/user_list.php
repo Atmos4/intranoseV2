@@ -39,7 +39,7 @@ page("Les licenciés")->css("user_list.css");
     </thead>
     <tbody>
         <?php foreach ($users as $user): ?>
-            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $user->id ?>'">
+            <tr class="clickable" tabindex=0 onclick="window.location.href = '/licencies/<?= $user->id ?>'">
                 <td class="lastname">
                     <?= $user->last_name ?>
                 </td>

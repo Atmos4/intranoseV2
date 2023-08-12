@@ -7,6 +7,7 @@ class Validator
     public bool $empty = true;
     public string|null $action;
     public string|null $success = null;
+    public string $error_msg = "";
 
 
     function __construct(array $form_values = [], $action = null)
@@ -33,7 +34,7 @@ class Validator
             return $this->get_field($key)->valid();
         }
 
-        if ($this->empty || !is_csrf_valid()) {
+        if ($this->empty || !is_csrf_valid() || $this->error_msg) {
             return false;
         }
         return array_reduce($this->fields, function ($valid, Field $field) {
@@ -65,8 +66,10 @@ class Validator
             }
         }
         if (!$this->empty) {
-            if ($this->valid() && $this->success) {
-                $result .= "<ins>$this->success</ins>";
+            if ($this->error_msg) {
+                $result .= "<label class=\"error\">$this->error_msg</label>";
+            } elseif ($this->valid() && $this->success) {
+                $result .= "<ins>$this->success</ins><br>";
             }
             $result .= "<br/>";
         }
@@ -76,6 +79,11 @@ class Validator
     function set_success($success)
     {
         $this->success = $success;
+    }
+
+    function set_error($message)
+    {
+        $this->error_msg = $message;
     }
 
     function render_field(string $key)

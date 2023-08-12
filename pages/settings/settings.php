@@ -135,7 +135,6 @@ if ($v_password->valid()) {
     if ($can_reset_credentials) {
         $user->set_password($user->first_name);
     } else {
-
         $user->set_password($new_password->value);
     }
     em()->persist($user);

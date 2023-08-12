@@ -1,7 +1,5 @@
 <?php
-if (!env('developement')) {
-    force_404("Not in dev environement");
-}
+restrict_dev();
 
 $user = em()->find(User::class, get_route_param("user_id"));
 if (!$user) {
