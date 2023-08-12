@@ -15,6 +15,7 @@ tr.delimiter {
 .event-limit.passed {
   opacity: 0.7;
   text-decoration: line-through;
+  color: red;
 }
 
 @media screen and (max-width: 768px) {

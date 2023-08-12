@@ -16,6 +16,7 @@ function render_event(EventDto $event)
     $td_class = $tooltip_content = "";
     if ($diff->invert) {
         $td_class = "passed";
+        $tooltip_content = "data-tooltip='Deadline dépassée'";
     } elseif ($diff->days < 7) {
         $td_class = "warning";
         $tooltip_content = "data-tooltip=\""
@@ -36,8 +37,8 @@ function render_event(EventDto $event)
                 <?php else: ?>
                     <i class="fas fa-question"></i>
                 <?php endif; else: ?>
-                <i class="fas fa-file"></i>
-            <?php endif; ?>
+            <i class="fas fa-file"></i>
+        <?php endif; ?>
 
         </td>
         <td class="event-name"><b>
@@ -81,7 +82,7 @@ function render_event(EventDto $event)
             // Draft events
             if ($can_edit && count($draft_events)): ?>
                 <tr class="delimiter">
-                    <td colspan="4">Événements en attentes</td>
+                    <td colspan="4">Événements en attente</td>
                 </tr>
                 <?php
                 foreach ($draft_events as $draft_event) {

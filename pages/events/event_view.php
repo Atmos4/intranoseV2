@@ -170,4 +170,32 @@ page($event->name)->css("event_view.css");
                 <i class="fas fa-plus"></i> Ajouter une course</a>
         </p>
     <?php endif; ?>
+
+    <?php if ($event->open): ?>
+        <footer>
+            <h4>Participants : </h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($event->entries as $entry): ?>
+                        <?php if ($entry->present): ?>
+                            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $entry->user->id ?>'">
+                                <td class="lastname">
+                                    <?= $entry->user->last_name ?>
+                                </td>
+                                <td class="firstname">
+                                    <?= $entry->user->first_name ?>
+                                </td>
+                            </tr>
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        </footer>
+    <?php endif ?>
 </article>
