@@ -33,7 +33,7 @@ class Category
     {
         $result = [];
         foreach ($categories as $category) {
-            $result[$category->id] = $category->name;
+            $result[$category->name] = $category->id;
         }
         return $result;
     }

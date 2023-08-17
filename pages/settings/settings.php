@@ -157,6 +157,7 @@ if ($v_password->valid()) {
             <h2 id="password">Mot de passe</h2>
             <?= $v_password->render_validation() ?>
             <?php if (!$can_reset_credentials): ?>
+                <!-- à quoi ça sert la ligne d'après ? -->
                 <input type="hidden" autocomplete="username" name="username" value="<?= $user->login ?>">
                 <?= $current_password->render() ?>
                 <?= $new_password->render() ?>
