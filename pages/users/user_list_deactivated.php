@@ -4,8 +4,6 @@ $can_add_user = check_auth(Access::$EDIT_USERS);
 $users_repository = em()->getRepository(User::class);
 page("Réactiver des licenciés")->css("user_list.css");
 
-var_dump($_POST);
-
 if (isset($_POST['action'])) {
     $dql = "SELECT u FROM User u where u.id IN ("
         . implode(",", array_map(function ($value) {

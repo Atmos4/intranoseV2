@@ -704,7 +704,7 @@ class SelectField extends Field
 
     function options(array $options)
     {
-        foreach ($options as $label => $value) {
+        foreach ($options as $value => $label) {
             $this->option($value, $label);
         }
         return $this;

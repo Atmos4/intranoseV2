@@ -6,7 +6,7 @@ $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required()
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
 $real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addresse mail")->required();
 
-$permissions = $v->select("permissions")->label("Permissions")->options(["User" => "USER", "Coach" => "COACH", "Coach Staff" => "COACHSTAFF", "Guest" => "GUEST", "Root" => "ROOT", "Staff" => "STAFF"])->required();
+$permissions = $v->select("permissions")->label("Permissions")->options(["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "ROOT" => "Big Boss", "STAFF" => "Responsable"])->required();
 
 if ($v->valid()) {
     $login = strtolower(substr($first_name->value, 0, 1) . $last_name->value);
