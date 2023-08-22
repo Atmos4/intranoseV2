@@ -54,6 +54,9 @@ article {
 .success {
   color: var(--ins-color);
 }
+label.error {
+  color: var(--del-color);
+}
 .error,
 .destructive {
   --primary: var(--del-color);

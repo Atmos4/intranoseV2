@@ -4,9 +4,9 @@ restrict_access(Access::$EDIT_USERS);
 $v = new Validator([], "new_user_form");
 $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required();
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
-$real_email = $v->email("real_email")->label("Addresse mail perso")->placeholder("Addresse mail perso")->required();
-$gender = $v->text("gender")->label("Sexe")->required();
-$phone = $v->phone("phone")->label("Numéro de téléphone")->placeholder();
+$real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addresse mail")->required();
+
+$permissions = $v->select("permissions")->label("Permissions")->options(["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "ROOT" => "Big Boss", "STAFF" => "Responsable"])->required();
 
 if ($v->valid()) {
     $login = strtolower(substr($first_name->value, 0, 1) . $last_name->value);
@@ -15,15 +15,31 @@ if ($v->valid()) {
     $user_same_name = User::findByFirstAndLastName($first_name->value, $last_name->value);
     $nose_email = strtolower($first_name->value . "." . $last_name->value) . (count($user_same_name) ?: '') . "@nose42.fr";
     $new_user = new User();
-    $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::from($gender->value));
+    $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
     $new_user->set_email($real_email->value, $nose_email);
-    $new_user->set_password($first_name->value);
-    $new_user->phone = $phone->value;
     $max_number ? $new_login = $login . $max_number : $new_login = $login;
+
+    $new_user->permission = Permission::from($permissions->value);
     $new_user->set_login($new_login);
-    em()->persist($new_user);
-    em()->flush();
-    $v->set_success("Nouveau licencié créé !");
+    $new_user->active = false;
+
+    $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
+
+    $base_url = env("base_url");
+    $subject = "Activation de votre compte NOSE";
+    $content = "Voici le lien pour activer votre compte NOSE : $base_url/activation?token=$token->id";
+
+    $result = Mailer::create()
+        ->to($real_email->value, $subject, $content)
+        ->send();
+    if ($result->success) {
+        $v->set_success('Message has been sent');
+        em()->persist($token);
+        em()->persist($new_user);
+        em()->flush();
+    } else {
+        $v->set_error($result->message);
+    }
 }
 
 
@@ -46,23 +62,18 @@ page("Nouveau licencié")->css("settings.css");
 
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
-        <?= $first_name->render() ?>
     </div>
 
     <div class="col-sm-12 col-md-6">
-        <?= $real_email->render() ?>
-        <?= $phone->render() ?>
+        <?= $first_name->render() ?>
     </div>
 
-    <fieldset>
-        <legend>Sexe</legend>
-        <label for="man">
-            <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?>>
-            Homme
-        </label>
-        <label for="woman">
-            <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?>>
-            Dame
-        </label>
-    </fieldset>
+    <div class="col-6">
+        <?= $real_email->render() ?>
+    </div>
+
+    <div class="col-sm-12 col-md-6">
+        <?= $permissions->render() ?>
+    </div>
+
 </form>

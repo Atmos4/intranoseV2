@@ -32,8 +32,8 @@ route('/licencies/$user_id/modifier', 'pages/settings/settings');
 
 // Users
 route('/licencies', 'pages/users/user_list.php');
-route('/licencies/add', 'pages/users/user_add.php');
-route('/licencies/reactiver', 'pages/users/user_reactivate.php');
+route('/licencies/ajouter', 'pages/users/user_add.php');
+route('/licencies/desactive', 'pages/users/user_list_deactivated.php');
 route('/licencies/$user_id', 'pages/users/user_view.php');
 route('/licencies/$user_id/supprimer', 'pages/users/user_delete.php');
 route('/licencies/$user_id/creer-famille', 'pages/users/family_create.php');
