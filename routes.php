@@ -44,6 +44,8 @@ route('/famille/$family_id/change/$member_id', 'pages/users/family_change.php');
 route('/famille/$family_id/supprimer/$member_id', 'pages/users/family_remove.php');
 route('/user-control/$user_id', 'pages/users/take_user_control.php');
 route('/activation', 'pages/tokens/user_activation.php');
+route('/reinitialiser-mot-de-passe', 'pages/tokens/send_reset_password.php');
+route('/reinitialisation-mot-de-passe', 'pages/tokens/reset_password.php');
 
 // Shared documents
 // route('/documents', 'pages/shared_documents');
