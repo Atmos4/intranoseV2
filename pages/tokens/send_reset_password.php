@@ -8,17 +8,17 @@ if ($v->valid()) {
     if ($user) {
         $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT2H'));
         em()->persist($token);
-        em()->flush();
 
         $base_url = env("base_url");
         $subject = "Réinitialisation du mot de passe";
-        $content = "Voici le lien pour réinitialiser votre mot de passe: $base_url/reinitialisation-mot-de-passe?token=$token->id";
+        $content = "Voici le lien pour réinitialiser votre mot de passe: $base_url/nouveau-mot-de-passe?token=$token->id";
 
         $result = Mailer::create()
             ->to($address->value, $subject, $content)
             ->send();
         if ($result->success) {
             $v->set_success('Message has been sent');
+            em()->flush();
         } else {
             $v->set_error($result->message);
         }

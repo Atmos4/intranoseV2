@@ -1,6 +1,5 @@
 <?php
 $token = AccessToken::retrieve($_GET['token'] ?? "");
-page("Réinitialiser le mot de passe")->disableNav()->heading(false);
 $v = new Validator(action: "reset_password_form");
 $new_password = $v->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
 $confirm_password = $v->password("confirm_password")
@@ -16,6 +15,7 @@ if ($v->valid()) {
     em()->flush();
     redirect("/");
 }
+page("Réinitialiser le mot de passe")->disableNav()->heading(false);
 ?>
 
 <article>
