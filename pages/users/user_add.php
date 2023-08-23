@@ -1,14 +1,13 @@
 <?php
 restrict_access(Access::$EDIT_USERS);
 
-$user = em()->find(User::class, $user_id ?? User::getCurrent());
-
 $v = new Validator([], "new_user_form");
 $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required();
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
 $real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addresse mail")->required();
 
 $permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "STAFF" => "Responsable"];
+$user = em()->find(User::class, User::getCurrent());
 if ($user->permission == Permission::ROOT) {
     $permissions_array["ROOT"] = "Big Boss";
 }
