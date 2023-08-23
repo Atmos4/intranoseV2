@@ -1,6 +1,6 @@
 <?php
 $token = AccessToken::retrieve($_GET['token'] ?? "");
-page("Activer le compte");
+page("Activer le compte")->disableNav()->heading(false);
 $v = new Validator(action: "validate_form");
 $new_password = $v->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
 $confirm_password = $v->password("confirm_password")
@@ -19,16 +19,16 @@ if ($v->valid()) {
     $user->active = true;
     em()->persist($user);
     em()->flush();
-    $v->set_success("Mot de passe mis à jour !");
     redirect("/");
 }
 
 ?>
 
 <article>
+    <h2 class="center">Activation de compte</h2>
     <p>
         Vous activez le compte de
-        <?= "{$token->user->first_name} {$token->user->last_name}" ?>.
+        <?= "{$token->user->first_name} {$token->user->last_name}" ?>
     </p>
 
     <form method="post" class="row">

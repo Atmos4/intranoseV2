@@ -25,4 +25,5 @@ page("Login")->css("login.css")->disableNav()->heading(false);
         <?= $v->render_validation() ?>
         <button type="submit">Se connecter</button>
     </form>
+    <a href="/reinitialiser-mot-de-passe">Mot de passe oublié ?</a>
 </article>
