@@ -1,45 +1,29 @@
 <?php
-use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMSetup;
 
-require_once "vendor/autoload.php";
+// Project base path
+define('BASE_PATH', dirname(__DIR__));
 
-session_start();
+function base_path(): string
+{
+    return BASE_PATH;
+}
 
-require_once "core/classes.php";
-require_once "core/user_control.php";
+function app_path(): string
+{
+    return BASE_PATH . "/app";
+}
 
 /** Returns an env variable */
 function env(string $key)
 {
-    return Env::getInstance()->getValue($key);
+    return Config::get($key);
 }
 
-$config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
-
-// ORM
-$connection = DriverManager::getConnection([
-    'driver' => 'pdo_mysql',
-    'user' => env("db_user"),
-    'password' => env("db_password"),
-    'dbname' => env("db_name"),
-    'host' => env("db_host"),
-    'charset' => 'utf8mb4'
-], $config);
-
-global $formatter, $entityManager;
-$entityManager = new EntityManager($connection, $config);
-$formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
-
-// Time zone and locale
-date_default_timezone_set("Europe/Paris");
-setlocale(LC_ALL, "French");
-//ini_set('display_errors', 1);
-
+/** Get global entity manager */
 function em(): EntityManager
 {
-    return $GLOBALS['entityManager'];
+    return DB::get();
 }
 
 /** Get global formatter.
@@ -49,25 +33,28 @@ function em(): EntityManager
  */
 function formatter(string $format = null): IntlDateFormatter
 {
-    global $formatter;
-    if ($format) {
-        $formatter->setPattern($format);
-    }
-    return $formatter;
+    return Formatter::get($format);
 }
 
-// HELPER METHODS
+/**
+ * Returns a named route parameter
+ * @param mixed $param Route parameter
+ * @param mixed $strict If the parameter is required
+ * @param mixed $numeric If the parameter needs to be numeric, defaults to true
+ * @return string|int|null
+ */
+function get_route_param($param, $strict = true, $numeric = true)
+{
+    return Router::getParameter($param, $strict, $numeric);
+}
+
 /** Redirect helper method */
 function redirect($href)
 {
     header("Location: " . $href);
     exit;
 }
-/** Require from root folder */
-function require_root($path)
-{
-    require_once $_SERVER['DOCUMENT_ROOT'] . "/" . $path;
-}
+
 /** Setup page */
 function page(string $title)
 {
@@ -91,13 +78,6 @@ function check_auth($levels = [])
     return false;
 }
 
-function restrict_dev()
-{
-    if (!env('developement')) {
-        force_404("Not in dev environement");
-    }
-}
-
 /** Restrict access to authenticated users, and to a set of authorized users if provided arguments.
  * Should be used as early as possible, to prevent unnecessary data loading.
  * @param Permission[] $permissions
@@ -106,7 +86,24 @@ function restrict_access($permissions = [])
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
         $permission = $_SESSION['user_permission']?->value ?? "non authenticated user";
-        force_404("Access for {$permission} is restricted for this page. ");
+        Router::abort("Access for {$permission} is restricted for this page. ");
+    }
+}
+
+function force_404($message = "")
+{
+    Router::abort($message);
+}
+
+function has_session($key): bool
+{
+    return isset($_SESSION[$key]);
+}
+
+function restrict_dev()
+{
+    if (!env('developement')) {
+        force_404("Not in dev environement");
     }
 }
 
@@ -121,4 +118,22 @@ function format_date($date, string $format = null)
         $date = date_create($date);
     }
     return formatter($format)->format($date);
+}
+/** CSRF Protection */
+function set_csrf()
+{
+    if (!isset($_SESSION["csrf"])) {
+        $_SESSION["csrf"] = bin2hex(random_bytes(50));
+    }
+    return '<input type="hidden" name="csrf" value="' . $_SESSION["csrf"] . '">';
+}
+function is_csrf_valid()
+{
+    if (!isset($_SESSION['csrf']) || !isset($_POST['csrf'])) {
+        return false;
+    }
+    if ($_SESSION['csrf'] != $_POST['csrf']) {
+        return false;
+    }
+    return true;
 }
