@@ -12,7 +12,22 @@
   "autoload": {
     "classmap": [
       "database/models/",
-      "components/form/"
+      "engine/core/",
+      "engine/validation/"
+    ],
+    "files": [
+      "engine/helpers.php"
     ]
+  },
+  "scripts": {
+    "setup": [
+      "@composer install",
+      "@db:migrate"
+    ],
+    "update:all": [
+      "@composer dump-autoload",
+      "@db:migrate"
+    ],
+    "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate"
   }
 }
