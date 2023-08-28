@@ -100,8 +100,11 @@ class User
         return em()->find(User::class, $user_id);
     }
 
-    static function getCurrent(): User
+    static function getCurrent(): User|null
     {
+        if (!has_session("user_id")) {
+            return null;
+        }
         if (isset($_SESSION['controlled_user_id'])) {
             Page::getInstance()->controlled();
         }
@@ -109,8 +112,11 @@ class User
         return self::$currentUser;
     }
 
-    static function getMain(): User
+    static function getMain(): User|null
     {
+        if (!has_session("user_id")) {
+            return null;
+        }
         self::$mainUser ??= em()->find(User::class, $_SESSION['user_id']);
         return self::$mainUser;
     }

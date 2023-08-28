@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 
-require_once "components/conditional_icon.php";
+require_once app_path() . "/components/conditional_icon.php";
 
 $event = Event::getWithGraphData(get_route_param('event_id'), User::getCurrent()->id);
 if (!$event->open) {
@@ -55,13 +55,13 @@ page($event->name)->css("event_view.css");
     <header class="center">
         <div class="row">
             <div>
-                <?php include "components/start_icon.php" ?>
+                <?php include app_path() . "/components/start_icon.php" ?>
                 <span>
                     <?= "Départ : " . format_date($event->start_date) ?>
                 </span>
             </div>
             <div>
-                <?php include "components/finish_icon.php" ?>
+                <?php include app_path() . "/components/finish_icon.php" ?>
                 <span>
                     <?= "Retour : " . format_date($event->end_date) ?>
                 </span>

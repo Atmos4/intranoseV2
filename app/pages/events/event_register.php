@@ -107,14 +107,14 @@ page("Inscription - " . $event->name)->css("event_view.css");
             <?= $v->render_validation() ?>
             <div class="row">
                 <div class="col-sm-6">
-                    <?php include "components/start_icon.php" ?>
+                    <?php include app_path() . "/components/start_icon.php" ?>
 
                     <span>
                         <?= "Départ - " . format_date($event->start_date) ?>
                     </span>
                 </div>
                 <div class="col-sm-6">
-                    <?php include "components/finish_icon.php" ?>
+                    <?php include app_path() . "/components/finish_icon.php" ?>
                     <span>
                         <?= "Retour - " . format_date($event->end_date) ?>
                     </span>

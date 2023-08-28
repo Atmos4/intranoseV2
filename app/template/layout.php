@@ -27,15 +27,16 @@
     <link rel="stylesheet" href="/assets/css/pico.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
-    <?php if ($page->css): ?>
-        <link rel="stylesheet" href="<?= $page->css ?>">
-    <?php endif ?>
+
+    <?php foreach ($page->css_files as $css): ?>
+        <link rel="stylesheet" href="<?= $css ?>">
+    <?php endforeach ?>
 </head>
 
 <body>
     <?php
     if ($page->nav) {
-        require_root("template/nav.php");
+        require_once app_path() . "/template/nav.php";
     }
     if ($page->controlled) {
         echo ControlNotice();

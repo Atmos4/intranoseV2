@@ -8,7 +8,7 @@ use Doctrine\Migrations\Tools\Console\Command;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
-require_once 'core/init.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $config = new ConfigurationArray([
     'table_storage' => [
