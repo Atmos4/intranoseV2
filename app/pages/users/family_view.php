@@ -29,7 +29,7 @@ $add_member_list = em()->createQueryBuilder()
     ->orderBy('u.last_name')
     ->getQuery()->getArrayResult();
 
-$profile_picture = "/app/" . (file_exists("app/images/profile/" . $user->id) ?
+$profile_picture = "/assets/" . (file_exists("/assets/images/profile/" . $user->id) ?
     "images/profile/" . $user->id
     : "images/profile/none.jpg");
 

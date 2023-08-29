@@ -32,19 +32,19 @@ $page = Page::getInstance(); ?>
     <link rel="stylesheet" href="/assets/css/pico.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
+    <!-- Custom CSS -->
+    <?php foreach ($page->css_files as $css): ?>
+        <link rel="stylesheet" href="<?= $css ?>">
+    <?php endforeach ?>
+
     <?php
     if ($page->nav) { ?>
         <link rel="stylesheet" href="/assets/css/navbar.css">
     <?php } ?>
-    <script src="https://unpkg.com/htmx.org@1.9.3"
+    <script src="https://unpkg.com/htmx.org@1.8.5"
         integrity="sha384-lVb3Rd/Ca0AxaoZg5sACe8FJKF0tnUgR2Kd7ehUOG5GCcROv5uBIZsOqovBAcWua" crossorigin="anonymous"
         defer></script>
     <script defer src="/assets/js/nav.js"></script>
-
-
-    <?php foreach ($page->css_files as $css): ?>
-        <link rel="stylesheet" href="<?= $css ?>">
-    <?php endforeach ?>
 </head>
 
 <body>
