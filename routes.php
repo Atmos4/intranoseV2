@@ -3,6 +3,21 @@
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
 
+
+require_once app_path() . "/components/user_control.php";
+
+// Env
+$dotenv = Dotenv\Dotenv::createImmutable(base_path());
+$dotenv->load();
+$dotenv->required('DB_NAME');
+$dotenv->required('DB_USER');
+$dotenv->required('DB_PASSWORD');
+$dotenv->ifPresent('DEVELOPMENT')->isBoolean();
+$dotenv->required('BASE_URL');
+$dotenv->required('MAIL_HOST');
+$dotenv->required('MAIL_USER');
+$dotenv->required('MAIL_PASSWORD');
+
 // BIG TODO: REPLACE THIS SHIT ROUTER.
 
 Router::add('/', 'pages/index');

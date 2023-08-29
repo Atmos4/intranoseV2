@@ -9,7 +9,7 @@ if ($v->valid()) {
         $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT2H'));
         em()->persist($token);
 
-        $base_url = env("base_url");
+        $base_url = env("BASE_URL");
         $subject = "Réinitialisation du mot de passe";
         $content = "Voici le lien pour réinitialiser votre mot de passe: $base_url/nouveau-mot-de-passe?token=$token->id";
 

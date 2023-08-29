@@ -17,7 +17,7 @@ function app_path(): string
 /** Returns an env variable */
 function env(string $key)
 {
-    return Config::get($key);
+    return $_ENV[$key] ?? null;
 }
 
 /** Get global entity manager */
@@ -102,7 +102,7 @@ function has_session($key): bool
 
 function restrict_dev()
 {
-    if (!env('developement')) {
+    if (!env('DEVELOPMENT')) {
         force_404("Not in dev environement");
     }
 }

@@ -37,13 +37,13 @@ class Mailer
         $instance->mail = new PHPMailer();
         $instance->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $instance->mail->isSMTP();
-        $instance->mail->Host = env("mail_host");
+        $instance->mail->Host = env("MAIL_HOST");
         $instance->mail->SMTPAuth = true;
-        $instance->mail->Username = env("mail_user");
-        $instance->mail->Password = env("mail_password");
+        $instance->mail->Username = env("MAIL_USER");
+        $instance->mail->Password = env("MAIL_PASSWORD");
         $instance->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $instance->mail->Port = 465;
-        $instance->mail->setFrom(env("mail_user"));
+        $instance->mail->setFrom(env("MAIL_USER"));
         return $instance;
     }
 

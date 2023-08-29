@@ -12,10 +12,10 @@ class DB extends Singleton
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
         $connection = DriverManager::getConnection([
             'driver' => 'pdo_mysql',
-            'user' => env("db_user"),
-            'password' => env("db_password"),
-            'dbname' => env("db_name"),
-            'host' => env("db_host"),
+            'user' => env("DB_USER"),
+            'password' => env("DB_PASSWORD"),
+            'dbname' => env("DB_NAME"),
+            'host' => env("DB_HOST"),
             'charset' => 'utf8mb4'
         ], $config);
         $this->entityManager = new EntityManager($connection, $config);

@@ -10,7 +10,7 @@ if ($v->valid()) {
     em()->persist($token);
     em()->flush();
 
-    $base_url = env("base_url");
+    $base_url = env("BASE_URL");
     $subject = "Test token";
     $content = "Voici le lien pour tester le token: $base_url/activation?token=$token->id";
 

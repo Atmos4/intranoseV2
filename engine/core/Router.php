@@ -16,7 +16,7 @@ class Router extends Singleton
     static function abort(string $message = null, int $code = 404)
     {
         http_response_code($code);
-        if (env('developement')) {
+        if (env('DEVELOPMENT')) {
             echo $message;
         }
         self::getInstance()->render();
@@ -41,8 +41,11 @@ class Router extends Singleton
     {
         $router = self::getInstance();
         $_SESSION['current_route'] = $route;
-        if (!strpos($path_to_include, '.php')) {
-            $path_to_include .= '.php';
+        $callback = $path_to_include;
+        if (!is_callable($callback)) {
+            if (!strpos($path_to_include, '.php')) {
+                $path_to_include .= '.php';
+            }
         }
         if ($route == "/404") {
             $router->render($path_to_include);
@@ -71,6 +74,12 @@ class Router extends Singleton
                 return;
             }
         }
+        // Callback function
+        if (is_callable($callback)) {
+            call_user_func_array($callback, $parameters);
+            exit;
+        }
+
         $router->render($path_to_include);
     }
 }
