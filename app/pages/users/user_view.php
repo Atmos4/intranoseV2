@@ -8,9 +8,9 @@ if (!$user) {
 $can_edit_users = check_auth(Access::$EDIT_USERS);
 $is_root = check_auth([Permission::ROOT]);
 
-$profile_picture = (file_exists("images/profile/" . $user->id . ".jpg")) ?
-    "/images/profile/" . $user->id . ".jpg"
-    : "/images/profile/none.jpg";
+$profile_picture = (file_exists(base_path() . "/assets/images/profile/" . $user->id . ".jpg")) ?
+    "/assets/images/profile/" . $user->id . ".jpg"
+    : "/assets/images/profile/none.jpg";
 page($user->first_name . " " . $user->last_name)->css("user_view.css");
 ?>
 <nav id="page-actions">
