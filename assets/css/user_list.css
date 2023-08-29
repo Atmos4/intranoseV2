@@ -1,9 +1,10 @@
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 991px) {
   tr {
     display: grid;
     grid:
-      "lastname firstname phone"
-      "email email email" / auto 1fr;
+      "lastname firstname"
+      "phone phone"
+      "email email" / auto 1fr;
     border-bottom: var(--border-width) solid var(--table-border-color);
     align-items: center;
   }

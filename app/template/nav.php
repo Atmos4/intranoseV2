@@ -1,69 +1,55 @@
 <?php
-$nav_routes = [
-    "/evenements" => ["Événements", "fa-calendar"],
-    "/licencies" => ["Les licenciés", "fa-users"],
-    "/mon-profil" => ["Mon profil", "fa-gear"]
-];
-$main_user = User::getMain();
-/* if (check_auth(Access::$ADD_EVENTS)) {
-$nav_routes["/documents"] = ["Documents partagés", "fa-file"];
-} */
-if (env('developement')) {
-    $nav_routes["/dev"] = ["Dev", "fa-code"];
+$menu = MainMenu::getInstance()
+    ->addItem("Événements", "/", "fa-calendar")
+    ->addItem("Les licenciés", "/licencies", "fa-users")
+    ->addItem("Mon profil", "/mon-profil", "fa-gear");
+
+if (env('DEVELOPMENT')) {
+    $menu->addItem("Dev", "/dev", "fa-code");
 }
-$logged_in = isset($_SESSION['user_id']);
+$main_user = User::getMain();
+
 ?>
-
-<nav class="container-fluid" id="main-menu">
-    <ul class="responsive icon">
-        <li>
-            <a href="javascript:void(0);" onclick="toggleNav()">
-                <i class="fas fa-bars"></i>
-            </a>
-        </li>
-    </ul>
-
-    <?php if ($logged_in): ?>
+<header id="main-header">
+    <button class="nav-button outline contrast" onclick="toggleNav()">&#9776;</button>
+    <h3>Intranose</h3>
+    <?php include app_path() . "/components/theme_switcher.php" ?>
+</header>
+<aside id="mySidenav" class="sidenav">
+    <nav hx-boost="true">
         <ul>
-            <?php foreach ($nav_routes as $route => $nav_title): ?>
-                <li class="<?= $route == $_SESSION['current_route'] ? "active" : "" ?>"><a
-                        class="<?= $route == $_SESSION['current_route'] ? "active" : "contrast" ?>" href="<?= $route ?>"><i
-                            class="fas <?= $nav_title[1] ?>"></i>
-                        <?= " " . $nav_title[0] ?>
-                    </a></li>
+            <?php foreach ($menu->items as $menu_item): ?>
+                <li class="<?= $menu_item->url == $_SESSION['current_route'] ? "active" : "" ?>">
+                    <a class="<?= $menu_item == $_SESSION['current_route'] ? "active" : "contrast" ?>"
+                        href="<?= $menu_item->url ?>" <?= $menu_item->disableBoost ? 'hx-boost="false"' : '' ?>>
+                        <?php if ($menu_item->icon): ?> <i class="fas <?= $menu_item->icon ?>"></i>
+                        <?php endif ?>
+                        <?= " " . $menu_item->label ?>
+                    </a>
+                </li>
             <?php endforeach ?>
             <?php if ($main_user->family_leader): ?>
-                <li role="list">
-                    <a aria-haspopup="listbox" class="contrast"><i class="fa fa-users"></i> Famille
-                    </a>
-                    <ul role="listbox">
-                        <?php foreach ($main_user->family->members as $member):
-                            if ($member !== $main_user): ?>
-                                <li><a href="/user-control/<?= $member->id ?>">
-                                        <?= $member->first_name ?>
-                                    </a></li>
-                            <?php endif;
-                        endforeach ?>
-                        <li><a href="/famille/<?= $main_user->family->id ?>"><i class="fa fa-gear"></i> Gérer...</a></li>
-                    </ul>
+                <li>
+                    <details role="list" id="family-dropdown">
+                        <summary aria-haspopup="listbox" role="link" class="contrast"><i class="fa fa-users"></i> Famille
+                        </summary>
+                        <ul role="listbox">
+                            <?php foreach ($main_user->family->members as $member):
+                                if ($member !== $main_user): ?>
+                                    <li><a href="/user-control/<?= $member->id ?>">
+                                            <?= $member->first_name ?>
+                                        </a></li>
+                                <?php endif;
+                            endforeach ?>
+                            <li><a href="/famille/<?= $main_user->family->id ?>"><i class="fa fa-gear"></i> Gérer...</a>
+                            </li>
+                        </ul>
+                    </details>
                 </li>
             <?php endif ?>
+            <?php if ($main_user): ?>
+                <li><a class="destructive" href="/logout"><i class="fa fa-power-off"></i> Déconnexion</a></li>
+            <?php endif ?>
         </ul>
-    <?php endif ?>
-    <ul>
-        <li>
-            <details role="list" dir="rtl">
-                <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
-                <ul role="listbox">
-                    <li><a href="#" data-theme-switcher="auto">Auto</a></li>
-                    <li><a href="#" data-theme-switcher="light">Light</a></li>
-                    <li><a href="#" data-theme-switcher="dark">Dark</a></li>
-                </ul>
-            </details>
-        </li>
-        <?php if ($logged_in): ?>
-            <li><a class="destructive" href="/logout">Déconnexion</a></li>
-        <?php endif ?>
-    </ul>
-
-</nav>
+    </nav>
+</aside>

@@ -1,0 +1,101 @@
+:not(form) button {
+  display: inline;
+  width: fit-content;
+}
+
+.nav-button {
+  font-size: 1.5rem;
+  line-height: 1em;
+  border: none;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow-x: hidden;
+  transition: width 0.2s;
+  padding-top: 4.5rem;
+  background: var(--card-background-color);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+body > header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 0 1rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  background: var(--card-background-color);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+body > header > * {
+  margin: 0;
+  padding: 0.5rem;
+}
+
+body > main.container {
+  padding: 1rem 1.5rem;
+}
+
+body > main > .spacing-div {
+  height: 3.75rem;
+}
+
+.sidenav.open {
+  width: 100%;
+}
+
+.sidenav > nav > ul {
+  margin: 0 1rem;
+}
+
+.sidenav :is(a, #family-dropdown summary):has(i) {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 2rem 1fr;
+  align-items: center;
+}
+.sidenav :is(a, #family-dropdown summary) {
+  text-decoration: none;
+  color: var(--contrast);
+  transition: color var(--transition);
+}
+.sidenav :is(a, #family-dropdown summary):is(:hover, :focus) {
+  color: var(--primary);
+}
+
+@media screen and (min-width: 576px) {
+  .sidenav.open {
+    width: 250px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .sidenav {
+    width: 250px;
+  }
+
+  body {
+    padding-left: 250px;
+  }
+
+  body > header {
+    width: calc(100% + 250px); /* twice the value of the parent's padding*/
+    margin-left: -250px; /* -1 * parent's padding*/
+    padding-left: 2rem;
+  }
+
+  .nav-button,
+  .sidenav .closebtn {
+    display: none;
+  }
+}
