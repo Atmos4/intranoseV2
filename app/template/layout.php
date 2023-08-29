@@ -1,4 +1,5 @@
-<?php $page = Page::getInstance(); ?>
+<?php
+$page = Page::getInstance(); ?>
 <!doctype html>
 <html lang="en">
 
@@ -23,9 +24,22 @@
     <link rel="stylesheet" href="/assets/css/fontawesome.min.css">
     <link rel="stylesheet" href="/assets/css/solid.min.css">
 
+    <!-- Theme switcher -->
+    <link rel="stylesheet" href="/assets/css/open-props-easings.css">
+    <link rel="stylesheet" href="/assets/css/theme-toggle.css">
+
     <!-- Pico.css -->
     <link rel="stylesheet" href="/assets/css/pico.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
+
+    <?php
+    if ($page->nav) { ?>
+        <link rel="stylesheet" href="/assets/css/navbar.css">
+    <?php } ?>
+    <script src="https://unpkg.com/htmx.org@1.9.3"
+        integrity="sha384-lVb3Rd/Ca0AxaoZg5sACe8FJKF0tnUgR2Kd7ehUOG5GCcROv5uBIZsOqovBAcWua" crossorigin="anonymous"
+        defer></script>
+    <script defer src="/assets/js/nav.js"></script>
 
 
     <?php foreach ($page->css_files as $css): ?>
@@ -37,11 +51,11 @@
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";
-    }
-    if ($page->controlled) {
-        echo ControlNotice();
     } ?>
     <main class="container">
+        <?php if ($page->controlled) {
+            echo ControlNotice();
+        } ?>
         <?php if ($page->heading !== false): ?>
             <h2 class="center">
                 <?= $page->heading ?: $page->title ?>
@@ -49,8 +63,6 @@
         <?php endif ?>
         <?= $page->content ?>
     </main>
-
-    <script src="/assets/js/nav.js"></script>
 </body>
 
 </html>

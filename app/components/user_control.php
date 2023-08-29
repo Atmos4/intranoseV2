@@ -5,10 +5,14 @@ if (isset($_POST['action']) and ($_POST['action'] == "reset-control")) {
 
 function ControlNotice()
 { ?>
-    <form class="control-notice" method="post">
-        <input type="hidden" name="action" value="reset-control">
-        <i class="fa fa-eye"></i>
+    <div class="control-notice">
+        Vous contrôlez actuellement
         <?= User::getCurrent()->first_name . " " . User::getCurrent()->last_name ?>
-        <button type="submit" class="outline contrast"><i class="fa fa-xmark"></i></button>
-    </form>
+        <form method="post">
+            <input type="hidden" name="action" value="reset-control">
+            <button type="submit" class="outline secondary">
+                <i class="fa fa-stop"></i> Arrêter
+            </button>
+        </form>
+    </div>
 <?php } ?>
