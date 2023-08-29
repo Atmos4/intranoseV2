@@ -31,7 +31,7 @@ if ($v->valid()) {
 
     $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
 
-    $base_url = env("base_url");
+    $base_url = env("BASE_URL");
     $subject = "Activation de votre compte NOSE";
     $content = "Voici le lien pour activer votre compte NOSE : $base_url/activation?token=$token->id";
 

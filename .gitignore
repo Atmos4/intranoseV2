@@ -1,6 +1,5 @@
 /images/profile/*
 !/images/profile/none.jpg
-env.php
 /uploads/*
 !/uploads/shared_docs/
 /uploads/shared_docs/*
@@ -8,3 +7,7 @@ env.php
 !/uploads/*.php
 /vendor/
 /node_modules
+
+# Env
+env.php
+.env
