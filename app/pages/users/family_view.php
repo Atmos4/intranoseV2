@@ -51,7 +51,6 @@ page($family->name)->css("family_list.css") ?>
         </li>
     </nav>
 <?php endif ?>
-<br>
 <div class="row">
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">

@@ -94,13 +94,14 @@ label.error:hover {
 #page-actions {
   display: flex;
   height: fit-content;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   position: sticky;
   top: 2.5rem;
   left: 0;
   right: 0;
   z-index: 2;
   background-color: var(--background-color);
+  margin: 0.5rem -1rem;
 }
 #page-actions button {
   margin: 0;
@@ -122,6 +123,7 @@ label.error:hover {
   }
   #page-actions {
     top: 0;
+    margin: 0.5rem -2rem;
   }
 }
 
@@ -131,7 +133,7 @@ tbody > tr.clickable {
   position: relative;
 }
 tbody > tr.clickable:where(:hover, :focus) {
-  background-color: var(--secondary-focus);
+  background-color: var(--secondary-focus) !important;
   outline: none;
 }
 
