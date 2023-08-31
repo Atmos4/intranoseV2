@@ -37,21 +37,18 @@ $page = Page::getInstance(); ?>
         <link rel="stylesheet" href="<?= $css ?>">
     <?php endforeach ?>
 
-    <?php
-    if ($page->nav): ?>
+    <?php if ($page->nav): ?>
         <link rel="stylesheet" href="/assets/css/navbar.css">
     <?php endif ?>
 
     <!-- HTMX -->
-    <script src="/assets/js/htmx-core.min.js" defer></script>
-    <script src="/assets/js/htmx-head.js" defer></script>
-    <script src="/assets/js/htmx-preload.js" defer></script>
-    <!-- <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js" defer></script> -->
+    <script src="/assets/js/htmx1.9.5-core.min.js" defer></script>
+    <script src="/assets/js/htmx1.9.5-head.js" defer></script>
 
     <script defer src="/assets/js/nav.js"></script>
 </head>
 
-<body hx-ext="head-support, preload" hx-boost="true" hx-indicator="#hx-indicator">
+<body hx-ext="head-support">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";

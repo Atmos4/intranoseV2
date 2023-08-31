@@ -11,10 +11,12 @@ $main_user = User::getMain();
 
 ?>
 <div id="nav-button">
-    <button class="outline contrast" onclick="toggleNav()">&#9776; Menu</button>
+    <button class="outline contrast" onclick="document.getElementById('mySidenav').classList.toggle('open')">
+        &#9776; Menu
+    </button>
 </div>
 <aside id="mySidenav" class="sidenav">
-    <nav>
+    <nav hx-boost="true" hx-indicator="#hx-indicator">
         <ul>
             <li>
                 <h3 class="nav-title">Intranose</h3>
@@ -23,7 +25,7 @@ $main_user = User::getMain();
                 <li class="<?= $menu_item->url == $_SESSION['current_route'] ? "active" : "" ?>">
                     <a class="<?= $menu_item == $_SESSION['current_route'] ? "active" : "contrast" ?>"
                         href="<?= $menu_item->url ?>" <?= $menu_item->disableBoost ? 'hx-boost="false"' : '' ?>>
-                        <?php if ($menu_item->icon): ?> <i class="fas <?= $menu_item->icon ?>" preload="mousedown"></i>
+                        <?php if ($menu_item->icon): ?> <i class="fas <?= $menu_item->icon ?>"></i>
                         <?php endif ?>
                         <?= " " . $menu_item->label ?>
                     </a>
@@ -31,7 +33,7 @@ $main_user = User::getMain();
             <?php endforeach ?>
             <?php if ($main_user->family_leader): ?>
                 <li>
-                    <details id="family-dropdown">
+                    <details role="list" id="family-dropdown">
                         <summary role="link" class="contrast"><i class="fa fa-users"></i> Famille
                         </summary>
                         <ul>
