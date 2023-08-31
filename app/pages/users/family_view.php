@@ -37,17 +37,21 @@ page($family->name)->css("family_list.css") ?>
 <?php if (check_auth(Access::$EDIT_USERS)): ?>
     <nav id="page-actions">
         <a href="/familles" class="secondary"><i class="fa fa-caret-left"></i> Retour</a>
-        <li role="list" dir="rtl">
-            <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
-            <ul role="listbox">
-                <li>
-                    <a href="<?= $family->id ?>/supprimer" class="destructive outline">
-                        <i class="fa fa-trash"></i> Supprimer la famille
-                    </a>
-                </li>
-            </ul>
+        <li>
+            <details role="list" dir="rtl">
+                <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
+                <ul role="listbox">
+                    <li>
+                        <a href="<?= $family->id ?>/supprimer" class="destructive outline">
+                            <i class="fa fa-trash"></i> Supprimer la famille
+                        </a>
+                    </li>
+                </ul>
+            </details>
+        </li>
     </nav>
 <?php endif ?>
+<br>
 <div class="row">
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">

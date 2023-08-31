@@ -84,12 +84,13 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
         <?= $nose_email->render() ?>
+        <?= $phone->render() ?>
     </div>
 
-    <?= $phone->render() ?>
 
-    <button type="submit" class="outline" name="submitIdentity" class=col-md-4>Mettre à jour
-        les infos</button>
+    <div class="col-12">
+        <input type="submit" class="outline" name="submitIdentity" value="Mettre à jour les infos">
+    </div>
 </form>
 <hr>
 

@@ -31,18 +31,20 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
 
 <nav id="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <li role="list" dir="rtl">
-        <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
-        <ul role="listbox">
-            <li><button type="submit" name="action" class="error" value="reactivate" form="deactivate-form">
-                    Réactiver
-                </button></li>
-            <li>
-                <button type="submit" name="action" value="delete" form="deactivate-form">
-                    Supprimer
-                </button>
-            </li>
-        </ul>
+    <li>
+        <details role="list" dir="rtl">
+            <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
+            <ul role="listbox">
+                <li><button type="submit" name="action" class="error" value="reactivate" form="deactivate-form">
+                        Réactiver
+                    </button></li>
+                <li>
+                    <button type="submit" name="action" value="delete" form="deactivate-form">
+                        Supprimer
+                    </button>
+                </li>
+            </ul>
+        </details>
     </li>
 </nav>
 

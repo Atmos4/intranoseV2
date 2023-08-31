@@ -19,24 +19,27 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
 
     <?php if ($can_edit_users): ?>
         <a href="/user-control/<?= $user->id ?>" class="outline">Contrôler</a>
-        <li role="list" dir="rtl">
-            <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
-            <ul role="listbox">
-                <li><a href="/licencies/<?= $user->id ?>/modifier"><i class="fa fa-pen"></i> Modifier</a>
-                </li>
-                <li>
-                    <a href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>">
-                        <i class="fa fa-<?= $user->family ? "users" : "plus" ?>"></i> Famille
-                    </a>
-                </li>
-                <?php if ($is_root): ?>
+        <li>
+            <details role="list" dir="rtl">
+                <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
+                <ul role="listbox">
+                    <li><a href="/licencies/<?= $user->id ?>/modifier">Modifier</a>
+                    </li>
                     <li>
-                        <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
-                            <i class="fas fa-trash"></i> Désactiver
+                        <a
+                            href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>">
+                            Famille <i class="fa fa-<?= $user->family ? "users" : "plus" ?>"></i>
                         </a>
                     </li>
-                <?php endif ?>
-            </ul>
+                    <?php if ($is_root): ?>
+                        <li>
+                            <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                                Désactiver <i class="fas fa-trash"></i>
+                            </a>
+                        </li>
+                    <?php endif ?>
+                </ul>
+            </details>
         </li>
     <?php endif ?>
 </nav>

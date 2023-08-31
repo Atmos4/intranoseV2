@@ -12,6 +12,7 @@ ul[role="listbox"] {
   grid-auto-flow: column;
   grid-template-columns: auto 1fr auto;
   border-radius: 50px;
+  box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 .row .card > img {
   height: 100px;

@@ -3,9 +3,21 @@
   width: fit-content;
 }
 
-.nav-button {
+#nav-button {
   font-size: 1.5rem;
   line-height: 1em;
+  height: 3rem;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+#nav-button > button {
+  padding: 0.5rem;
+  margin: 0;
   border: none;
 }
 
@@ -19,9 +31,21 @@
   white-space: nowrap;
   overflow-x: hidden;
   transition: width 0.2s;
-  padding-top: 4.5rem;
+  padding: 4.5rem 0 1rem;
   background: var(--card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.sidenav > nav {
+  /*just so that we are safe from overflowing*/
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidenav .nav-title {
+  margin: 0;
 }
 
 body > header {
@@ -43,7 +67,7 @@ body > header > * {
 }
 
 body > main.container {
-  padding: 1rem 1.5rem;
+  padding: 4rem 1rem 1rem;
 }
 
 body > main > .spacing-div {
@@ -56,6 +80,14 @@ body > main > .spacing-div {
 
 .sidenav > nav > ul {
   margin: 0 1rem;
+}
+
+.sidenav > nav > ul:last-child {
+  margin-top: auto;
+}
+
+.sidenav li > details {
+  border-bottom: none;
 }
 
 .sidenav :is(a, #family-dropdown summary):has(i) {
@@ -82,10 +114,15 @@ body > main > .spacing-div {
 @media screen and (min-width: 992px) {
   .sidenav {
     width: 250px;
+    padding-top: 1rem;
   }
 
   body {
     padding-left: 250px;
+  }
+
+  body > main.container {
+    padding: 4rem 2rem 1rem;
   }
 
   body > header {
@@ -94,7 +131,7 @@ body > main > .spacing-div {
     padding-left: 2rem;
   }
 
-  .nav-button,
+  #nav-button,
   .sidenav .closebtn {
     display: none;
   }
