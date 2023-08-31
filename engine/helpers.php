@@ -137,3 +137,17 @@ function is_csrf_valid()
     }
     return true;
 }
+
+// OVH API
+use Ovh\Api;
+
+function ovh_api(): Api
+{
+    $endpoint = 'ovh-eu';
+    return new Api(
+        env("APPLICATION_KEY"),
+        env("APPLICATION_SECRET"),
+        $endpoint,
+        env("CONSUMER_KEY")
+    );
+}

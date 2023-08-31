@@ -9,6 +9,8 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+// Load env
+require_once __DIR__ . '/../engine/load_env.php';
 
 $config = new ConfigurationArray([
     'table_storage' => [

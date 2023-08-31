@@ -3,20 +3,10 @@
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
 
-
+// User control
 require_once app_path() . "/components/user_control.php";
-
-// Env
-$dotenv = Dotenv\Dotenv::createImmutable(base_path());
-$dotenv->load();
-$dotenv->required('DB_NAME');
-$dotenv->required('DB_USER');
-$dotenv->required('DB_PASSWORD');
-$dotenv->ifPresent('DEVELOPMENT')->isBoolean();
-$dotenv->required('BASE_URL');
-$dotenv->required('MAIL_HOST');
-$dotenv->required('MAIL_USER');
-$dotenv->required('MAIL_PASSWORD');
+// Load env
+require_once base_path() . "/engine/load_env.php";
 
 // BIG TODO: REPLACE THIS SHIT ROUTER.
 
@@ -29,6 +19,8 @@ Router::add('/dev/create-user', 'pages/dev/create_test_user');
 // TODO: replace this
 //Router::add('/dev/reset-pw/$user_id', 'pages/dev/reset_pw');
 Router::add('/dev/send-email', 'pages/dev/send_test_email');
+Router::add('/dev/test-ovh', 'pages/dev/test_ovh');
+Router::add('/dev/ovh-mailing', 'pages/dev/ovh_mailing_lists');
 
 // Events
 Router::add('/evenements', 'pages/events/event_list');
