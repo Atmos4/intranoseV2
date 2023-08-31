@@ -56,12 +56,7 @@ page("Nouveau licencié")->css("settings.css");
 <form method="post" class="row">
     <nav id="page-actions">
         <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-
-        <div>
-            <button type="submit">
-                Créer
-            </button>
-        </div>
+        <button type="submit">Créer</button>
     </nav>
 
     <?= $v->render_validation() ?>

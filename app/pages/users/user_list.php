@@ -8,15 +8,16 @@ page("Les licenciés")->css("user_list.css");
 <?php if ($can_add_user): ?>
     <nav id="page-actions">
         <a href="/licencies/ajouter"><i class="fas fa-plus"></i> Ajouter un licencié</a>
-        <li role="list" dir="rtl">
-            <summary aria-haspopup="listbox" class="contrast">Plus <i class="fa fa-angle-right"></i></summary>
-            <ul role="listbox">
-                <li><a href="/familles" class="contrast"><i class="fas fa-users"></i> Familles</a></li>
-                <li>
-                    <a href="/licencies/desactive" class="contrast"><i class="fas fa-bed"></i> Licenciés
-                        désactivés</a>
-                </li>
-            </ul>
+        <li>
+            <details role="list" dir="rtl">
+                <summary role="link" aria-haspopup="listbox" class="contrast">Plus</summary>
+                <ul role="listbox">
+                    <li><a href="/familles" class="contrast"><i class="fas fa-users"></i> Familles</a></li>
+                    <li>
+                        <a href="/licencies/desactive" class="contrast"><i class="fas fa-bed"></i> Licenciés désactivés</a>
+                    </li>
+                </ul>
+            </details>
         </li>
     </nav>
 <?php endif ?>

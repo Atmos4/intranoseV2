@@ -1,4 +1,4 @@
-/* Pink Light scheme (Default) */
+/* Green Light scheme (Default) */
 /* Can be forced with data-theme="light" */
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
@@ -8,7 +8,7 @@
   --primary-inverse: #fff;
 }
 
-/* Pink Dark scheme (Auto) */
+/* Green Dark scheme (Auto) */
 /* Automatically enabled if user has Dark mode enabled */
 @media only screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -19,7 +19,7 @@
   }
 }
 
-/* Pink Dark scheme (Forced) */
+/* Green Dark scheme (Forced) */
 /* Enabled if forced with data-theme="dark" */
 [data-theme="dark"] {
   --primary: hsl(123, 68%, 36%);
@@ -28,7 +28,7 @@
   --primary-inverse: #fff;
 }
 
-/* Pink (Common styles) */
+/* Green (Common styles) */
 :root {
   --form-element-active-border-color: var(--primary);
   --form-element-focus-color: var(--primary-focus);
@@ -41,6 +41,23 @@
   --size: 1.5rem;
   box-shadow: none;
   margin-left: auto;
+}
+
+#hx-indicator {
+  position: fixed;
+  top: 0.8rem;
+  left: 6rem;
+  display: none;
+  z-index: 6;
+}
+#hx-indicator.htmx-request {
+  display: block;
+}
+
+/* change these rules to not be bothr*/
+details[dir="rtl"] ul > li {
+  left: auto;
+  direction: ltr;
 }
 
 .center {
@@ -73,45 +90,15 @@ label.error:hover {
   margin-left: 0.5em;
 }
 
-/* Nav bar */
-#main-menu {
-  position: relative;
-}
-#main-menu .responsive {
-  display: none;
-}
-#main-menu > ul > li:hover > a {
-  background-color: var(--dropdown-hover-background-color);
-  color: var(--primary-hover);
-}
-@media screen and (max-width: 768px) {
-  #main-menu {
-    float: left;
-  }
-  #main-menu,
-  #main-menu.toggled ul {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  #main-menu ul:not(.responsive) {
-    display: none;
-  }
-  #main-menu ul.responsive {
-    display: flex;
-  }
-  #main-menu.toggled ul:not(.responsive) {
-    display: flex;
-  }
-  #main-menu.toggled ul:not(.responsive) li {
-    padding: 7px;
-  }
-}
+/* Page actions */
 #page-actions {
   display: flex;
   height: fit-content;
   padding: 0.5rem;
   position: sticky;
-  top: 3.925rem;
+  top: 2.5rem;
+  left: 0;
+  right: 0;
   z-index: 2;
   background-color: var(--background-color);
 }
@@ -128,15 +115,14 @@ label.error:hover {
 #page-actions > :where(a, li):hover {
   --background-color: var(--secondary-focus);
 }
-#page-actions > li > summary > i {
-  transition: transform 0.2s;
-}
-#page-actions > li:hover > summary > i {
-  transform: rotate(90deg);
-}
-nav details[role="list"] summary,
-nav li[role="list"] a {
-  display: block;
+
+@media screen and (min-width: 992px) {
+  #hx-indicator {
+    left: calc(250px + 1rem);
+  }
+  #page-actions {
+    top: 0;
+  }
 }
 
 /* table hover effect */

@@ -8,18 +8,20 @@ if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }
 
+$all_event_entries = Event::getAllEntries($event->id);
+
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
-$entry = $event->entries[0] ?? null;
+
+$entry = $event->entries->get(0) ?? null;
 
 page($event->name)->css("event_view.css");
 ?>
 <nav id="page-actions">
     <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
-    <?php if ($event->open && $event->deadline >= date_create("today")):
-        $is_entered = count($event->entries); ?>
-        <a href="/evenements/<?= $event->id ?>/inscription" <?= $is_entered ? "class=\"contrast\"" : "" ?>>
+    <?php if ($event->open && $event->deadline >= date_create("today")): ?>
+        <a href="/evenements/<?= $event->id ?>/inscription" <?= $entry ? "class=\"contrast\"" : "" ?>>
             <i class="fas fa-pen-to-square"></i> Inscription
         </a>
     <?php elseif (!$event->open): ?>
@@ -29,24 +31,26 @@ page($event->name)->css("event_view.css");
     <?php endif ?>
 
     <?php if ($can_edit): ?>
-        <li role="list" dir="rtl">
-            <summary aria-haspopup="listbox" class="contrast">Actions <i class="fa fa-angle-right"></i></summary>
-            <ul role="listbox">
-                <li><a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
-                        <i class="fas fa-pen"></i> Modifier
-                    </a></li>
-                <li>
-                    <?php if (!$event->open): ?>
-                        <a href="/evenements/<?= $event->id ?>/supprimer" class="destructive">
-                            <i class="fas fa-trash"></i> Supprimer
-                        </a>
-                    <?php elseif ($event->open): ?>
-                        <a href="/evenements/<?= $event->id ?>/publier" class="destructive">
-                            <i class="fas fa-calendar-minus"></i> Retirer
-                        </a>
-                    <?php endif; ?>
-                </li>
-            </ul>
+        <li>
+            <details role="list" dir="rtl">
+                <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
+                <ul role="listbox">
+                    <li><a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
+                            <i class="fas fa-pen"></i> Modifier
+                        </a></li>
+                    <li>
+                        <?php if (!$event->open): ?>
+                            <a href="/evenements/<?= $event->id ?>/supprimer" class="destructive">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        <?php elseif ($event->open): ?>
+                            <a href="/evenements/<?= $event->id ?>/publier" class="destructive">
+                                <i class="fas fa-calendar-minus"></i> Retirer
+                            </a>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </details>
         </li>
 
     <?php endif ?>
@@ -78,7 +82,7 @@ page($event->name)->css("event_view.css");
         <div class="row">
             <b>
                 <?php if ($event->open): ?>
-                    <?php if ($entry && $entry->present): ?>
+                    <?php if ($entry?->present): ?>
                         <ins><i class="fas fa-check"></i>
                             <span>Je participe</span></ins>
                     <?php else: ?>
@@ -182,7 +186,7 @@ page($event->name)->css("event_view.css");
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($event->entries as $entry): ?>
+                    <?php foreach ($all_event_entries as $entry): ?>
                         <?php if ($entry->present): ?>
                             <tr class="clickable" onclick="window.location.href = '/licencies/<?= $entry->user->id ?>'">
                                 <td class="lastname">

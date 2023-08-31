@@ -37,8 +37,8 @@ function render_event(EventDto $event)
                 <?php else: ?>
                     <i class="fas fa-question"></i>
                 <?php endif; else: ?>
-            <i class="fas fa-file"></i>
-        <?php endif; ?>
+                <i class="fas fa-file"></i>
+            <?php endif ?>
 
         </td>
         <td class="event-name"><b>
@@ -52,7 +52,7 @@ function render_event(EventDto $event)
             </span>
         </td>
         <td class="event-limit <?= $td_class ?>">
-            <i class="fas fa-clock"></i><span <?= $tooltip_content ?>>
+            <i class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>
                 <?= format_date($event->deadline) ?>
             </span>
         </td>

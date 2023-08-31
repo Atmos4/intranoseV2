@@ -38,20 +38,25 @@ $page = Page::getInstance(); ?>
     <?php endforeach ?>
 
     <?php
-    if ($page->nav) { ?>
+    if ($page->nav): ?>
         <link rel="stylesheet" href="/assets/css/navbar.css">
-    <?php } ?>
-    <script src="https://unpkg.com/htmx.org@1.8.5"
-        integrity="sha384-lVb3Rd/Ca0AxaoZg5sACe8FJKF0tnUgR2Kd7ehUOG5GCcROv5uBIZsOqovBAcWua" crossorigin="anonymous"
-        defer></script>
+    <?php endif ?>
+
+    <!-- HTMX -->
+    <script src="/assets/js/htmx-core.min.js" defer></script>
+    <script src="/assets/js/htmx-head.js" defer></script>
+    <script src="/assets/js/htmx-preload.js" defer></script>
+    <!-- <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js" defer></script> -->
+
     <script defer src="/assets/js/nav.js"></script>
 </head>
 
-<body>
+<body hx-ext="head-support, preload" hx-boost="true" hx-indicator="#hx-indicator">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";
     } ?>
+    <div id="hx-indicator" aria-busy="true"></div>
     <main class="container">
         <?php if ($page->controlled) {
             echo ControlNotice();

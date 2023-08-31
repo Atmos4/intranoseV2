@@ -142,6 +142,17 @@ class Event
         }
     }
 
+    /** @return EventEntry[] */
+    static function getAllEntries($event_id): array
+    {
+        return em()->createQueryBuilder()
+            ->select('e')
+            ->from(EventEntry::class, 'e')
+            ->where('e.event = :eid')
+            ->setParameters(['eid' => $event_id])
+            ->getQuery()->getResult();
+    }
+
     /** @return EventDto[] */
     static function listAllOpen($user_id)
     {
