@@ -1,4 +1,4 @@
-:not(form) button {
+:not(form) :not(footer) button {
   display: inline;
   width: fit-content;
 }

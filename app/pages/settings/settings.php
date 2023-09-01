@@ -66,11 +66,9 @@ $image_mime_types = [
 $v_picture = new Validator(action: "picture_form");
 $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);
 
-var_dump($_FILES);
-
 if ($v_picture->valid()) {
     $picture->set_target_dir("assets/images/profile/");
-    $picture->set_file_name($user->id . "." . pathinfo($picture->file_name, PATHINFO_EXTENSION));
+    $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . pathinfo($picture->file_name, PATHINFO_EXTENSION));
     foreach ($result_image as $image) {
         if (is_file($image)) {
             unlink($image);
@@ -86,23 +84,21 @@ if ($v_picture->valid()) {
 
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
+
 <?php if ($is_visiting): ?>
     <nav id="page-actions">
         <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
     </nav>
 <?php endif ?>
 
-
-
-<figure class="center">
-    <img class="profile" src="<?= $profile_picture ?>">
-    <h4>Photo de profil</h4>
-    <form method="post" action="#picture" enctype="multipart/form-data">
-        <?= $v_picture->render_validation() ?>
-        <?= $picture->render() ?>
-        <input type="submit" class="outline" name="submitPicture" value="Mettre à jour la photo">
-    </form>
-</figure>
+<form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
+    <?= $v_picture->render_validation() ?>
+    <label class="profile">
+        <img src="<?= $profile_picture ?>">
+        <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
+        <?= $picture->render("style='width: auto;' onchange=\"document.getElementById('pictureForm').submit();\"") ?>
+    </label>
+</form>
 
 <h2 id="identity">Infos</h2>
 
@@ -131,7 +127,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
 
-    <div class="col-12">
+    <div class="col-4">
         <input type="submit" class="outline" name="submitIdentity" value="Mettre à jour les infos">
     </div>
 </form>

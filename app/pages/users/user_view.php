@@ -10,7 +10,6 @@ $is_root = check_auth([Permission::ROOT]);
 
 $result_image = glob("assets/images/profile/" . $user->id . ".*");
 
-
 $profile_picture = (count($result_image) > 0) ?
     "/" . $result_image[0]
     : "/assets/images/profile/none.jpg";
