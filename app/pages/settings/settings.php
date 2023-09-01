@@ -52,6 +52,37 @@ if ($v_infos->valid()) {
     $v_infos->set_success("Identité mise à jour !");
 }
 
+$result_image = glob("assets/images/profile/" . $user->id . ".*");
+
+$profile_picture = (count($result_image) > 0) ?
+    "/" . $result_image[0]
+    : "/assets/images/profile/none.jpg";
+
+$image_mime_types = [
+    'jpg' => 'image/jpeg',
+    'png' => 'image/png',
+    'gif' => 'image/gif'
+];
+$v_picture = new Validator(action: "picture_form");
+$picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);
+
+var_dump($_FILES);
+
+if ($v_picture->valid()) {
+    $picture->set_target_dir("assets/images/profile/");
+    $picture->set_file_name($user->id . "." . pathinfo($picture->file_name, PATHINFO_EXTENSION));
+    foreach ($result_image as $image) {
+        if (is_file($image)) {
+            unlink($image);
+        }
+    }
+    if ($picture->save_file()) {
+        $v_picture->set_success("Photo de profil mise à jour !");
+    } else {
+        $v_picture->set_error("Erreur lors de la mise à jour de la photo de profil");
+    }
+    $profile_picture = $picture->target_file;
+}
 
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
@@ -60,6 +91,18 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
     </nav>
 <?php endif ?>
+
+
+
+<figure class="center">
+    <img class="profile" src="<?= $profile_picture ?>">
+    <h4>Photo de profil</h4>
+    <form method="post" action="#picture" enctype="multipart/form-data">
+        <?= $v_picture->render_validation() ?>
+        <?= $picture->render() ?>
+        <input type="submit" class="outline" name="submitPicture" value="Mettre à jour la photo">
+    </form>
+</figure>
 
 <h2 id="identity">Infos</h2>
 

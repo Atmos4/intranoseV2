@@ -1,10 +1,10 @@
-/images/profile/*
-!/images/profile/none.jpg
-/uploads/*
-!/uploads/shared_docs/
-/uploads/shared_docs/*
-!/uploads/shared_docs/*.php
-!/uploads/*.php
+assets/images/profile/*
+!images/profile/none.jpg
+app/uploads/*
+!app/uploads/shared_docs/
+app/uploads/shared_docs/*
+!app/uploads/shared_docs/*.php
+!app/uploads/*.php
 /vendor/
 /node_modules
 

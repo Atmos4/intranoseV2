@@ -184,3 +184,10 @@ input[role="switch"]:not(:checked) ~ ins {
 .control-notice ~ main {
   padding-top: 0;
 }
+
+.profile {
+  object-fit: cover;
+  width: 25vh;
+  height: 25vh;
+  border-radius: 50%;
+}

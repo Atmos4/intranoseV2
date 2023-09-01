@@ -402,6 +402,16 @@ class UploadField extends Field
         return $this;
     }
 
+    function max_size(int $size)
+    {
+        // Check custom filesize here. 
+        if ($this->should_test() && $_FILES[$this->key]['size'] > 1000000) {
+            $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
+        }
+        return $this;
+    }
+
+
     function save_file()
     {
         $file_exists = file_exists($this->target_file);
@@ -413,6 +423,13 @@ class UploadField extends Field
         else
             $this->set_error("Problème à l'enregistrement");
         return $result;
+    }
+
+    function set_file_name(string $name)
+    {
+        $this->file_name = $name;
+        $this->target_file = $this->target_dir . $name;
+        return $this;
     }
 
     function set_target_dir(string $directory)

@@ -29,10 +29,6 @@ $add_member_list = em()->createQueryBuilder()
     ->orderBy('u.last_name')
     ->getQuery()->getArrayResult();
 
-$profile_picture = "/assets/" . (file_exists("/assets/images/profile/" . $user->id) ?
-    "images/profile/" . $user->id
-    : "images/profile/none.jpg");
-
 page($family->name)->css("family_list.css") ?>
 <?php if (check_auth(Access::$EDIT_USERS)): ?>
     <nav id="page-actions">
@@ -55,6 +51,13 @@ page($family->name)->css("family_list.css") ?>
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">
             <article class="card">
+                <?php
+                $result_image = glob("assets/images/profile/" . $f_member->id . ".*");
+
+                $profile_picture = (count($result_image) > 0 ?
+                    "/" . $result_image[0]
+                    : "/assets/images/profile/none.jpg");
+                ?>
                 <img src="<?= $profile_picture ?>">
                 <div>
                     <a href="/licencies/<?= $f_member->id ?>"><?= "$f_member->first_name $f_member->last_name" ?></a>
