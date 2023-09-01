@@ -185,7 +185,7 @@ input[role="switch"]:not(:checked) ~ ins {
   padding-top: 0;
 }
 
-img {
+.profile-picture {
   object-fit: cover;
   width: 200px;
   height: 200px;

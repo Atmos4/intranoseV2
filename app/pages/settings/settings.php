@@ -94,7 +94,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
     <?= $v_picture->render_validation() ?>
     <label class="profile">
-        <img src="<?= $profile_picture ?>">
+        <img class="profile-picture" src="<?= $profile_picture ?>">
         <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
         <?= $picture->render("style='width: auto;' onchange=\"document.getElementById('pictureForm').submit();\"") ?>
     </label>
