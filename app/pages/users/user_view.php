@@ -8,8 +8,10 @@ if (!$user) {
 $can_edit_users = check_auth(Access::$EDIT_USERS);
 $is_root = check_auth([Permission::ROOT]);
 
-$profile_picture = (file_exists(base_path() . "/assets/images/profile/" . $user->id . ".jpg")) ?
-    "/assets/images/profile/" . $user->id . ".jpg"
+$result_image = glob("assets/images/profile/" . $user->id . ".*");
+
+$profile_picture = (count($result_image) > 0) ?
+    "/" . $result_image[0]
     : "/assets/images/profile/none.jpg";
 page($user->first_name . " " . $user->last_name)->css("user_view.css");
 ?>
@@ -45,7 +47,7 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
 </nav>
 <article class="grid center">
     <figure>
-        <img src="<?= $profile_picture ?>">
+        <img class="profile-picture" src="<?= $profile_picture ?>">
     </figure>
     <table class="infos-table">
         <tr>

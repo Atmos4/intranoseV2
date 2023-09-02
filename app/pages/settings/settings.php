@@ -52,14 +52,53 @@ if ($v_infos->valid()) {
     $v_infos->set_success("Identité mise à jour !");
 }
 
+$result_image = glob("assets/images/profile/" . $user->id . ".*");
+
+$profile_picture = (count($result_image) > 0) ?
+    "/" . $result_image[0]
+    : "/assets/images/profile/none.jpg";
+
+$image_mime_types = [
+    'jpg' => 'image/jpeg',
+    'png' => 'image/png',
+    'gif' => 'image/gif'
+];
+$v_picture = new Validator(action: "picture_form");
+$picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);
+
+if ($v_picture->valid()) {
+    $picture->set_target_dir("assets/images/profile/");
+    $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . pathinfo($picture->file_name, PATHINFO_EXTENSION));
+    foreach ($result_image as $image) {
+        if (is_file($image)) {
+            unlink($image);
+        }
+    }
+    if ($picture->save_file()) {
+        $v_picture->set_success("Photo de profil mise à jour !");
+    } else {
+        $v_picture->set_error("Erreur lors de la mise à jour de la photo de profil");
+    }
+    $profile_picture = $picture->target_file;
+}
 
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
+
 <?php if ($is_visiting): ?>
     <nav id="page-actions">
         <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
     </nav>
 <?php endif ?>
+
+<form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
+    <?= $v_picture->render_validation() ?>
+    <label class="profile">
+        <img class="profile-picture" src="<?= $profile_picture ?>">
+        <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
+        <?= $picture->render("style='width: auto;' onchange=\"document.getElementById('pictureForm').submit();\"") ?>
+    </label>
+</form>
 
 <h2 id="identity">Infos</h2>
 
@@ -88,7 +127,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
 
-    <div class="col-12">
+    <div class="col-4">
         <input type="submit" class="outline" name="submitIdentity" value="Mettre à jour les infos">
     </div>
 </form>

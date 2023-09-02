@@ -5,3 +5,19 @@
 .align-end > *:last-child {
   margin-top: auto;
 }
+
+.profile {
+  position: relative;
+  width: fit-content;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.profile > span {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
