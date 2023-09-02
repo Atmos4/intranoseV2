@@ -405,7 +405,7 @@ class UploadField extends Field
     function max_size(int $size)
     {
         // Check custom filesize here. 
-        if ($this->should_test() && $_FILES[$this->key]['size'] > 1000000) {
+        if ($this->should_test() && $_FILES[$this->key]['size'] > $size) {
             $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
         }
         return $this;

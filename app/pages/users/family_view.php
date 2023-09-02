@@ -58,7 +58,7 @@ page($family->name)->css("family_list.css") ?>
                     "/" . $result_image[0]
                     : "/assets/images/profile/none.jpg");
                 ?>
-                <img class="profile-picture" src="<?= $profile_picture ?>">
+                <img src="<?= $profile_picture ?>">
                 <div>
                     <a href="/licencies/<?= $f_member->id ?>"><?= "$f_member->first_name $f_member->last_name" ?></a>
                     <br>

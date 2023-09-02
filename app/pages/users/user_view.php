@@ -47,7 +47,7 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
 </nav>
 <article class="grid center">
     <figure>
-        <img class="profile" src="<?= $profile_picture ?>">
+        <img class="profile-picture" src="<?= $profile_picture ?>">
     </figure>
     <table class="infos-table">
         <tr>
