@@ -16,7 +16,7 @@ if ($user->permission == Permission::ROOT) {
 $permissions = $v->select("permissions")->label("Permissions")->options($permissions_array)->required();
 
 if ($v->valid()) {
-    $login = strtolower(substr($first_name->value, 0, 1) . $last_name->value);
+    $login = strtolower($last_name->value . "_" . substr($first_name->value, 0, 1));
     $list_login_numbers = User::getBySubstring($login);
     $max_number = $list_login_numbers ? (max($list_login_numbers) ? max($list_login_numbers) + 1 : 1) : 0;
     $user_same_name = User::findByFirstAndLastName($first_name->value, $last_name->value);

@@ -35,6 +35,7 @@ class Mailer
     {
         $instance = new Mailer();
         $instance->mail = new PHPMailer();
+        $instance->mail->CharSet = "UTF-8";
         $instance->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $instance->mail->isSMTP();
         $instance->mail->Host = env("MAIL_HOST");

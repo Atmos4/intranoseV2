@@ -130,6 +130,9 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
     <div class="col-sm-12 col-md-6">
+        <?php if ($can_reset_credentials): ?>
+            <p>Attention: tout changement doit être suivi d'un changement de redirection! </p>
+        <?php endif; ?>
         <?= $real_email->render() ?>
         <?= $nose_email->render() ?>
         <?= $phone->render() ?>
