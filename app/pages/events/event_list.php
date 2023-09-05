@@ -73,11 +73,18 @@ function render_event(EventDto $event)
 
 <?php } ?>
 
-<?php foreach ($birthday_users as $birthday_user): ?>
+<?php
+$vowels = array("a", "e", "i", "o", "u");
+foreach ($birthday_users as $birthday_user): ?>
     <div class="birthday">
-        <span>🎂 C'est l'aniversaire d'
+        <span>🎂 C'est l'aniversaire
+            <?php if (in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)): ?>
+                d'
+            <?php else: ?>
+                de
+            <?php endif ?>
             <?= $birthday_user->first_name ?>
-            <?= $birthday_user->last_name ?> aujourd'hui !
+            <?= $birthday_user->last_name ?> 🎉
         </span>
     </div>
 <?php endforeach ?>
