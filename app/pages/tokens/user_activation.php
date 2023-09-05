@@ -18,17 +18,25 @@ if ($v->valid()) {
     $user->phone = $phone->value;
     $user->active = true;
     em()->persist($user);
+    em()->remove($token);
     em()->flush();
+
+    // Reset session
+    $_SESSION = [];
+    $_SESSION['user_id'] = $user->id;
+    $_SESSION['user_permission'] = $user->permission;
+
     redirect("/");
 }
 
 ?>
 
 <article>
-    <h2 class="center">Activation de compte</h2>
+    <h2 class="center">Bienvenue au NOSE !</h2>
     <p>
-        Vous activez le compte de
-        <?= "{$token->user->first_name} {$token->user->last_name}" ?>
+        Bienvenue,
+        <?= "{$token->user->first_name} {$token->user->last_name}" ?> ! Remplis ces dernières informations avant de
+        pouvoir accéder à ton compte.
     </p>
 
     <form method="post" class="row">

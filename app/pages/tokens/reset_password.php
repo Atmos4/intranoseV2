@@ -1,6 +1,7 @@
 <?php
 $token = AccessToken::retrieve($_GET['token'] ?? "");
-$v = new Validator(action: "reset_password_form");
+$v = new Validator(["username" => $token->user->login], action: "reset_password_form");
+$username = $v->text("username")->autocomplete("username")->label("Login")->readonly();
 $new_password = $v->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
 $confirm_password = $v->password("confirm_password")
     ->autocomplete("new-password")
@@ -20,18 +21,11 @@ page("Réinitialiser le mot de passe")->disableNav()->heading(false);
 
 <article>
     <h2 class="center">Réinitialisation de mot de passe</h2>
-    <p> Utilisateur :
-        <?= "{$token->user->first_name} {$token->user->last_name}" ?>
-    </p>
-    <form method="post" class="row center">
+    <form method="post">
         <?= $v->render_validation() ?>
-        <div class="col-sm-12 col-md-8">
-            <h2 id="password">Mot de passe</h2>
-            <legend>Mot de passe</legend>
-            <?= $new_password->render() ?>
-            <legend>Confirmation</legend>
-            <?= $confirm_password->render() ?>
-            <input type="submit" class="outline" value="Enregistrer">
-        </div>
+        <?= $username->render() ?>
+        <?= $new_password->render() ?>
+        <?= $confirm_password->render() ?>
+        <input type="submit" class="outline" value="Enregistrer">
     </form>
 </article>

@@ -5,6 +5,7 @@ $v = new Validator([], "new_user_form");
 $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required();
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
 $real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addresse mail")->required();
+$birthdate = $v->date("birthdate")->label("Date de naissance")->required();
 
 $permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "STAFF" => "Responsable"];
 $user = em()->find(User::class, User::getCurrent());
@@ -22,6 +23,7 @@ if ($v->valid()) {
     $nose_email = strtolower($first_name->value . "." . $last_name->value) . (count($user_same_name) ?: '') . "@nose42.fr";
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
+    $new_user->birthdate = date_create($birthdate->value);
     $new_user->set_email($real_email->value, $nose_email);
     $max_number ? $new_login = $login . $max_number : $new_login = $login;
 
@@ -39,10 +41,10 @@ if ($v->valid()) {
         ->to($real_email->value, $subject, $content)
         ->send();
     if ($result->success) {
-        $v->set_success('Message has been sent');
         em()->persist($token);
         em()->persist($new_user);
         em()->flush();
+        $v->set_success('Email envoyé!');
     } else {
         $v->set_error($result->message);
     }
@@ -63,17 +65,12 @@ page("Nouveau licencié")->css("settings.css");
 
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
-    </div>
-
-    <div class="col-sm-12 col-md-6">
         <?= $first_name->render() ?>
-    </div>
-
-    <div class="col-6">
-        <?= $real_email->render() ?>
+        <?= $birthdate->render() ?>
     </div>
 
     <div class="col-sm-12 col-md-6">
+        <?= $real_email->render() ?>
         <?= $permissions->render() ?>
     </div>
 

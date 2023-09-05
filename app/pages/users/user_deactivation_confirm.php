@@ -13,7 +13,7 @@ if (!empty($_POST) and isset($_POST['delete'])) {
     redirect("/licencies");
 }
 
-page("Confirmation de suppression");
+page("Confirmation de désactivation");
 ?>
 <form method="post">
     <div class="row center">

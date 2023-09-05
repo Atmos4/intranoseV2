@@ -16,8 +16,7 @@ $profile_picture = (count($result_image) > 0) ?
 page($user->first_name . " " . $user->last_name)->css("user_view.css");
 ?>
 <nav id="page-actions">
-    <a href=<?= $user->active ? "/licencies" : "/licencies/reactivate" ?> class="secondary"><i
-            class="fas fa-caret-left"></i> Retour</a>
+    <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
     <?php if ($can_edit_users): ?>
         <a href="/user-control/<?= $user->id ?>" class="outline">Contrôler</a>
@@ -35,7 +34,7 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
                     </li>
                     <?php if ($is_root): ?>
                         <li>
-                            <a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                            <a href="/licencies/<?= $user->id ?>/desactiver" class="destructive">
                                 Désactiver <i class="fas fa-trash"></i>
                             </a>
                         </li>

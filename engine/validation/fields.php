@@ -24,6 +24,7 @@ class Field
     /** Access to the validator for recursion and decorator pattern */
     public ?Validator $context;
     public bool $disabled = false;
+    public bool $readonly = false;
     public bool $required = false;
 
     function __construct(string $key, mixed $value = null, $context = null)
@@ -63,7 +64,9 @@ class Field
             . ($this->valid() ? "" : " aria-invalid=true")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
-            . ($this->required ? " required" : "") . ">";
+            . ($this->required ? " required" : "")
+            . ($this->readonly ? " readonly" : "")
+            . ">";
         return $this->render_label($result);
     }
 
@@ -104,9 +107,15 @@ class Field
         return $this;
     }
 
-    protected function test(string $preg)
+    function readonly()
     {
-        return preg_match($preg, $this->value ?? "");
+        $this->readonly = true;
+        return $this;
+    }
+
+    protected function test(string $preg, $value = null)
+    {
+        return preg_match($preg, $value ?? $this->value ?? "");
     }
 
     /** Makes the field required */

@@ -22,13 +22,8 @@
     ]
   },
   "scripts": {
-    "setup": [
+    "install:all": [
       "@composer install",
-      "@db:migrate"
-    ],
-    "update:all": [
-      "@composer update",
-      "@composer dump-autoload",
       "@db:migrate"
     ],
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate"

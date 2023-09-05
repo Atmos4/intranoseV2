@@ -4,7 +4,9 @@ $login = $v->text("login")->placeholder("Login")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
 if ($v->valid()) {
     $user = User::getByLogin($login->value);
-    if (!$user->active) {
+    if (!$user) {
+        $login->set_error("Utilisateur non trouvé");
+    } else if (!$user->active) {
         $login->set_error("Votre compte est désactivé");
     } else if (password_verify($password->value, $user->password)) {
         $_SESSION['user_id'] = $user->id;
