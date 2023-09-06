@@ -8,7 +8,20 @@ $events = Event::listAllOpen($user->id);
 if ($can_edit)
     $draft_events = Event::listDrafts();
 
-page("Événements")->css("event_list.css");
+// Get the current date
+$current_date_month = date('m');
+$current_date_day = date('d');
+
+// Query the database to get a list of users whose birthday matches the current date
+$birthday_users = em()->createQueryBuilder()
+    ->select("u")
+    ->from(User::class, "u")
+    ->where("MONTH(u.birthdate) = :month AND DAY(u.birthdate) = :day")
+    ->setParameter("month", $current_date_month)
+    ->setParameter("day", $current_date_day)
+    ->getQuery()->getResult();
+
+page("Événements")->css("event_list.css")->heading(false);
 
 function render_event(EventDto $event)
 {
@@ -59,6 +72,25 @@ function render_event(EventDto $event)
     </tr>
 
 <?php } ?>
+
+<?php
+$vowels = array("a", "e", "i", "o", "u");
+foreach ($birthday_users as $birthday_user): ?>
+    <div class="birthday">
+        <span>🎂 C'est l'aniversaire
+            <?php if (in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)): ?>
+                d'
+            <?php else: ?>
+                de
+            <?php endif ?>
+            <?= $birthday_user->first_name ?>
+            <?= $birthday_user->last_name ?> 🎉
+        </span>
+    </div>
+<?php endforeach ?>
+
+<h2 class="center">Événements</h2>
+
 
 <?php if ($can_edit): ?>
     <nav id="page-actions">

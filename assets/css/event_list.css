@@ -62,3 +62,11 @@ tr.delimiter {
     white-space: nowrap;
   }
 }
+
+.birthday {
+  border-left: solid 5px;
+  border-color: var(--primary-focus);
+  background-color: var(--card-background-color);
+  padding: 10px;
+  margin-bottom: 10px;
+}
