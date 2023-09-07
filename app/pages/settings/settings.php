@@ -26,27 +26,35 @@ $user_infos = [
     "gender" => $user->gender->value,
     "real_email" => $user->real_email,
     "nose_email" => $user->nose_email,
-    "phone" => $user->phone
+    "phone" => $user->phone,
+    "birthdate" => date_format($user->birthdate, "Y-m-d"),
 ];
 
 $v_infos = new Validator($user_infos, "identity_form");
 $last_name = $v_infos->text("last_name")->label("Nom")->placeholder()->required();
 $first_name = $v_infos->text("first_name")->label("Prénom")->placeholder()->required();
-$real_email = $v_infos->email("real_email")->label("Addresse mail perso")->placeholder()->required();
+$real_email = $v_infos->email("real_email")->label("Addresse mail perso")->placeholder();
 $nose_email = $v_infos->email("nose_email")->label("Addresse mail nose")->placeholder();
+$birthdate = $v_infos->date("birthdate")->label("Date de naissance")->required();
 $gender = $v_infos->text("gender")->label("Sexe");
 $phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
 
-if ($is_visiting) {
+if ($can_reset_credentials) {
     $nose_email->required();
+    $real_email->required();
 } else {
-    $nose_email->disabled();
+    $nose_email->readonly();
+    $real_email->readonly();
 }
 
 if ($v_infos->valid()) {
     $user->set_identity($last_name->value, $first_name->value, Gender::from($gender->value));
-    $user->set_email($real_email->value, $nose_email->value);
+    $user->real_email = $real_email->value;
+    if ($can_reset_credentials) {
+        $user->nose_email = $nose_email->value;
+    }
     $user->phone = $phone->value;
+    $user->birthdate = date_create($birthdate->value);
     em()->persist($user);
     em()->flush();
     $v_infos->set_success("Identité mise à jour !");
@@ -107,6 +115,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
+        <?= $birthdate->render() ?>
         <fieldset>
             <legend>Sexe</legend>
             <label for="man">
@@ -121,6 +130,9 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
     <div class="col-sm-12 col-md-6">
+        <?php if ($can_reset_credentials): ?>
+            <p>Attention: tout changement doit être suivi d'un changement de redirection! </p>
+        <?php endif; ?>
         <?= $real_email->render() ?>
         <?= $nose_email->render() ?>
         <?= $phone->render() ?>
@@ -197,6 +209,7 @@ if ($v_password->valid()) {
             <h2 id="password">Mot de passe</h2>
             <?= $v_password->render_validation() ?>
             <?php if (!$can_reset_credentials): ?>
+                <input type="hidden" autocomplete="username" id="username" name="username" value="<?= $user->login ?>">
                 <?= $current_password->render() ?>
                 <?= $new_password->render() ?>
                 <?= $confirm_password->render() ?>

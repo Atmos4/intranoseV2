@@ -8,8 +8,13 @@ class Router extends Singleton
     {
         ob_start();
         include_once app_path() . "/$path_to_include";
-        Page::getInstance()->setContent(ob_get_clean());
-        require_once app_path() . "/template/layout.php";
+        $page = Page::getInstance();
+        if ($page->title) {
+            Page::getInstance()->setContent(ob_get_clean());
+            require_once app_path() . "/template/layout.php";
+        } else {
+            ob_end_flush();
+        }
         exit();
     }
 
@@ -22,19 +27,23 @@ class Router extends Singleton
         self::getInstance()->render();
     }
 
-    static function getParameter($param, $strict = true, $numeric = true)
+    static function getParameter($param, $strict = true, $numeric = true, $pattern = null)
     {
         $router = self::getInstance();
         if (empty($router->dynamicSegments[$param])) {
             if ($strict) {
-                self::abort(message: "Route parameter {$param} was not found");
+                self::abort(message: "Route parameter $param was not found");
             }
             return null;
         }
-        if ($numeric and !is_numeric($router->dynamicSegments[$param])) {
-            self::abort(message: "Route parameter {$param} is not numeric");
+        $found_param = $router->dynamicSegments[$param];
+        if (!$pattern and $numeric and !is_numeric($found_param)) {
+            self::abort(message: "Route parameter $param is not numeric");
         }
-        return $router->dynamicSegments[$param];
+        if ($pattern and !preg_match($pattern, $found_param)) {
+            self::abort(message: "Route parameter $param doesn't match pattern $pattern");
+        }
+        return $found_param;
     }
 
     static function add($route, $path_to_include)

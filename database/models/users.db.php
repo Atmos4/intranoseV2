@@ -61,6 +61,18 @@ class User
     #[Column]
     public bool $family_leader = false;
 
+    /** @var Collection<int,AccessToken> entries */
+    #[OneToMany(targetEntity: AccessToken::class, mappedBy: "user", cascade: ["remove"])]
+    public Collection $tokens;
+
+    /** @var Collection<int,EventEntry> entries */
+    #[OneToMany(targetEntity: EventEntry::class, mappedBy: "user", cascade: ["remove"])]
+    public Collection $event_entries;
+
+    /** @var Collection<int,RaceEntry> entries */
+    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "user", cascade: ["remove"])]
+    public Collection $race_entries;
+
     function __construct()
     {
         $this->birthdate = date_create();
@@ -89,10 +101,10 @@ class User
         $this->login = $login;
     }
 
-    static function getByLogin($login): User
+    static function getByLogin($login): User|null
     {
         $result = em()->getRepository(User::class)->findByLogin($login);
-        return count($result) ? $result[0] : new User();
+        return count($result) ? $result[0] : null;
     }
 
     static function get($user_id): User

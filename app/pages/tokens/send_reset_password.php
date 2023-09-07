@@ -1,12 +1,12 @@
 <?php
 
 $v = new Validator();
-$address = $v->email("address")->placeholder("Email")->required()->autocomplete("email");
+$login = $v->text("login")->placeholder("Login")->required()->autocomplete("username");
 
 if ($v->valid()) {
-    $user = em()->getRepository(User::class)->findOneBy(['real_email' => $address->value]);
+    $user = em()->getRepository(User::class)->findOneBy(['login' => $login->value]);
     if ($user) {
-        $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT2H'));
+        $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT15M'));
         em()->persist($token);
 
         $base_url = env("BASE_URL");
@@ -14,7 +14,7 @@ if ($v->valid()) {
         $content = "Voici le lien pour réinitialiser votre mot de passe: $base_url/nouveau-mot-de-passe?token=$token->id";
 
         $result = Mailer::create()
-            ->to($address->value, $subject, $content)
+            ->to($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
             $v->set_success('Message has been sent');
@@ -38,7 +38,10 @@ page("Réinitialisation du mot de passe")->disableNav()->heading(false);
     <form method="post">
         <h2 class="center">Réinitialisation du mot de passe</h2>
         <?= $v->render_validation() ?>
-        <?= $address->render() ?>
+        <p>Entrez votre login pour recevoir un email de réinitialisation de votre mot de passe. Le login a
+            habituellement comme format <code>(nom de famille en miniscule)_(première lettre du prénom)</code>.
+        </p>
+        <?= $login->render() ?>
         <button type="submit"><i class="fa fa-paper-plane"></i> Envoyer</button>
     </form>
 </article>

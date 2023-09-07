@@ -4,53 +4,52 @@ $can_add_user = check_auth(Access::$EDIT_USERS);
 $users_repository = em()->getRepository(User::class);
 page("Réactiver des licenciés")->css("user_list.css");
 
+// Just for convenience
+$form = new Validator();
+
 if (isset($_POST['action'])) {
-    $dql = "SELECT u FROM User u where u.id IN ("
-        . implode(",", array_map(function ($value) {
-            if (!is_numeric($value)) {
-                die("Stupide hobbit joufflu !");
+    if (!isset($_POST['selected_users'])) {
+        $form->set_error("No users selected");
+    } else {
+        $dql = "SELECT u FROM User u where u.id IN ("
+            . implode(",", array_map(function ($value) {
+                if (!is_numeric($value)) {
+                    die("Stupide hobbit joufflu !");
+                }
+                return "?$value";
+            }, array_keys($_POST['selected_users']))) . ")";
+        $query = em()->createQuery($dql)->setParameters([...$_POST['selected_users']]);
+        $users = $query->getResult();
+
+        if ($_POST['action'] === 'reactivate') {
+            foreach ($users as $user) {
+                $user->active = true;
             }
-            return "?$value";
-        }, array_keys($_POST['selected_users']))) . ")";
-    $query = em()->createQuery($dql)->setParameters([...$_POST['selected_users']]);
-    $users = $query->getResult();
-    if ($_POST['action'] === 'reactivate') {
-        foreach ($users as $user) {
-            $user->active = true;
+            em()->flush();
         }
-        em()->flush();
-    } elseif ($_POST['action'] === 'delete') {
-        foreach ($users as $user) {
-            em()->remove($user);
-        }
-        em()->flush();
     }
 }
 $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'first_name' => 'ASC']);
-?>
+
+// No user found. Return early
+if (!$users): ?>
+    <nav id="page-actions">
+        <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+    </nav>
+    <p class="center">Aucun utilisateur désactivé 😴</p>
+    <?php
+    return;
+endif; ?>
 
 <nav id="page-actions">
     <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <li>
-        <details role="list" dir="rtl">
-            <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
-            <ul role="listbox">
-                <li><button type="submit" name="action" class="error" value="reactivate" form="deactivate-form">
-                        Réactiver
-                    </button></li>
-                <li>
-                    <button type="submit" name="action" value="delete" form="deactivate-form">
-                        Supprimer
-                    </button>
-                </li>
-            </ul>
-        </details>
-    </li>
+    <button name="action" value="reactivate" form="reactivate-form">Réactiver</button>
 </nav>
 
 <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('search-users', 'users-table')">
 
-<form method="post" id="deactivate-form">
+<form method="post" id="reactivate-form">
+    <?= $form->render_validation() ?>
 
     <table id="users-table" class="reactivate">
         <thead>
@@ -58,6 +57,7 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                 <th scope="col"></th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -72,6 +72,9 @@ $users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'fi
                     <td class="firstname">
                         <?= $user->first_name ?>
                     </td>
+                    <td><a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                            Supprimer <i class="fas fa-trash"></i>
+                        </a></td>
                 </tr>
             <?php endforeach ?>
         </tbody>

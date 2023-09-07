@@ -1,15 +1,21 @@
 <?php
 $token = AccessToken::retrieve($_GET['token'] ?? "");
 page("Activer le compte")->disableNav()->heading(false);
-$v = new Validator(action: "validate_form");
-$new_password = $v->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
+$v = new Validator(["username" => $token->user->login], action: "validate_form");
+$username = $v->text("username")->autocomplete("username")->label("Votre nom d'utilisateur")->readonly();
+$new_password = $v->password("new_password")
+    ->autocomplete("new-password")
+    ->placeholder("Nouveau mot de passe")
+    ->label("Saisissez votre mot de passe")
+    ->required()
+    ->secure();
 $confirm_password = $v->password("confirm_password")
     ->autocomplete("new-password")
     ->placeholder("Confirmer le mot de passe")
     ->required();
 $confirm_password->condition($new_password->value == $confirm_password->value, "Les deux mots de passe sont différents");
 $gender = $v->text("gender")->label("Sexe");
-$phone = $v->phone("phone")->label("Numéro de téléphone")->placeholder();
+$phone = $v->phone("phone")->label("Numéro de téléphone");
 
 if ($v->valid()) {
     $user = $token->user;
@@ -18,30 +24,35 @@ if ($v->valid()) {
     $user->phone = $phone->value;
     $user->active = true;
     em()->persist($user);
+    em()->remove($token);
     em()->flush();
+
+    // Reset session
+    $_SESSION = [];
+    $_SESSION['user_id'] = $user->id;
+    $_SESSION['user_permission'] = $user->permission;
+
     redirect("/");
 }
 
 ?>
 
 <article>
-    <h2 class="center">Activation de compte</h2>
+    <h2 class="center">Bienvenue au NOSE !</h2>
     <p>
-        Vous activez le compte de
-        <?= "{$token->user->first_name} {$token->user->last_name}" ?>
+        Bienvenue,
+        <?= "{$token->user->first_name} {$token->user->last_name}" ?> ! Remplis ces dernières informations avant de
+        pouvoir accéder à ton compte :
     </p>
 
     <form method="post" class="row">
         <?= $v->render_validation() ?>
-        <div class="col-sm-12 col-md-6 align-end">
-            <h2 id="password">Mot de passe</h2>
-            <legend>Mot de passe</legend>
+        <div class="col-sm-12 col-md-6">
+            <?= $username->render() ?>
             <?= $new_password->render() ?>
-            <legend>Confirmation</legend>
             <?= $confirm_password->render() ?>
         </div>
-        <div class="col-sm-12 col-md-6 align-end">
-            <h2 id="password">Infos</h2>
+        <div class="col-sm-12 col-md-6">
             <?= $phone->render() ?>
             <fieldset>
                 <legend>Sexe</legend>
@@ -55,6 +66,6 @@ if ($v->valid()) {
                 </label>
             </fieldset>
         </div>
-        <input type="submit" class="outline" value="Enregistrer">
+        <div class="col"><input type="submit" class="outline" value="Enregistrer"></div>
     </form>
 </article>
