@@ -17,7 +17,8 @@
       "database/models/",
       "engine/core/",
       "engine/validation/",
-      "app/services"
+      "app/services",
+      "engine/api/"
     ],
     "files": [
       "engine/helpers.php"

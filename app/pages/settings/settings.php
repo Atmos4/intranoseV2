@@ -22,6 +22,7 @@ $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user
 // TODO: remove this when OVH integration is rolling
 $can_change_emails = check_auth([Permission::ROOT]) && (!$is_visiting || $user->permission != Permission::ROOT);
 
+$can_change_emails = check_auth([Permission::ROOT]);
 
 $user_infos = [
     "last_name" => $user->last_name,
@@ -44,10 +45,8 @@ $phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder(
 
 if ($can_change_emails) {
     $nose_email->required();
-    $real_email->required();
 } else {
     $nose_email->readonly();
-    $real_email->readonly();
 }
 
 if ($v_infos->valid()) {
@@ -131,8 +130,11 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
     <div class="col-sm-12 col-md-6">
-        <?php if ($can_reset_credentials): ?>
-            <p>Attention: tout changement doit être suivi d'un changement de redirection! </p>
+        <?php if ($can_change_emails):
+            $redirection = ovh_api()->getRedirection($user->nose_email, $user->real_email) ?>
+            <p>
+                <?= $redirection ? "Redirection à jour" : "Pas de redirection!" ?>
+            </p>
         <?php endif; ?>
         <?= $real_email->render() ?>
         <?= $nose_email->render() ?>
