@@ -49,6 +49,13 @@ page($event->name)->css("event_view.css");
                             </a>
                         <?php endif; ?>
                     </li>
+                    <?php if ($event->open): ?>
+                        <li>
+                            <a href="/evenements/<?= $event->id ?>/participants" class="secondary">
+                                <i class="fas fa-users"></i> Afficher les participants
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </details>
         </li>
@@ -142,7 +149,7 @@ page($event->name)->css("event_view.css");
                 </tr>
                 <?php if ($race_entry && ($race_entry->present || $race_entry->comment)): ?>
                     <tr class="edit">
-                        <td colspan="4">
+                        <td colspan="3">
                             <div class="row">
                                 <div class="col-auto">
                                     <strong>
@@ -161,6 +168,12 @@ page($event->name)->css("event_view.css");
                                 <?php endif ?>
                             </div>
                         </td>
+                        <?php if ($can_edit): ?>
+                            <td style="text-align: right;">
+                                <a href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>/inscrits'> <i class="fa fa-users"></i>
+                                    Inscrits</a>
+                            </td>
+                        <?php endif ?>
                     </tr>
                 <?php endif;
             endforeach; ?>
