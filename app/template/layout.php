@@ -45,7 +45,7 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/htmx1.9.5-core.min.js" defer></script>
     <script src="/assets/js/htmx1.9.5-head.js" defer></script>
 
-    <script defer src="/assets/js/nav.js"></script>
+    <script src="/assets/js/theme.js"></script>
 </head>
 
 <body hx-ext="head-support">

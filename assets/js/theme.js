@@ -42,7 +42,3 @@ window
     theme.value = isDark ? "dark" : "light";
     setPreference();
   });
-
-function toggleNav() {
-  document.getElementById("mySidenav").classList.toggle("open");
-}

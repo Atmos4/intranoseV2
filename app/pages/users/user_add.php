@@ -55,11 +55,11 @@ if ($v->valid()) {
 
 page("Nouveau licencié")->css("settings.css");
 ?>
-<form method="post" class="row">
-    <nav id="page-actions">
-        <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-        <button type="submit">Créer</button>
-    </nav>
+<nav id="page-actions">
+    <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+    <button type="submit" form="add-user">Créer</button>
+</nav>
+<form id="add-user" method="post" class="row">
 
     <?= $v->render_validation() ?>
 
