@@ -146,8 +146,11 @@ class Event
     static function getAllEntries($event_id): array
     {
         return em()->createQueryBuilder()
-            ->select('e')
+            ->select('e', 'u', 're')
             ->from(EventEntry::class, 'e')
+            ->join('e.event', 'ev')
+            ->leftJoin('e.user', 'u')
+            ->leftJoin('u.race_entries', 're', JOIN::WITH, 're.user = e.user and re.race MEMBER OF ev.races', 're.race')
             ->where('e.event = :eid')
             ->setParameters(['eid' => $event_id])
             ->getQuery()->getResult();

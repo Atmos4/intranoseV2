@@ -5,9 +5,9 @@
 function ConditionalIcon(bool $condition, string $text = "")
 {
     if ($condition): ?>
-        <ins><i class="fas fa-check"></i></ins>
+        <ins><i class="fas fa-check fa-fw"></i></ins>
     <?php else: ?>
-        <del><i class="fas fa-xmark"></i></del>
+        <del><i class="fas fa-xmark fa-fw"></i></del>
     <?php endif; ?>
     <?php if (!!$text): ?>
         <span class="space-before">

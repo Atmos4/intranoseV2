@@ -25,6 +25,7 @@ Router::add('/dev/ovh-mailing', 'pages/dev/ovh_mailing_lists');
 // Events
 Router::add('/evenements', 'pages/events/event_list');
 Router::add('/evenements/nouveau', 'pages/events/event_edit');
+Router::add('/evenements/course/$race_id/inscrits', 'pages/events/registered_list');
 Router::add('/evenements/$event_id/modifier', 'pages/events/event_edit');
 Router::add('/evenements/$event_id/ajouter-course', 'pages/events/race_edit');
 Router::add('/evenements/$event_id/course/$race_id', 'pages/events/race_edit');
@@ -32,6 +33,7 @@ Router::add('/evenements/$event_id', 'pages/events/event_view');
 Router::add('/evenements/$event_id/inscription', 'pages/events/event_register');
 Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
 Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
+Router::add('/evenements/$event_id/participants', 'pages/events/registered_list');
 // Router::add('/download', 'uploads/download_file');
 
 // Settings
