@@ -137,15 +137,8 @@ page($event->name)->css("event_view.css");
                     <summary>
                         <?= ConditionalIcon($race_entry && $race_entry->present) . " " . $race->name ?>
                     </summary>
-                    <div class="grid">
-                        <div>
-                            <?php if ($race_entry?->present): ?>
-                                <p><ins><span>Je participe</span></ins></p>
-                            <?php else: ?>
-                                <p><del><span>
-                                            <?= $race_entry ? "Je ne participe pas" : "Pas inscrit" ?>
-                                        </span></del></p>
-                            <?php endif; ?>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
                             <ul class="fa-ul">
                                 <li><span class="fa-li"><i class="fa fa-calendar"></i></span>
                                     <?= format_date($race->date) ?>
@@ -153,6 +146,17 @@ page($event->name)->css("event_view.css");
                                 <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
                                     <?= $race->place ?>
                                 </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <ul class="fa-ul">
+                                <?php if ($race_entry?->present): ?>
+                                    <li><span class="fa-li"><i class="fa fa-check"></i></span><ins>Je participe</ins></li>
+                                <?php else: ?>
+                                    <li><span class="fa-li"><i class="fa fa-xmark"></i></span><del>
+                                            <?= $race_entry ? "Je ne participe pas" : "Pas inscrit" ?>
+                                        </del></li>
+                                <?php endif; ?>
                                 <?php if ($race_entry?->category): ?>
                                     <li><span class="fa-li"><i class="fa fa-person-running"></i></span>
                                         <?= $race_entry->category?->name ?>
@@ -165,19 +169,23 @@ page($event->name)->css("event_view.css");
                                 <?php endif ?>
                             </ul>
                         </div>
-                        <div>
-                            <strong>Commentaires : </strong>
-                            <?= $race_entry?->comment ?>
-                        </div>
                     </div>
-                    <?php if ($can_edit): ?>
-                        <div class="grid center">
-                            <a class="secondary" href='/evenements/course/<?= $race->id ?>/inscrits'> <i class="fa fa-users"></i>
-                                Liste des inscrits</a>
-                            <a class="secondary" href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'> <i
-                                    class="fa fa-pen"></i>
-                                Modifier la course</a>
+                    <?php if ($race_entry?->comment): ?>
+                        <div>
+                            <cite>Remarque : </cite>
+                            <?= $race_entry->comment ?>
                         </div>
+                        <br>
+                    <?php endif;
+                    if ($can_edit): ?>
+                        <nav>
+                            <a role="button" class="outline secondary" href='/evenements/course/<?= $race->id ?>/inscrits'> <i
+                                    class="fa fa-users"></i>
+                                Inscrits</a>
+                            <a role="button" class="outline secondary" href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'>
+                                <i class="fa fa-pen"></i>
+                                Modifier</a>
+                        </nav>
 
                     <?php endif ?>
                 </details>

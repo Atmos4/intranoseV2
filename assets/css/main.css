@@ -67,6 +67,12 @@ details[dir="rtl"] ul > li {
 .row.center {
   justify-content: center;
 }
+.align-right {
+  text-align: right;
+}
+.row.end {
+  justify-content: flex-end;
+}
 /* Disable article margin top because what's the point */
 article {
   margin-top: 0;
