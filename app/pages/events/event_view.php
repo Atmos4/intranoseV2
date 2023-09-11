@@ -133,50 +133,55 @@ page($event->name)->css("event_view.css");
 
             <?php foreach ($event->races as $race):
                 $race_entry = $race->entries[0] ?? null; ?>
-                <tr class="display <?= $can_edit ? "clickable" : "" ?>" <?= $can_edit ? "onclick=\"window.location.href = '/evenements/{$event->id}/course/{$race->id}'\"" : "" ?>>
-                    <td class="race-entry">
-                        <?= ConditionalIcon($race_entry && $race_entry->present) ?>
-                    </td>
-                    <td class="race-name"><b>
-                            <?= $race->name ?>
-                        </b></td>
-                    <td class="race-date">
-                        <?= format_date($race->date) ?>
-                    </td>
-                    <td class="race-place">
-                        <?= $race->place ?>
-                    </td>
-                </tr>
-                <?php if ($race_entry && ($race_entry->present || $race_entry->comment)): ?>
-                    <tr class="edit">
-                        <td colspan="3">
-                            <div class="row">
-                                <div class="col-auto">
-                                    <strong>
+                <details>
+                    <summary>
+                        <?= ConditionalIcon($race_entry && $race_entry->present) . " " . $race->name ?>
+                    </summary>
+                    <div class="grid">
+                        <div>
+                            <?php if ($race_entry?->present): ?>
+                                <p><ins><span>Je participe</span></ins></p>
+                            <?php else: ?>
+                                <p><del><span>
+                                            <?= $race_entry ? "Je ne participe pas" : "Pas inscrit" ?>
+                                        </span></del></p>
+                            <?php endif; ?>
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="fa fa-calendar"></i></span>
+                                    <?= format_date($race->date) ?>
+                                </li>
+                                <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
+                                    <?= $race->place ?>
+                                </li>
+                                <?php if ($race_entry?->category): ?>
+                                    <li><span class="fa-li"><i class="fa fa-person-running"></i></span>
                                         <?= $race_entry->category?->name ?>
-                                    </strong>
-                                </div>
-                                <?php if ($race_entry->upgraded): ?>
-                                    <div class="col-auto">
-                                        <ins>Surclassé</ins><br />
-                                    </div>
+                                    </li>
                                 <?php endif ?>
-                                <?php if ($race_entry->comment): ?>
-                                    <i>
-                                        <?= $race_entry->comment ?>
-                                    </i>
+                                <?php if ($race_entry?->upgraded): ?>
+                                    <li><span class="fa-li"><i class="fa fa-arrow-up"></i></span>
+                                        <b>Surclassé</b>
+                                    </li>
                                 <?php endif ?>
-                            </div>
-                        </td>
-                        <?php if ($can_edit): ?>
-                            <td style="text-align: right;">
-                                <a href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>/inscrits'> <i class="fa fa-users"></i>
-                                    Inscrits</a>
-                            </td>
-                        <?php endif ?>
-                    </tr>
-                <?php endif;
-            endforeach; ?>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Commentaires : </strong>
+                            <?= $race_entry?->comment ?>
+                        </div>
+                    </div>
+                    <?php if ($can_edit): ?>
+                        <div class="grid center">
+                            <a class="secondary" href='/evenements/course/<?= $race->id ?>/inscrits'> <i class="fa fa-users"></i>
+                                Liste des inscrits</a>
+                            <a class="secondary" href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'> <i
+                                    class="fa fa-pen"></i>
+                                Modifier la course</a>
+                        </div>
+
+                    <?php endif ?>
+                </details>
+            <?php endforeach; ?>
         </table>
     <?php endif; ?>
 

@@ -54,3 +54,11 @@ textarea {
 .eventForm.hidden ~ #conditionalText {
   display: block;
 }
+
+.fa-ul li {
+  list-style: none;
+}
+
+details summary:focus:not([role="button"]) {
+  color: var(--accordion-close-summary-color);
+}
