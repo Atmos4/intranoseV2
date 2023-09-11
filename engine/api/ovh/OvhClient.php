@@ -61,8 +61,8 @@ class OvhClient implements OvhClientInterface
     // redirections
     function getRedirection($from = "", $to = "")
     {
-        $query = http_build_query(array_filter(["from" => $from, "to" => $to]));
-        return $this->api->get("/email/domain/$this->domain/redirection?$query");
+        $query = $from || $to ? "?" . http_build_query(array_filter(["from" => $from, "to" => $to])) : "";
+        return $this->api->get("/email/domain/$this->domain/redirection$query");
     }
     function addRedirection($from = "", $to = "")
     {

@@ -147,31 +147,38 @@ class User
         return self::$mainUser;
     }
 
-    static function getBySubstring($subString): array
+    static function existsWithLogin($login): bool
     {
-        // Returns all the numbers associated with a login $subString
-        $user_numbers = em()
-            ->createQuery("SELECT SUBSTRING(u.login, LENGTH(?1))
-            FROM User u
-            WHERE u.login LIKE ?1")
-            ->setParameter(1, $subString . '%')
-            ->getResult();
-
-
-        $user_numbers = array_map(function ($value) {
-            return $value[1] ? intval($value[1]) : null;
-        }, $user_numbers);
-
-        return $user_numbers;
+        $logins = em()
+            ->createQuery("SELECT u.login FROM User u WHERE u.login = ?1")
+            ->setParameter(1, $login)
+            ->getArrayResult();
+        return count($logins);
     }
 
-    static function findByFirstAndLastName($firstname, $lastname)
+    static function findAllByLogin($login): array
     {
-        $query = em()->createQuery('SELECT u FROM User u WHERE u.first_name = :firstname AND u.last_name = :lastname')
-            ->setParameter('firstname', $firstname)
-            ->setParameter('lastname', $lastname);
+        return em()
+            ->createQuery("SELECT u.login FROM User u WHERE u.login LIKE ?1")
+            ->setParameter(1, $login . '%')
+            ->getSingleColumnResult();
+    }
 
-        return $query->getResult();
+    static function existsWithEmail($email): bool
+    {
+        $emails = em()
+            ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email = :email')
+            ->setParameter(':email', $email)
+            ->getArrayResult();
+        return count($emails);
+    }
+
+    static function findEmailWithPattern($email): array
+    {
+        return em()
+            ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email LIKE :email')
+            ->setParameter(':email', $email)
+            ->getSingleColumnResult();
     }
 }
 
