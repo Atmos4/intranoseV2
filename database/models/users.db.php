@@ -61,6 +61,9 @@ class User
     #[Column]
     public bool $family_leader = false;
 
+    #[Column]
+    public bool $use_family_email = false;
+
     /** @var Collection<int,AccessToken> entries */
     #[OneToMany(targetEntity: AccessToken::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $tokens;
@@ -169,6 +172,9 @@ class Family
 
     #[Column]
     public string $name = "";
+
+    #[Column]
+    public string $email = "";
 
     /** @var Collection<int, User> members */
     #[OneToMany(targetEntity: User::class, mappedBy: 'family')]
