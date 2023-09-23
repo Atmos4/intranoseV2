@@ -14,7 +14,7 @@ final class Version20230423135447 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Access tokens';
     }
 
     public function up(Schema $schema): void

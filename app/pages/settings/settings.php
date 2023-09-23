@@ -16,8 +16,11 @@ if (!$user) {
     echo "This user doesn't exist";
     return;
 }
+
 $is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
+// TODO: remove this when OVH integration is rolling
+$can_change_emails = check_auth([Permission::ROOT]) && (!$is_visiting || $user->permission != Permission::ROOT);
 
 
 $user_infos = [
@@ -39,7 +42,7 @@ $birthdate = $v_infos->date("birthdate")->label("Date de naissance")->required()
 $gender = $v_infos->text("gender")->label("Sexe");
 $phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
 
-if ($can_reset_credentials) {
+if ($can_change_emails) {
     $nose_email->required();
     $real_email->required();
 } else {
@@ -49,8 +52,8 @@ if ($can_reset_credentials) {
 
 if ($v_infos->valid()) {
     $user->set_identity($last_name->value, $first_name->value, Gender::from($gender->value));
-    $user->real_email = $real_email->value;
-    if ($can_reset_credentials) {
+    if ($can_change_emails) {
+        $user->real_email = $real_email->value;
         $user->nose_email = $nose_email->value;
     }
     $user->phone = $phone->value;
@@ -76,7 +79,7 @@ $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 
 
 if ($v_picture->valid()) {
     $picture->set_target_dir("assets/images/profile/");
-    $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . pathinfo($picture->file_name, PATHINFO_EXTENSION));
+    $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . strtolower(pathinfo($picture->file_name, PATHINFO_EXTENSION)));
     foreach ($result_image as $image) {
         if (is_file($image)) {
             unlink($image);
@@ -104,7 +107,12 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <label class="profile">
         <img class="profile-picture" src="<?= $profile_picture ?>">
         <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
-        <?= $picture->render("style='width: auto;' onchange=\"document.getElementById('pictureForm').submit();\"") ?>
+        <?= $picture
+            ->attributes([
+                "style" => "width: auto",
+                "onchange" => "document.getElementById('pictureForm').submit()"
+            ])
+            ->render() ?>
     </label>
 </form>
 

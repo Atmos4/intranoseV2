@@ -129,7 +129,7 @@ page("Inscription - " . $event->name)->css("event_view.css");
 
             <fieldset>
                 <b>
-                    <?= $event_present->render("onchange=\"toggleDisplay(this,'.eventForm')\"") ?>
+                    <?= $event_present->attributes(["onchange" => "toggleDisplay(this,'.eventForm')"])->render() ?>
                 </b>
             </fieldset>
         </header>
@@ -170,7 +170,7 @@ page("Inscription - " . $event->name)->css("event_view.css");
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
                                         <div>
-                                            <?= $race_form["entry"]->render("onchange=\"toggleDisplay(this,'.raceToggle$index')\"") ?>
+                                            <?= $race_form["entry"]->attributes(["onchange" => "toggleDisplay(this,'.raceToggle$index')"])->render() ?>
                                         </div>
                                         <div class="<?= $toggle_class ?>">
                                             <?= $race_form["ranked_up"]->render() ?>
@@ -201,7 +201,6 @@ page("Inscription - " . $event->name)->css("event_view.css");
 </form>
 
 <script>
-
     function toggleDisplay(toggle, target) {
         const elements = document.querySelectorAll(target);
         for (element of elements) {

@@ -124,7 +124,6 @@ class Validator
         return $this->create($key, DateField::class, $msg);
     }
 
-    /** Creates new date field */
     function switch (string $key, string $msg = null): SwitchField
     {
         return $this->create($key, SwitchField::class, $msg);

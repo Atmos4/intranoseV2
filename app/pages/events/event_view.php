@@ -179,12 +179,18 @@ page($event->name)->css("event_view.css");
                     <?php endif;
                     if ($can_edit): ?>
                         <nav>
-                            <a role="button" class="outline secondary" href='/evenements/course/<?= $race->id ?>/inscrits'> <i
-                                    class="fa fa-users"></i>
-                                Inscrits</a>
-                            <a role="button" class="outline secondary" href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'>
-                                <i class="fa fa-pen"></i>
-                                Modifier</a>
+                            <li></li>
+                            <li>
+                                <?php if ($event->open): ?>
+                                    <a role="button" class="outline secondary" href='/evenements/course/<?= $race->id ?>/inscrits'> <i
+                                            class="fa fa-users"></i>
+                                        Inscrits</a>
+                                <?php endif ?>
+                                <a role="button" class="outline secondary"
+                                    href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'>
+                                    <i class="fa fa-pen"></i>
+                                    Modifier</a>
+                            </li>
                         </nav>
 
                     <?php endif ?>
