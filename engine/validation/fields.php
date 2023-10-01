@@ -27,6 +27,8 @@ class Field
     public bool $readonly = false;
     public bool $required = false;
 
+    private array $attributes = [];
+
     function __construct(string $key, mixed $value = null, $context = null)
     {
         $this->key = $key;
@@ -53,27 +55,50 @@ class Field
         return $this->label;
     }
 
+    function attributes(array $attrs)
+    {
+        $this->attributes += $attrs;
+        return $this;
+    }
+
     /**
      * Renders the field as input
      * @param string $attrs
      * @return string
      */
-    function render(string $attrs = "")
+    function render()
     {
-        $result = "<input type=\"{$this->type->value}\" $attrs name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+
+        return $this->render_label($this->render_core());
+    }
+
+    protected function render_core()
+    {
+        return "<input {$this->props()}>";
+    }
+
+    function props()
+    {
+        return
+            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
             . ($this->valid() ? "" : " aria-invalid=true")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
             . ($this->required ? " required" : "")
             . ($this->readonly ? " readonly" : "")
-            . ">";
-        return $this->render_label($result);
+            . $this->render_attrs();
     }
 
-    protected function render_label($input_render)
+    protected function render_attrs()
+    {
+        return array_reduce(array_keys($this->attributes), fn($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
+    }
+
+    protected function render_label($input_render, $reverse = false)
     {
         if ($this->label) {
-            $input_render = "<label for=\"$this->key\">{$this->label}{$input_render}</label>";
+            $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
+            $input_render = "<label {$this->render_attrs()} for=\"$this->key\">{$label_content}</label>";
         }
         return $input_render;
     }
@@ -173,10 +198,10 @@ class StringField extends Field
         }
     }
 
-    function render(string $attrs = "")
+    function render()
     {
-        $placeholder = $this->placeholder ?? $this->label;
-        return parent::render("placeholder=\"$placeholder\" $attrs");
+        $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
+        return parent::render();
     }
 
     function max_length(int $count, string $msg = null)
@@ -198,12 +223,10 @@ class StringField extends Field
 
 class TextAreaField extends StringField
 {
-    function render(string $attrs = "")
+    function render()
     {
-        $placeholder = $this->placeholder ?? $this->label;
-        $result = "<textarea name=\"$this->key\" id=\"$this->key\" placeholder=\"$placeholder\""
-            . ($this->valid() ? "" : " aria-invalid=true")
-            . ">$this->value</textarea>";
+        $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
+        $result = "<textarea {$this->props()}>$this->value</textarea>";
         return $this->render_label($result);
     }
 }
@@ -303,16 +326,17 @@ class SwitchField extends Field
         return $this->true_label;
     }
 
-    function render(string $attrs = "")
+    function render()
     {
         return "<label for=\"$this->key\">"
-            . "<input type=checkbox role=switch name=\"$this->key\" id=\"$this->key\" value=1 $attrs " . ($this->valid() ? "" : " aria-invalid=true") . ($this->value ? " checked" : "") . ">"
+            . "<input role=switch value=1 " . $this->props() . ($this->value ? " checked" : "") . ">"
             . ($this->true_label && $this->false_label ?
                 "<ins>$this->true_label <i class=\"fas fa-check\"></i></ins><del>$this->false_label <i class=\"fas fa-xmark\"></i></del>"
                 : $this->label)
             . "</label>";
     }
 }
+
 
 class UploadField extends Field
 {
@@ -544,10 +568,9 @@ class SelectField extends Field
     /** @var SelectFieldOption[] */
     public array $options = [];
 
-    function render(string $attrs = "")
+    function render()
     {
-        $required = $this->required ? " required" : "";
-        $result = "<select name=\"$this->key\"$required>";
+        $result = "<select {$this->props()}>";
         foreach ($this->options as $option) {
             $selected = $option->selected ? " selected" : "";
             $result .= "<option value=\"$option->value\"$selected>$option->label</option>";

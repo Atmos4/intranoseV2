@@ -15,18 +15,18 @@ if ($v_user->valid()) {
         $newUser->first_name = $fn;
         $newUser->login = $login;
         $newUser->password = password_hash(strtolower($fn), PASSWORD_DEFAULT);
-        $newUser->nose_email = "$fn.$ln@nose42.fr";
+        $newUser->nose_email = strtolower("$fn.$ln@nose42.fr");
         $newUser->real_email = "test@example.com";
         $newUser->phone = "0612345678";
         $newUser->permission = Permission::ROOT;
         $newUser->gender = Gender::M;
-        $newUser->birthdate = date_create("1958-09-07");
+        $newUser->birthdate = date_create("1996-01-01");
         $newUser->active = 1;
         em()->persist($newUser);
         em()->flush();
         $v_user->set_success("Created user $newUser->first_name $newUser->last_name<br>"
             . "Login: $newUser->login<br>"
-            . "Password: $newUser->password");
+            . "Password: " . strtolower($fn));
     } else {
         $v_user->set_error("User already exists");
     }

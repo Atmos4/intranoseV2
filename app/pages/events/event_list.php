@@ -78,7 +78,7 @@ $vowels = array("a", "e", "i", "o", "u");
 foreach ($birthday_users as $birthday_user): ?>
     <div class="birthday">
         <span>🎂 C'est l'anniversaire
-            <?= ((in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)) ? "d'" : "de")
+            <?= ((in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)) ? "d'" : "de ")
                 . "$birthday_user->first_name $birthday_user->last_name 🎉" ?>
         </span>
     </div>

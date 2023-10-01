@@ -47,7 +47,7 @@ page($family->name)->css("family_list.css") ?>
         </li>
     </nav>
 <?php endif ?>
-<div class="row">
+<section class="row">
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">
             <article class="card">
@@ -60,7 +60,9 @@ page($family->name)->css("family_list.css") ?>
                 ?>
                 <img src="<?= $profile_picture ?>">
                 <div>
-                    <a href="/licencies/<?= $f_member->id ?>"><?= "$f_member->first_name $f_member->last_name" ?></a>
+                    <a href="/licencies/<?= $f_member->id ?>">
+                        <?= "$f_member->first_name $f_member->last_name" ?>
+                    </a>
                     <br>
                     <?= $f_member->family_leader ? "Parent" : "Enfant" ?>
                 </div>
@@ -90,7 +92,7 @@ page($family->name)->css("family_list.css") ?>
             </article>
         </div>
     <?php endforeach ?>
-</div>
+</section>
 
 <?php if (check_auth(Access::$EDIT_USERS)): ?>
     <form method="post">
