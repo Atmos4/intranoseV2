@@ -1,0 +1,34 @@
+name: Deploy to OVH
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+
+      - name: Composer install
+        run: composer install --prefer-dist --no-progress --no-suggest --no-dev
+
+      - name: Deploy using rsync-deployments
+        uses: burnett01/rsync-deployments@4.1
+        with:
+          switches: "-avz --exclude=.git --exclude=vendor"
+          path: "./"
+          remote_path: ${{ secrets.DEPLOY_PATH }}
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
