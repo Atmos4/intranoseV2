@@ -34,22 +34,41 @@ $database = new PDO(
     env("OLD_DB_PASSWORD"),
 );
 $users = $database->query('SELECT * FROM licencies WHERE valid=1 and invisible=0')->fetchAll();
-foreach ($users as $user) {
-    $newUser = new User();
-    $newUser->last_name = $user['nom'];
-    $newUser->first_name = $user['prenom'];
-    $newUser->login = $user['login'];
-    $newUser->password = password_hash($user["prenom"], PASSWORD_DEFAULT);
-    $newUser->nose_email = $user['email'];
-    $newUser->real_email = $user['realmail'];
-    $newUser->phone = $user['telport'] ?? $user['tel'];
-    $newUser->permission = map_permission($user['perm']);
-    $newUser->gender = map_gender($user['sexe']);
-    $newUser->birthdate = date_create($user['ddn']);
-    em()->persist($newUser);
+
+$v = new Validator(action: "migrate");
+
+if ($v->valid()) {
+    foreach ($users as $user) {
+        $newUser = new User();
+        $newUser->last_name = $user['nom'];
+        $newUser->first_name = $user['prenom'];
+        $newUser->login = $user['login'];
+        $newUser->password = password_hash(strtolower($user["prenom"]), PASSWORD_DEFAULT);
+        $newUser->nose_email = $user['email'];
+        $newUser->real_email = $user['realmail'];
+        $newUser->phone = $user['telport'] ?? $user['tel'];
+        $newUser->permission = map_permission($user['perm']);
+        $newUser->gender = map_gender($user['sexe']);
+        $newUser->birthdate = date_create($user['ddn']);
+        $newUser->active = true;
+        em()->persist($newUser);
+    }
+    em()->flush();
 }
 
-em()->flush();
 $count = count($users);
 
-echo "Inserted $count users";
+page("Migration")->disableNav()
+    ?>
+
+<?php if ($v->valid()):
+    echo "Pas assez rapide! MI-GRA-TIOOOOON!!! $count users migrated";
+else: ?>
+    <form method="post">
+        <?= $v->render_validation() ?>
+        <p>Sûr de vouloir migrer
+            <?= $count ?> utilisateurs
+        </p>
+        <button>UI</button>
+    </form>
+<?php endif ?>

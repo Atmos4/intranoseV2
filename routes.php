@@ -21,6 +21,7 @@ if (env("DEVELOPMENT")) {
     Router::add('/dev/send-email', 'pages/dev/send_test_email');
     Router::add('/dev/test-ovh', 'pages/dev/test_ovh');
     Router::add('/dev/ovh-mailing', 'pages/dev/ovh_mailing_lists');
+    Router::add('/dev/migrate', '../database/migrate_db');
 }
 
 // Events
