@@ -1,6 +1,6 @@
 <?php
 $menu = MainMenu::getInstance()
-    ->addItem("Événements", "/", "fa-calendar")
+    ->addItem("Événements", "/evenements", "fa-calendar")
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Mon profil", "/mon-profil", "fa-gear");
 

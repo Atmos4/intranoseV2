@@ -147,7 +147,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
 
-    <div class="col-4">
+    <div>
         <input type="submit" class="outline" name="submitIdentity" value="Mettre à jour les infos">
     </div>
 </form>
