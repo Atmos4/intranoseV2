@@ -23,7 +23,7 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest --no-dev --optimize-autoloader
 
       - name: Deploy with rsync
-        uses: burnett01/rsync-deployments@4.1
+        uses: burnett01/rsync-deployments@5.2.2
         with:
           switches: "-avz --exclude=.git"
           path: "./"
