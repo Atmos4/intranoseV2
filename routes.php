@@ -57,6 +57,8 @@ Router::add('/famille/$family_id/supprimer', 'pages/users/family_remove.php');
 Router::add('/famille/$family_id/change/$member_id', 'pages/users/family_change.php');
 Router::add('/famille/$family_id/supprimer/$member_id', 'pages/users/family_remove.php');
 Router::add('/user-control/$user_id', 'pages/users/take_user_control.php');
+
+// Tokens
 Router::add('/activation', 'pages/tokens/user_activation.php');
 Router::add('/reinitialiser-mot-de-passe', 'pages/tokens/send_reset_password.php');
 Router::add('/nouveau-mot-de-passe', 'pages/tokens/reset_password.php');

@@ -50,7 +50,6 @@ if ($v->valid()) {
         $newUser->permission = map_permission($user['perm']);
         $newUser->gender = map_gender($user['sexe']);
         $newUser->birthdate = date_create($user['ddn']);
-        $newUser->active = true;
         em()->persist($newUser);
     }
     em()->flush();

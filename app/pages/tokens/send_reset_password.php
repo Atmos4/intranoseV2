@@ -17,7 +17,7 @@ if ($v->valid()) {
             ->to($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
-            $v->set_success('Message has been sent');
+            $v->set_success('Mail envoyé');
             em()->flush();
         } else {
             $v->set_error($result->message);

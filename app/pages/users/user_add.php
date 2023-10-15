@@ -33,13 +33,7 @@ if ($v->valid()) {
 
     $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
 
-    $base_url = env("BASE_URL");
-    $subject = "Activation de votre compte NOSE";
-    $content = "Voici le lien pour activer votre compte NOSE : $base_url/activation?token=$token->id";
-
-    $result = Mailer::create()
-        ->to($real_email->value, $subject, $content)
-        ->send();
+    $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();
     if ($result->success) {
         em()->persist($token);
         em()->persist($new_user);

@@ -7,7 +7,22 @@ if ($v->valid()) {
     if (!$user) {
         $login->set_error("Utilisateur non trouvé");
     } else if (!$user->active) {
-        $login->set_error("Votre compte est désactivé");
+        if (!$user->blocked) {
+            $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+            em()->persist($token);
+
+            $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
+
+            if ($result->success) {
+                $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
+                    . ". Utilisez-le pour activer votre compte.";
+                em()->flush();
+            } else {
+                $v->set_error($result->message);
+            }
+        } else {
+            $login->set_error("Votre compte est bloqué. Contactez un administrateur.");
+        }
     } else if (password_verify($password->value, $user->password)) {
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_permission'] = $user->permission;
