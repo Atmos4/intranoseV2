@@ -18,6 +18,7 @@ $gender = $v->text("gender")->label("Sexe");
 $phone = $v->phone("phone")->label("Numéro de téléphone");
 
 if ($v->valid()) {
+    logger()->info("User {$token->user->id} activated");
     $user = $token->user;
     $user->set_password($new_password->value);
     $user->gender = Gender::from($gender->value);

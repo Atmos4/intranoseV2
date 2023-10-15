@@ -138,6 +138,12 @@ function is_csrf_valid()
     return true;
 }
 
+// Logger
+function logger()
+{
+    return Log::get();
+}
+
 // OVH API
 use Ovh\Api;
 
