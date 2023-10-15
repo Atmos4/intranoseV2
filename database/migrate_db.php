@@ -50,7 +50,6 @@ if ($v->valid()) {
         $newUser->permission = map_permission($user['perm']);
         $newUser->gender = map_gender($user['sexe']);
         $newUser->birthdate = date_create($user['ddn']);
-        $newUser->active = true;
         em()->persist($newUser);
     }
     em()->flush();
@@ -67,8 +66,8 @@ else: ?>
     <form method="post">
         <?= $v->render_validation() ?>
         <p>Sûr de vouloir migrer
-            <?= $count ?> utilisateurs
+            <?= $count ?> utilisateurs ?
         </p>
-        <button>UI</button>
+        <button>Let's go 🚀</button>
     </form>
 <?php endif ?>

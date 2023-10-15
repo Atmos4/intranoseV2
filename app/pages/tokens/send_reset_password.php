@@ -5,7 +5,7 @@ $login = $v->text("login")->placeholder("Login")->required()->autocomplete("user
 
 if ($v->valid()) {
     $user = em()->getRepository(User::class)->findOneBy(['login' => $login->value]);
-    if ($user) {
+    if ($user && $user->active && !$user->blocked) {
         $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT15M'));
         em()->persist($token);
 
@@ -17,7 +17,7 @@ if ($v->valid()) {
             ->to($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
-            $v->set_success('Message has been sent');
+            $v->set_success('Mail envoyé');
             em()->flush();
         } else {
             $v->set_error($result->message);

@@ -65,5 +65,28 @@ class Mailer
             return MailResult::error("Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}");
         }
     }
+}
 
+class MailHelper
+{
+    // Shamelessly taken from StackOverflow
+    static function obfuscate($email)
+    {
+        $em = explode("@", $email);
+        $name = implode('@', array_slice($em, 0, count($em) - 1));
+        $len = floor(strlen($name) / 2);
+
+        return substr($name, 0, $len) . str_repeat('*', $len) . "@" . end($em);
+    }
+}
+
+class MailerFactory
+{
+    static function createActivationEmail(string $address, string $token)
+    {
+        $base_url = env("BASE_URL");
+        $subject = "Activation du compte NOSE";
+        $content = "Voici le lien pour activer ton compte: $base_url/activation?token=$token";
+        return Mailer::create()->to($address, $subject, $content);
+    }
 }

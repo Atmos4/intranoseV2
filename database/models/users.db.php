@@ -53,7 +53,13 @@ class User
     public string $phone = "";
 
     #[Column]
+    public string $picture = "";
+
+    #[Column]
     public bool $active = false;
+
+    #[Column]
+    public bool $blocked = false;
 
     #[ManyToOne]
     public Family|null $family = null;
