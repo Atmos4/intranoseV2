@@ -66,8 +66,8 @@ else: ?>
     <form method="post">
         <?= $v->render_validation() ?>
         <p>Sûr de vouloir migrer
-            <?= $count ?> utilisateurs
+            <?= $count ?> utilisateurs ?
         </p>
-        <button>UI</button>
+        <button>Let's go 🚀</button>
     </form>
 <?php endif ?>
