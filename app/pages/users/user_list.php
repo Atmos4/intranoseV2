@@ -24,11 +24,11 @@ page("Les licenciés")->css("user_list.css");
 
 <form method="get">
     <input type="search" id="search-users" name="search" placeholder="Rechercher..."
-        onkeyup="searchTable('search-users','users-table')">
+        onkeyup="searchSection('search-users','users-list')">
 </form>
 
-
-<table id="users-table">
+<?php
+/* <table id="users-table">
     <thead>
         <tr>
             <th scope="col">Nom</th>
@@ -55,6 +55,37 @@ page("Les licenciés")->css("user_list.css");
             </tr>
         <?php endforeach ?>
     </tbody>
-</table>
+</table> */
+?>
+
+<section class="row" id="users-list">
+    <?php foreach ($users as $user): ?>
+        <div class="col-sm-12 col-md-6">
+            <article class="card">
+                <?php
+                $result_image = glob("assets/images/profile/" . $user->id . ".*");
+
+                $profile_picture = (count($result_image) > 0 ?
+                    "/" . $result_image[0]
+                    : "/assets/images/profile/none.jpg");
+                ?>
+                <img src="<?= $profile_picture ?>">
+                <div class="card-content">
+                    <div id="name-div">
+                        <a href="/licencies/<?= $user->id ?>">
+                            <?= "$user->first_name $user->last_name" ?>
+                        </a>
+                    </div>
+                    <div class="card-details">
+                        <?= $user->nose_email ?>
+                        <br>
+                        <?= $user->phone ?>
+                    </div>
+                </div>
+            </article>
+        </div>
+    <?php endforeach ?>
+</section>
 
 <script src="/assets/js/table-search.js"></script>
+<script src="/assets/js/section-search.js"></script>
