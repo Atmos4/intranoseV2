@@ -29,7 +29,7 @@ if ($v->valid()) {
 
     $new_user->permission = Permission::from($permissions->value);
     $new_user->set_login($new_login);
-    $new_user->active = false;
+    $new_user->status = UserStatus::INACTIVE;
 
     $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
 

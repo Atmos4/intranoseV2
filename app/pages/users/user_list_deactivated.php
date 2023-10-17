@@ -1,7 +1,5 @@
 <?php
-restrict_access();
-$can_add_user = check_auth(Access::$EDIT_USERS);
-$users_repository = em()->getRepository(User::class);
+restrict_access(Access::$EDIT_USERS);
 page("Réactiver des licenciés")->css("user_list.css");
 
 // Just for convenience
@@ -23,13 +21,15 @@ if (isset($_POST['action'])) {
 
         if ($_POST['action'] === 'reactivate') {
             foreach ($users as $user) {
-                $user->active = true;
+                // We just want to allow them to login again
+                $user->status = UserStatus::INACTIVE;
             }
             em()->flush();
         }
     }
 }
-$users = $users_repository->findBy(['active' => "0"], ['last_name' => 'ASC', 'first_name' => 'ASC']);
+
+$users = UserService::getDeactivatedUserList();
 
 // No user found. Return early
 if (!$users): ?>

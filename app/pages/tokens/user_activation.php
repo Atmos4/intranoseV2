@@ -22,7 +22,7 @@ if ($v->valid()) {
     $user->set_password($new_password->value);
     $user->gender = Gender::from($gender->value);
     $user->phone = $phone->value;
-    $user->active = true;
+    $user->status = UserStatus::ACTIVE;
     em()->persist($user);
     em()->remove($token);
     em()->flush();

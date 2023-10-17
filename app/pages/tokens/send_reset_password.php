@@ -5,7 +5,7 @@ $login = $v->text("login")->placeholder("Login")->required()->autocomplete("user
 
 if ($v->valid()) {
     $user = em()->getRepository(User::class)->findOneBy(['login' => $login->value]);
-    if ($user && $user->active && !$user->blocked) {
+    if ($user?->status == UserStatus::ACTIVE) {
         $token = new AccessToken($user, AccessTokenType::RESET_PASSWORD, new DateInterval('PT15M'));
         em()->persist($token);
 

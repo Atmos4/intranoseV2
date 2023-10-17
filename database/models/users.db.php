@@ -56,10 +56,7 @@ class User
     public string $picture = "";
 
     #[Column]
-    public bool $active = false;
-
-    #[Column]
-    public bool $blocked = false;
+    public UserStatus $status = UserStatus::INVALID;
 
     #[ManyToOne]
     public Family|null $family = null;
@@ -105,6 +102,17 @@ class User
     function set_login($login)
     {
         $this->login = $login;
+    }
+
+    function getPicture()
+    {
+        return $this->picture && file_exists($this->picture) ? "/" . $this->picture : "/assets/images/profile/none.jpg";
+    }
+
+    function replacePicture(string $newPicture)
+    {
+        $this->picture && file_exists($this->picture) && unlink($this->picture);
+        $this->picture = $newPicture;
     }
 
     static function getByLogin($login): User|null
@@ -165,6 +173,14 @@ class User
 
         return $query->getResult();
     }
+}
+
+enum UserStatus: string
+{
+    case INVALID = '';
+    case DEACTIVATED = 'DEACTIVATED';
+    case INACTIVE = 'INACTIVE';
+    case ACTIVE = 'ACTIVE';
 }
 
 #[Entity, Table(name: 'families')]

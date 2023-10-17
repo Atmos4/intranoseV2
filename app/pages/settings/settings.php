@@ -11,7 +11,7 @@ if ($user_id) {
     $is_visiting = true;
 }
 
-$user = em()->find(User::class, $user_id ?? User::getCurrent());
+$user = User::getCurrent();
 if (!$user) {
     echo "This user doesn't exist";
     return;
@@ -63,11 +63,7 @@ if ($v_infos->valid()) {
     $v_infos->set_success("Identité mise à jour !");
 }
 
-$result_image = glob("assets/images/profile/" . $user->id . ".*");
-
-$profile_picture = (count($result_image) > 0) ?
-    "/" . $result_image[0]
-    : "/assets/images/profile/none.jpg";
+$profile_picture = $user->picture && file_exists($user->picture) ? "/" . $user->picture : "/assets/images/profile/none.jpg";
 
 $image_mime_types = [
     'jpg' => 'image/jpeg',
@@ -80,13 +76,10 @@ $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 
 if ($v_picture->valid()) {
     $picture->set_target_dir("assets/images/profile/");
     $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . strtolower(pathinfo($picture->file_name, PATHINFO_EXTENSION)));
-    foreach ($result_image as $image) {
-        if (is_file($image)) {
-            unlink($image);
-        }
-    }
     if ($picture->save_file()) {
+        $user->replacePicture($picture->target_file);
         $v_picture->set_success("Photo de profil mise à jour !");
+        em()->flush();
     } else {
         $v_picture->set_error("Erreur lors de la mise à jour de la photo de profil");
     }

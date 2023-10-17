@@ -8,7 +8,7 @@ if (!$user) {
     return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
-    $user->active = false;
+    $user->status = UserStatus::DEACTIVATED;
     em()->flush();
     redirect("/licencies");
 }

@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 $can_add_user = check_auth(Access::$EDIT_USERS);
-$users = em()->getRepository(User::class)->findBy(['active' => "1"], ['last_name' => 'ASC', 'first_name' => 'ASC']);
+$users = UserService::getActiveUserList();
 page("Les licenciés")->css("user_list.css");
 ?>
 

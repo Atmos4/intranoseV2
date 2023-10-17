@@ -50,6 +50,8 @@ if ($v->valid()) {
         $newUser->permission = map_permission($user['perm']);
         $newUser->gender = map_gender($user['sexe']);
         $newUser->birthdate = date_create($user['ddn']);
+        $newUser->picture = "assets/images/profile/" . $user['id'] . ".jpg";
+        $newUser->status = UserStatus::INACTIVE;
         em()->persist($newUser);
     }
     em()->flush();
@@ -57,8 +59,8 @@ if ($v->valid()) {
 
 $count = count($users);
 
-page("Migration")->disableNav()
-    ?>
+page("Migration")->disableNav();
+?>
 
 <?php if ($v->valid()):
     echo "Pas assez rapide! MI-GRA-TIOOOOON!!! $count users migrated";
