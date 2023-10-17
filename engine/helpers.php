@@ -48,6 +48,16 @@ function get_route_param($param, $strict = true, $numeric = true)
     return Router::getParameter($param, $strict, $numeric);
 }
 
+/**
+ * Returns the value of a request header
+ * @param string $headerName 
+ * @return string header value 
+ */
+function get_header($headerName)
+{
+    return $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $headerName))] ?? null;
+}
+
 /** Redirect helper method */
 function redirect($href)
 {
@@ -86,6 +96,10 @@ function restrict_access($permissions = [])
 {
     if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
         $permission = $_SESSION['user_permission']?->value ?? "non authenticated user";
+        if (get_header('HX-Request')) {
+            // This is a bit lazy but it's the idea
+            header('HX-Refresh: true');
+        }
         Router::abort("Access for {$permission} is restricted for this page. ");
     }
 }
