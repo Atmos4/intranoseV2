@@ -8,11 +8,7 @@ if (!$user) {
 $can_edit_users = check_auth(Access::$EDIT_USERS);
 $is_root = check_auth([Permission::ROOT]);
 
-$result_image = glob("assets/images/profile/" . $user->id . ".*");
-
-$profile_picture = (count($result_image) > 0) ?
-    "/" . $result_image[0]
-    : "/assets/images/profile/none.jpg";
+$profile_picture = $user->getPicture();
 page($user->first_name . " " . $user->last_name)->css("user_view.css");
 ?>
 <nav id="page-actions">

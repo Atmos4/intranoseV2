@@ -21,7 +21,7 @@ if ($v_user->valid()) {
         $newUser->permission = Permission::ROOT;
         $newUser->gender = Gender::M;
         $newUser->birthdate = date_create("1996-01-01");
-        $newUser->active = 1;
+        $newUser->status = UserStatus::ACTIVE;
         em()->persist($newUser);
         em()->flush();
         $v_user->set_success("Created user $newUser->first_name $newUser->last_name<br>"

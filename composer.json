@@ -15,7 +15,8 @@
     "classmap": [
       "database/models/",
       "engine/core/",
-      "engine/validation/"
+      "engine/validation/",
+      "app/services"
     ],
     "files": [
       "engine/helpers.php"
@@ -26,6 +27,7 @@
       "@composer install",
       "@db:migrate"
     ],
-    "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate"
+    "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",
+    "db:diff": "@php bin/doctrine --no-interaction migrations:diff"
   }
 }

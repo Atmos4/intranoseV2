@@ -8,7 +8,7 @@ $user = em()->find(User::class, $user_id);
 if (!$user) {
     $form->set_error("the user of id $user_id doesn't exist");
 }
-if ($user->active) {
+if ($user->status != UserStatus::DEACTIVATED) {
     $form->set_error("Can't delete an active user");
 }
 if ($form->valid()) {
