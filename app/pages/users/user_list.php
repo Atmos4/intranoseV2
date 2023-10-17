@@ -45,11 +45,6 @@ page("Les licenciés")->css("user_list.css");
                             <?= "$user->first_name $user->last_name" ?>
                         </a>
                     </div>
-                    <div class="card-details">
-                        <?= $user->nose_email ?>
-                        <br>
-                        <?= $user->phone ?>
-                    </div>
                 </div>
             </article>
         </div>
