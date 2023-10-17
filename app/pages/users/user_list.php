@@ -31,14 +31,7 @@ page("Les licenciés")->css("user_list.css");
     <?php foreach ($users as $user): ?>
         <div class="col-sm-12 col-md-6">
             <article class="card">
-                <?php
-                $result_image = glob("assets/images/profile/" . $user->id . ".*");
-
-                $profile_picture = (count($result_image) > 0 ?
-                    "/" . $result_image[0]
-                    : "/assets/images/profile/none.jpg");
-                ?>
-                <img src="<?= $profile_picture ?>">
+                <img src="<?= $user->getPicture() ?>">
                 <div class="card-content">
                     <div id="name-div">
                         <a href="/licencies/<?= $user->id ?>">
