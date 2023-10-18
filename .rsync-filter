@@ -1,7 +1,8 @@
-- /assets/images/profile/*
-- /app/uploads/*
++ *
 + /app/uploads/*.php
 + /app/uploads/shared_docs/*.php
-- /.*
 + /.htaccess
+- /app/uploads/*
+- /assets/images/profile/*
+- /.*
 - /logs
