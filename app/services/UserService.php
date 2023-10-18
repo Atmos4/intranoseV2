@@ -2,10 +2,10 @@
 class UserService
 {
 
-    /** @return ActiveUserDto[] */
+    /** @return User[] */
     static function getActiveUserList()
     {
-        return em()->createQuery("SELECT NEW ActiveUserDto(u.id, u.last_name, u.first_name, u.nose_email, u.phone) FROM User u WHERE u.status != :status ORDER BY u.last_name ASC, u.first_name ASC")
+        return em()->createQuery("SELECT u FROM User u WHERE u.status != :status ORDER BY u.last_name ASC, u.first_name ASC")
             ->setParameters(['status' => UserStatus::DEACTIVATED])->getResult();
     }
 
@@ -19,19 +19,6 @@ class UserService
 }
 
 // DTOs
-class ActiveUserDto
-{
-    function __construct(
-        public int $id,
-        public string $last_name,
-        public string $first_name,
-        public string $nose_email,
-        public string $phone,
-    ) {
-
-    }
-}
-
 class DeactivatedUserDto
 {
     function __construct(
