@@ -1,8 +1,15 @@
-+ *
-+ /app/uploads/*.php
-+ /app/uploads/shared_docs/*.php
-+ /.htaccess
-- /app/uploads/*
-- /assets/images/profile/*
+# Include all files in the root folder
++ /*
+
+# Exclude files in the root folder that start with a dot (except .htaccess)
 - /.*
-- /logs
+
+# Include .htaccess in the root folder
++ /.htaccess
+
+# Exclude all files in assets/images/profile folder (except none.jpg)
+- /assets/images/profile/*
++ /assets/images/profile/none.jpg
+
+# Exclude the root folder /logs
+- /logs/
