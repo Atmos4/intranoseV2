@@ -35,11 +35,13 @@ if ($v->valid()) {
 
     $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();
     if ($result->success) {
+        logger()->info("User {$new_user->id} created by user {$user->id} and activation email sent");
         em()->persist($token);
         em()->persist($new_user);
         em()->flush();
         $v->set_success('Email envoyé!');
     } else {
+        logger()->warning("User {$user->id} tried to create user {$new_user->id} but activation email failed to send");
         $v->set_error($result->message);
     }
 }

@@ -9,7 +9,8 @@
     "phpmailer/phpmailer": "^6.8",
     "ramsey/uuid": "^4.7",
     "vlucas/phpdotenv": "^5.5",
-    "ovh/ovh": "^3.2"
+    "ovh/ovh": "^3.2",
+    "monolog/monolog": "^3.4"
   },
   "autoload": {
     "classmap": [
@@ -29,5 +30,10 @@
     ],
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",
     "db:diff": "@php bin/doctrine --no-interaction migrations:diff"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   }
 }
