@@ -1,11 +1,11 @@
-# Include all files in the root folder
-+ /*
+# Include .htaccess in the root folder
++ /.htaccess
 
 # Exclude files in the root folder that start with a dot (except .htaccess)
 - /.*
 
-# Include .htaccess in the root folder
-+ /.htaccess
+# Include all files in the root folder
++ /*
 
 # Exclude all files in assets/images/profile folder (except none.jpg)
 - /assets/images/profile/*
