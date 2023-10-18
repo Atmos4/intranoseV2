@@ -159,15 +159,17 @@ function logger()
 }
 
 // OVH API
-use Ovh\Api;
-
-function ovh_api(): Api
+function ovh_api(): OvhClientInterface
 {
-    $endpoint = 'ovh-eu';
-    return new Api(
-        env("APPLICATION_KEY"),
-        env("APPLICATION_SECRET"),
-        $endpoint,
-        env("CONSUMER_KEY")
+    if (env("MOCK_OVH") || !env("OVH_APPLICATION_KEY")) {
+        return new OvhMock();
+    }
+    return new OvhClient(
+        new \Ovh\Api(
+            env("OVH_APPLICATION_KEY"),
+            env("OVH_APPLICATION_SECRET"),
+            "ovh-eu",
+            env("OVH_CONSUMER_KEY")
+        )
     );
 }

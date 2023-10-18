@@ -13,24 +13,26 @@ if ($user->permission == Permission::ROOT) {
     $permissions_array["ROOT"] = "Big Boss";
 }
 
-$permissions = $v->select("permissions")->label("Permissions")->options($permissions_array)->required();
+$permissions = $v->select("permissions")->options($permissions_array)->label("Permissions")->required();
 
 if ($v->valid()) {
-    $login = strtolower($last_name->value . "_" . substr($first_name->value, 0, 1));
-    $list_login_numbers = User::getBySubstring($login);
-    $max_number = $list_login_numbers ? (max($list_login_numbers) ? max($list_login_numbers) + 1 : 1) : 0;
-    $user_same_name = User::findByFirstAndLastName($first_name->value, $last_name->value);
-    $nose_email = strtolower($first_name->value . "." . $last_name->value) . (count($user_same_name) ?: '') . "@nose42.fr";
+    require_once app_path() . "/utils/userUtils.php";
+    // DB
+    $login = UserHelper::generateUserLogin($first_name->value, $last_name->value);
+    $nose_email = UserHelper::generateUserEmail($first_name->value, $last_name->value);
+
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
     $new_user->birthdate = date_create($birthdate->value);
     $new_user->set_email($real_email->value, $nose_email);
-    $max_number ? $new_login = $login . $max_number : $new_login = $login;
-
     $new_user->permission = Permission::from($permissions->value);
     $new_user->set_login($new_login);
     $new_user->status = UserStatus::INACTIVE;
 
+    //Setup OVH redirections
+    $ovh = ovh_api();
+
+    // Send Email
     $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
 
     $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();

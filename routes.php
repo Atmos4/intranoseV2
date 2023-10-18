@@ -8,8 +8,6 @@ require_once app_path() . "/components/user_control.php";
 // Load env
 require_once base_path() . "/engine/load_env.php";
 
-// BIG TODO: REPLACE THIS SHIT ROUTER.
-
 Router::add('/', 'pages/index');
 Router::add('/login', 'pages/login');
 
@@ -19,8 +17,15 @@ if (env("DEVELOPMENT")) {
     Router::add('/dev/create-user', 'pages/dev/create_test_user');
     //Router::add('/dev/reset-pw/$user_id', 'pages/dev/reset_pw');
     Router::add('/dev/send-email', 'pages/dev/send_test_email');
-    Router::add('/dev/test-ovh', 'pages/dev/test_ovh');
-    Router::add('/dev/ovh-mailing', 'pages/dev/ovh_mailing_lists');
+
+    // --- ovh ---
+    Router::add('/dev/ovh', 'pages/dev/ovh/main_page');
+    Router::add('/dev/ovh/mailing-lists', 'pages/dev/ovh/mailing_lists');
+    Router::add('/dev/ovh/mailing-list/$name', 'pages/dev/ovh/mailing_list_view');
+    Router::add('/dev/ovh/redirections', 'pages/dev/ovh/redirections');
+    Router::add('/dev/ovh/redirections/$id', 'pages/dev/ovh/redirections');
+
+    // --- migration ---
     Router::add('/dev/migrate', '../database/migrate_db');
 }
 
@@ -42,6 +47,7 @@ Router::add('/evenements/$event_id/participants', 'pages/events/event_entry_list
 Router::add('/mon-profil', 'pages/settings/settings');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', 'pages/settings/settings');
+Router::add('/licencies/$user_id/ovh', 'pages/settings/ovh_settings');
 
 // Users
 Router::add('/licencies', 'pages/users/user_list.php');

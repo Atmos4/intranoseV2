@@ -3,31 +3,24 @@ restrict_dev();
 page("Test ovh");
 
 $ovh = ovh_api();
-$domain = 'nose42.fr';
 
 // FORMS
 $logout_form = new Validator(action: "logout");
 $credentials_form = new Validator(action: "credentials");
 
 if ($logout_form->valid()) {
-    $ovh->post('/auth/logout');
+    $ovh->logOut();
 }
 
 // display new credentials
 if ($credentials_form->valid()):
-    $auth_response = $ovh->post('/auth/credential', [
-        "accessRules" => [
-            ["method" => "GET", "path" => "*"],
-            ["method" => "POST", "path" => "*"],
-            ["method" => "DELETE", "path" => "*"],
-        ]
-    ]); ?>
+    $auth_response = $ovh->logIn(); ?>
 
     <h3>New credentials</h3>
     <p>Consumer key: <code><?= $auth_response["consumerKey"] ?></code>. Paste this in <code>.env</code></p>
     <p><a href="<?= $auth_response["validationUrl"] ?>" target="_blank">Validation url</a>. Click to validate the new token
     </p>
-    <a role="button" href="/dev/test-ovh">Refresh page</a>
+    <a role="button" href="/dev/ovh">Refresh page</a>
 
     <?php return;
 endif;
@@ -35,7 +28,7 @@ endif;
 $needNewCredential = false;
 
 try {
-    $currentCredential = $ovh->get('/auth/currentCredential');
+    $currentCredential = $ovh->currentAuth();
 } catch (\Exception $e) {
     // If the request failed, the credentials are not valid
     if ($e->getCode() == 403) {
@@ -61,6 +54,12 @@ if ($needNewCredential): ?>
         <p>You are logged in!</p>
         <input type="submit" value="logout">
     </form>
+    <nav>
+        <ul>
+            <li><a href="/dev/ovh/mailing-lists">Mailing lists</a></li>
+            <li><a href="/dev/ovh/redirections">Redirections</a></li>
+        </ul>
+    </nav>
     <h4>Login info</h4>
     <pre><?= print_r($currentCredential, true) ?></pre>
 <?php endif ?>

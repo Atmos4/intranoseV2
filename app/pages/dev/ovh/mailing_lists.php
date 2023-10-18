@@ -4,13 +4,15 @@ restrict_dev();
 $ovh = ovh_api();
 $domain = 'nose42.fr';
 
-$mailingLists = $ovh->get("/email/domain/$domain/mailingList");
+$user = User::getCurrent();
+
+$mailingLists = $ovh->getMailingLists();
 
 page("Mailing list") ?>
 <ul>
     <?php foreach ($mailingLists as $list): ?>
         <li>
-            <?= $list ?>
+            <a href="/dev/ovh/mailing-list/<?= $list ?>"><?= $list ?></a>
         </li>
     <?php endforeach ?>
 </ul>

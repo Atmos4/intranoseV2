@@ -40,22 +40,25 @@ page($user->first_name . " " . $user->last_name)->css("user_view.css");
         </li>
     <?php endif ?>
 </nav>
-<article class="grid center">
-    <figure>
+<article class="row center">
+    <figure class="col">
         <img class="profile-picture" src="<?= $profile_picture ?>">
+        <figcaption>
+            <?= "$user->first_name $user->last_name" ?>
+        </figcaption>
     </figure>
-    <table class="infos-table">
-        <tr>
-            <td>Email</td>
-            <td>
-                <?= $user->nose_email ?>
-            </td>
-        </tr>
-        <tr>
-            <td>Téléphone</td>
-            <td>
-                <?= $user->phone ?: "" ?>
-            </td>
-        </tr>
-    </table>
+    <div class="col">
+        <p>
+            <?= $user->nose_email ?>
+        </p>
+        <p>
+            <?= $user->phone ?: "" ?>
+        </p>
+    </div>
 </article>
+
+<?php if (check_auth([Permission::ROOT])): ?>
+    <section hx-get="/licencies/<?= $user->id ?>/ovh" hx-swap="innerHTML" hx-trigger="load">
+        <div aria-busy="true"></div>
+    </section>
+<?php endif ?>
