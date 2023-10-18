@@ -25,7 +25,7 @@ jobs:
       - name: Deploy with rsync
         uses: burnett01/rsync-deployments@5.2.2
         with:
-          switches: "-avz --exclude=.git"
+          switches: "-avzC --delete --exclude=/.*"
           path: "./"
           remote_path: "./"
           remote_host: ${{ secrets.DEPLOY_HOST }}
