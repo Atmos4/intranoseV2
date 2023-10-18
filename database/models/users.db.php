@@ -150,8 +150,8 @@ class User
     static function existsWithLogin($login): bool
     {
         $logins = em()
-            ->createQuery("SELECT u.login FROM User u WHERE u.login = ?1")
-            ->setParameter(1, $login)
+            ->createQuery("SELECT u.login FROM User u WHERE u.login = :login")
+            ->setParameter("login", $login)
             ->getArrayResult();
         return count($logins);
     }
@@ -159,8 +159,8 @@ class User
     static function findAllByLogin($login): array
     {
         return em()
-            ->createQuery("SELECT u.login FROM User u WHERE u.login LIKE ?1")
-            ->setParameter(1, $login . '%')
+            ->createQuery("SELECT u.login FROM User u WHERE u.login LIKE :login")
+            ->setParameter("login", $login . '%')
             ->getSingleColumnResult();
     }
 
@@ -168,7 +168,7 @@ class User
     {
         $emails = em()
             ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email = :email')
-            ->setParameter(':email', $email)
+            ->setParameter('email', $email)
             ->getArrayResult();
         return count($emails);
     }
@@ -177,7 +177,7 @@ class User
     {
         return em()
             ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email LIKE :email')
-            ->setParameter(':email', $email)
+            ->setParameter('email', $email)
             ->getSingleColumnResult();
     }
 }

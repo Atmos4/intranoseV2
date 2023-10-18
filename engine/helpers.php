@@ -159,8 +159,6 @@ function logger()
 }
 
 // OVH API
-use Ovh\Api;
-
 function ovh_api(): OvhClientInterface
 {
     if (env("MOCK_OVH") || !env("OVH_APPLICATION_KEY")) {
