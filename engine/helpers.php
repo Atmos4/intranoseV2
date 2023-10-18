@@ -155,7 +155,7 @@ function is_csrf_valid()
 // Logger
 function logger()
 {
-    return Log::get();
+    return IntraLogger::get();
 }
 
 // OVH API

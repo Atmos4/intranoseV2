@@ -31,10 +31,5 @@
     ],
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",
     "db:diff": "@php bin/doctrine --no-interaction migrations:diff"
-  },
-  "config": {
-    "allow-plugins": {
-      "php-http/discovery": true
-    }
   }
 }
