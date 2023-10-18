@@ -1,0 +1,9 @@
+/assets/images/profile/*
+/app/uploads/*
+/app/uploads/shared_docs/*
+!/app/uploads/shared_docs/*.php
+!/app/uploads/*.php
+/.env
+/logs
+/.ovhconfig
+/.ssh
