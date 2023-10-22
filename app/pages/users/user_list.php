@@ -29,19 +29,17 @@ page("Les licenciés")->css("user_list.css");
 
 <section class="row" id="users-list">
     <?php foreach ($users as $user): ?>
-        <div class="col-sm-12 col-md-6">
+        <div class="toggleWrapper col-sm-12 col-md-6">
             <article class="card">
                 <img src="<?= $user->getPicture() ?>">
-                <div class="card-content">
-                    <div id="name-div">
-                        <a href="/licencies/<?= $user->id ?>">
-                            <?= "$user->first_name $user->last_name" ?>
-                        </a>
-                    </div>
-                </div>
+                <a href="/licencies?user=<?= $user->id ?>" <?= UserModal::props($user->id) ?>>
+                    <?= "$user->first_name $user->last_name" ?>
+                </a>
             </article>
         </div>
     <?php endforeach ?>
 </section>
+
+<?= UserModal::renderRoot() ?>
 
 <script src="/assets/js/section-search.js"></script>

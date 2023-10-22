@@ -1,6 +1,0 @@
-.infos-table tr td:first-child {
-  border-right: var(--border-width) solid var(--table-border-color);
-}
-.infos-table tr:last-child td {
-  border-bottom: none;
-}

@@ -88,12 +88,6 @@ if ($v_picture->valid()) {
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
 
-<?php if ($is_visiting): ?>
-    <nav id="page-actions">
-        <a href="/licencies/<?= $user->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    </nav>
-<?php endif ?>
-
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
     <?= $v_picture->render_validation() ?>
     <label class="profile">

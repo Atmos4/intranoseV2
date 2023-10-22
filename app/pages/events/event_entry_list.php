@@ -32,7 +32,7 @@ page($event->name . " : Inscrits")->css("event_view.css");
             <tbody>
                 <?php foreach ($all_event_entries as $entry): ?>
                     <?php if ($entry->present): ?>
-                        <tr class="clickable" onclick="window.location.href = '/licencies/<?= $entry->user->id ?>'">
+                        <tr class="clickable" tabindex=0 <?= UserModal::props($entry->user->id) ?>>
                             <td class="lastname">
                                 <?= $entry->user->last_name ?>
                             </td>
@@ -62,3 +62,5 @@ page($event->name . " : Inscrits")->css("event_view.css");
     </figure>
     <script src="/assets/js/select-table.js"></script>
 <?php endif ?>
+
+<?= UserModal::renderRoot() ?>

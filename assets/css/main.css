@@ -55,6 +55,10 @@
   display: block;
 }
 
+.hidden {
+  display: none;
+}
+
 /* change these rules to not be bothr*/
 details[dir="rtl"] ul > li {
   left: auto;
@@ -197,4 +201,18 @@ input[role="switch"]:not(:checked) ~ ins {
   width: 200px;
   height: 200px;
   border-radius: 50%;
+}
+
+/* --- pico dialog style improvements --- */
+dialog article > header .close:is(button) {
+  border: none;
+  background-color: transparent;
+}
+dialog article > header .close:is(:hover, :focus) {
+  background-color: transparent;
+}
+
+/* --- pico dropdown extra direction --- */
+details[role="list"] summary + ul[data-placement="top"] {
+  bottom: 100%;
 }

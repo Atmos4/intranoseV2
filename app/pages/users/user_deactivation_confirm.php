@@ -20,7 +20,7 @@ page("Confirmation de désactivation");
     <div class="row center">
         <p>Sûr de vouloir désactiver cet utilisateur ?</p>
         <div class="col-auto">
-            <a class="secondary" role="button" href="/licencies/<?= $user->id ?>">Annuler</a>
+            <a class="secondary" role="button" href="/licencies?user=<?= $user->id ?>">Annuler</a>
         </div>
         <div class="col-auto">
             <button type="submit" name="delete" value="true" class="destructive">Désactiver</button>

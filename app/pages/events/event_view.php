@@ -211,21 +211,14 @@ page($event->name)->css("event_view.css");
         <footer>
             <h4>Participants : </h4>
             <table>
-                <thead>
-                    <tr>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Prénom</th>
-                    </tr>
-                </thead>
                 <tbody>
                     <?php foreach ($all_event_entries as $entry): ?>
                         <?php if ($entry->present): ?>
-                            <tr class="clickable" onclick="window.location.href = '/licencies/<?= $entry->user->id ?>'">
-                                <td class="lastname">
-                                    <?= $entry->user->last_name ?>
-                                </td>
-                                <td class="firstname">
-                                    <?= $entry->user->first_name ?>
+                            <tr>
+                                <td>
+                                    <a href="/licencies?user<?= $entry->user->id ?>" <?= UserModal::props($entry->user->id) ?>>
+                                        <?= $entry->user->last_name . " " . $entry->user->first_name ?>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endif ?>
@@ -235,3 +228,5 @@ page($event->name)->css("event_view.css");
         </footer>
     <?php endif ?>
 </article>
+
+<?= UserModal::renderRoot() ?>
