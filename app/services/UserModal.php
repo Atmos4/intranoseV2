@@ -14,13 +14,7 @@ class UserModal
     static function renderRoot()
     {
         $id = get_query_param("user");
-        $content = $id ?
-            Component::render(app_path() . "/pages/users/user_view_modal.php", ["user_id" => $id]) :
-            <<<EOL
-            <article aria-busy=true>
-            </article>
-            EOL;
-
+        $content = $id ? Component::render(app_path() . "/pages/users/user_view_modal.php", ["user_id" => $id]) : "";
         $open = $id ? "open" : "";
 
         return <<<EOL

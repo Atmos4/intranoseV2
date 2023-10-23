@@ -29,8 +29,6 @@ if (!Component::mounted()) {
                 modal.close()
                 // reset state
                 modal.classList.remove('closing')
-                article.innerHTML = ''
-                article.setAttribute('aria-busy', 'true')
             }, { once: true })
             ">
         </button>
