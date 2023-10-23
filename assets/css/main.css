@@ -216,3 +216,67 @@ dialog article > header .close:is(:hover, :focus) {
 details[role="list"] summary + ul[data-placement="top"] {
   bottom: 100%;
 }
+
+/* --- pico modal animation --- */
+dialog[open] {
+  /* Animate when opening */
+  animation-name: fadeIn;
+  animation-duration: 150ms;
+  animation-timing-function: ease;
+}
+dialog[open] > article {
+  /* Animate when opening */
+  animation-name: zoomIn;
+  animation-duration: 150ms;
+  animation-timing-function: ease;
+}
+
+dialog.closing {
+  /* Animate when closing */
+  animation-name: fadeOut;
+  animation-duration: 150ms;
+  animation-timing-function: ease;
+}
+
+dialog.closing > article {
+  /* Animate when closing */
+  animation-name: zoomOut;
+  animation-duration: 150ms;
+  animation-timing-function: ease;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}

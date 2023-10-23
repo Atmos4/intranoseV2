@@ -9,9 +9,11 @@ if ($user_id) {
         redirect("/mon-profil");
     }
     $is_visiting = true;
+    $user = User::get($user_id);
+} else {
+    $user = User::getCurrent();
 }
 
-$user = User::getCurrent();
 if (!$user) {
     echo "This user doesn't exist";
     return;
@@ -95,9 +97,9 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
         <?= $picture
             ->attributes([
-                "style" => "width: auto",
-                "onchange" => "document.getElementById('pictureForm').submit()"
-            ])
+                    "style" => "width: auto",
+                    "onchange" => "document.getElementById('pictureForm').submit()"
+                ])
             ->render() ?>
     </label>
 </form>

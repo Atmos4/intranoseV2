@@ -49,9 +49,15 @@ function get_route_param($param, $strict = true, $numeric = true)
 }
 
 // TODO: move to router
-function get_query_param($param, $numeric = true)
+function get_query_param($param, $strict = false, $numeric = true)
 {
     $query_param = $_GET[$param] ?? null;
+    if (!$query_param) {
+        if ($strict) {
+            Router::abort(message: "Query parameter $param was not found");
+        }
+        return null;
+    }
     if ($numeric and !is_numeric($query_param)) {
         Router::abort(message: "Query parameter $param is not numeric");
     }

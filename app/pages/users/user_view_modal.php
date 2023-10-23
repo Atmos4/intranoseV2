@@ -1,7 +1,7 @@
 <?php
 restrict_access();
 
-$user = em()->find(User::class, get_route_param('user_id'));
+$user = em()->find(User::class, Component::prop('user_id') ?? get_route_param('user_id'));
 if (!$user) {
     force_404("this user doesn't exist");
 }
@@ -12,16 +12,28 @@ $is_root = check_auth([Permission::ROOT]);
 $profile_picture = $user->getPicture();
 
 // HTMX - replace url
-// $hxUrl = explode("?", get_header("HX-Current-URL"))[0];
-// header("HX-Replace-Url: $hxUrl?user=$user->id");
+$hxUrl = explode("?", get_header("HX-Current-URL"))[0];
+header("HX-Replace-Url: $hxUrl?user=$user->id");
 // HTMX - show user modal
-header("HX-Trigger-After-Settle: showModal");
+if (!Component::mounted()) {
+    header("HX-Trigger-After-Settle: showModal");
+}
 ?>
 <article>
-    <form method="dialog" class="hidden" id="userDialogForm">
-    </form>
     <header>
-        <button class="close secondary" role="link" form="userDialogForm"></button>
+        <button class="close secondary" role="link" onclick="
+            let modal = htmx.closest(this, 'dialog')
+            let article = htmx.closest(this, 'article')
+            modal.classList.add('closing')
+            modal.addEventListener('animationend', () => {
+                modal.close()
+                // reset state
+                modal.classList.remove('closing')
+                article.innerHTML = ''
+                article.setAttribute('aria-busy', 'true')
+            }, { once: true })
+            ">
+        </button>
         <b>
             <?= "$user->first_name $user->last_name" ?>
         </b>
