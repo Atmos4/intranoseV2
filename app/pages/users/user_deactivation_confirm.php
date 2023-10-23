@@ -8,10 +8,10 @@ if (!$user) {
     return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
-    logger()->info("User {$user->id} deactivated by user " . User::getCurrent());
+    logger()->info("User {$user->id} deactivated by user " . User::getCurrent()->id);
     $user->status = UserStatus::DEACTIVATED;
     em()->flush();
-    redirect("/licencies");
+    redirect("/licencies/desactive");
 }
 
 page("Confirmation de désactivation");

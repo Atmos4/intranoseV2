@@ -12,10 +12,10 @@ if ($user->status != UserStatus::DEACTIVATED) {
     $form->set_error("Can't delete an active user");
 }
 if ($form->valid()) {
-    logger()->info("User {$user->id} deleted by user " . User::getCurrent());
+    logger()->info("User {$user->id} deleted by user " . User::getCurrent()->id);
     em()->remove($user);
     em()->flush();
-    redirect("/licencies");
+    redirect("/licencies/desactive");
 }
 
 page("Confirmation de suppression");

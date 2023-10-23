@@ -48,7 +48,7 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/theme.js"></script>
 </head>
 
-<body hx-ext="head-support">
+<body hx-ext="head-support" hx-boost="true" hx-indicator="#hx-indicator">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";

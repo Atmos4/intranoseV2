@@ -51,34 +51,36 @@ endif; ?>
 <form method="post" id="reactivate-form">
     <?= $form->render_validation() ?>
 
-    <table id="users-table" class="reactivate">
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Nom</th>
-                <th scope="col">Prénom</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($users as $user): ?>
+    <figure>
+        <table id="users-table" class="reactivate">
+            <thead>
                 <tr>
-                    <td>
-                        <input type="checkbox" id="<?= $user->id ?>" name="selected_users[]" value="<?= $user->id ?>">
-                    </td>
-                    <td class="lastname">
-                        <?= $user->last_name ?>
-                    </td>
-                    <td class="firstname">
-                        <?= $user->first_name ?>
-                    </td>
-                    <td><a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
-                            Supprimer <i class="fas fa-trash"></i>
-                        </a></td>
+                    <th scope="col"></th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th></th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="<?= $user->id ?>" name="selected_users[]" value="<?= $user->id ?>">
+                        </td>
+                        <td class="lastname">
+                            <?= $user->last_name ?>
+                        </td>
+                        <td class="firstname">
+                            <?= $user->first_name ?>
+                        </td>
+                        <td><a href="/licencies/<?= $user->id ?>/supprimer" class="destructive">
+                                Supprimer <i class="fas fa-trash"></i>
+                            </a></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </figure>
 </form>
 
 <script src="/assets/js/table-search.js"></script>
