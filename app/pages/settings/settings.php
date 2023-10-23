@@ -61,7 +61,7 @@ if ($v_infos->valid()) {
     $user->birthdate = date_create($birthdate->value);
     em()->persist($user);
     em()->flush();
-    $v_infos->set_success("Identité mise à jour !");
+    Toast::create("Identité mise à jour !");
 }
 
 $profile_picture = $user->picture && file_exists($user->picture) ? "/" . $user->picture : "/assets/images/profile/none.jpg";
@@ -97,16 +97,16 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
         <?= $picture
             ->attributes([
-                    "style" => "width: auto",
-                    "onchange" => "document.getElementById('pictureForm').submit()"
-                ])
+                "style" => "width: auto",
+                "onchange" => "document.getElementById('pictureForm').submit()"
+            ])
             ->render() ?>
     </label>
 </form>
 
 <h2 id="identity">Infos</h2>
 
-<form method="post" action="#identity" class="row">
+<form method="post" hx-swap="innerHTML show:#identity:top" class="row">
     <?= $v_infos->render_validation() ?>
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
@@ -162,7 +162,7 @@ if ($v_login->valid()) {
         $user->set_login($new_login->value);
         em()->persist($user);
         em()->flush();
-        $v_login->set_success("Login mis à jour !");
+        Toast::create("Login mis à jour !");
     }
 }
 
@@ -190,25 +190,25 @@ if ($v_password->valid()) {
     }
     em()->persist($user);
     em()->flush();
-    $v_password->set_success("Mot de passe mis à jour !");
+    Toast::create("Mot de passe mis à jour !");
 }
 ?>
 
 
 <?php if (!$is_visiting || $can_reset_credentials): ?>
     <div class="row">
-        <form method="post" action="#login" class="col-sm-12 col-md-6 align-end">
+        <form method="post" hx-swap="innerHTML show:#login:top" class="col-sm-12 col-md-6 align-end">
             <h2 id="login">Login</h2>
             <?= $v_login->render_validation() ?>
             <?= $can_reset_credentials ? "Login acuel: $user->login" : $current_login->render() ?>
             <?= $new_login->render() ?>
             <input type="submit" class="outline" name="submitLogin" value="Changer le login">
         </form>
-        <form method="post" action="#password" class="col-sm-12 col-md-6 align-end">
+        <form method="post" hx-swap="innerHTML show:#password:top" class="col-sm-12 col-md-6 align-end">
             <h2 id="password">Mot de passe</h2>
             <?= $v_password->render_validation() ?>
             <?php if (!$can_reset_credentials): ?>
-                <input type="hidden" autocomplete="username" id="username" name="username" value="<?= $user->login ?>">
+                <input type="text" name="username" value="<?= $user->login ?>" autocomplete="username" class="hidden">
                 <?= $current_password->render() ?>
                 <?= $new_password->render() ?>
                 <?= $confirm_password->render() ?>

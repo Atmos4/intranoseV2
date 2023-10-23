@@ -48,7 +48,12 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/theme.js"></script>
 </head>
 
-<body hx-ext="head-support" hx-boost="true" hx-indicator="#hx-indicator">
+<body hx-ext="head-support" hx-boost="true" hx-indicator="#hx-indicator" hx-on:toast-message="
+    let toast = htmx.find('#toast')
+    toast.classList.add('show', 'visible')
+    htmx.removeClass(toast, 'show', 3000)
+    htmx.removeClass(toast, 'visible', 4000)
+">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";
@@ -65,6 +70,13 @@ $page = Page::getInstance(); ?>
         <?php endif ?>
         <?= $page->content ?>
     </main>
+
+    <?php if (Toast::exists()):
+        [$message, $level] = Toast::pop() ?>
+        <div id="toast" class="<?= $level->value ?>">
+            <?= $message ?>
+        </div>
+    <?php endif ?>
 </body>
 
 </html>

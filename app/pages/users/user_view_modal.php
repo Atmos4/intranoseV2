@@ -29,6 +29,7 @@ if (!Component::mounted()) {
                 modal.close()
                 // reset state
                 modal.classList.remove('closing')
+                history.replaceState({htmx:true}, '', '<?= $hxUrl ?>')
             }, { once: true })
             ">
         </button>
