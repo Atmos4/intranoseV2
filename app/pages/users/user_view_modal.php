@@ -23,7 +23,6 @@ if (!Component::mounted()) {
     <header>
         <button class="close secondary" role="link" onclick="
             let modal = htmx.closest(this, 'dialog')
-            let article = htmx.closest(this, 'article')
             modal.classList.add('closing')
             modal.addEventListener('animationend', () => {
                 modal.close()
