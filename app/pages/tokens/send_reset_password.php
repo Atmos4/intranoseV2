@@ -17,7 +17,7 @@ if ($v->valid()) {
             ->to($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
-            logger()->info("User {$user->id} password reset email sent by user " . User::getCurrent());
+            logger()->info("User {$user->id} password reset email sent by user " . User::getCurrent()->id);
             $v->set_success('Mail envoyé');
             em()->flush();
         } else {

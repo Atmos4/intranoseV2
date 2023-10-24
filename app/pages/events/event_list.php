@@ -39,7 +39,8 @@ function render_event(EventDto $event)
             . "\"";
     } ?>
 
-    <tr class="event-row clickable" onclick="window.location.href = '/evenements/<?= $event->id ?>'">
+    <tr class="event-row clickable" tabindex="0" hx-trigger="click,keyup[key=='Enter']"
+        hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true">
         <td class="event-entry">
 
             <?php if ($event->open):

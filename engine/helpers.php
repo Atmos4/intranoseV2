@@ -48,12 +48,28 @@ function get_route_param($param, $strict = true, $numeric = true)
     return Router::getParameter($param, $strict, $numeric);
 }
 
+// TODO: move to router
+function get_query_param($param, $strict = false, $numeric = true)
+{
+    $query_param = $_GET[$param] ?? null;
+    if (!$query_param) {
+        if ($strict) {
+            Router::abort(message: "Query parameter $param was not found");
+        }
+        return null;
+    }
+    if ($numeric and !is_numeric($query_param)) {
+        Router::abort(message: "Query parameter $param is not numeric");
+    }
+    return $query_param;
+}
+
 /**
  * Returns the value of a request header
  * @param string $headerName 
  * @return string header value 
  */
-function get_header($headerName)
+function get_header($headerName): string|null
 {
     return $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $headerName))] ?? null;
 }

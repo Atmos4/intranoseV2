@@ -8,10 +8,10 @@ if (!$user) {
     return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
-    logger()->info("User {$user->id} deactivated by user " . User::getCurrent());
+    logger()->info("User {$user->id} deactivated by user " . User::getCurrent()->id);
     $user->status = UserStatus::DEACTIVATED;
     em()->flush();
-    redirect("/licencies");
+    redirect("/licencies/desactive");
 }
 
 page("Confirmation de désactivation");
@@ -20,7 +20,7 @@ page("Confirmation de désactivation");
     <div class="row center">
         <p>Sûr de vouloir désactiver cet utilisateur ?</p>
         <div class="col-auto">
-            <a class="secondary" role="button" href="/licencies/<?= $user->id ?>">Annuler</a>
+            <a class="secondary" role="button" href="/licencies?user=<?= $user->id ?>">Annuler</a>
         </div>
         <div class="col-auto">
             <button type="submit" name="delete" value="true" class="destructive">Désactiver</button>

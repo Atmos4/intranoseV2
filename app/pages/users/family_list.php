@@ -8,7 +8,8 @@ page("Familles") ?>
 </nav>
 <table>
     <?php foreach ($families as $family): ?>
-        <tr class="clickable" tabindex="0" onclick="window.location.href = '/famille/<?= $family->id ?>'">
+        <tr class="clickable" tabindex="0" hx-trigger="click,keyup[key=='Enter']" hx-get="/famille/<?= $family->id ?>"
+            hx-target="body" hx-push-url="true">
             <td>
                 <?= $family->name ?>
             </td>

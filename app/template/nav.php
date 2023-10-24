@@ -16,7 +16,7 @@ $main_user = User::getMain();
     </button>
 </div>
 <aside id="mySidenav" class="sidenav">
-    <nav hx-boost="true" hx-indicator="#hx-indicator">
+    <nav>
         <ul>
             <li>
                 <h3 class="nav-title">Intranose</h3>

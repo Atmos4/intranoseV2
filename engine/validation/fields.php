@@ -81,7 +81,7 @@ class Field
     {
         return
             "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
-            . ($this->valid() ? "" : " aria-invalid=true")
+            . ($this->valid() ? "" : " aria-invalid=true autofocus")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
             . ($this->required ? " required" : "")
@@ -89,7 +89,7 @@ class Field
             . $this->render_attrs();
     }
 
-    protected function render_attrs()
+    protected function render_attrs(): string
     {
         return array_reduce(array_keys($this->attributes), fn($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
     }

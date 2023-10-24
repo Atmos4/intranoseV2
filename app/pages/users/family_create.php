@@ -25,7 +25,7 @@ page("Créer une famille") ?>
             de ses proches pour les inscrire aux courses, modifier leur profil, etc</p>
         <p>Êtes-vous sûr ?</p>
         <div class="col-auto">
-            <a class="secondary" role="button" href="/licencies/<?= $user->id ?>">Annuler</a>
+            <a class="secondary" role="button" href="/licencies?user=<?= $user->id ?>">Annuler</a>
         </div>
         <div class="col-auto">
             <button type="submit">Créer</button>

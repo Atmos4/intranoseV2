@@ -1,57 +1,11 @@
-@media screen and (max-width: 991px) {
-  tr {
-    display: grid;
-    grid:
-      "lastname firstname"
-      "phone phone"
-      "email email" / auto 1fr;
-    border-bottom: var(--border-width) solid var(--table-border-color);
-    align-items: center;
-  }
-  td {
-    border-bottom: none;
-    align-items: center;
-  }
-  td.lastname {
-    grid-area: lastname;
-    padding-right: 0;
-    padding-bottom: 0;
-  }
-  td.firstname {
-    grid-area: firstname;
-    padding-left: 0.5rem;
-    padding-bottom: 0;
-  }
-  td.email {
-    grid-area: email;
-    text-align: end;
-  }
-  td.phone-number {
-    grid-area: phone;
-    text-align: end;
-    padding-bottom: 0;
-  }
-  thead {
-    display: none;
-  }
-}
-
-.card-content {
-  display: grid;
-  align-items: center;
-  padding-right: 20px;
-  word-break: break-word;
-  overflow: hidden;
-}
-
 .row .card {
   height: 100px;
-  padding: 0;
+  padding: 0 1rem 0 0;
   margin-bottom: 1em;
   align-items: center;
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   border-radius: 50px;
   box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.1);
 }

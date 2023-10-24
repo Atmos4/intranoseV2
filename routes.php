@@ -53,7 +53,7 @@ Router::add('/licencies/$user_id/ovh', 'pages/settings/ovh_settings');
 Router::add('/licencies', 'pages/users/user_list.php');
 Router::add('/licencies/ajouter', 'pages/users/user_add.php');
 Router::add('/licencies/desactive', 'pages/users/user_list_deactivated.php');
-Router::add('/licencies/$user_id', 'pages/users/user_view.php');
+Router::add('/licencies/$user_id', 'pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', 'pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', 'pages/users/user_delete_confirm.php');
 Router::add('/licencies/$user_id/creer-famille', 'pages/users/family_create.php');
