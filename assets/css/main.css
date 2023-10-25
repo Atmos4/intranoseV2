@@ -334,3 +334,7 @@ dialog.closing > article {
   color: white;
 }
 /* add more statuses when needed */
+
+.list-chevron {
+  text-align: end;
+}

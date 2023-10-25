@@ -16,7 +16,6 @@ if ($user->permission == Permission::ROOT) {
 $permissions = $v->select("permissions")->options($permissions_array)->label("Permissions")->required();
 
 if ($v->valid()) {
-    require_once app_path() . "/utils/userUtils.php";
     // DB
     $login = UserHelper::generateUserLogin($first_name->value, $last_name->value);
     $nose_email = UserHelper::generateUserEmail($first_name->value, $last_name->value);
@@ -26,26 +25,14 @@ if ($v->valid()) {
     $new_user->birthdate = date_create($birthdate->value);
     $new_user->set_email($real_email->value, $nose_email);
     $new_user->permission = Permission::from($permissions->value);
-    $new_user->set_login($new_login);
+    $new_user->set_login($login);
     $new_user->status = UserStatus::INACTIVE;
 
     //Setup OVH redirections
     $ovh = ovh_api();
 
-    // Send Email
-    $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
-
-    $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();
-    if ($result->success) {
-        logger()->info("User {$new_user->id} created by user {$user->id} and activation email sent");
-        em()->persist($token);
-        em()->persist($new_user);
-        em()->flush();
-        $v->set_success('Email envoyé!');
-    } else {
-        logger()->warning("User {$user->id} tried to create user {$new_user->id} but activation email failed to send");
-        $v->set_error($result->message);
-    }
+    // validate user adding with redirections
+    OvhService::userAddValidation($v, $new_user, $nose_email, $real_email);
 }
 
 

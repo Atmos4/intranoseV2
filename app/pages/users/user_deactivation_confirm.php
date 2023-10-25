@@ -1,23 +1,22 @@
 <?php
 restrict_access([Permission::ROOT]);
 
+$form = new Validator(action: "confirm-deactivate");
+
 $user_id = get_route_param("user_id");
 $user = em()->find(USER::class, $user_id);
 if (!$user) {
-    echo "the user of id $user_id doesn't exist";
-    return;
+    $form->set_error("the user of id $user_id doesn't exist");
 }
-if (!empty($_POST) and isset($_POST['delete'])) {
-    logger()->info("User {$user->id} deactivated by user " . User::getCurrent()->id);
-    $user->status = UserStatus::DEACTIVATED;
-    em()->flush();
-    redirect("/licencies/desactive");
+if ($form->valid()) {
+    OvhService::userDeactivateValidation($form, $user);
 }
 
 page("Confirmation de désactivation");
 ?>
 <form method="post">
     <div class="row center">
+        <?= $form->render_validation() ?>
         <p>Sûr de vouloir désactiver cet utilisateur ?</p>
         <div class="col-auto">
             <a class="secondary" role="button" href="/licencies?user=<?= $user->id ?>">Annuler</a>

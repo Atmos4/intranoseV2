@@ -26,12 +26,11 @@ $can_change_emails = check_auth([Permission::ROOT]) && (!$is_visiting || $user->
 
 $can_change_emails = check_auth([Permission::ROOT]);
 
+// Identity
 $user_infos = [
     "last_name" => $user->last_name,
     "first_name" => $user->first_name,
     "gender" => $user->gender->value,
-    "real_email" => $user->real_email,
-    "nose_email" => $user->nose_email,
     "phone" => $user->phone,
     "birthdate" => date_format($user->birthdate, "Y-m-d"),
 ];
@@ -39,24 +38,13 @@ $user_infos = [
 $v_infos = new Validator($user_infos, "identity_form");
 $last_name = $v_infos->text("last_name")->label("Nom")->placeholder()->required();
 $first_name = $v_infos->text("first_name")->label("Prénom")->placeholder()->required();
-$real_email = $v_infos->email("real_email")->label("Addresse mail perso")->placeholder();
-$nose_email = $v_infos->email("nose_email")->label("Addresse mail nose")->placeholder();
 $birthdate = $v_infos->date("birthdate")->label("Date de naissance")->required();
 $gender = $v_infos->text("gender")->label("Sexe");
 $phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
 
-if ($can_change_emails) {
-    $nose_email->required();
-} else {
-    $nose_email->readonly();
-}
-
 if ($v_infos->valid()) {
     $user->set_identity($last_name->value, $first_name->value, Gender::from($gender->value));
-    if ($can_change_emails) {
-        $user->real_email = $real_email->value;
-        $user->nose_email = $nose_email->value;
-    }
+
     $user->phone = $phone->value;
     $user->birthdate = date_create($birthdate->value);
     em()->persist($user);
@@ -64,6 +52,26 @@ if ($v_infos->valid()) {
     Toast::create("Identité mise à jour !");
 }
 
+// Emails
+$user_emails = [
+    "real_email" => $user->real_email,
+    "nose_email" => $user->nose_email,
+];
+$v_emails = new Validator($user_emails, action: "emails_form");
+$real_email = $v_emails->email("real_email")->label("Addresse mail perso")->placeholder();
+$nose_email = $v_emails->email("nose_email")->label("Addresse mail nose")->placeholder();
+
+if ($can_change_emails) {
+    $nose_email->required();
+} else {
+    $nose_email->readonly();
+}
+
+if ($v_emails->valid() && $can_change_emails) {
+    OvhService::emailsSettingsValidation($user, $v_emails, $real_email, $nose_email);
+}
+
+// Picture
 $profile_picture = $user->picture && file_exists($user->picture) ? "/" . $user->picture : "/assets/images/profile/none.jpg";
 
 $image_mime_types = [
@@ -111,7 +119,6 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $last_name->render() ?>
         <?= $first_name->render() ?>
-        <?= $birthdate->render() ?>
         <fieldset>
             <legend>Sexe</legend>
             <label for="man">
@@ -126,14 +133,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </div>
 
     <div class="col-sm-12 col-md-6">
-        <?php if ($can_change_emails):
-            $redirection = ovh_api()->getRedirection($user->nose_email, $user->real_email) ?>
-            <p>
-                <?= $redirection ? "Redirection à jour" : "Pas de redirection!" ?>
-            </p>
-        <?php endif; ?>
-        <?= $real_email->render() ?>
-        <?= $nose_email->render() ?>
+        <?= $birthdate->render() ?>
         <?= $phone->render() ?>
     </div>
 
@@ -142,6 +142,31 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <input type="submit" class="outline" name="submitIdentity" value="Mettre à jour les infos">
     </div>
 </form>
+<hr>
+
+<h2 id="emails">Emails</h2>
+
+<form method="post" hx-swap="innerHTML show:#emails:top" class="row">
+    <?= $v_emails->render_validation() ?>
+    <?php if ($can_change_emails):
+        $redirection = ovh_api()->getRedirection($user->nose_email, $user->real_email) ?>
+        <p>
+            <b>
+                <?= $redirection ? "Redirection à jour" : "Pas de redirection!" ?>
+            </b>
+        </p>
+    <?php endif; ?>
+    <div class="col-sm-12 col-md-6">
+        <?= $real_email->render() ?>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <?= $nose_email->render() ?>
+    </div>
+    <div>
+        <input type="submit" class="outline" name="submitEmails" value="Mettre à jour les emails">
+    </div>
+</form>
+
 <hr>
 
 <?php
@@ -193,8 +218,6 @@ if ($v_password->valid()) {
     Toast::create("Mot de passe mis à jour !");
 }
 ?>
-
-
 <?php if (!$is_visiting || $can_reset_credentials): ?>
     <div class="row">
         <form method="post" hx-swap="innerHTML show:#login:top" class="col-sm-12 col-md-6 align-end">

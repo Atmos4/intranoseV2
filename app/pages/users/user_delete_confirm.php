@@ -15,7 +15,7 @@ if ($form->valid()) {
     logger()->info("User {$user->id} deleted by user " . User::getCurrent()->id);
     em()->remove($user);
     em()->flush();
-    redirect("/licencies/desactive");
+    redirect("/licencies");
 }
 
 page("Confirmation de suppression");
