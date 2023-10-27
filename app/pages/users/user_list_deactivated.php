@@ -7,7 +7,7 @@ $form = new Validator();
 
 if (isset($_POST['action'])) {
     if (!isset($_POST['selected_users'])) {
-        $form->set_error("No users selected");
+        $form->set_error("Pas d'utilisateurs sélectionnés");
     } else {
         $dql = "SELECT u FROM User u where u.id IN ("
             . implode(",", array_map(function ($value) {
@@ -21,16 +21,18 @@ if (isset($_POST['action'])) {
 
         if ($_POST['action'] === 'reactivate') {
             foreach ($users as $user) {
-                // We just want to allow them to login again
                 $user->status = UserStatus::INACTIVE;
+                logger()->info("user {userId} reactivated by admin {adminUserId}", ["userId" => $user->id, "adminUserId" => User::getMainUserId()]);
             }
             em()->flush();
+            $form->set_success("Utilisateurs réactivés");
         }
     }
 }
 
 $users = UserService::getDeactivatedUserList();
 
+echo $form->render_validation();
 // No user found. Return early
 if (!$users): ?>
     <nav id="page-actions">
@@ -48,9 +50,7 @@ endif; ?>
 
 <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('search-users', 'users-table')">
 
-<form method="post" id="reactivate-form">
-    <?= $form->render_validation() ?>
-
+<form method="post" id="reactivate-form" hx-boost="false">
     <figure>
         <table id="users-table" class="reactivate">
             <thead>
