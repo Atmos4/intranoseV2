@@ -138,6 +138,15 @@ class User
         return self::$currentUser;
     }
 
+    static function getMainUserId(): int|null
+    {
+        // this way we don't need a DB call
+        if (!has_session("user_id")) {
+            return null;
+        }
+        return $_SESSION['user_id'];
+    }
+
     static function getMain(): User|null
     {
         if (!has_session("user_id")) {

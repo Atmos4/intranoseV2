@@ -24,6 +24,32 @@ class Toast
     {
         return !!self::$message;
     }
+
+    static function render(bool $oob = false)
+    {
+        if ($oob) {
+            header('HX-Retarget: #toast-root');
+            header('HX-Reswap: afterbegin');
+        }
+        if (self::$message): ?>
+            <div class="toast show <?= self::$level->value ?>" aria-live="polite" hx-on:animationend="htmx.remove(this)">
+                <?= self::$message ?>
+            </div>
+        <?php endif;
+    }
+
+    static function error(string $message)
+    {
+        return self::create($message, ToastLevel::Error);
+    }
+    static function success(string $message)
+    {
+        return self::create($message, ToastLevel::Success);
+    }
+    static function info(string $message)
+    {
+        return self::create($message, ToastLevel::Info);
+    }
 }
 
 enum ToastLevel: string

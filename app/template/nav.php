@@ -53,7 +53,7 @@ $main_user = User::getMain();
                 </li>
             <?php endif ?>
             <?php if ($main_user): ?>
-                <li><a class="destructive" href="/logout"><i class="fa fa-power-off"></i> Déconnexion</a>
+                <li><a class="destructive" href="/logout" hx-boost="false"><i class="fa fa-power-off"></i> Déconnexion</a>
                 </li>
             <?php endif ?>
         </ul>

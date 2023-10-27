@@ -9,7 +9,7 @@ if ($v->valid()) {
 page("Login")->css("login.css")->disableNav()->heading(false);
 ?>
 <article>
-    <form method="post">
+    <form method="post" hx-boost="false">
         <h2 class="center">Intranose</h2>
         <?= $login->render() ?>
         <?= $password->render() ?>

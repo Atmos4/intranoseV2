@@ -6,14 +6,22 @@ class Router extends Singleton
 
     private function render($path_to_include = "pages/404.php")
     {
-        ob_start();
-        include_once app_path() . "/$path_to_include";
-        $page = Page::getInstance();
-        if ($page->title) {
-            Page::getInstance()->setContent(ob_get_clean());
-            require_once app_path() . "/template/layout.php";
-        } else {
+        try {
+            ob_start();
+            include_once app_path() . "/$path_to_include";
+            $page = Page::getInstance();
+            if ($page->title) {
+                $content = ob_get_clean();
+                Page::getInstance()->setContent($content);
+                ob_start();
+                require_once app_path() . "/template/layout.php";
+            }
             ob_end_flush();
+        } catch (Throwable $e) {
+            ob_clean();
+            logger()->error($e->getMessage());
+            Toast::error("Une erreur est survenue");
+            echo Toast::render(true);
         }
         exit();
     }
