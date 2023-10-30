@@ -22,9 +22,9 @@ if (!$user) {
 $is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
 // TODO: remove this when OVH integration is rolling
-$can_change_emails = check_auth([Permission::ROOT]) && (!$is_visiting || $user->permission != Permission::ROOT);
+$can_change_nose_email = check_auth([Permission::ROOT]) && (!$is_visiting || $user->permission != Permission::ROOT);
 
-$can_change_emails = check_auth([Permission::ROOT]);
+$can_change_nose_email = check_auth([Permission::ROOT]);
 
 // Identity
 $user_infos = [
@@ -61,14 +61,14 @@ $v_emails = new Validator($user_emails, action: "emails_form");
 $real_email = $v_emails->email("real_email")->label("Addresse mail perso")->placeholder();
 $nose_email = $v_emails->email("nose_email")->label("Addresse mail nose")->placeholder();
 
-if ($can_change_emails) {
+if ($can_change_nose_email) {
     $nose_email->required();
 } else {
     $nose_email->readonly();
 }
 
-if ($v_emails->valid() && $can_change_emails) {
-    OvhService::emailsSettingsValidation($user, $v_emails, $real_email, $nose_email);
+if ($v_emails->valid()) {
+    OvhService::changeEmails($user, $v_emails, $real_email, $nose_email);
 }
 
 // Picture
@@ -148,14 +148,6 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 
 <form method="post" hx-swap="innerHTML show:#emails:top" class="row">
     <?= $v_emails->render_validation() ?>
-    <?php if ($can_change_emails):
-        $redirection = ovh_api()->getRedirection($user->nose_email, $user->real_email) ?>
-        <p>
-            <b>
-                <?= $redirection ? "Redirection à jour" : "Pas de redirection!" ?>
-            </b>
-        </p>
-    <?php endif; ?>
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
     </div>

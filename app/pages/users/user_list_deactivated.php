@@ -6,7 +6,6 @@ page("Réactiver des licenciés")->css("user_list.css");
 $form = new Validator();
 
 if (isset($_POST['action'])) {
-    var_dump($_POST);
     if (!isset($_POST['selected_users'])) {
         $form->set_error("Pas d'utilisateurs sélectionnés");
     } else {

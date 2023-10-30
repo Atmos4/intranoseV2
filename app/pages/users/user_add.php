@@ -32,7 +32,21 @@ if ($v->valid()) {
     $ovh = ovh_api();
 
     // validate user adding with redirections
-    OvhService::userAddValidation($v, $new_user, $nose_email, $real_email);
+    $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
+    $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();
+    if ($result->success) {
+        em()->persist($token);
+        em()->persist($user);
+        em()->flush();
+        OvhService::addUser($nose_email, $real_email);
+        Toast::create('Email envoyé!');
+        logger()->info("User {$user->id} created and activation email sent");
+    } else {
+        logger()->warning("Atempt to create a user with email {$real_email->value} but activation email failed to send");
+        $form->set_error("Erreur lors de l'envoi de l'email d'activation");
+        $form->set_error($result->message);
+        return false;
+    }
 }
 
 

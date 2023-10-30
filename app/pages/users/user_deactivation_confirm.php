@@ -6,10 +6,10 @@ $form = new Validator(action: "confirm-deactivate");
 $user_id = get_route_param("user_id");
 $user = em()->find(USER::class, $user_id);
 if (!$user) {
-    $form->set_error("the user of id $user_id doesn't exist");
+    $form->set_error("L'utilisateur numéro $user_id n'existe pas");
 }
 if ($form->valid()) {
-    OvhService::userDeactivateValidation($form, $user);
+    OvhService::deactivateUser($user);
 }
 
 page("Confirmation de désactivation");

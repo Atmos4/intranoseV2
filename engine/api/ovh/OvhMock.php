@@ -18,7 +18,7 @@ class OvhMock implements OvhClientInterface
     {
         return [
             "allowedIPs" => [
-                "192.0.2.0/24"
+                "OVHMOCK"
             ],
             "applicationId" => 0,
             "creation" => "2023-10-23T07:34:56.497Z",
