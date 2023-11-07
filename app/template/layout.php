@@ -44,11 +44,12 @@ $page = Page::getInstance(); ?>
     <!-- HTMX -->
     <script src="/assets/js/htmx1.9.5-core.min.js" defer></script>
     <script src="/assets/js/htmx1.9.5-head.js" defer></script>
+    <script src="/assets/js/htmx1.9.5-loading.js" defer></script>
 
     <script src="/assets/js/theme.js"></script>
 </head>
 
-<body hx-ext="head-support" hx-boost="true" hx-indicator="#hx-indicator">
+<body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";
@@ -66,9 +67,8 @@ $page = Page::getInstance(); ?>
         <?= $page->content ?>
     </main>
 
-    <div id="toast-root">
-        <?= Toast::render() ?>
-    </div>
+    <?= Toast::renderRoot() ?>
 </body>
+
 
 </html>

@@ -1,124 +1,198 @@
 <?php
+use GuzzleHttp\Promise\Utils;
 
-class OvhService
+class OvhService extends ServiceBase
 {
-    // TODO :check if "nose" is the right name for the mailing list
+    // TODO FIXME: remove
     public static string $main_mailing_list = "nose";
-    static function changeEmails($user, $v_infos, $real_email, $nose_email)
+
+    private string $mailingList;
+    private OvhClientInterface $ovhClient;
+
+    function __construct(OvhClientInterface $ovhClient, string $mailingList = "nose")
     {
-        $toast_message = "";
+        $this->ovhClient = $ovhClient;
+        $this->mailingList = $mailingList;
+    }
+
+    public static function getOvhClient(): OvhClientInterface
+    {
+        return self::getInstance()->ovhClient;
+    }
+
+    static function changeEmails(string $noseEmail, string $oldRealEmail, string $newRealEmail)
+    {
         try {
-            // Check if user is part of a family and is family leader
-            if ($user->family->id && $user->family_leader) {
-                // Get all family members with the same email
-                $family_members = em()->getRepository(User::class)->findBy([
-                    'family' => $user->family,
-                    'real_email' => $user->real_email
-                ]);
-                // Update emails and redirection for every family member - might take a quite long time
-                foreach ($family_members as $family_member) {
-                    ovh_api()->removeRedirection($family_member->nose_email, $family_member->real_email);
-                    $family_member->real_email = $real_email->value;
-                    ovh_api()->addRedirection($family_member->nose_email, $real_email->value);
-                    em()->persist($family_member);
-                }
-                Toast::create(count($family_members) > 1 ? "Emails mis à jour pour toute la famille !" : "Emails mis à jour !");
-            } else {
-                // Update emails and redirection for the user only
-                ovh_api()->removeRedirection($user->nose_email, $user->real_email);
-                $user->real_email = $real_email->value;
-                $user->nose_email = $nose_email->value;
-                ovh_api()->addRedirection($nose_email->value, $real_email->value);
-                em()->persist($user);
-                Toast::create("Emails mis à jour !");
-            }
+            // ovh_api()->changeRedirection(etc...)
+            self::getOvhClient()->removeRedirection($noseEmail, $oldRealEmail);
+            self::getOvhClient()->addRedirection($noseEmail, $newRealEmail);
         } catch (GuzzleHttp\Exception\ClientException $e) {
-            logger()->error("Erreur lors de l'ajout de la redirection", ["exception" => $e]);
-            $v_infos->set_error("Erreur de redirection");
+            logger()->error("API error", ["exception" => $e]);
             return false;
         }
-        em()->flush();
         return true;
     }
 
     static function deactivateUser($user)
     {
-        $mailingLists = ovh_api()->getMailingLists();
-        foreach ($mailingLists as $list) {
-            if (in_array($user->nose_email, ovh_api()->getMailingListSubscribers($list))) {
-                try {
-                    ovh_api()->removeSubscriberFromMailingList($list, $user->nose_email);
-                    logger()->info("User {$user->id} removed from mailing list {$list})");
-                } catch (GuzzleHttp\Exception\ClientException $e) {
-                    logger()->error("Error with email list", ["exception" => $e]);
-                    Toast::create("Erreur dans la mise à jour des listes d'email", ToastLevel::ERROR);
-                    return false;
+        $emailCount = UserService::countUsersWithSameEmail($user->real_email);
+        if (!$emailCount) {
+            $mailingLists = self::getOvhClient()->getMailingLists();
+            foreach ($mailingLists as $list) {
+                if (self::getOvhClient()->getMailingListSubscriber($list, $user->real_email)) {
+                    try {
+                        self::getOvhClient()->removeSubscriberFromMailingList($list, $user->real_email);
+                        logger()->info("User {$user->id} removed from mailing list {$list})");
+                    } catch (GuzzleHttp\Exception\ClientException $e) {
+                        logger()->error("Error with email list", ["exception" => $e]);
+                        Toast::error("Erreur dans la mise à jour des listes d'email");
+                        return false;
+                    }
                 }
             }
+        } else {
+            logger()->info("Skipping removing {email} from mailing list, {emailCount} users found with same email", [
+                "email" => $user->real_email,
+                "emailCount" => $emailCount,
+            ]);
+            Toast::info("Email utilisé, mailing non affecté");
         }
         try {
-            ovh_api()->removeRedirection($user->nose_email, $user->real_email);
+            self::getOvhClient()->removeRedirection($user->nose_email, $user->real_email);
             logger()->info("User {$user->id} got his redirection {$user->nose_email} -> {$user->real_email} removed");
         } catch (GuzzleHttp\Exception\ClientException $e) {
             logger()->error("Error with redirections", ["exception" => $e]);
-            Toast::create("Erreur dans la mise à jour des redirections", ToastLevel::ERROR);
+            Toast::error("Erreur dans la mise à jour des redirections");
             return false;
         }
-        //if an exeption is thrown, this part is never executed
-        logger()->info("User {$user->id} deactivated by user " . User::getMain()->id);
+
+        logger()->info("User {deactivatedUserId} deactivated by {mainUserId} ", [
+            "deactivatedUserId" => $user->id,
+            "mainUserId" => User::getMainUserId(),
+        ]);
+        Toast::success("Utilisateur désactivé");
         $user->status = UserStatus::DEACTIVATED;
         em()->flush();
         redirect("/licencies/desactive");
         return true;
     }
 
-    static function reactivateUser($form, $users)
+
+
+    /** @param User[] $users */
+    static function reactivateUsers(array $users): bool
     {
+        $promises = [];
+        $emailCounts = [];
         foreach ($users as $user) {
-            try {
-                ovh_api()->addRedirection($user->nose_email, $user->real_email);
-                logger()->info("User {$user->id} got his redirection {$user->nose_email} -> {$user->real_email} added");
-            } catch (GuzzleHttp\Exception\ClientException $e) {
-                logger()->error("Error with redirections.", ["exception" => $e]);
-                $form->set_error("Erreur dans la mise à jour des redirections.");
-                return false;
+            $promises["redirection_$user->id"] = self::getOvhClient()->addRedirectionAsync($user->nose_email, $user->real_email);
+
+            $count = $emailCounts[$user->id] = UserService::countUsersWithSameEmail($user->real_email);
+            if (!$count) {
+                $promises["mailing_$user->id"] = self::getOvhClient()->addSubscriberToMailingListAsync(self::$main_mailing_list, $user->real_email);
+            } else {
+                Toast::info("Email utilisé, mailing non affecté");
             }
-            try {
-                ovh_api()->addSubscriberToMailingList(self::$main_mailing_list, $user->real_email);
-                logger()->info("User {$user->id} added to the main mailing list");
-            } catch (GuzzleHttp\Exception\ClientException $e) {
-                logger()->error("Error with mailing list.", ["exception" => $e]);
-                $form->set_error("Erreur dans l'ajout de l'utilisateur {$user->id} à la liste principale.");
-                // if there is a problem with the mailing list, we may have the issue to have a user not reactivated, but with 
-                // the redirection already added.
-                return false;
-            }
-            logger()->info("User {$user->id} reactivated by user " . User::getMain()->id);
-            $user->status = UserStatus::INACTIVE;
-            em()->persist($user);
-            //flush for each user to avoid losing all changes if an error occurs
-            em()->flush();
         }
+
+        $responses = Utils::settle($promises)->wait();
+
+        $anyError = false;
+
+        foreach ($users as $user) {
+            $redirectionResponse = $responses["redirection_$user->id"];
+            if ($redirectionResponse['state'] === "rejected") {
+                logger()->error(
+                    "Error with redirection for {userId}",
+                    ["exception" => $redirectionResponse, "userId" => $user->id]
+                );
+                Toast::error("Erreur: redirection");
+                $anyError |= true;
+            }
+
+            if (!$emailCounts[$user->id]) {
+                $mailingResponse = $responses["mailing_$user->id"];
+                if ($mailingResponse['state'] === "rejected") {
+                    logger()->error(
+                        "Error with mailing for {userId}",
+                        ["exception" => $mailingResponse, "userId" => $user->id]
+                    );
+                    Toast::error("Erreur: mailing");
+                    $anyError |= true;
+                }
+            }
+            $user->status = UserStatus::INACTIVE;
+            logger()->info(
+                "User reactivated",
+                ["userId" => $user->id, "adminUserId" => User::getMainUserId()]
+            );
+            Toast::success("$user->first_name réactivé");
+        }
+
+        em()->flush();
+        return $anyError;
     }
 
-    static function addUser($nose_email, $real_email)
+    static function updateUserInNoseMailingList(User $user, $action)
     {
-        if (!ovh_api()->getRedirection($nose_email, $real_email->value)) {
-            try {
-                ovh_api()->addRedirection($nose_email, $real_email->value);
-                logger()->info("New user got his redirection {$nose_email} -> {$real_email->value} added");
-            } catch (GuzzleHttp\Exception\ClientException $e) {
-                logger()->error("Error with redirections", ["exception" => $e]);
-                Toast::create("Erreur dans la mise à jour des redirections.", ToastLevel::ERROR);
-            }
-        }
-        try {
-            ovh_api()->addSubscriberToMailingList(self::$main_mailing_list, $real_email->value);
-            logger()->info("New user got his email {$real_email->value} added to mailing list " . self::$main_mailing_list);
-        } catch (GuzzleHttp\Exception\ClientException $e) {
-            logger()->error("Error when adding user with email {$real_email->value} to the list " . self::$main_mailing_list, ["exception" => $e]);
-            Toast::create("Erreur dans la mise à jour des listes d'email.", ToastLevel::ERROR);
+        $client = self::getOvhClient();
+        $mailingList = "nose";
+
+        // The update takes about 15s on OVH's side. To prevent confusion we disable the action.
+        switch ($action) {
+            case "removeFromMailing":
+                $client->removeSubscriberFromMailingList($mailingList, $user->real_email);
+                $_SESSION['updatedMailingStatus'] = false;
+                Toast::success("Retiré à la liste de diffusion");
+                break;
+            case "addToMailing":
+                $client->addSubscriberToMailingList($mailingList, $user->real_email);
+                $_SESSION['updatedMailingStatus'] = true;
+                Toast::success("Ajouté de la liste de diffusion");
+                break;
         }
 
+        $realEmailIsSubscribed = $client->getMailingListSubscriber($mailingList, $user->real_email);
+
+        if (isset($_SESSION['updatedMailingStatus'])) {
+            if ($_SESSION['updatedMailingStatus'] !== !!$realEmailIsSubscribed) {
+                return [$_SESSION['updatedMailingStatus'], true];
+            } else {
+                unset($_SESSION['updatedMailingStatus']);
+            }
+        }
+        return [!!$realEmailIsSubscribed, false];
+
+    }
+
+    /** Add new user redirection and mailing list */
+    static function addUser(string $nose_email, string $real_email)
+    {
+        $emailCount = UserService::countUsersWithSameEmail($real_email);
+        $client = self::getOvhClient();
+        if (!$client->getRedirection($nose_email, $real_email)) {
+            try {
+                $client->addRedirection($nose_email, $real_email);
+                logger()->info("New user got his redirection {$nose_email} -> {$real_email} added");
+                Toast::success("Redirection créée");
+            } catch (GuzzleHttp\Exception\ClientException $e) {
+                logger()->error("Error with redirections", ["exception" => $e]);
+                Toast::error("Erreur dans la mise à jour des redirections.");
+            }
+        }
+        if (!$client->getMailingListSubscriber(self::$main_mailing_list, $real_email) && !$emailCount) {
+            try {
+                $client->addSubscriberToMailingList(self::$main_mailing_list, $real_email);
+                logger()->info("New user got his email {$real_email} added to mailing list " . self::$main_mailing_list);
+                Toast::success("Utilisateur ajouté aux mailing lists");
+            } catch (GuzzleHttp\Exception\ClientException $e) {
+                logger()->error("Error when adding user with email {$real_email} to the list " . self::$main_mailing_list, ["exception" => $e]);
+                Toast::error("Erreur dans la mise à jour des listes d'email.");
+            }
+        }
+
+        if ($emailCount) {
+            Toast::info("Email utilisé, mailing non affecté");
+        }
     }
 }

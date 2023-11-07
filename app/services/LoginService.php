@@ -31,8 +31,8 @@ class AuthService
                         return;
                     }
                     logger()->info("Login failed for user {userId}: wrong password", ["userId" => $user->id]);
-                    break;
-
+                    $v->set_error("Mauvais mot de passe");
+                    return;
                 case $user?->status == UserStatus::DEACTIVATED:
                     logger()->info("Login failed for user {userId}: deactivated account", ["userId" => $user->id]);
                     $v->set_error("Votre compte est bloqué. Contactez un administrateur.");

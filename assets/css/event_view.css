@@ -1,9 +1,6 @@
 del {
   text-decoration: none;
 }
-.hidden {
-  display: none;
-}
 header > .row {
   justify-content: center;
   margin-bottom: 2rem;

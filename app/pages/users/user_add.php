@@ -8,7 +8,7 @@ $real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addr
 $birthdate = $v->date("birthdate")->label("Date de naissance")->required();
 
 $permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "STAFF" => "Responsable"];
-$user = em()->find(User::class, User::getCurrent());
+$user = User::getMain();
 if ($user->permission == Permission::ROOT) {
     $permissions_array["ROOT"] = "Big Boss";
 }
@@ -28,21 +28,22 @@ if ($v->valid()) {
     $new_user->set_login($login);
     $new_user->status = UserStatus::INACTIVE;
 
-    //Setup OVH redirections
-    $ovh = ovh_api();
-
     // validate user adding with redirections
-    $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
+    $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
     $result = MailerFactory::createActivationEmail($real_email->value, $token->id)->send();
     if ($result->success) {
         em()->persist($token);
-        em()->persist($user);
+        em()->persist($new_user);
         em()->flush();
-        OvhService::addUser($nose_email, $real_email);
-        Toast::create('Email envoyé!');
-        logger()->info("User {$user->id} created and activation email sent");
+        logger()->info("User {$new_user->id} created and activation email sent");
+
+        // Optional: set up OVH redirection
+        OvhService::addUser($nose_email, $real_email->value);
+
+        Toast::success('Email envoyé!');
+        redirect('/licencies');
     } else {
-        logger()->warning("Atempt to create a user with email {$real_email->value} but activation email failed to send");
+        logger()->warning("Attempt to create a user with email {$real_email->value} but activation email failed to send", ["error" => $result->message]);
         $form->set_error("Erreur lors de l'envoi de l'email d'activation");
         $form->set_error($result->message);
         return false;

@@ -20,12 +20,10 @@ if (isset($_POST['action'])) {
         $users = $query->getResult();
 
         if ($_POST['action'] === 'reactivate') {
-            foreach ($users as $user) {
-                $user->status = UserStatus::INACTIVE;
-                logger()->info("user {userId} reactivated by admin {adminUserId}", ["userId" => $user->id, "adminUserId" => User::getMainUserId()]);
-            }
-            em()->flush();
-            $form->set_success("Utilisateurs réactivés");
+            $hasError = OvhService::reactivateUsers($users);
+            $hasError ?
+                $form->set_error("Erreurs présentes. Vérifiez les utilisateurs") :
+                $form->set_success("Utilisateurs réactivés");
         }
     }
 }

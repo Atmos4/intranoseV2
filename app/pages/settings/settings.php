@@ -21,10 +21,6 @@ if (!$user) {
 
 $is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
-// TODO: remove this when OVH integration is rolling
-$can_change_nose_email = check_auth([Permission::ROOT]) && (!$is_visiting || $user->permission != Permission::ROOT);
-
-$can_change_nose_email = check_auth([Permission::ROOT]);
 
 // Identity
 $user_infos = [
@@ -53,6 +49,10 @@ if ($v_infos->valid()) {
 }
 
 // Emails
+// TODO: change this to include more admins or remove once it's stable enough
+$can_change_nose_email = check_auth([Permission::ROOT]);
+$can_change_emails = check_auth(Access::$EDIT_USERS);
+
 $user_emails = [
     "real_email" => $user->real_email,
     "nose_email" => $user->nose_email,
@@ -61,14 +61,11 @@ $v_emails = new Validator($user_emails, action: "emails_form");
 $real_email = $v_emails->email("real_email")->label("Addresse mail perso")->placeholder();
 $nose_email = $v_emails->email("nose_email")->label("Addresse mail nose")->placeholder();
 
-if ($can_change_nose_email) {
-    $nose_email->required();
-} else {
-    $nose_email->readonly();
-}
+$can_change_nose_email ? $nose_email->required() : $nose_email->readonly();
+$can_change_emails ? $real_email->required() : $real_email->readonly();
 
-if ($v_emails->valid()) {
-    OvhService::changeEmails($user, $v_emails, $real_email, $nose_email);
+if ($v_emails->valid() && $can_change_nose_email) {
+    UserManagementService::changeEmails($user, $v_emails, $nose_email->value, $real_email->value);
 }
 
 // Picture
@@ -106,7 +103,8 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <?= $picture
             ->attributes([
                 "style" => "width: auto",
-                "onchange" => "document.getElementById('pictureForm').submit()"
+                "onchange" => "document.getElementById('pictureForm').submit()",
+                "class" => "hidden"
             ])
             ->render() ?>
     </label>
@@ -158,6 +156,11 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <input type="submit" class="outline" name="submitEmails" value="Mettre à jour les emails">
     </div>
 </form>
+<?php if ($can_change_nose_email): ?>
+    <section hx-get="/licencies/<?= $user->id ?>/ovh" hx-swap="outerHTML" hx-trigger="load">
+        <div aria-busy="true"></div>
+    </section>
+<?php endif ?>
 
 <hr>
 

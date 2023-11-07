@@ -58,6 +58,7 @@ if ($needNewCredential): ?>
         <ul>
             <li><a href="/dev/ovh/mailing-lists">Mailing lists</a></li>
             <li><a href="/dev/ovh/redirections">Redirections</a></li>
+            <li><a href="/dev/ovh/test-api">test API</a></li>
         </ul>
     </nav>
     <h4>Login info</h4>

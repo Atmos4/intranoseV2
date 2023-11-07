@@ -1,42 +1,66 @@
 <?php
 
+class ToastItem
+{
+    function __construct(
+        public string $message = "",
+        public ToastLevel $level = ToastLevel::Success
+    ) {
+    }
+}
+
 class Toast
 {
-    public static ToastLevel $level = ToastLevel::Success;
-    public static string $message = "";
+    /** @var ToastItem[] */
+    public static array $toasts = [];
     static function create($message, $level = ToastLevel::Success)
     {
-        self::$message = $message;
-        self::$level = $level;
-        header("HX-Trigger-After-Settle: toastMessage");
+        self::$toasts[] = new ToastItem($message, $level);
     }
 
-    static function pop()
+    static function stash()
     {
-        $message = self::$message;
-        $level = self::$level;
-        self::$message = "";
-        self::$level = ToastLevel::Success;
-        return [$message, $level];
+        $_SESSION['toasts'] = self::$toasts;
     }
 
-    static function exists()
+    static function popStash()
     {
-        return !!self::$message;
+        self::$toasts = [...self::$toasts, ...($_SESSION['toasts'] ?? [])];
     }
 
-    static function render(bool $oob = false)
+    static function clearStash()
     {
-        if ($oob) {
-            header('HX-Retarget: #toast-root');
-            header('HX-Reswap: afterbegin');
-        }
-        if (self::$message): ?>
-            <div class="toast show <?= self::$level->value ?>" aria-live="polite" hx-on:animationend="htmx.remove(this)">
-                <?= self::$message ?>
+        unset($_SESSION['toasts']);
+    }
+
+    static function render()
+    {
+        self::popStash();
+        $toasts = "";
+        foreach (self::$toasts as $toast):
+            $toasts .= <<<EOL
+            <div class="toast show {$toast->level->value}" aria-live="polite" hx-on:animationend="htmx.remove(this)">
+                $toast->message
             </div>
-        <?php endif;
+            EOL;
+        endforeach;
+        self::clearStash();
+        return $toasts;
     }
+
+    static function renderRoot()
+    { ?>
+        <div id="toast-root">
+            <?= self::render() ?>
+        </div>
+    <?php }
+
+    static function renderOob()
+    { ?>
+        <div id="toast-root" hx-swap-oob="afterbegin">
+            <?= self::render() ?>
+        </div>
+    <?php }
 
     static function error(string $message)
     {

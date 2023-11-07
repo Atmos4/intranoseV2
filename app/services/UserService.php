@@ -16,6 +16,12 @@ class UserService
         return em()->createQuery("SELECT NEW DeactivatedUserDto(u.id, u.last_name, u.first_name) FROM User u WHERE u.status = :status ORDER BY u.last_name ASC, u.first_name ASC")
             ->setParameters(['status' => UserStatus::DEACTIVATED])->getResult();
     }
+
+    static function countUsersWithSameEmail($email)
+    {
+        return em()->createQuery("SELECT COUNT(u) FROM User u WHERE u.real_email = :email")
+            ->setParameters(['email' => $email])->getSingleScalarResult();
+    }
 }
 
 class UserHelper

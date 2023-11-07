@@ -121,6 +121,7 @@ class User
         return count($result) ? $result[0] : null;
     }
 
+    /** Get user by ID */
     static function get($user_id): User
     {
         return em()->find(User::class, $user_id);

@@ -1,4 +1,7 @@
 <?php
+use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
+
 class OvhMock implements OvhClientInterface
 {
     //Auth
@@ -68,13 +71,12 @@ class OvhMock implements OvhClientInterface
     function getMailingListSubscriber($list, $subscriberEmail)
     {
         return [
-            "domain" => "string",
-            "email" => "string",
-            "mailinglist" => "string"
+            "0" => "mock"
         ];
     }
     function addSubscriberToMailingList($list, $subscriberEmail)
     {
+        logger()->debug("OvhMock: $subscriberEmail added to $list");
         return [
             "account" => "string",
             "action" => "add",
@@ -104,7 +106,11 @@ class OvhMock implements OvhClientInterface
     // redirections
     function getRedirection($from = "", $to = "")
     {
-        return ["string"];
+        // We check if the user exists in the DB.
+        return em()
+            ->createQuery("SELECT COUNT(u) FROM User u WHERE u.nose_email=:email")
+            ->setParameter("email", $from)
+            ->getSingleScalarResult();
     }
     function addRedirection($from = "", $to = "")
     {
@@ -139,9 +145,41 @@ class OvhMock implements OvhClientInterface
 
     function checkFromEmail($email, $string)
     {
-        // Helper function to test exeptions
+        // Helper function to test exceptions
         $parts = explode('@', $email);
         $firstPart = $parts[0];
         return strpos($firstPart, $string) === 0;
+    }
+    function getRedirectionById($id)
+    {
+        return "todo fixme $id";
+    }
+
+    function getMailingListSubscriberAsync($list, $subscriberEmail): PromiseInterface
+    {
+        $promise = new Promise();
+        $promise->resolve("OK");
+        return $promise;
+    }
+
+    function getRedirectionAsync($from = '', $to = ''): PromiseInterface
+    {
+        $promise = new Promise();
+        $promise->resolve("OK");
+        return $promise;
+    }
+
+    function addRedirectionAsync($from, $to): PromiseInterface
+    {
+        $promise = new Promise();
+        $promise->resolve("OK");
+        return $promise;
+    }
+
+    function addSubscriberToMailingListAsync($list, $subscriberEmail): PromiseInterface
+    {
+        $promise = new Promise();
+        $promise->resolve("OK");
+        return $promise;
     }
 }

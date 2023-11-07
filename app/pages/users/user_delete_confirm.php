@@ -4,7 +4,7 @@ restrict_access([Permission::ROOT]);
 $form = new Validator(action: "confirm-delete");
 
 $user_id = get_route_param("user_id");
-$user = em()->find(User::class, $user_id);
+$user = User::get($user_id);
 if (!$user) {
     $form->set_error("L'utilisateur numéro $user_id n'existe pas");
 }
@@ -15,7 +15,7 @@ if ($form->valid()) {
     logger()->info("User {$user->id} deleted by user " . User::getCurrent()->id);
     em()->remove($user);
     em()->flush();
-    redirect("/licencies/deactive");
+    redirect("/licencies/desactive");
 }
 
 page("Confirmation de suppression");
