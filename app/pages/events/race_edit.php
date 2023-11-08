@@ -26,7 +26,11 @@ if ($race_id) {
 
 $v = new Validator($form_values ?? []);
 $name = $v->text("name")->label("Nom de la course")->placeholder()->required();
-$date = $v->date("date")->label("Date")->required();
+$date = $v->date("date")
+    ->label("Date")
+    ->after($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'événement")
+    ->before($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'événement")
+    ->required();
 $place = $v->text("place")->label("Lieu")->required();
 
 $category_rows = [];
@@ -60,6 +64,9 @@ if ($v->valid()) {
     em()->flush();
     redirect("/evenements/$event->id");
 }
+
+//set the date to the first day of the event if it's not set
+$date->value = $date->value ?? $event->start_date->format("Y-m-d");
 
 page($race_id ? "{$race->name} : Modifier" : "Ajouter une course")->css("race_edit.css");
 ?>
