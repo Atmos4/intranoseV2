@@ -279,8 +279,9 @@ class DateField extends Field
     }
 
     /** Set upper date limit */
-    function before(string|null $date, string $msg = null)
+    function max(string|null $date, bool $addAttribute = true, string $msg = null)
     {
+        $addAttribute ? $this->attributes(["max" => $date ?? ""]) : null;
         if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
         }
@@ -288,8 +289,9 @@ class DateField extends Field
     }
 
     /** Set lower date limit */
-    function after(string|null $date, string $msg = null)
+    function min(string|null $date, bool $addAttribute = true, string $msg = null)
     {
+        $addAttribute ? $this->attributes(["min" => $date ?? ""]) : null;
         if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
         }
