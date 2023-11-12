@@ -25,7 +25,7 @@ class Toast
 
     static function popStash()
     {
-        self::$toasts = [...self::$toasts, ...($_SESSION['toasts'] ?? [])];
+        self::$toasts = array_merge(self::$toasts, $_SESSION['toasts'] ?? []);
     }
 
     static function clearStash()
@@ -38,11 +38,11 @@ class Toast
         self::popStash();
         $toasts = "";
         foreach (self::$toasts as $toast):
-            $toasts .= <<<EOL
+            $toasts .= <<<HTML
             <div class="toast show {$toast->level->value}" aria-live="polite" hx-on:animationend="htmx.remove(this)">
                 $toast->message
             </div>
-            EOL;
+            HTML;
         endforeach;
         self::clearStash();
         return $toasts;

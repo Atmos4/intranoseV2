@@ -107,7 +107,7 @@ class OvhService extends ServiceBase
                     ["exception" => $redirectionResponse, "userId" => $user->id]
                 );
                 Toast::error("Erreur: redirection");
-                $anyError |= true;
+                $anyError = true;
             }
 
             if (!$emailCounts[$user->id]) {
@@ -118,7 +118,7 @@ class OvhService extends ServiceBase
                         ["exception" => $mailingResponse, "userId" => $user->id]
                     );
                     Toast::error("Erreur: mailing");
-                    $anyError |= true;
+                    $anyError = true;
                 }
             }
             $user->status = UserStatus::INACTIVE;
