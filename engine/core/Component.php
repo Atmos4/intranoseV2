@@ -21,4 +21,11 @@ class Component
     {
         return !empty(self::$_props);
     }
+
+    // TODO maybe move elsewhere some day;
+    /** Helper function to transform a props array into a string of HTML attributes */
+    static function attrs(array $props = []): string
+    {
+        return array_reduce(array_keys($props), fn($carry, $item) => ("$carry $item=\"" . htmlspecialchars($props[$item]) . "\""), "");
+    }
 }

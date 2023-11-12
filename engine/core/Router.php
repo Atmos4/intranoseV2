@@ -15,13 +15,15 @@ class Router extends Singleton
                 Page::getInstance()->setContent($content);
                 ob_start();
                 require_once app_path() . "/template/layout.php";
+            } else {
+                Toast::renderOob();
             }
             ob_end_flush();
         } catch (Throwable $e) {
             ob_clean();
             logger()->error($e->getMessage());
             Toast::error("Une erreur est survenue");
-            echo Toast::render(true);
+            Toast::renderOob();
         }
         exit();
     }

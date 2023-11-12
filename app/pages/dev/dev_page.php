@@ -1,11 +1,32 @@
 <?php
 restrict_dev();
 
+function DevButton($href, $label)
+{
+    return <<<EOL
+    <li><a href="$href" role="button" class="contrast outline">$label</a></li>
+    EOL;
+}
+
 page("Dev") ?>
+<b>User control</b>
 <nav>
     <ul>
-        <li><a href="/dev/create-user" role="button" class="contrast outline">Créer utilisateur</a></li>
-        <li><a href="/dev/send-email" role="button" class="contrast outline">Test email</a></li>
-        <li><a href="/dev/ovh" role="button" class="contrast outline">OVH</a></li>
+        <?= DevButton("/dev/create-user", "Créer utilisateur") ?>
+        <?= DevButton("/dev/change-access", "Change access") ?>
+    </ul>
+</nav>
+<b>APIs</b>
+<nav>
+    <ul>
+        <?= DevButton("/dev/send-email", "Email") ?>
+        <?= DevButton("/dev/ovh", "OVH") ?>
+    </ul>
+</nav>
+<b>Tests</b>
+<nav>
+    <ul>
+        <?= DevButton("/dev/toast", "Toasts") ?>
+        <?= DevButton("/dev/random", "Random") ?>
     </ul>
 </nav>

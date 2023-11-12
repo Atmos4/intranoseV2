@@ -484,7 +484,7 @@ class EmailField extends StringField
 
     function check(string $msg = null)
     {
-        if ($this->should_test() && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+        if ($this->should_test() && $this->value && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             $this->set_error($msg ?? "Format d'email invalide");
         }
     }

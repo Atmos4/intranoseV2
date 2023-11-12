@@ -77,7 +77,12 @@ function get_header($headerName): string|null
 /** Redirect helper method */
 function redirect($href)
 {
-    header("Location: " . $href);
+    Toast::stash();
+    if (get_header("HX-Boost")) {
+        header("HX-Location: $href");
+    } else {
+        header("Location: $href");
+    }
     exit;
 }
 
@@ -181,7 +186,7 @@ function ovh_api(): OvhClientInterface
         return new OvhMock();
     }
     return new OvhClient(
-        new \Ovh\Api(
+        new OvhHttpClient(
             env("OVH_APPLICATION_KEY"),
             env("OVH_APPLICATION_SECRET"),
             "ovh-eu",

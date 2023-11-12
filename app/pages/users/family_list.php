@@ -13,6 +13,9 @@ page("Familles") ?>
             <td>
                 <?= $family->name ?>
             </td>
+            <td class="list-chevron">
+                <i class=" fa fa-chevron-right"></i>
+            </td>
         </tr>
     <?php endforeach;
     if (!$families): ?>

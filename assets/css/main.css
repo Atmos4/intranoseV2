@@ -219,30 +219,16 @@ details[role="list"] summary + ul[data-placement="top"] {
 
 /* --- pico modal animation --- */
 dialog[open] {
-  /* Animate when opening */
-  animation-name: fadeIn;
-  animation-duration: 150ms;
-  animation-timing-function: ease;
+  animation-name: fadeIn 150ms;
 }
 dialog[open] > article {
-  /* Animate when opening */
-  animation-name: zoomIn;
-  animation-duration: 150ms;
-  animation-timing-function: ease;
+  animation: zoomIn 150ms;
 }
-
 dialog.closing {
-  /* Animate when closing */
-  animation-name: fadeOut;
-  animation-duration: 150ms;
-  animation-timing-function: ease;
+  animation: fadeOut 150ms;
 }
-
 dialog.closing > article {
-  /* Animate when closing */
-  animation-name: zoomOut;
-  animation-duration: 150ms;
-  animation-timing-function: ease;
+  animation: zoomOut 150ms;
 }
 
 @keyframes fadeIn {
@@ -320,7 +306,7 @@ dialog.closing > article {
   color: black;
   height: 3rem;
 
-  /* Animaation */
+  /* Animation */
   animation-name: toastSlide;
   animation-duration: 2000ms;
   animation-fill-mode: forwards;
@@ -334,3 +320,7 @@ dialog.closing > article {
   color: white;
 }
 /* add more statuses when needed */
+
+.list-chevron {
+  text-align: end;
+}

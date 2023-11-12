@@ -9,8 +9,8 @@
     "phpmailer/phpmailer": "^6.8",
     "ramsey/uuid": "^4.7",
     "vlucas/phpdotenv": "^5.5",
-    "ovh/ovh": "^3.2",
-    "monolog/monolog": "^3.4"
+    "monolog/monolog": "^3.4",
+    "guzzlehttp/guzzle": "^7.0"
   },
   "autoload": {
     "classmap": [

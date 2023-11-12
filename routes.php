@@ -2,12 +2,15 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
-
 // User control
 require_once app_path() . "/components/user_control.php";
 // Load env
 require_once base_path() . "/engine/load_env.php";
 
+// ---init services---
+OvhService::init(new OvhService(ovh_api()));
+
+// ---routes---
 Router::add('/', 'pages/index');
 Router::add('/login', 'pages/login');
 
@@ -15,6 +18,7 @@ Router::add('/login', 'pages/login');
 if (env("DEVELOPMENT")) {
     Router::add('/dev', 'pages/dev/dev_page');
     Router::add('/dev/create-user', 'pages/dev/create_test_user');
+    Router::add('/dev/change-access', 'pages/dev/change_user_access');
     //Router::add('/dev/reset-pw/$user_id', 'pages/dev/reset_pw');
     Router::add('/dev/send-email', 'pages/dev/send_test_email');
 
@@ -24,9 +28,14 @@ if (env("DEVELOPMENT")) {
     Router::add('/dev/ovh/mailing-list/$name', 'pages/dev/ovh/mailing_list_view');
     Router::add('/dev/ovh/redirections', 'pages/dev/ovh/redirections');
     Router::add('/dev/ovh/redirections/$id', 'pages/dev/ovh/redirections');
+    Router::add('/dev/ovh/test-api', 'pages/dev/ovh/test_api.php');
 
     // --- migration ---
     Router::add('/dev/migrate', '../database/migrate_db');
+
+    // ---experiments
+    Router::add('/dev/toast', 'pages/dev/test_toast');
+    Router::add('/dev/random', 'pages/dev/test_random');
 }
 
 // Events
@@ -48,6 +57,8 @@ Router::add('/mon-profil', 'pages/settings/settings');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', 'pages/settings/settings');
 Router::add('/licencies/$user_id/ovh', 'pages/settings/ovh_settings');
+Router::add('/licencies/$user_id/ovh/redirections', 'pages/settings/ovh/redirections');
+Router::add('/licencies/$user_id/ovh/mailing', 'pages/settings/ovh/mailing');
 
 // Users
 Router::add('/licencies', 'pages/users/user_list.php');

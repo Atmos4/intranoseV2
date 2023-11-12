@@ -12,10 +12,6 @@
   cursor: pointer;
 }
 
-input[type="file"] {
-  display: none;
-}
-
 .profile > span {
   position: absolute;
   bottom: 10px;
