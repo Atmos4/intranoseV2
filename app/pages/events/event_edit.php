@@ -26,10 +26,10 @@ $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder
 $start_date = $v->date("start_date")->label("Date de départ")->required();
 $end_date = $v->date("end_date")
     ->label("Date de retour")->required()
-    ->min($start_date->value, false, "Doit être après le départ");
+    ->min($start_date->value, "Doit être après le départ", false);
 $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
-    ->max($start_date->value ? date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d") : "", false, "Doit être avant le jour de départ");
+    ->max($start_date->value ? date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d") : "", "Doit être avant le jour de départ", false);
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
 
 if (!empty($_POST) && $v->valid()) {
