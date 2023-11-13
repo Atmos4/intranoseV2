@@ -152,9 +152,11 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $nose_email->render() ?>
     </div>
-    <div>
-        <input type="submit" class="outline" name="submitEmails" value="Mettre à jour les emails">
-    </div>
+    <?php if ($can_change_emails): ?>
+        <div>
+            <input type="submit" class="outline" name="submitEmails" value="Mettre à jour les emails">
+        </div>
+    <?php endif ?>
 </form>
 <?php if ($can_change_nose_email): ?>
     <section hx-get="/licencies/<?= $user->id ?>/ovh" hx-swap="outerHTML" hx-trigger="load">
