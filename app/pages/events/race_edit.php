@@ -24,9 +24,13 @@ if ($race_id) {
     $race = new Race();
 }
 
-$v = new Validator($form_values ?? []);
+$v = new Validator($form_values ?? ["date" => $event->start_date->format("Y-m-d")]);
 $name = $v->text("name")->label("Nom de la course")->placeholder()->required();
-$date = $v->date("date")->label("Date")->required();
+$date = $v->date("date")
+    ->label("Date")
+    ->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'événement")
+    ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'événement")
+    ->required();
 $place = $v->text("place")->label("Lieu")->required();
 
 $category_rows = [];
