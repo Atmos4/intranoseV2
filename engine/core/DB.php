@@ -16,13 +16,13 @@ class DB extends Singleton
     protected function __construct()
     {
         $evm = new \Doctrine\Common\EventManager;
-
-        // Table Prefix
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
+        $config->addCustomDatetimeFunction('MONTH', Month::class);
+        $config->addCustomDatetimeFunction('DAY', Day::class);
+
         $connection = DriverManager::getConnection([
             'driver' => 'pdo_mysql',
             'user' => env("DB_USER"),
@@ -31,8 +31,7 @@ class DB extends Singleton
             'host' => env("DB_HOST"),
             'charset' => 'utf8mb4',
         ], $config);
-        $config->addCustomDatetimeFunction('MONTH', Month::class);
-        $config->addCustomDatetimeFunction('DAY', Day::class);
+
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 

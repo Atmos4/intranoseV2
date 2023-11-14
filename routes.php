@@ -2,13 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
-// User control
-require_once app_path() . "/components/user_control.php";
-// Load env
-require_once base_path() . "/engine/load_env.php";
-
-// ---init services---
-OvhService::init(new OvhService(ovh_api()));
+require_once __DIR__ . "/engine/setup.php";
 
 // ---routes---
 Router::add('/', 'pages/index');
@@ -56,6 +50,7 @@ Router::add('/evenements/$event_id/participants', 'pages/events/event_entry_list
 Router::add('/mon-profil', 'pages/settings/settings');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', 'pages/settings/settings');
+// OVH Settings
 Router::add('/licencies/$user_id/ovh', 'pages/settings/ovh_settings');
 Router::add('/licencies/$user_id/ovh/redirections', 'pages/settings/ovh/redirections');
 Router::add('/licencies/$user_id/ovh/mailing', 'pages/settings/ovh/mailing');

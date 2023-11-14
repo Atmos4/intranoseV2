@@ -7,3 +7,5 @@
 + /assets/images/profile/none.jpg
 # Exclude the root folder /logs
 - /logs/
+# Exclude tests
+- /tests

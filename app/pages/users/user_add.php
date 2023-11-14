@@ -37,7 +37,7 @@ if ($v->valid()) {
         logger()->info("User {$new_user->id} created and activation email sent");
 
         // Optional: set up OVH redirection
-        OvhService::addUser($nose_email, $real_email->value);
+        OvhService::create()->addUser($nose_email, $real_email->value);
 
         Toast::success('Email envoyé!');
         redirect('/licencies');

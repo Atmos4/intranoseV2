@@ -14,7 +14,7 @@ if ($v->valid()) {
         $content = "Voici le lien pour réinitialiser votre mot de passe: $base_url/nouveau-mot-de-passe?token=$token->id";
 
         $result = Mailer::create()
-            ->to($user->real_email, $subject, $content)
+            ->createEmail($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
             logger()->info("User $user->id password reset email sent");

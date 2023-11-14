@@ -14,3 +14,4 @@ env.php
 
 # Logs
 /logs
+/tests/runtime

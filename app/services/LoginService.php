@@ -1,5 +1,5 @@
 <?php
-class AuthService
+class AuthService extends Service
 {
     static function tryLogin(string $login, string $password, Validator &$v)
     {

@@ -7,20 +7,13 @@ use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Monolog\Processor\WebProcessor;
 
-class IntraLogger extends Singleton
+class MainLogger extends StaticInstance
 {
     private Logger $logger;
 
-    protected function __construct()
+    public function __construct(Logger $logger = null)
     {
-        $this->logger = new Logger('main');
-        if (env('DEVELOPMENT')) {
-            $this->logger->pushHandler(new BrowserConsoleHandler(Level::Debug));
-        }
-        $this->logger->pushHandler(new StreamHandler(base_path() . '/logs/app.log'));
-
-        $this->logger->pushProcessor(new PsrLogMessageProcessor());
-        $this->logger->pushProcessor(new WebProcessor());
+        $this->logger = $logger;
     }
 
     static function get()
