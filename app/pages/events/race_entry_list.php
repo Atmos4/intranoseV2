@@ -29,7 +29,6 @@ page($race->name . " : Inscrits")->css("event_view.css");
                     <th scope="col">Nom</th>
                     <th scope="col">Prénom</th>
                     <th scope="col">Catégorie</th>
-                    <th scope="col">Surclassé</th>
                     <th scope="col">Remarques</th>
                 </tr>
             </thead>
@@ -45,9 +44,6 @@ page($race->name . " : Inscrits")->css("event_view.css");
                             </td>
                             <td class="center">
                                 <?= $entry->category ? $entry->category->name : "" ?>
-                            </td>
-                            <td class="center">
-                                <?= $entry->upgraded ? "Oui" : "Non" ?>
                             </td>
                             <td>
                                 <?= $entry->comment ?>

@@ -25,7 +25,6 @@ foreach ($event->races as $index => $race) {
     $race_entry = $race->entries[0] ?? null;
     if ($race_entry) {
         $form_values["race_{$index}_entry"] = $race_entry->present;
-        $form_values["race_{$index}_ranked_up"] = $race_entry->upgraded;
         $form_values["race_{$index}_comment"] = $race_entry->comment;
         $form_values["race_{$index}_category"] = $race_entry->category->id ?? "";
     }
@@ -41,7 +40,6 @@ $event_comment_noentry = $v->textarea("event_comment_noentry")->label("Remarque"
 $race_rows = [];
 foreach ($event->races as $index => $race) {
     $race_rows[$index]["entry"] = $v->switch("race_{$index}_entry")->set_labels("Je cours", "Je ne cours pas");
-    $race_rows[$index]["ranked_up"] = $v->switch("race_{$index}_ranked_up")->label("Surclassé");
     $race_rows[$index]["comment"] = $v->textarea("race_{$index}_comment")->label("Remarque");
     if (count($race->categories)) {
         $race_rows[$index]["category"] = $v->select("race_{$index}_category")->label("Catégorie")
@@ -77,7 +75,6 @@ if ($v->valid()) {
                 $user,
                 $race,
                 $race_present,
-                $race_present && $race_form["ranked_up"]->value,
                 $race_present ? $race_form["comment"]->value : "",
             );
             $race_entry->category = $race_present ? $race_category_map[$race_form["category"]->value] : null;
@@ -171,9 +168,6 @@ page("Inscription - " . $event->name)->css("event_view.css");
                                     <div class="col-sm-12 col-md-6">
                                         <div>
                                             <?= $race_form["entry"]->attributes(["onchange" => "toggleDisplay(this,'.raceToggle$index')"])->render() ?>
-                                        </div>
-                                        <div class="<?= $toggle_class ?>">
-                                            <?= $race_form["ranked_up"]->render() ?>
                                         </div>
                                     </div>
                                     <?php if (count($race->categories)): ?>
