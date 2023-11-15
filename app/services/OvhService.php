@@ -142,23 +142,23 @@ class OvhService extends ServiceBase
         switch ($action) {
             case "removeFromMailing":
                 $client->removeSubscriberFromMailingList($mailingList, $user->real_email);
-                $_SESSION['updatedMailingStatus'] = false;
+                $_SESSION['updatedMailingStatus'][$user->real_email] = false;
                 Toast::success("Retiré à la liste de diffusion");
                 break;
             case "addToMailing":
                 $client->addSubscriberToMailingList($mailingList, $user->real_email);
-                $_SESSION['updatedMailingStatus'] = true;
+                $_SESSION['updatedMailingStatus'][$user->real_email] = true;
                 Toast::success("Ajouté de la liste de diffusion");
                 break;
         }
 
         $realEmailIsSubscribed = $client->getMailingListSubscriber($mailingList, $user->real_email);
 
-        if (isset($_SESSION['updatedMailingStatus'])) {
-            if ($_SESSION['updatedMailingStatus'] !== !!$realEmailIsSubscribed) {
-                return [$_SESSION['updatedMailingStatus'], true];
+        if (isset($_SESSION['updatedMailingStatus']) and isset($_SESSION['updatedMailingStatus'][$user->real_email])) {
+            if ($_SESSION['updatedMailingStatus'][$user->real_email] !== !!$realEmailIsSubscribed) {
+                return [$_SESSION['updatedMailingStatus'][$user->real_email], true];
             } else {
-                unset($_SESSION['updatedMailingStatus']);
+                unset($_SESSION['updatedMailingStatus'][$user->real_email]);
             }
         }
         return [!!$realEmailIsSubscribed, false];
