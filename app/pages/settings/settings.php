@@ -58,8 +58,8 @@ $user_emails = [
     "nose_email" => $user->nose_email,
 ];
 $v_emails = new Validator($user_emails, action: "emails_form");
-$real_email = $v_emails->email("real_email")->label("Addresse mail perso")->placeholder();
-$nose_email = $v_emails->email("nose_email")->label("Addresse mail nose")->placeholder();
+$real_email = $v_emails->email("real_email")->label("Adresse mail perso")->placeholder();
+$nose_email = $v_emails->email("nose_email")->label("Adresse mail nose")->placeholder();
 
 $can_change_nose_email ? $nose_email->required() : $nose_email->readonly();
 $can_change_emails ? $real_email->required() : $real_email->readonly();

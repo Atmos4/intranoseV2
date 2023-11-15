@@ -4,7 +4,7 @@ restrict_access(Access::$EDIT_USERS);
 $v = new Validator([], "new_user_form");
 $last_name = $v->text("last_name")->label("Nom")->placeholder("Nom")->required();
 $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->required();
-$real_email = $v->email("real_email")->label("Addresse mail")->placeholder("Addresse mail")->required();
+$real_email = $v->email("real_email")->label("Adresse mail")->placeholder("Adresse mail")->required();
 $birthdate = $v->date("birthdate")->label("Date de naissance")->required();
 
 $permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "STAFF" => "Responsable"];
