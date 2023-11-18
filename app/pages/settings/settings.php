@@ -22,6 +22,8 @@ if (!$user) {
 $is_visiting |= Page::getInstance()->controlled;
 $can_reset_credentials = $is_visiting && check_auth([Permission::ROOT]) && $user->permission != Permission::ROOT;
 
+$can_change_permission = check_auth(Access::$EDIT_USERS) && $is_visiting;
+
 // Identity
 $user_infos = [
     "last_name" => $user->last_name,
@@ -29,6 +31,7 @@ $user_infos = [
     "gender" => $user->gender->value,
     "phone" => $user->phone,
     "birthdate" => date_format($user->birthdate, "Y-m-d"),
+    "permission" => $user->permission->value
 ];
 
 $v_infos = new Validator($user_infos, "identity_form");
@@ -38,11 +41,28 @@ $birthdate = $v_infos->date("birthdate")->label("Date de naissance")->required()
 $gender = $v_infos->text("gender")->label("Sexe");
 $phone = $v_infos->phone("phone")->label("Numéro de téléphone")->placeholder();
 
+if ($can_change_permission) {
+    $permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "STAFF" => "Administration"];
+    if (check_auth([Permission::ROOT])) {
+        $permissions_array["ROOT"] = "Big Boss";
+    }
+    $permission = $v_infos->select("permission")->options($permissions_array)->label("Rôle")->required();
+}
+
 if ($v_infos->valid()) {
     $user->set_identity($last_name->value, $first_name->value, Gender::from($gender->value));
 
     $user->phone = $phone->value;
     $user->birthdate = date_create($birthdate->value);
+    if ($can_change_permission) {
+        $oldLevel = $user->permission->value;
+        $user->permission = Permission::from($permission->value);
+        logger()->info("Permission changed for user {userId} from {oldLevel} to {newLevel}", [
+            "userId" => $user->id,
+            "oldLevel" => $oldLevel,
+            "newLevel" => $user->permission->value,
+        ]);
+    }
     em()->persist($user);
     em()->flush();
     Toast::create("Identité mise à jour !");
@@ -133,6 +153,9 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <div class="col-sm-12 col-md-6">
         <?= $birthdate->render() ?>
         <?= $phone->render() ?>
+        <?php if ($can_change_permission): ?>
+            <?= $permission->render() ?>
+        <?php endif ?>
     </div>
 
 

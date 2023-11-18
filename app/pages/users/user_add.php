@@ -7,13 +7,12 @@ $first_name = $v->text("first_name")->label("Prénom")->placeholder("Prénom")->
 $real_email = $v->email("real_email")->label("Adresse mail")->placeholder("Adresse mail")->required();
 $birthdate = $v->date("birthdate")->label("Date de naissance")->required();
 
-$permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "COACHSTAFF" => "Coach/Responsable", "GUEST" => "Guest", "STAFF" => "Responsable"];
-$user = User::getMain();
-if ($user->permission == Permission::ROOT) {
+$permissions_array = ["USER" => "Utilisateur", "COACH" => "Coach", "STAFF" => "Administration"];
+if (check_auth([Permission::ROOT])) {
     $permissions_array["ROOT"] = "Big Boss";
 }
 
-$permissions = $v->select("permissions")->options($permissions_array)->label("Permissions")->required();
+$permission = $v->select("permissions")->options($permissions_array)->label("Rôle")->required();
 
 if ($v->valid()) {
     // DB
@@ -24,7 +23,7 @@ if ($v->valid()) {
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
     $new_user->birthdate = date_create($birthdate->value);
     $new_user->set_email($real_email->value, $nose_email);
-    $new_user->permission = Permission::from($permissions->value);
+    $new_user->permission = Permission::from($permission->value);
     $new_user->set_login($login);
     $new_user->status = UserStatus::INACTIVE;
 
@@ -71,7 +70,7 @@ page("Nouveau licencié")->css("settings.css");
 
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
-        <?= $permissions->render() ?>
+        <?= $permission->render() ?>
     </div>
 
 </form>
