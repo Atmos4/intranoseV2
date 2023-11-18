@@ -162,11 +162,6 @@ page($event->name)->css("event_view.css");
                                         <?= $race_entry->category?->name ?>
                                     </li>
                                 <?php endif ?>
-                                <?php if ($race_entry?->upgraded): ?>
-                                    <li><span class="fa-li"><i class="fa fa-arrow-up"></i></span>
-                                        <b>Surclassé</b>
-                                    </li>
-                                <?php endif ?>
                             </ul>
                         </div>
                     </div>

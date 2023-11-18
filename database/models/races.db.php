@@ -25,17 +25,13 @@ class RaceEntry
     public bool $present = false;
 
     #[Column]
-    public bool $upgraded = false;
-
-    #[Column]
     public string $comment = "";
 
-    function set($user, $race, $present, $upgraded, $comment)
+    function set($user, $race, $present, $comment)
     {
         $this->user = $user;
         $this->race = $race;
         $this->present = $present;
-        $this->upgraded = $upgraded;
         $this->comment = $comment;
     }
 }

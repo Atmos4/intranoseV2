@@ -26,6 +26,7 @@ page($event->name . " : Inscrits")->css("event_view.css");
                     <th scope="col">Prénom</th>
                     <th scope="col">Transport</th>
                     <th scope="col">Hébergement</th>
+                    <th scope="col">Remarques</th>
                     <th scope="col">Courses</th>
                 </tr>
             </thead>
@@ -44,6 +45,9 @@ page($event->name . " : Inscrits")->css("event_view.css");
                             </td>
                             <td class="center">
                                 <?= $entry->accomodation ? "1" : "0" ?>
+                            </td>
+                            <td class="center">
+                                <?= $entry->comment ?>
                             </td>
                             <td>
                                 <?php
