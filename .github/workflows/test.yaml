@@ -1,4 +1,4 @@
-name: PHPUnit Tests
+name: Test
 
 on:
   pull_request:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   test:
-    name: Run PHPUnit Tests
     runs-on: ubuntu-latest
 
     services:
@@ -40,10 +39,14 @@ jobs:
         run: |
           echo "DB_USER=test_user" > .env
           echo "DB_PASSWORD=test_password" >> .env
-          echo "DB_HOST=localhost" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=3306" >> .env
           echo "TEST_DB_NAME=test_database" >> .env
           echo "DB_NAME=test_database" >> .env
+          echo "SKIP_TEST_DB_CREATE=yes" >> .env
+
+      - name: See if it works
+        run: php bin/test_db.php
 
       - name: Run PHPUnit
         run: php bin/phpunit

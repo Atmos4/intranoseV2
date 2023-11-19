@@ -1,7 +1,7 @@
 <?php
-class AuthService extends Service
+class AuthService extends FactoryDependency
 {
-    static function tryLogin(string $login, string $password, Validator &$v)
+    function tryLogin(string $login, string $password, Validator &$v)
     {
         $user = User::getByLogin($login);
         if ($user) {

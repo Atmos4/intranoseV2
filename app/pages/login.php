@@ -3,7 +3,7 @@ $v = new Validator();
 $login = $v->text("login")->placeholder("Login")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
 if ($v->valid()) {
-    AuthService::tryLogin($login->value, $password->value, $v);
+    AuthService::create()->tryLogin($login->value, $password->value, $v);
 }
 
 page("Login")->css("login.css")->disableNav()->heading(false);

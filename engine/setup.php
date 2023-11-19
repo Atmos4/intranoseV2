@@ -2,7 +2,12 @@
 // User control
 require_once app_path() . "/components/user_control.php";
 // Load env
-require_once base_path() . "/engine/load_env.php";
+$env = require_once base_path() . "/engine/load_env.php";
+
+$env->required('BASE_URL');
+$env->required('MAIL_HOST');
+$env->required('MAIL_USER');
+$env->required('MAIL_PASSWORD');
 
 // static
 $logger = new \Monolog\Logger('main');

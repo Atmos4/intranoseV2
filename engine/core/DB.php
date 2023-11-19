@@ -13,7 +13,7 @@ class DB extends SingletonDependency
 {
     private EntityManager $entityManager;
 
-    function __construct(array $connectionParams = [])
+    function __construct(Doctrine\DBAL\Connection $connection = null)
     {
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
@@ -23,14 +23,14 @@ class DB extends SingletonDependency
         $config->addCustomDatetimeFunction('MONTH', Month::class);
         $config->addCustomDatetimeFunction('DAY', Day::class);
 
-        $connection = DriverManager::getConnection([
+        $connection ??= DriverManager::getConnection([
             'driver' => 'pdo_mysql',
             'user' => env("DB_USER"),
             'password' => env("DB_PASSWORD"),
             'dbname' => env("DB_NAME"),
             'host' => env("DB_HOST"),
             'charset' => 'utf8mb4',
-        ] + $connectionParams, $config);
+        ], $config);
 
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
