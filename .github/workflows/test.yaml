@@ -43,6 +43,7 @@ jobs:
           echo "DB_HOST=localhost" >> .env
           echo "DB_PORT=3306" >> .env
           echo "TEST_DB_NAME=test_database" >> .env
+          echo "DB_NAME=test_database" >> .env
 
       - name: Run PHPUnit
         run: php bin/phpunit

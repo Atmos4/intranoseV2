@@ -9,11 +9,11 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use \Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 
-class DB extends Singleton
+class DB extends SingletonDependency
 {
     private EntityManager $entityManager;
 
-    protected function __construct()
+    function __construct(array $connectionParams = [])
     {
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
@@ -30,7 +30,7 @@ class DB extends Singleton
             'dbname' => env("DB_NAME"),
             'host' => env("DB_HOST"),
             'charset' => 'utf8mb4',
-        ], $config);
+        ] + $connectionParams, $config);
 
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
