@@ -1,6 +1,6 @@
 <?php
 /** Modified singleton. Needs to be initialized during config and then acts as a global object */
-class StaticInstance
+class InstanceDependency
 {
     private static $instances = [];
 
@@ -11,7 +11,7 @@ class StaticInstance
     }
 
     /** @param static $instance */
-    public static function init($instance)
+    public static function instance($instance)
     {
         self::$instances[static::class] ??= $instance;
     }

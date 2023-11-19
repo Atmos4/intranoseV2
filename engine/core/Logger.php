@@ -1,13 +1,7 @@
 <?php
-
-use Monolog\Handler\BrowserConsoleHandler;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
 use Monolog\Logger;
-use Monolog\Processor\PsrLogMessageProcessor;
-use Monolog\Processor\WebProcessor;
 
-class MainLogger extends StaticInstance
+class MainLogger extends InstanceDependency
 {
     private Logger $logger;
 

@@ -1,39 +1,36 @@
 <?php declare(strict_types=1);
-use PHPUnit\Framework\TestCase;
 
-final class OvhServiceTest extends TestCase
+final class OvhServiceTest extends BaseTestCase
 {
-    private function initTestOvhService(): OvhService
+    public function testRedirectionAndMailingAreAddedIfMissing(): void
     {
-        $mock = new class extends OvhMock {
-            function getMailingListSubscriber($list, $subscriberEmail)
-            {
-                return false;
-            }
-            function addSubscriberToMailingList($list, $subscriberEmail)
-            {
-                return true;
-            }
-            function getRedirection($from = "", $to = "")
-            {
-                return false;
-            }
-            function addRedirection($from = "", $to = "")
-            {
-                return true;
-            }
-        };
-        MainLogger::init(new MainLogger(new Monolog\Logger("")));
-        return new OvhService($mock);
-    }
-    public function testMethodWorks(): void
-    {
-        $service = $this->initTestOvhService();
+        $ovhClient = $this->createMock(OvhMock::class);
+        $ovhClient->expects($this->once())->method('getMailingListSubscriber')->willReturn(false);
+        $ovhClient->expects($this->once())->method('getRedirection')->willReturn(false);
+        $ovhClient->expects($this->once())->method('addSubscriberToMailingList')->willReturn(true);
+        $ovhClient->expects($this->once())->method('addRedirection')->willReturn(true);
+
+        $service = new OvhService($ovhClient);
         $service->addUser("test@example.com", "test@example.com");
 
-        // Assert
         $toasts = Toast::$toasts;
         $this->assertEquals(count($toasts), 2);
         $this->assertEquals($toasts[0]->message, "Redirection créée");
+    }
+
+    public function testRedirectionAndMailingAreSkippedIfAlreadyPresent(): void
+    {
+        $ovhClient = $this->createMock(OvhMock::class);
+        $ovhClient->expects($this->once())->method('getMailingListSubscriber')->willReturn(true);
+        $ovhClient->expects($this->once())->method('getRedirection')->willReturn(true);
+        # should never be called if the user already already has a redirection
+        $ovhClient->expects($this->never())->method('addSubscriberToMailingList');
+        $ovhClient->expects($this->never())->method('addRedirection');
+
+        $service = new OvhService($ovhClient);
+        $service->addUser("test@example.com", "test@example.com");
+
+        $toasts = Toast::$toasts;
+        $this->assertEquals(count($toasts), 0);
     }
 }

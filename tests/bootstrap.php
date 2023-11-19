@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
+require_once __DIR__ . '/BaseTestCase.php';
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
@@ -15,8 +16,9 @@ $connection = DriverManager::getConnection([
     'driver' => 'pdo_mysql',
     'user' => env("DB_USER"),
     'password' => env("DB_PASSWORD"),
-    'dbname' => 'intranose_test',
+    'dbname' => env("TEST_DB_NAME") ?? 'intranose_test',
     'host' => env("DB_HOST"),
+    'port' => env("DB_PORT") ?? "3306",
     'charset' => 'utf8mb4',
 ]);
 

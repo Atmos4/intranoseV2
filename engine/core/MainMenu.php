@@ -1,5 +1,5 @@
 <?php
-class MainMenu extends Service
+class MainMenu extends FactoryDependency
 {
 
     /** @var MainMenuItem[] */

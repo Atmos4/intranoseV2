@@ -1,11 +1,8 @@
 <?php
 use GuzzleHttp\Promise\Utils;
 
-class OvhService extends Service
+class OvhService extends FactoryDependency
 {
-    // TODO FIXME: remove
-    public static string $main_mailing_list = "nose";
-
     private string $mailingList;
     private OvhClientInterface $ovhClient;
 
@@ -84,7 +81,7 @@ class OvhService extends Service
 
             $count = $emailCounts[$user->id] = UserService::countUsersWithSameEmail($user->real_email);
             if (!$count) {
-                $promises["mailing_$user->id"] = $this->ovhClient->addSubscriberToMailingListAsync(self::$main_mailing_list, $user->real_email);
+                $promises["mailing_$user->id"] = $this->ovhClient->addSubscriberToMailingListAsync($this->mailingList, $user->real_email);
             } else {
                 Toast::info("Email utilisé, mailing non affecté");
             }
@@ -131,23 +128,22 @@ class OvhService extends Service
     function updateUserInNoseMailingList(User $user, $action)
     {
         $client = $this->ovhClient;
-        $mailingList = "nose";
 
         // The update takes about 15s on OVH's side. To prevent confusion we disable the action.
         switch ($action) {
             case "removeFromMailing":
-                $client->removeSubscriberFromMailingList($mailingList, $user->real_email);
+                $client->removeSubscriberFromMailingList($this->mailingList, $user->real_email);
                 $_SESSION['updatedMailingStatus'][$user->real_email] = false;
                 Toast::success("Retiré à la liste de diffusion");
                 break;
             case "addToMailing":
-                $client->addSubscriberToMailingList($mailingList, $user->real_email);
+                $client->addSubscriberToMailingList($this->mailingList, $user->real_email);
                 $_SESSION['updatedMailingStatus'][$user->real_email] = true;
                 Toast::success("Ajouté de la liste de diffusion");
                 break;
         }
 
-        $realEmailIsSubscribed = $client->getMailingListSubscriber($mailingList, $user->real_email);
+        $realEmailIsSubscribed = $client->getMailingListSubscriber($this->mailingList, $user->real_email);
 
         if (isset($_SESSION['updatedMailingStatus']) and isset($_SESSION['updatedMailingStatus'][$user->real_email])) {
             if ($_SESSION['updatedMailingStatus'][$user->real_email] !== !!$realEmailIsSubscribed) {
@@ -175,13 +171,13 @@ class OvhService extends Service
                 Toast::error("Erreur dans la mise à jour des redirections.");
             }
         }
-        if (!$client->getMailingListSubscriber(self::$main_mailing_list, $real_email) && !$emailCount) {
+        if (!$client->getMailingListSubscriber($this->mailingList, $real_email) && !$emailCount) {
             try {
-                $client->addSubscriberToMailingList(self::$main_mailing_list, $real_email);
-                logger()->info("New user got his email {$real_email} added to mailing list " . self::$main_mailing_list);
+                $client->addSubscriberToMailingList($this->mailingList, $real_email);
+                logger()->info("New user got his email {$real_email} added to mailing list " . $this->mailingList);
                 Toast::success("Utilisateur ajouté aux mailing lists");
             } catch (GuzzleHttp\Exception\ClientException $e) {
-                logger()->error("Error when adding user with email {$real_email} to the list " . self::$main_mailing_list, ["exception" => $e]);
+                logger()->error("Error when adding user with email {$real_email} to the list " . $this->mailingList, ["exception" => $e]);
                 Toast::error("Erreur dans la mise à jour des listes d'email.");
             }
         }

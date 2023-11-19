@@ -12,8 +12,7 @@ if (env('DEVELOPMENT')) {
 $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path() . '/logs/app.log'));
 $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
-MainLogger::init(new MainLogger($logger));
 
-// dependency injection
-OvhService::setFactory(fn() => new OvhService(ovh_api()));
-Mailer::setFactory(fn() => env('DEVELOPMENT') ? new MockMailer() : new Mailer());
+MainLogger::instance(new MainLogger($logger));
+OvhService::factory(fn() => new OvhService(ovh_api()));
+Mailer::factory(fn() => env('DEVELOPMENT') ? new MockMailer() : new Mailer());

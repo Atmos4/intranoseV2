@@ -22,7 +22,7 @@ class MailResult
     }
 }
 
-class Mailer extends Service
+class Mailer extends FactoryDependency
 {
     public PHPMailer $mail;
 
