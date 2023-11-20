@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: phpunit
     runs-on: ubuntu-latest
 
     services:
@@ -44,9 +45,6 @@ jobs:
           echo "TEST_DB_NAME=test_database" >> .env
           echo "DB_NAME=test_database" >> .env
           echo "SKIP_TEST_DB_CREATE=yes" >> .env
-
-      - name: See if it works
-        run: php bin/test_db.php
 
       - name: Run PHPUnit
         run: php bin/phpunit
