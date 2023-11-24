@@ -9,6 +9,10 @@ if (env('DEVELOPMENT')) {
 }
 $main_user = User::getMain();
 
+if (check_auth([Permission::ROOT])) {
+    $menu->addItem("Feedbacks", "/feedbacks_list", "fa-bug");
+}
+
 ?>
 <div id="nav-button">
     <button class="outline contrast" onclick="document.getElementById('mySidenav').classList.toggle('open')">
@@ -57,10 +61,12 @@ $main_user = User::getMain();
                 </li>
             <?php endif ?>
         </ul>
-        <ul>
-            <li>
-                <?php include app_path() . "/components/theme_switcher.php" ?>
-            </li>
-        </ul>
+        <div class="icon-buttons">
+            <?php include app_path() . "/components/theme_switcher.php" ?>
+            <a href="/feedbacks" role=button class="outline contrast" aria-label="auto" aria-live="polite"
+                title="Feedbacks">
+                <i class="fa fa-bug"></i>
+            </a>
+        </div>
     </nav>
 </aside>
