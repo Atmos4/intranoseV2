@@ -41,12 +41,14 @@ class OvhMock implements OvhClientInterface
 
     function getMailingLists()
     {
+        logger()->debug("OvhMock: get all mailing lists");
         return [
             "nose@nose42.fr"
         ];
     }
     function getMailingList($name)
     {
+        logger()->debug("OvhMock: get details for mailing list $name");
         return [
             "id" => 0,
             "language" => "fr",
@@ -64,19 +66,21 @@ class OvhMock implements OvhClientInterface
     }
     function getMailingListSubscribers($list)
     {
+        logger()->debug("OvhMock: get all subscribers to {mailingList}", ["mailingList" => $list]);
         return [
             "string"
         ];
     }
     function getMailingListSubscriber($list, $subscriberEmail)
     {
+        logger()->debug("OvhMock: get {subscriberEmail} in {list}", ["subscriberEmail" => $subscriberEmail, "list" => $list]);
         return [
             "0" => "mock"
         ];
     }
     function addSubscriberToMailingList($list, $subscriberEmail)
     {
-        logger()->debug("OvhMock: $subscriberEmail added to $list");
+        logger()->debug("OvhMock: {subscriberEmail} added to {list}", ["subscriberEmail" => $subscriberEmail, "list" => $list]);
         return [
             "account" => "string",
             "action" => "add",
@@ -88,51 +92,38 @@ class OvhMock implements OvhClientInterface
     }
     function removeSubscriberFromMailingList($list, $subscriberEmail)
     {
-        throw new GuzzleHttp\Exception\ClientException(
-            "Error adding redirection",
-            new GuzzleHttp\Psr7\Request('POST', 'http://example.com'),
-            new GuzzleHttp\Psr7\Response(400, [], 'Bad Request')
-        );
-        /* return [
+        logger()->debug("OvhMock: $subscriberEmail removed from $list");
+        return [
             "account" => "string",
             "action" => "delete",
             "date" => "2023-10-23T07:25:35.113Z",
             "domain" => "string",
             "id" => 0,
             "language" => "fr"
-        ]; */
+        ];
     }
 
     // redirections
     function getRedirection($from = "", $to = "")
     {
-        // We check if the user exists in the DB.
-        return em()
-            ->createQuery("SELECT COUNT(u) FROM User u WHERE u.nose_email=:email")
-            ->setParameter("email", $from)
-            ->getSingleScalarResult();
+        logger()->debug("OvhMock: get redirection from {from} to {to}", ["from" => $from, "to" => $to]);
+        return true;
     }
     function addRedirection($from = "", $to = "")
     {
-        if ($this->checkFromEmail($to, "add")) {
-            throw new GuzzleHttp\Exception\ClientException(
-                "Error adding redirection",
-                new GuzzleHttp\Psr7\Request('POST', 'http://example.com'),
-                new GuzzleHttp\Psr7\Response(400, [], 'Bad Request')
-            );
-        } else {
-            return [
-                "account" => "string",
-                "action" => "add",
-                "date" => "2023-10-23T07:45:30.236Z",
-                "domain" => "string",
-                "id" => "string",
-                "type" => "25g"
-            ];
-        }
+        logger()->debug("OvhMock: add redirection from {from} to {to}", ["from" => $from, "to" => $to]);
+        return [
+            "account" => "string",
+            "action" => "add",
+            "date" => "2023-10-23T07:45:30.236Z",
+            "domain" => "string",
+            "id" => "string",
+            "type" => "25g"
+        ];
     }
     function removeRedirection($from = "", $to = "")
     {
+        logger()->debug("OvhMock: removed redirection from {from} to {to}", ["from" => $from, "to" => $to]);
         return [
             "account" => "string",
             "action" => "delete",
@@ -143,13 +134,6 @@ class OvhMock implements OvhClientInterface
         ];
     }
 
-    function checkFromEmail($email, $string)
-    {
-        // Helper function to test exceptions
-        $parts = explode('@', $email);
-        $firstPart = $parts[0];
-        return strpos($firstPart, $string) === 0;
-    }
     function getRedirectionById($id)
     {
         return "todo fixme $id";
@@ -157,6 +141,7 @@ class OvhMock implements OvhClientInterface
 
     function getMailingListSubscriberAsync($list, $subscriberEmail): PromiseInterface
     {
+        logger()->debug("OvhMock: ASYNC get {subscriberEmail} in {list}", ["subscriberEmail" => $subscriberEmail, "list" => $list]);
         $promise = new Promise();
         $promise->resolve("OK");
         return $promise;
@@ -164,6 +149,7 @@ class OvhMock implements OvhClientInterface
 
     function getRedirectionAsync($from = '', $to = ''): PromiseInterface
     {
+        logger()->debug("OvhMock: ASYNC get redirection from {from} to {to}", ["from" => $from, "to" => $to]);
         $promise = new Promise();
         $promise->resolve("OK");
         return $promise;
@@ -171,6 +157,7 @@ class OvhMock implements OvhClientInterface
 
     function addRedirectionAsync($from, $to): PromiseInterface
     {
+        logger()->debug("OvhMock: ASYNC add redirection from {from} to {to}", ["from" => $from, "to" => $to]);
         $promise = new Promise();
         $promise->resolve("OK");
         return $promise;
@@ -178,6 +165,7 @@ class OvhMock implements OvhClientInterface
 
     function addSubscriberToMailingListAsync($list, $subscriberEmail): PromiseInterface
     {
+        logger()->debug("OvhMock: ASYNC add {subscriberEmail} in {list}", ["subscriberEmail" => $subscriberEmail, "list" => $list]);
         $promise = new Promise();
         $promise->resolve("OK");
         return $promise;

@@ -13,7 +13,7 @@ if ($v->valid()) {
     em()->flush();
 
     $result = Mailer::create()
-        ->to($address->value, $subject->value, $content->value)
+        ->createEmail($address->value, $subject->value, $content->value)
         ->send();
     if ($result->success) {
         $v->set_success('Message has been sent');

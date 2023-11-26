@@ -9,21 +9,21 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use \Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 
-class DB extends Singleton
+class DB extends SingletonDependency
 {
     private EntityManager $entityManager;
 
-    protected function __construct()
+    function __construct(Doctrine\DBAL\Connection $connection = null)
     {
         $evm = new \Doctrine\Common\EventManager;
-
-        // Table Prefix
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
-        $connection = DriverManager::getConnection([
+        $config->addCustomDatetimeFunction('MONTH', Month::class);
+        $config->addCustomDatetimeFunction('DAY', Day::class);
+
+        $connection ??= DriverManager::getConnection([
             'driver' => 'pdo_mysql',
             'user' => env("DB_USER"),
             'password' => env("DB_PASSWORD"),
@@ -31,8 +31,7 @@ class DB extends Singleton
             'host' => env("DB_HOST"),
             'charset' => 'utf8mb4',
         ], $config);
-        $config->addCustomDatetimeFunction('MONTH', Month::class);
-        $config->addCustomDatetimeFunction('DAY', Day::class);
+
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 

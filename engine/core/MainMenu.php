@@ -1,9 +1,14 @@
 <?php
-class MainMenu extends Singleton
+class MainMenu extends FactoryDependency
 {
 
     /** @var MainMenuItem[] */
     public array $items;
+
+    function __construct()
+    {
+        $this->items = [];
+    }
 
     function addItem(
         string $label,

@@ -1,19 +1,17 @@
 <?php
-// Note: this is heavily inspired from the singleton pattern, but without most of the drawbacks.
-
-/** Base for all services. The instance needs to be boostrapped first, then can be used globally. */
-class ServiceBase
+/** Modified singleton. Needs to be initialized during config and then acts as a global object */
+class InstanceDependency
 {
     private static $instances = [];
 
     public static function getInstance(): static
     {
         $cls = static::class;
-        return self::$instances[$cls] ?? throw new Exception("Service $cls not initialized");
+        return self::$instances[$cls] ?? throw new Exception("Instance $cls not initialized");
     }
 
     /** @param static $instance */
-    public static function init($instance)
+    public static function instance($instance)
     {
         self::$instances[static::class] ??= $instance;
     }

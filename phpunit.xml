@@ -1,0 +1,5 @@
+<phpunit bootstrap="tests/bootstrap.php" cacheResultFile="tests/runtime/.phpunit.result.cache">
+    <testsuite name="integration">
+        <directory>tests/integration</directory>
+    </testsuite>
+</phpunit>

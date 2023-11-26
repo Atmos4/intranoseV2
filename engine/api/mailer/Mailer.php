@@ -22,33 +22,27 @@ class MailResult
     }
 }
 
-class Mailer
+class Mailer extends FactoryDependency
 {
     public PHPMailer $mail;
 
     // Only allow new instance with create() function
-    private function __construct()
+    function __construct()
     {
+        $this->mail = new PHPMailer();
+        $this->mail->CharSet = "UTF-8";
+        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
+        $this->mail->isSMTP();
+        $this->mail->Host = env("MAIL_HOST");
+        $this->mail->SMTPAuth = true;
+        $this->mail->Username = env("MAIL_USER");
+        $this->mail->Password = env("MAIL_PASSWORD");
+        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $this->mail->Port = 465;
+        $this->mail->setFrom(env("MAIL_USER"));
     }
 
-    static function create(): self
-    {
-        $instance = new Mailer();
-        $instance->mail = new PHPMailer();
-        $instance->mail->CharSet = "UTF-8";
-        $instance->mail->SMTPDebug = SMTP::DEBUG_OFF;
-        $instance->mail->isSMTP();
-        $instance->mail->Host = env("MAIL_HOST");
-        $instance->mail->SMTPAuth = true;
-        $instance->mail->Username = env("MAIL_USER");
-        $instance->mail->Password = env("MAIL_PASSWORD");
-        $instance->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $instance->mail->Port = 465;
-        $instance->mail->setFrom(env("MAIL_USER"));
-        return $instance;
-    }
-
-    function to($address, $subject, $content): self
+    function createEmail($address, $subject, $content): self
     {
         $this->mail->addAddress($address);
         $this->mail->Subject = $subject;
@@ -87,6 +81,6 @@ class MailerFactory
         $base_url = env("BASE_URL");
         $subject = "Activation du compte NOSE";
         $content = "Voici le lien pour activer ton compte: $base_url/activation?token=$token";
-        return Mailer::create()->to($address, $subject, $content);
+        return Mailer::create()->createEmail($address, $subject, $content);
     }
 }

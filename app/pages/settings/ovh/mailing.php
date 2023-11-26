@@ -8,7 +8,7 @@ require_once __DIR__ . "/SubmitButton.php";
 $user_id = get_route_param("user_id");
 $user = User::get($user_id) ?? throw new Exception("user not found");
 
-[$isSubscribed, $polling] = OvhService::updateUserInNoseMailingList($user, $_POST['action'] ?? null);
+[$isSubscribed, $polling] = OvhService::create()->updateUserInNoseMailingList($user, $_POST['action'] ?? null);
 
 ?>
 <form data-loading-states class="col-sm-12 col-md-6" method="post" hx-indicator="this"

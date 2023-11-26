@@ -2,37 +2,19 @@
 <?php
 
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
-use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
-// Load env
 require_once __DIR__ . '/../engine/load_env.php';
 
-$config = new ConfigurationArray([
-    'table_storage' => [
-        'table_name' => 'doctrine_migration_versions',
-        'version_column_name' => 'version',
-        'version_column_length' => 191,
-        'executed_at_column_name' => 'executed_at',
-        'execution_time_column_name' => 'execution_time',
-    ],
+$configFile = new PhpFile(__DIR__ . "../database/config/migrations.php");
+$deps = DependencyFactory::fromEntityManager($configFile, new ExistingEntityManager(em()));
 
-    'migrations_paths' => [
-        'intranose\Migrations' => 'database/migrations',
-    ],
-
-    'all_or_nothing' => true,
-    'transactional' => true,
-    'check_database_platform' => true,
-]);
-
-$deps = DependencyFactory::fromEntityManager($config, new ExistingEntityManager(em()));
-
-$commands = [
+ConsoleRunner::run(new SingleManagerProvider(em()), [
     new Command\ExecuteCommand($deps),
     new Command\GenerateCommand($deps),
     new Command\MigrateCommand($deps),
@@ -42,6 +24,4 @@ $commands = [
     new Command\RollupCommand($deps),
     new Command\VersionCommand($deps),
     new Command\LatestCommand($deps),
-
-];
-ConsoleRunner::run(new SingleManagerProvider(em()), $commands);
+]);

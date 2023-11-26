@@ -31,5 +31,8 @@
     ],
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",
     "db:diff": "@php bin/doctrine --no-interaction migrations:diff"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.4"
   }
 }
