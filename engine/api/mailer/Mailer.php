@@ -40,6 +40,15 @@ class Mailer extends FactoryDependency
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $this->mail->Port = 465;
         $this->mail->setFrom(env("MAIL_USER"));
+
+        // DKIM - not using for now
+        if (env("USE_DKIM")) {
+            $this->mail->DKIM_domain = env("DKIM_DOMAIN");
+            $this->mail->DKIM_private = base_path() . "/.secrets/" . env("DKIM_FILENAME"); // Make sure to protect the key from being publicly accessible!
+            $this->mail->DKIM_selector = env("DKIM_SELECTOR");
+            $this->mail->DKIM_passphrase = env("DKIM_PASSPHRASE");
+            $this->mail->DKIM_identity = $this->mail->From;
+        }
     }
 
     function createEmail($address, $subject, $content): self

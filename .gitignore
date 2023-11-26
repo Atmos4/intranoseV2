@@ -11,6 +11,7 @@ app/uploads/shared_docs/*
 # Env
 env.php
 .env
+/.secrets
 
 # Logs
 /logs

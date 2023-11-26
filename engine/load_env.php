@@ -5,4 +5,12 @@ $dotenv->required('DB_NAME');
 $dotenv->required('DB_USER');
 $dotenv->required('DB_PASSWORD');
 $dotenv->ifPresent('DEVELOPMENT')->isBoolean();
+
+$dotenv->ifPresent('USE_DKIM')->isBoolean();
+if (env("USE_DKIM")) {
+    $dotenv->required("DKIM_DOMAIN");
+    $dotenv->required("DKIM_SELECTOR");
+    $dotenv->required("DKIM_PASSPHRASE");
+    $dotenv->required("DKIM_FILENAME");
+}
 return $dotenv; // if need to change things in specific execution envs.
