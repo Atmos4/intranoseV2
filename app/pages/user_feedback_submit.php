@@ -2,16 +2,16 @@
 restrict_access();
 $user = User::getMain();
 $v = new Validator();
-$description = $v->textarea("description")->placeholder("Description")->required();
+$description = $v->textarea("description")->placeholder("Description")->attributes(['height' => '200px'])->required();
 
 if ($v->valid()) {
-    $new_feedback = new Feedback();
-    $new_feedback->user = $user;
-    $new_feedback->description = $description->value;
-    em()->persist($new_feedback);
+    $new_user_feedback = new UserFeedback();
+    $new_user_feedback->user = $user;
+    $new_user_feedback->description = $description->value;
+    em()->persist($new_user_feedback);
     em()->flush();
     Toast::success("Merci pour votre retour !");
-    redirect("/feedbacks");
+    redirect("/feedback");
 }
 
 

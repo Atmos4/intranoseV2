@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 
-#[Entity, Table(name: 'feedbacks')]
-class Feedback
+#[Entity, Table(name: 'user_feedbacks')]
+class UserFeedback
 {
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
@@ -16,11 +16,7 @@ class Feedback
     #[ManyToOne(targetEntity: User::class)]
     public User|null $user = null;
 
-    #[Column]
+    #[Column(type: 'text')]
     public string $description = "";
-
-    function __construct()
-    {
-    }
 
 }

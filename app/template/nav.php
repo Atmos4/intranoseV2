@@ -10,7 +10,7 @@ if (env('DEVELOPMENT')) {
 $main_user = User::getMain();
 
 if (check_auth([Permission::ROOT])) {
-    $menu->addItem("Feedbacks", "/feedbacks_list", "fa-bug");
+    $menu->addItem("Feedbacks", "/feedback-list", "fa-bug");
 }
 
 ?>
@@ -63,8 +63,7 @@ if (check_auth([Permission::ROOT])) {
         </ul>
         <div class="icon-buttons">
             <?php include app_path() . "/components/theme_switcher.php" ?>
-            <a href="/feedbacks" role=button class="outline contrast" aria-label="auto" aria-live="polite"
-                title="Feedbacks">
+            <a href="/feedback" role=button class="outline contrast" title="Bugs et suggestion">
                 <i class="fa fa-bug"></i>
             </a>
         </div>
