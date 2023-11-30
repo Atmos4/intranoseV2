@@ -41,7 +41,7 @@
 .theme-toggle {
   --size: 1.5rem;
   box-shadow: none;
-  margin-left: auto;
+  margin-bottom: 0;
 }
 
 #hx-indicator {

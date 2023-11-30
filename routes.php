@@ -79,6 +79,11 @@ Router::add('/nouveau-mot-de-passe', 'pages/tokens/reset_password.php');
 // Router::add('/documents', 'pages/shared_documents');
 // Router::add('/download_shared_files', 'uploads/shared_docs/download_shared_file');
 
+//Report
+Router::add('/feedback', 'pages/user_feedback_submit');
+Router::add('/feedback-list', 'pages/user_feedback_list');
+Router::add('/feedback-list/supprimer/$user_id', 'pages/user_feedback_list');
+
 // Logout
 Router::add('/logout', function () {
     session_destroy();
