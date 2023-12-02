@@ -10,8 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     if ($user_feedback) {
         em()->remove($user_feedback);
         em()->flush();
-        // Send a response
-        http_response_code(200);
         Toast::success("Le feedback a été supprimé");
         return;
     }
@@ -20,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 // Get all the bug reports
 $user_feedbacks = em()->getRepository(UserFeedback::class)->findAll();
 
-page("Feedbaks")->css('user_feedback_list.css') ?>
+page("Feedbacks")->css('user_feedback_list.css') ?>
 
-<article hx-confirm="Are you sure?" hx-target="closest div#row" hx-swap="outerHTML">
+<article hx-confirm="Sûr de vouloir supprimer ?" hx-target="closest #row">
     <?php foreach ($user_feedbacks as $user_feedback): ?>
 
         <div id="row">

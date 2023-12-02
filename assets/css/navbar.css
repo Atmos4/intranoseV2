@@ -79,7 +79,21 @@ body > main > .spacing-div {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
+  padding: 0 1rem 1rem;
+}
+.icon-buttons > .feedback {
+  border: none;
+  width: 1.4rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+}
+/* theme toggle */
+.icon-buttons > .theme-toggle {
+  --size: 1.4rem;
+  line-height: 1rem;
+  margin: 0;
 }
 
 .sidenav.open {
