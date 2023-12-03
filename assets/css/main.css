@@ -37,13 +37,6 @@
   --card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* theme toggle */
-.theme-toggle {
-  --size: 1.5rem;
-  box-shadow: none;
-  margin-bottom: 0;
-}
-
 #hx-indicator {
   position: fixed;
   top: 0.8rem;

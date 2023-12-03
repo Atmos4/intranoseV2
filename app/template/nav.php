@@ -63,8 +63,8 @@ if (check_auth([Permission::ROOT])) {
         </ul>
         <div class="icon-buttons">
             <?php include app_path() . "/components/theme_switcher.php" ?>
-            <a href="/feedback" role=button class="outline contrast" title="Bugs et suggestion">
-                <i class="fa fa-bug"></i>
+            <a href="/feedback" role=button class="outline contrast feedback" title="Bugs et suggestion">
+                <i class="fa fa-bug fa-lg"></i>
             </a>
         </div>
     </nav>
