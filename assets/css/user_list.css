@@ -16,3 +16,6 @@
   border-radius: 50px;
   margin-right: 1em;
 }
+.row .card > a {
+  width: fit-content;
+}
