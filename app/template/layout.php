@@ -18,7 +18,7 @@ $page = Page::getInstance(); ?>
     <link rel="manifest" href="/assets/favicon/site.webmanifest">
     <link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#28b432">
     <meta name="msapplication-TileColor" content="#00a300">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#14a91b">
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="/assets/css/fontawesome.min.css">
