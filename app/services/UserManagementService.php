@@ -1,17 +1,18 @@
 <?php
 class UserManagementService
 {
-    static function changeEmails($user, $v_infos, string $newNoseEmail, string $newRealEmail)
+    static function changeEmails($user, ?string $newNoseEmail, string $newRealEmail)
     {
         $oldRealEmail = $user->real_email;
         $user->real_email = $newRealEmail;
-        $user->nose_email = $newNoseEmail;
+        if ($newNoseEmail)
+            $user->nose_email = $newNoseEmail;
 
         $family_members = [];
 
         if ($user->family?->id) {
             $family_members = em()->createQuery(
-                "SELECT u FROM User u 
+                "SELECT COUNT(u) FROM User u 
                 WHERE u.family = :family_id 
                 AND u.real_email = :real_email 
                 AND u.id != :user_id"
@@ -21,9 +22,9 @@ class UserManagementService
                     "family_id" => $user->family->id,
                     "user_id" => $user->id
                 ])
-                ->getResult();
+                ->getSingleScalarResult();
             if ($family_members) {
-                Toast::info("Votre famille contient $family_members->count membres avec un email similaire !");
+                Toast::info("Votre famille contient $family_members membres avec un email similaire !");
             }
         }
         em()->flush();

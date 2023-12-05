@@ -69,7 +69,6 @@ if ($v_infos->valid()) {
 }
 
 // Emails
-// TODO: change this to include more admins or remove once it's stable enough
 $can_change_nose_email = check_auth([Permission::ROOT]);
 $can_change_emails = check_auth(Access::$EDIT_USERS);
 
@@ -84,8 +83,8 @@ $nose_email = $v_emails->email("nose_email")->label("Adresse mail nose")->placeh
 $can_change_nose_email ? $nose_email->required() : $nose_email->readonly();
 $can_change_emails ? $real_email->required() : $real_email->readonly();
 
-if ($v_emails->valid() && $can_change_nose_email) {
-    UserManagementService::changeEmails($user, $v_emails, $nose_email->value, $real_email->value);
+if ($v_emails->valid() && $can_change_emails) {
+    UserManagementService::changeEmails($user, $can_change_nose_email ? $nose_email->value : null, $real_email->value);
 }
 
 // Picture
