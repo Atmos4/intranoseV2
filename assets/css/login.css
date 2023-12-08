@@ -13,3 +13,18 @@ body > main {
     max-width: 700px;
   }
 }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  text-align: center;
+  align-items: center;
+}
+
+.help {
+  margin-bottom: var(--spacing);
+}
+
+.help::before {
+  white-space: pre;
+}

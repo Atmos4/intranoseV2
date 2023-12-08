@@ -11,7 +11,11 @@ page("Login")->css("login.css")->disableNav()->heading(false);
 <article>
     <form method="post" hx-boost="false">
         <h2 class="center">Intranose</h2>
-        <?= $login->render() ?>
+        <div class="grid">
+            <?= $login->render() ?>
+            <a href="#" class="help" data-tooltip="Même login que sur l'ancien site : &#xa; dupont_a pour André Dupont"
+                data-placement="left"><i class="fas fa-circle-info"></i></a>
+        </div>
         <?= $password->render() ?>
         <?= $v->render_validation() ?>
         <button type="submit">Se connecter</button>
