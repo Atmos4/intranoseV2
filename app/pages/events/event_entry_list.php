@@ -10,7 +10,7 @@ page($event->name . " : Inscrits")->css("event_view.css");
 <nav id="page-actions">
     <a href="/evenements/<?= $event->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
     <?php if ($event->open): ?>
-        <button onclick="selectTable()">Selectionner le tableau</button>
+        <button onclick="selectTable()">Copier le tableau</button>
     <?php endif ?>
 </nav>
 <?php if (!$event->open): ?>
