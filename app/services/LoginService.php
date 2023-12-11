@@ -44,4 +44,12 @@ class AuthService extends FactoryDependency
         logger()->info("Login failed: not found", ["login" => $login]);
         $v->set_error("Utilisateur non trouvé");
     }
+
+    function createActivationLink(User $user): string
+    {
+        $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+        em()->persist($token);
+        em()->flush();
+        return env("BASE_URL") . "/activation?token=$token->id";
+    }
 }

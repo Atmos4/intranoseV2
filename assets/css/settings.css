@@ -17,3 +17,9 @@
   bottom: 10px;
   right: 10px;
 }
+
+.grid-clip {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-column-gap: var(--grid-spacing-horizontal);
+}

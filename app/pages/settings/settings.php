@@ -261,3 +261,67 @@ if ($v_password->valid()) {
         </form>
     </div>
 <?php endif ?>
+
+
+<?php if ($is_visiting && $can_reset_credentials && $user?->status == UserStatus::INACTIVE): ?>
+    <hr>
+    <?php
+    $v_activation = new Validator(action: "activation_form");
+    $activationLink = "";
+    if ($v_activation->valid()) {
+        // Generate activation link
+        $activationLink = AuthService::create()->createActivationLink($user);
+    }
+    ?>
+    <div class="row">
+        <form method="post" hx-swap="innerHTML show:#activation:top" class="col-sm-12 col-md-6 align-end">
+            <h2 id="activation">Activation</h2>
+            <?= $v_activation->render_validation() ?>
+            <input type="submit" class="outline" name="createLink" value="Créer le lien">
+        </form>
+        <div class="grid-clip">
+            <input id="clip_text" type="text" value="<?= $activationLink ?>">
+            <button onclick="copyToClipboard(htmx.find(this.parentElement, 'input').value)
+            .then(()=>{
+                htmx.removeClass(htmx.find(this, 'i'),'fa-clipboard')
+                htmx.addClass(htmx.find(this, 'i'), 'fa-check')
+                htmx.addClass(htmx.find(this, 'i'), 'fa-clipboard', 5000)
+                htmx.removeClass(htmx.find(this, 'i'), 'fa-check', 5000)
+                span = htmx.find('#clip-result')
+                span.innerHTML = 'Lien copié !'
+                htmx.addClass(span, 'success')
+            })">
+                <i class="fa fa-clipboard"></i>
+            </button>
+        </div>
+        <span id="clip-result"></span>
+    </div>
+<?php endif ?>
+
+<script>
+    async function copyToClipboard(textToCopy) {
+        // Navigator clipboard api needs a secure context (https)
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(textToCopy);
+        } else {
+            // Use the 'out of viewport hidden text area' trick
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+
+            // Move textarea out of the viewport so it's not visible
+            textArea.style.position = "absolute";
+            textArea.style.left = "-999999px";
+
+            document.body.prepend(textArea);
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+            } catch (error) {
+                console.error(error);
+            } finally {
+                textArea.remove();
+            }
+        }
+    }
+</script>

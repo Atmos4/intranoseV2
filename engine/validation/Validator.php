@@ -71,7 +71,6 @@ class Validator
             } elseif ($this->valid() && $this->success) {
                 $result .= "<ins>$this->success</ins><br>";
             }
-            $result .= "<br/>";
         }
         return $result;
     }
