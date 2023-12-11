@@ -275,7 +275,12 @@ if ($v_password->valid()) {
     ?>
     <div class="row">
         <form method="post" hx-swap="innerHTML show:#activation:top" class="col-sm-12 col-md-6 align-end">
-            <h2 id="activation">Activation</h2>
+            <div class=activation-header>
+                <h2 id="activation">Activation</h2>
+                <ins tabindex="0" class="help"
+                    data-tooltip="A n'utiliser qu'en cas de problème &#xa; avec les emails d'activation"><i
+                        class="fas fa-circle-info"></i></ins>
+            </div>
             <?= $v_activation->render_validation() ?>
             <input type="submit" class="outline" name="createLink" value="Créer le lien">
         </form>
@@ -298,30 +303,4 @@ if ($v_password->valid()) {
     </div>
 <?php endif ?>
 
-<script>
-    async function copyToClipboard(textToCopy) {
-        // Navigator clipboard api needs a secure context (https)
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(textToCopy);
-        } else {
-            // Use the 'out of viewport hidden text area' trick
-            const textArea = document.createElement("textarea");
-            textArea.value = textToCopy;
-
-            // Move textarea out of the viewport so it's not visible
-            textArea.style.position = "absolute";
-            textArea.style.left = "-999999px";
-
-            document.body.prepend(textArea);
-            textArea.select();
-
-            try {
-                document.execCommand('copy');
-            } catch (error) {
-                console.error(error);
-            } finally {
-                textArea.remove();
-            }
-        }
-    }
-</script>
+<script src="/assets/js/copy-clipboard.js"></script>
