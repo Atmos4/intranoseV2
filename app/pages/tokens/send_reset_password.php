@@ -17,11 +17,11 @@ if ($v->valid()) {
             ->createEmail($user->real_email, $subject, $content)
             ->send();
         if ($result->success) {
-            logger()->info("User $user->login password reset email sent");
+            logger()->info("User {login} password reset email sent", ["login" => $user->login]);
             $v->set_success("Mail envoyé à l'adresse " . MailHelper::obfuscate($user->real_email));
             em()->flush();
         } else {
-            logger()->warning("User $user->login password reset email failed to send");
+            logger()->warning("User {login} password reset email failed to send", ["login" => $user->login]);
             $v->set_error($result->message);
         }
     } else {

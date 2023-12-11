@@ -164,7 +164,7 @@ class OvhService extends FactoryDependency
         if (!$client->getRedirection($nose_email, $real_email)) {
             try {
                 $client->addRedirection($nose_email, $real_email);
-                logger()->info("New user got his redirection {$nose_email} -> {$real_email} added");
+                logger()->info("New user got his redirection {noseEmail} -> {realEmail} added", ["noseEmail" => $nose_email, "realEmail" => $real_email]);
                 Toast::success("Redirection créée");
             } catch (GuzzleHttp\Exception\ClientException $e) {
                 logger()->error("Error with redirections", ["exception" => $e]);
@@ -174,10 +174,10 @@ class OvhService extends FactoryDependency
         if (!$client->getMailingListSubscriber($this->mailingList, $real_email) && !$emailCount) {
             try {
                 $client->addSubscriberToMailingList($this->mailingList, $real_email);
-                logger()->info("New user got his email {$real_email} added to mailing list " . $this->mailingList);
+                logger()->info("New user got his email {realEmail} added to mailing list {mailingList}", ["realEmail" => $real_email, "mailingList" => $this->mailingList]);
                 Toast::success("Utilisateur ajouté aux mailing lists");
             } catch (GuzzleHttp\Exception\ClientException $e) {
-                logger()->error("Error when adding user with email {$real_email} to the list " . $this->mailingList, ["exception" => $e]);
+                logger()->error("Error when adding user with email {realEmail} to the list {mailingList}", ["exception" => $e, "realEmail" => $real_email, "mailingList" => $this->mailingList]);
                 Toast::error("Erreur dans la mise à jour des listes d'email.");
             }
         }
