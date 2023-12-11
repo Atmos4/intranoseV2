@@ -34,7 +34,7 @@ class OvhService extends FactoryDependency
                 if ($this->ovhClient->getMailingListSubscriber($list, $user->real_email)) {
                     try {
                         $this->ovhClient->removeSubscriberFromMailingList($list, $user->real_email);
-                        logger()->info("User {$user->id} removed from mailing list {$list})");
+                        logger()->info("User {$user->login} removed from mailing list {$list})");
                     } catch (GuzzleHttp\Exception\ClientException $e) {
                         logger()->error("Error with email list", ["exception" => $e]);
                         Toast::error("Erreur dans la mise à jour des listes d'email");
@@ -58,8 +58,8 @@ class OvhService extends FactoryDependency
             return false;
         }
 
-        logger()->info("User {deactivatedUserId} deactivated by {mainUserId} ", [
-            "deactivatedUserId" => $user->id,
+        logger()->info("User {deactivatedUserLogin} deactivated by {mainUserId} ", [
+            "deactivatedUserLogin" => $user->login,
             "mainUserId" => User::getMainUserId(),
         ]);
         Toast::success("Utilisateur désactivé");
@@ -95,19 +95,19 @@ class OvhService extends FactoryDependency
             $redirectionResponse = $responses["redirection_$user->id"];
             if ($redirectionResponse['state'] === "rejected") {
                 logger()->error(
-                    "Error with redirection for {userId}",
-                    ["exception" => $redirectionResponse, "userId" => $user->id]
+                    "Error with redirection for {login}",
+                    ["exception" => $redirectionResponse, "login" => $user->login]
                 );
                 Toast::error("Erreur: redirection");
                 $anyError = true;
             }
 
             if (!$emailCounts[$user->id]) {
-                $mailingResponse = $responses["mailing_$user->id"];
+                $mailingResponse = $responses["mailing_$user->login"];
                 if ($mailingResponse['state'] === "rejected") {
                     logger()->error(
-                        "Error with mailing for {userId}",
-                        ["exception" => $mailingResponse, "userId" => $user->id]
+                        "Error with mailing for {login}",
+                        ["exception" => $mailingResponse, "login" => $user->login]
                     );
                     Toast::error("Erreur: mailing");
                     $anyError = true;
@@ -116,7 +116,7 @@ class OvhService extends FactoryDependency
             $user->status = UserStatus::INACTIVE;
             logger()->info(
                 "User reactivated",
-                ["userId" => $user->id, "adminUserId" => User::getMainUserId()]
+                ["login" => $user->login, "adminUserId" => User::getMainUserId()]
             );
             Toast::success("$user->first_name réactivé");
         }
