@@ -81,7 +81,9 @@ body > main > .spacing-div {
   justify-content: space-between;
   padding: 0 1rem 1rem;
 }
-.icon-buttons > .feedback {
+.icon-buttons > :last-child {
+  margin: 0;
+  padding: 0;
   border: none;
   width: 1.4rem;
   aspect-ratio: 1;
@@ -90,7 +92,7 @@ body > main > .spacing-div {
   border-radius: 50%;
 }
 /* theme toggle */
-.icon-buttons > .theme-toggle {
+.icon-buttons > :first-child {
   --size: 1.4rem;
   line-height: 1rem;
   margin: 0;

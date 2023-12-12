@@ -10,7 +10,7 @@ if ($v->valid()) {
     $new_user_feedback->description = $description->value;
     em()->persist($new_user_feedback);
     em()->flush();
-    Toast::success("Merci pour votre retour !");
+    Toast::success("Merci pour ton retour !");
     redirect("/feedback");
 }
 
@@ -20,8 +20,9 @@ page("Bugs et suggestions");
 
 <article>
     <form method="post">
+        <p>Descris ton problème ou ta suggestion ci-dessous !</p>
         <?= $v->render_validation() ?>
         <?= $description->render() ?>
-        <button type="submit">Submit</button>
+        <button type="submit">Envoyer</button>
     </form>
 </article>
