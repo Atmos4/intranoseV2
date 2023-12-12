@@ -57,8 +57,8 @@ if ($v_infos->valid()) {
     if ($can_change_permission) {
         $oldLevel = $user->permission->value;
         $user->permission = Permission::from($permission->value);
-        logger()->info("Permission changed for user {userId} from {oldLevel} to {newLevel}", [
-            "userId" => $user->id,
+        logger()->info("Permission changed for user {login} from {oldLevel} to {newLevel}", [
+            "login" => $user->login,
             "oldLevel" => $oldLevel,
             "newLevel" => $user->permission->value,
         ]);
