@@ -8,12 +8,9 @@ if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }
 
-$all_event_entries = Event::getAllEntries($event->id);
-
 $can_edit = check_auth(Access::$ADD_EVENTS);
-
-
 $entry = $event->entries->get(0) ?? null;
+$totalEntryCount = EventService::getEntryCount($event->id);
 
 page($event->name)->css("event_view.css");
 ?>
@@ -49,13 +46,6 @@ page($event->name)->css("event_view.css");
                             </a>
                         <?php endif; ?>
                     </li>
-                    <?php if ($event->open): ?>
-                        <li>
-                            <a href="/evenements/<?= $event->id ?>/participants" class="secondary">
-                                <i class="fas fa-users"></i> Afficher les participants
-                            </a>
-                        </li>
-                    <?php endif; ?>
                 </ul>
             </details>
         </li>
@@ -107,6 +97,13 @@ page($event->name)->css("event_view.css");
         <?php if ($event->bulletin_url): ?>
             <a href="<?= $event->bulletin_url ?>" target="_blank"> <i class="fa fa-paperclip"></i> Bulletin
                 <i class="fa fa-external-link"></i></a>
+        <?php endif ?>
+
+        <?php if ($event->open && $totalEntryCount): ?>
+            <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary">
+                <i class="fas fa-users"></i> Participants
+                <?= "($totalEntryCount)" ?>
+            </a>
         <?php endif ?>
     </header>
 
@@ -200,27 +197,6 @@ page($event->name)->css("event_view.css");
             <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-course">
                 <i class="fas fa-plus"></i> Ajouter une course</a>
         </p>
-    <?php endif; ?>
-
-    <?php if ($event->open): ?>
-        <footer>
-            <h4>Participants : </h4>
-            <table>
-                <tbody>
-                    <?php foreach ($all_event_entries as $entry): ?>
-                        <?php if ($entry->present): ?>
-                            <tr>
-                                <td>
-                                    <a href="/licencies?user<?= $entry->user->id ?>" <?= UserModal::props($entry->user->id) ?>>
-                                        <?= $entry->user->last_name . " " . $entry->user->first_name ?>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endif ?>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
-        </footer>
     <?php endif ?>
 </article>
 

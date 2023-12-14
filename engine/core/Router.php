@@ -3,10 +3,12 @@ class Router extends Singleton
 {
 
     private array $dynamicSegments;
+    private int $level = 0;
 
     private function render($path_to_include = "pages/404.php")
     {
         try {
+            $this->level = ob_get_level();
             ob_start();
             include_once app_path() . "/$path_to_include";
             $page = Page::getInstance();
@@ -20,12 +22,20 @@ class Router extends Singleton
             }
             ob_end_flush();
         } catch (Throwable $e) {
-            ob_clean();
+            $this->cleanBuffer();
             logger()->error($e->getMessage());
             Toast::error("Une erreur est survenue");
             Toast::renderOob();
         }
         exit();
+    }
+
+    private function cleanBuffer(): self
+    {
+        while (ob_get_level() > $this->level) {
+            ob_end_clean();
+        }
+        return $this;
     }
 
     static function abort(string $message = null, int $code = 404)
@@ -34,7 +44,8 @@ class Router extends Singleton
         if (env('DEVELOPMENT')) {
             echo $message;
         }
-        self::getInstance()->render();
+        Page::reset();
+        self::getInstance()->cleanBuffer()->render();
     }
 
     static function getParameter($param, $strict = true, $numeric = true, $pattern = null)

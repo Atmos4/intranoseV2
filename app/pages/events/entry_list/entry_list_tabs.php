@@ -1,4 +1,6 @@
 <?php
+include_once __DIR__ . "/TotalRow.php";
+
 $eventId = Component::prop("event_id") ?? get_route_param("event_id") ?? throw new Exception("no event selected");
 $selectedRaceId = Component::prop("race_id") ?? get_query_param("race_id", false) ?? null;
 $races = EventService::getRaceIdList($eventId);
@@ -10,7 +12,8 @@ $getProps = fn($isSelected) =>
 <div class="tab-list" role="tablist">
     <button hx-get="<?= "/evenements/$eventId/participants/tabs" ?>" <?= $getProps(!$selectedRaceId) ?>>Déplacement</button>
     <?php foreach ($races as $race): ?>
-        <button hx-get="<?= "/evenements/$eventId/participants/tabs?race_id=$race->id" ?>"
+        <button id="<?= "race$race->id" ?>" hx-swap="innerHTML show:#<?= "race$race->id" ?>:top"
+            hx-get="<?= "/evenements/$eventId/participants/tabs?race_id=$race->id" ?>"
             <?= $getProps($selectedRaceId == $race->id) ?>>
             <?= $race->name ?>
         </button>

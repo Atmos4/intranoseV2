@@ -1,40 +1,47 @@
 <?php
-$event_id = Component::prop("event_id");
-$all_event_entries = Event::getAllEntries($event_id);
+$eventId = Component::prop("event_id");
+$all_event_entries = Event::getAllEntries($eventId);
+$options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
 ?>
 <figure>
     <table>
         <thead>
             <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Prénom</th>
-                <th scope="col">Transport</th>
-                <th scope="col">Hébergement</th>
-                <th scope="col">Remarques</th>
+                <th></th>
+                <th class="center">Transport</th>
+                <th class="center">Hébergement</th>
+                <th>Remarques</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($all_event_entries as $entry): ?>
-                <?php if ($entry->present): ?>
+
+            <?php
+            ob_start();
+            $totalTransport = 0;
+            $totalAccomodation = 0;
+            foreach ($all_event_entries as $entry): ?>
+                <?php if ($entry->present):
+                    $totalTransport += $entry->transport;
+                    $totalAccomodation += $entry->accomodation ?>
                     <tr class="clickable" tabindex=0 <?= UserModal::props($entry->user->id) ?>>
                         <td>
-                            <?= $entry->user->last_name ?>
-                        </td>
-                        <td>
-                            <?= $entry->user->first_name ?>
+                            <?= $entry->user->last_name . " " . $entry->user->first_name ?>
                         </td>
                         <td class="center">
-                            <?= $entry->transport ? "1" : "0" ?>
+                            <?= $options[$entry->transport] ?>
                         </td>
                         <td class="center">
-                            <?= $entry->accomodation ? "1" : "0" ?>
+                            <?= $options[$entry->accomodation] ?>
                         </td>
                         <td>
                             <?= $entry->comment ?>
                         </td>
                     </tr>
                 <?php endif ?>
-            <?php endforeach ?>
+            <?php endforeach;
+            $table = ob_get_clean() ?>
+            <?= TotalRow("Total", [$totalTransport, true], [$totalAccomodation, true], "") ?>
+            <?= $table ?>
         </tbody>
     </table>
 </figure>

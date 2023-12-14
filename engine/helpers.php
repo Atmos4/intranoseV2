@@ -43,13 +43,13 @@ function formatter(string $format = null): IntlDateFormatter
  * @param mixed $numeric If the parameter needs to be numeric, defaults to true
  * @return string|int|null
  */
-function get_route_param($param, $strict = true, $numeric = true)
+function get_route_param($param, $strict = true, $numeric = true, $pattern = null)
 {
-    return Router::getParameter($param, $strict, $numeric);
+    return Router::getParameter($param, $strict, $numeric, $pattern);
 }
 
 // TODO: move to router
-function get_query_param($param, $strict = false, $numeric = true)
+function get_query_param($param, $strict = false, $numeric = true, $pattern = null)
 {
     $query_param = $_GET[$param] ?? null;
     if (!$query_param) {
@@ -58,8 +58,11 @@ function get_query_param($param, $strict = false, $numeric = true)
         }
         return null;
     }
-    if ($numeric and !is_numeric($query_param)) {
+    if (!$pattern and $numeric and !is_numeric($query_param)) {
         Router::abort(message: "Query parameter $param is not numeric");
+    }
+    if ($pattern and !preg_match($pattern, $query_param)) {
+        Router::abort(message: "Route parameter $param doesn't match pattern $pattern");
     }
     return $query_param;
 }

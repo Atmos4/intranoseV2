@@ -6,7 +6,7 @@ page($event_infos->name . " : Inscrits")->css("entry_list.css") ?>
 
 <nav id="page-actions">
     <a href="/evenements/<?= $event_id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <?php if ($event_infos->open): ?>
+    <?php if ($event_infos->open && check_auth(Access::$ADD_EVENTS)): ?>
         <button onclick="selectTable()">Copier le tableau</button>
     <?php endif ?>
 </nav>

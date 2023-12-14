@@ -9,4 +9,9 @@ class SingletonDependency extends FactoryDependency
         self::$instances[$cls] ??= self::create();
         return self::$instances[$cls];
     }
+
+    public static function reset()
+    {
+        unset(self::$instances[static::class]);
+    }
 }
