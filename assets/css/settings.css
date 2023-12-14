@@ -17,3 +17,23 @@
   bottom: 10px;
   right: 10px;
 }
+
+.grid-clip {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-column-gap: var(--grid-spacing-horizontal);
+}
+
+.help {
+  margin-left: var(--grid-spacing-horizontal);
+  margin-bottom: 2.625rem;
+}
+
+.help::before {
+  white-space: pre;
+}
+
+.activation-header {
+  display: flex;
+  align-items: center;
+}

@@ -13,7 +13,8 @@ page("Login")->css("login.css")->disableNav()->heading(false);
         <h2 class="center">Intranose</h2>
         <div class="grid">
             <?= $login->render() ?>
-            <a href="#" class="help" data-tooltip="Même login que sur l'ancien site : &#xa; dupont_a pour André Dupont"
+            <ins tabindex="0" role=link class="help"
+                data-tooltip="Même login que sur l'ancien site : &#xa; dupont_a pour André Dupont"
                 data-placement="left"><i class="fas fa-circle-info"></i></a>
         </div>
         <?= $password->render() ?>
