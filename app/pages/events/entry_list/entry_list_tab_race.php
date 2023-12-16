@@ -3,7 +3,7 @@ $raceId = Component::prop("race_id");
 $raceEntries = RaceService::getRaceEntries($raceId);
 ?>
 <?php if (!$raceEntries): ?>
-    <p>Pas d'inscrits sur cette course</p>
+    <p style="padding: 1rem" class="center">Pas d'inscrits sur cette course</p>
     <?php return;
 endif ?>
 <figure>
