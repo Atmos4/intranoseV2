@@ -1,5 +1,5 @@
 <?php
-class Page extends Singleton
+class Page extends SingletonDependency
 {
     public string|false $title = "";
     public string $description = "";

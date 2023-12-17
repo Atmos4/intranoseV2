@@ -5,21 +5,21 @@ class Component
     public static array $_props = [];
     static function render(string $location, array $props = []): string
     {
-        self::$_props = $props;
         ob_start();
+        self::$_props[ob_get_level()] = $props;
         include $location;
-        $_props = [];
+        self::$_props[ob_get_level()] = [];
         return ob_get_clean();
     }
 
     static function prop($key)
     {
-        return self::$_props[$key] ?? null;
+        return self::$_props[ob_get_level()][$key] ?? null;
     }
 
     static function mounted()
     {
-        return !empty(self::$_props);
+        return !empty(self::$_props[ob_get_level()]);
     }
 
     // TODO maybe move elsewhere some day;

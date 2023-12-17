@@ -2,7 +2,9 @@
 $menu = MainMenu::create()
     ->addItem("Événements", "/evenements", "fa-calendar")
     ->addItem("Les licenciés", "/licencies", "fa-users")
-    ->addItem("Mon profil", "/mon-profil", "fa-gear");
+    ->addItem("Mon profil", "/mon-profil", "fa-gear")
+    ->addItem("Suggestions", "/feedback", "fa-lightbulb")
+;
 
 if (env('DEVELOPMENT')) {
     $menu->addItem("Dev", "/dev", "fa-code");
@@ -29,7 +31,7 @@ if (check_auth([Permission::ROOT])) {
                 <li class="<?= $menu_item->url == $_SESSION['current_route'] ? "active" : "" ?>">
                     <a class="<?= $menu_item == $_SESSION['current_route'] ? "active" : "contrast" ?>"
                         href="<?= $menu_item->url ?>" <?= $menu_item->disableBoost ? 'hx-boost="false"' : '' ?>>
-                        <?php if ($menu_item->icon): ?> <i class="fas <?= $menu_item->icon ?>"></i>
+                        <?php if ($menu_item->icon): ?> <i class="fa fa-fw <?= $menu_item->icon ?>"></i>
                         <?php endif ?>
                         <?= " " . $menu_item->label ?>
                     </a>
@@ -38,7 +40,7 @@ if (check_auth([Permission::ROOT])) {
             <?php if ($main_user->family_leader): ?>
                 <li>
                     <details role="list" id="family-dropdown">
-                        <summary role="link" class="contrast"><i class="fa fa-users"></i> Famille
+                        <summary role="link" class="contrast"><i class="fa fa-fw fa-users"></i> Famille
                         </summary>
                         <ul>
                             <?php foreach ($main_user->family->members as $member):
@@ -56,16 +58,15 @@ if (check_auth([Permission::ROOT])) {
                     </details>
                 </li>
             <?php endif ?>
-            <?php if ($main_user): ?>
-                <li><a class="destructive" href="/logout" hx-boost="false"><i class="fa fa-power-off"></i> Déconnexion</a>
-                </li>
-            <?php endif ?>
         </ul>
         <div class="icon-buttons">
             <?php include app_path() . "/components/theme_switcher.php" ?>
-            <a href="/feedback" role=button class="outline contrast feedback" title="Bugs et suggestion">
-                <i class="fa fa-bug fa-lg"></i>
-            </a>
+
+            <?php if ($main_user): ?>
+                <a href="/logout" hx-boost="false" role=button class="outline contrast destructive" title="Déconnexion">
+                    <i class="fa fa-power-off"></i>
+                </a>
+            <?php endif ?>
         </div>
     </nav>
 </aside>

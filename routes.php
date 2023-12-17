@@ -35,7 +35,6 @@ if (env("DEVELOPMENT")) {
 // Events
 Router::add('/evenements', 'pages/events/event_list');
 Router::add('/evenements/nouveau', 'pages/events/event_edit');
-Router::add('/evenements/course/$race_id/inscrits', 'pages/events/race_entry_list');
 Router::add('/evenements/$event_id/modifier', 'pages/events/event_edit');
 Router::add('/evenements/$event_id/ajouter-course', 'pages/events/race_edit');
 Router::add('/evenements/$event_id/course/$race_id', 'pages/events/race_edit');
@@ -43,7 +42,10 @@ Router::add('/evenements/$event_id', 'pages/events/event_view');
 Router::add('/evenements/$event_id/inscription', 'pages/events/event_register');
 Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
 Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
-Router::add('/evenements/$event_id/participants', 'pages/events/event_entry_list');
+
+// Event entry lists
+Router::add('/evenements/$event_id/participants', 'pages/events/entry_list/entry_list');
+Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/entry_list_tabs');
 // Router::add('/download', 'uploads/download_file');
 
 // Settings
