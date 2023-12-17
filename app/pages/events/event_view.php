@@ -126,8 +126,8 @@ page($event->name)->css("event_view.css");
 
     <?php if (count($event->races)): ?>
         <h4>Courses :
-            <a href="#" title="Afficher tous les détails" onclick="
-                    htmx.findAll(htmx.closest(this, 'article'),'details').forEach(e => {e.open=!e.open});
+            <a href="#" class="secondary" title="Afficher tous les détails" onclick="
+                    htmx.findAll(htmx.closest(this, 'article'),'details').forEach(e => {e.open=true});
                     return false
                 ">
                 <i class="fa fa-up-down"></i>
