@@ -95,8 +95,11 @@ page($event->name)->css("event_view.css");
         </div>
 
         <?php if ($event->bulletin_url): ?>
-            <a href="<?= $event->bulletin_url ?>" target="_blank"> <i class="fa fa-paperclip"></i> Bulletin
-                <i class="fa fa-external-link"></i></a>
+
+            <p>
+                <a href="<?= $event->bulletin_url ?>" target="_blank"> <i class="fa fa-paperclip"></i> Bulletin
+                    <i class="fa fa-external-link"></i></a>
+            </p>
         <?php endif ?>
 
         <?php if ($event->open && $totalEntryCount): ?>
