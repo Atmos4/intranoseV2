@@ -359,7 +359,7 @@ class UploadField extends Field
         $this->type = FieldType::File;
     }
 
-    public string $target_dir = "uploads/";
+    public string $target_dir = "/uploads/";
     public string $target_file = '';
     public string $file_type;
     public string $file_name = '';
@@ -370,8 +370,16 @@ class UploadField extends Field
     {
         parent::__construct($key, $value, $context);
         $this->file_name = $_FILES[$this->key]["name"] ?? "";
-        $this->target_file = isset($_FILES[$this->key]) ? $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
+        $this->target_file = isset($_FILES[$this->key]) ? app_path() . $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
         $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
+    }
+
+    function required(string $msg = null)
+    {
+        if ($this->should_test() && !$this->file_name) {
+            $this->set_error($msg ?? "Requis");
+        }
+        return $this;
     }
 
     function check(string $msg = null)

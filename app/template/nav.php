@@ -4,6 +4,7 @@ $menu = MainMenu::create()
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Mon profil", "/mon-profil", "fa-gear")
     ->addItem("Suggestions", "/feedback", "fa-lightbulb")
+    ->addItem("Documents", "/documents", "fa-file")
 ;
 
 if (env('DEVELOPMENT')) {

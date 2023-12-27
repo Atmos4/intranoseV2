@@ -22,7 +22,7 @@ class SharedFile
     public string $mime = "";
 
     #[Column]
-    public bool $is_public = true;
+    public Permission $permission_level = Permission::USER;
 
     #[ManyToOne]
     public Race|null $race = null;
@@ -39,6 +39,12 @@ class SharedFile
     {
         $this->path = $path;
         $this->mime = $mime;
+    }
+
+    /** Get document by ID */
+    static function get($file_id): SharedFile|null
+    {
+        return em()->find(SharedFile::class, $file_id);
     }
 
 }

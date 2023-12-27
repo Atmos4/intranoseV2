@@ -2,7 +2,9 @@
 restrict_access(Access::$ADD_EVENTS);
 
 $v = new Validator();
-$file_upload = $v->upload("file_upload")->mime(UploadField::$FILE_MIME);
+$file_upload = $v->upload("file_upload")->required()->mime(UploadField::$FILE_MIME);
+$permission = $v->select("permission")->options(array_column(Permission::cases(), 'value', 'name'))->label("Permission");
+
 
 if ($v->valid()) {
     $shared_file = em()->getRepository(SharedFile::class)->findOneBy(['path' => $file_upload->file_name]);
@@ -18,13 +20,16 @@ $shared_files = em()->getRepository(SharedFile::class)->findAll();
 
 function render_documents($shared_doc)
 { ?>
-    <tr class="event-row clickable" onclick="window.location.href = '/download?id=<?= $shared_doc->id ?>'">
+    <tr class="event-row clickable" onclick="window.location.href = '/telecharger?id=<?= $shared_doc->id ?>'">
         <td>
             <i class="fas fa-file"></i>
         </td>
         <td>
             <?= $shared_doc->path ?>
         </td>
+        <td><a href="/documents/<?= $shared_doc->id ?>/supprimer" class="destructive">
+                <i class="fas fa-trash"></i>
+            </a></td>
     </tr>
 <?php }
 
@@ -39,8 +44,11 @@ page("Documents partagés");
         <div class="col-auto">
             <?= $file_upload->render() ?>
         </div>
-        <div class="col-auto">
-            <button type="submit" class="outline">
+        <div>
+            <?= $permission->render() ?>
+        </div>
+        <div>
+            <button type=" submit" class="outline">
                 Enregistrer
             </button>
         </div>
@@ -56,6 +64,7 @@ page("Documents partagés");
             <tr>
                 <th></th>
                 <th>Nom du fichier</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
