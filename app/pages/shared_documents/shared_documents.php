@@ -1,28 +1,49 @@
 <?php
-restrict_access(Access::$ADD_EVENTS);
+restrict_access();
 
-$v = new Validator();
-$file_upload = $v->upload("file_upload")->required()->mime(UploadField::$FILE_MIME);
-$permission = $v->select("permission")->options(array_column(Permission::cases(), 'value', 'name'))->label("Permission");
+$can_edit = check_auth(Access::$ADD_EVENTS);
 
+# public files
+$shared_files_users = em()->getRepository(SharedFile::class)->findBy(['permission_level' => Permission::USER]);
 
-if ($v->valid()) {
-    $shared_file = em()->getRepository(SharedFile::class)->findOneBy(['path' => $file_upload->file_name]);
-    $shared_file ??= new SharedFile();
-    $shared_file->set($file_upload->file_name, $file_upload->file_type);
-    if ($file_upload->save_file()) {
-        em()->persist($shared_file);
-        em()->flush();
-    }
+# upper authorisation files
+if ($can_edit) {
+    $shared_files_coach_staff = em()->getRepository(SharedFile::class)->findBy(['permission_level' => Access::$ADD_EVENTS]);
 }
 
-$shared_files = em()->getRepository(SharedFile::class)->findAll();
-
 function render_documents($shared_doc)
-{ ?>
+{
+    $file_mime = $shared_doc->mime;
+
+    switch ($file_mime) {
+        case 'pdf':
+            $file_icon = 'fas fa-file-pdf';
+            break;
+        case 'png':
+        case 'jpg':
+        case 'jpeg':
+        case 'gif':
+            $file_icon = 'fas fa-file-image';
+            break;
+        case 'doc':
+        case 'docx':
+            $file_icon = 'fas fa-file-word';
+            break;
+        case 'xls':
+        case 'xlsx':
+            $file_icon = 'fas fa-file-excel';
+            break;
+        case 'ppt':
+        case 'pptx':
+            $file_icon = 'fas fa-file-powerpoint';
+            break;
+        default:
+            $file_icon = 'fas fa-file';
+            break;
+    } ?>
     <tr class="event-row clickable" onclick="window.location.href = '/telecharger?id=<?= $shared_doc->id ?>'">
         <td>
-            <i class="fas fa-file"></i>
+            <i class="<?= $file_icon ?> fa-lg"></i>
         </td>
         <td>
             <?= $shared_doc->path ?>
@@ -34,32 +55,19 @@ function render_documents($shared_doc)
 <?php }
 
 page("Documents partagés");
-
 ?>
 
-<h3>Ajouter un document</h3>
-<form method="post" enctype="multipart/form-data">
-    <?= $v->render_validation() ?>
-    <div class="row">
-        <div class="col-auto">
-            <?= $file_upload->render() ?>
-        </div>
-        <div>
-            <?= $permission->render() ?>
-        </div>
-        <div>
-            <button type=" submit" class="outline">
-                Enregistrer
-            </button>
-        </div>
-    </div>
-</form>
-</article>
+<?php if ($can_edit): ?>
+    <nav id="page-actions">
+        <a href="/documents/ajouter"><i class="fas fa-plus"></i> Ajouter un document</a>
+    </nav>
+<?php endif ?>
 
-<h3>Documents enregistrés</h3>
-
-<table role="grid">
-    <?php if (count($shared_files)): ?>
+<?php if (count($shared_files_users)): ?>
+    <?php if ($can_edit): ?>
+        <h2>Documents publics</h2>
+    <?php endif ?>
+    <table role="grid">
         <thead class=header-responsive>
             <tr>
                 <th></th>
@@ -69,12 +77,34 @@ page("Documents partagés");
         </thead>
         <tbody>
 
-            <?php foreach ($shared_files as $shared_file) {
+            <?php foreach ($shared_files_users as $shared_file) {
                 render_documents($shared_file);
             } ?>
 
         </tbody>
-    <?php else: ?>
-        <p class="center">Pas de fichiers pour le moment 🫠</p>
-    <?php endif ?>
-</table>
+    </table>
+<?php endif ?>
+
+<?php if ($can_edit && count($shared_files_coach_staff)): ?>
+    <h2>Documents admins</h2>
+    <table role="grid">
+        <thead class=header-responsive>
+            <tr>
+                <th></th>
+                <th>Nom du fichier</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <?php foreach ($shared_files_coach_staff as $shared_file) {
+                render_documents($shared_file);
+            } ?>
+
+        </tbody>
+    </table>
+<?php endif ?>
+
+<?php if (!count($shared_files_users) && (!$can_edit || !count($shared_files_coach_staff))): ?>
+    <p>Aucun document partagé</p>
+<?php endif ?>

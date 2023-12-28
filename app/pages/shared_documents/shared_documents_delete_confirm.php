@@ -13,6 +13,7 @@ if ($form->valid()) {
         logger()->info("File {file_path} deleted by user {currentUserLogin}", ['file_path' => $shared_doc->path, 'currentUserLogin' => User::getCurrent()->login]);
         em()->remove($shared_doc);
         em()->flush();
+        Toast::error("Document supprimé");
         redirect("/documents");
     } else {
         $form->set_error("Impossible de supprimer le fichier");

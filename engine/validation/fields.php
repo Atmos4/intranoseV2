@@ -343,16 +343,80 @@ class SwitchField extends Field
 class UploadField extends Field
 {
     public static $FILE_MIME = [
-        'jpg' => 'image/jpeg',
-        'png' => 'image/png',
-        'gif' => 'image/gif',
-        'doc' => 'application/msword',
-        'pdf' => 'application/pdf'
+        'image' => [
+            'image/webp',
+            'image/tiff',
+            'image/png',
+            'image/jpeg',
+            'image/gif',
+            'image/x-ms-bmp',
+            'image/x-bmp',
+            'image/x-portable-bitmap',
+            'image/vnd.adobe.photoshop',
+            'image/x-eps',
+            'application/postscript',
+            'application/dicom',
+            'application/pcx',
+            'application/x-pcx',
+            'image/pcx',
+            'image/x-pc-paintbrush',
+            'image/x-pcx',
+            'zz-application/zz-winassoc-pcx',
+            'image/jp2',
+            'image/heif'
+        ],
+        'doc' => ['application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-word.document.macroEnabled.12',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+            'application/vnd.ms-word.template.macroEnabled.12',
+            'application/vnd.oasis.opendocument.text',],
+        'pdf' => ['application/pdf'],
+        'excel' => [
+            'application/vnd.ms-excel',
+            'application/x-ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel.sheet.macroEnabled.12',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+            'application/vnd.ms-excel.template.macroEnabled.12',
+            'application/vnd.oasis.opendocument.spreadsheet',
+        ],
+        'powerpoint' => [
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
+            'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+            'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
+            'application/vnd.openxmlformats-officedocument.presentationml.template',
+            'application/vnd.ms-powerpoint.template.macroEnabled.12',
+            'application/vnd.ms-powerpoint.addin.macroEnabled.12',
+            'application/vnd.openxmlformats-officedocument.presentationml.slide',
+            'application/vnd.oasis.opendocument.presentation',
+        ]
     ];
     public static $IMAGE_MIME = [
-        'jpg' => 'image/jpeg',
-        'png' => 'image/png',
-        'gif' => 'image/gif'
+        'image' => [
+            'image/webp',
+            'image/tiff',
+            'image/png',
+            'image/jpeg',
+            'image/gif',
+            'image/x-ms-bmp',
+            'image/x-bmp',
+            'image/x-portable-bitmap',
+            'image/vnd.adobe.photoshop',
+            'image/x-eps',
+            'application/postscript',
+            'application/dicom',
+            'application/pcx',
+            'application/x-pcx',
+            'image/pcx',
+            'image/x-pc-paintbrush',
+            'image/x-pcx',
+            'zz-application/zz-winassoc-pcx',
+            'image/jp2',
+            'image/heif'
+        ]
     ];
     function set_type()
     {
@@ -412,8 +476,8 @@ class UploadField extends Field
 
                     // Check if the name of the file is correct
                     // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
-                    if (!preg_match("`^[-\d\wÀ-ÿ_\.]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
-                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres et . _ - sont autorisés");
+                    if (!preg_match("`^[-\d\wÀ-ÿ_\. ]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
+                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres, les espaces et . _ - sont autorisés");
                     }
 
                     // Check custom filesize here. 
@@ -432,10 +496,12 @@ class UploadField extends Field
             $this->allowed_mime = $mimes;
             // Allow certain file formats
             $finfo = new finfo(FILEINFO_MIME_TYPE);
+            // Flatten the array
+            $flatArray = array_reduce($this->allowed_mime, 'array_merge', []);
             if (
-                !array_search(
+                !in_array(
                     $finfo->file($_FILES[$this->key]['tmp_name']),
-                    $this->allowed_mime,
+                    $flatArray,
                     true
                 )
             ) {
@@ -462,9 +528,9 @@ class UploadField extends Field
             unlink($this->target_file);
         $result = move_uploaded_file($_FILES[$this->key]["tmp_name"], $this->target_file);
         if ($result)
-            $this->context->set_success($file_exists ? "Fichier modifié" : "Fichier enregistré");
+            Toast::success($file_exists ? "Fichier modifié" : "Fichier enregistré");
         else
-            $this->set_error("Problème à l'enregistrement");
+            Toast::error("Problème à l'enregistrement");
         return $result;
     }
 
