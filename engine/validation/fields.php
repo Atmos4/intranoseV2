@@ -434,7 +434,8 @@ class UploadField extends Field
     {
         parent::__construct($key, $value, $context);
         $this->file_name = $_FILES[$this->key]["name"] ?? "";
-        $this->target_file = isset($_FILES[$this->key]) ? app_path() . $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
+        $this->target_dir = app_path() . $this->target_dir;
+        $this->target_file = isset($_FILES[$this->key]) ? $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
         $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
     }
 

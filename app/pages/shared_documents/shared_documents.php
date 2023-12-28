@@ -46,7 +46,10 @@ function render_documents($shared_doc)
             <i class="<?= $file_icon ?> fa-lg"></i>
         </td>
         <td>
-            <?= $shared_doc->path ?>
+            <?= $shared_doc->name ?>
+        </td>
+        <td>
+            <?= $shared_doc->date->format("d/m/Y") ?>
         </td>
         <td><a href="/documents/<?= $shared_doc->id ?>/supprimer" class="destructive">
                 <i class="fas fa-trash"></i>
@@ -72,6 +75,7 @@ page("Documents partagés");
             <tr>
                 <th></th>
                 <th>Nom du fichier</th>
+                <th>Date d'ajout</th>
                 <th></th>
             </tr>
         </thead>
@@ -106,5 +110,5 @@ page("Documents partagés");
 <?php endif ?>
 
 <?php if (!count($shared_files_users) && (!$can_edit || !count($shared_files_coach_staff))): ?>
-    <p>Aucun document partagé</p>
+    <p class=center>Aucun document pour le moment 🫠</p>
 <?php endif ?>

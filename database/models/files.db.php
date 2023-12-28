@@ -13,6 +13,9 @@ class SharedFile
     public int|null $id = null;
 
     #[Column]
+    public string $name = "";
+
+    #[Column]
     public string $path = "";
 
     #[Column]
@@ -35,8 +38,9 @@ class SharedFile
         $this->date = date_create();
     }
 
-    function set(string $path, string $mime)
+    function set(string $name, string $path, string $mime)
     {
+        $this->name = $name;
         $this->path = $path;
         $this->mime = $mime;
     }
