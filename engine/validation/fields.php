@@ -475,12 +475,6 @@ class UploadField extends Field
                             $this->set_error("Erreur inconnue");
                     }
 
-                    // Check if the name of the file is correct
-                    // Accepts every letters and digits including french special caracters, plus "_" "." and "-"
-                    if (!preg_match("`^[-\d\wÀ-ÿ_\. ]+$`", $this->file_name) or (mb_strlen($this->file_name, "UTF-8") > 225)) {
-                        $this->set_error("Nom de fichier invalide : seuls les lettres/chiffres, les espaces et . _ - sont autorisés");
-                    }
-
                     // Check custom filesize here. 
                     if ($_FILES[$this->key]['size'] > 1000000) {
                         $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
