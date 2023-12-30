@@ -118,10 +118,13 @@ body > main > .spacing-div {
 }
 .sidenav :is(a, #family-dropdown summary) {
   text-decoration: none;
-  color: var(--contrast);
   transition: color var(--transition);
 }
 .sidenav :is(a, #family-dropdown summary):is(:hover, :focus) {
+  color: var(--primary);
+}
+
+.active > a {
   color: var(--primary);
 }
 
