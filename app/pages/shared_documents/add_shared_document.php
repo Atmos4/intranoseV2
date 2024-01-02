@@ -45,4 +45,3 @@ page("Ajouter un document");
         </button>
     </div>
 </form>
-</article>

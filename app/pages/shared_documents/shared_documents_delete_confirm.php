@@ -10,14 +10,14 @@ if (!$shared_doc) {
 }
 if ($form->valid()) {
     if (unlink(app_path() . "/uploads/" . $shared_doc->path)) {
-        logger()->info("File {file_path} deleted by user {currentUserLogin}", ['file_path' => $shared_doc->path, 'currentUserLogin' => User::getCurrent()->login]);
+        logger()->info("File {filePath} deleted by user {currentUserLogin}", ['filePath' => $shared_doc->path, 'currentUserLogin' => User::getCurrent()->login]);
         em()->remove($shared_doc);
         em()->flush();
         Toast::error("Document supprimé");
         redirect("/documents");
     } else {
         $form->set_error("Impossible de supprimer le fichier");
-        logger()->error("File {file_path} not deleted by user {currentUserLogin}", ['file_path' => $shared_doc->path, 'currentUserLogin' => User::getCurrent()->login]);
+        logger()->error("File {filePath} not deleted by user {currentUserLogin}", ['filePath' => $shared_doc->path, 'currentUserLogin' => User::getCurrent()->login]);
     }
 }
 
