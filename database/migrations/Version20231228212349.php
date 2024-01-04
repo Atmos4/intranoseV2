@@ -14,7 +14,7 @@ final class Version20231228212349 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'add permission level and name to shared documents';
     }
 
     public function up(Schema $schema): void
