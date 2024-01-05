@@ -7,7 +7,7 @@ $path = $file->path;
 
 
 header("Content-Type: " . $file->mime);
-header("Content-Disposition: attachment; filename=" . $path);
+header("Content-Disposition: attachment; filename=" . $file->name);
 header("Content-Length: " . filesize($path));
 readfile($path);
 

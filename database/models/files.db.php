@@ -13,6 +13,9 @@ class SharedFile
     public int|null $id = null;
 
     #[Column]
+    public string $name = "";
+
+    #[Column]
     public string $path = "";
 
     #[Column]
@@ -22,7 +25,7 @@ class SharedFile
     public string $mime = "";
 
     #[Column]
-    public bool $is_public = true;
+    public Permission $permission_level = Permission::USER;
 
     #[ManyToOne]
     public Race|null $race = null;
@@ -35,10 +38,17 @@ class SharedFile
         $this->date = date_create();
     }
 
-    function set(string $path, string $mime)
+    function set(string $name, string $path, string $mime)
     {
+        $this->name = $name;
         $this->path = $path;
         $this->mime = $mime;
+    }
+
+    /** Get document by ID */
+    static function get($file_id): SharedFile|null
+    {
+        return em()->find(SharedFile::class, $file_id);
     }
 
 }

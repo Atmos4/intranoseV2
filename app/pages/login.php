@@ -15,7 +15,7 @@ page("Login")->css("login.css")->disableNav()->heading(false);
             <?= $login->render() ?>
             <ins tabindex="0" role=link class="help"
                 data-tooltip="Même login que sur l'ancien site : &#xa; dupont_a pour André Dupont"
-                data-placement="left"><i class="fas fa-circle-info"></i></a>
+                data-placement="left"><i class="fas fa-circle-info"></i></ins>
         </div>
         <?= $password->render() ?>
         <?= $v->render_validation() ?>

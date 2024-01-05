@@ -78,8 +78,10 @@ Router::add('/reinitialiser-mot-de-passe', 'pages/tokens/send_reset_password.php
 Router::add('/nouveau-mot-de-passe', 'pages/tokens/reset_password.php');
 
 // Shared documents
-// Router::add('/documents', 'pages/shared_documents');
-// Router::add('/download_shared_files', 'uploads/shared_docs/download_shared_file');
+Router::add('/documents', 'pages/shared_documents/shared_documents');
+Router::add('/documents/ajouter', 'pages/shared_documents/add_shared_document');
+Router::add('/telecharger', 'uploads/download_file');
+Router::add('/documents/$doc_id/supprimer', 'pages/shared_documents/shared_documents_delete_confirm');
 
 //Report
 Router::add('/feedback', 'pages/user_feedback_submit');
