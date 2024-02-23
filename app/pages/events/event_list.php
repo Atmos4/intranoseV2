@@ -5,6 +5,8 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 formatter("d MMM");
 $user = User::getCurrent();
 $events = Event::listAllOpen($user->id);
+$past_events = Event::listAllPastOpen($user->id);
+$future_events = Event::listAllFutureOpen($user->id);
 if ($can_edit)
     $draft_events = Event::listDrafts();
 
@@ -95,39 +97,73 @@ foreach ($birthday_users as $birthday_user): ?>
     </nav>
 <?php endif ?>
 
-<table role="grid">
-    <?php if (count($events) || ($can_edit && count($draft_events))): ?>
-        <thead class=header-responsive>
-            <tr>
-                <th></th>
-                <th>Nom</th>
-                <th colspan=2>Dates</th>
-            </tr>
-        </thead>
-        <tbody>
+<?php if (count($events) || ($can_edit && count($draft_events))): ?>
+    <?php
+    // Draft events
+    if ($can_edit && count($draft_events)): ?>
+        <details open>
+            <summary>Événements en attente</summary>
+            <table role="grid">
+                <thead class=header-responsive>
+                    <tr>
+                        <th></th>
+                        <th>Nom</th>
+                        <th colspan=2>Dates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($draft_events as $draft_event) {
+                        render_event($draft_event);
+                    } ?>
 
-            <?php
-            // Draft events
-            if ($can_edit && count($draft_events)): ?>
-                <tr class="delimiter">
-                    <td colspan="4">Événements en attente</td>
-                </tr>
-                <?php
-                foreach ($draft_events as $draft_event) {
-                    render_event($draft_event);
-                } ?>
-
-                <tr class="delimiter">
-                    <td colspan="4">Événements publiés</td>
-                </tr>
-            <?php endif ?>
-
-            <?php foreach ($events as $event) {
-                render_event($event);
-            } ?>
-
-        </tbody>
-    <?php else: ?>
-        <p class="center">Pas d'événement pour le moment 😴</p>
+                </tbody>
+            </table>
+        </details>
     <?php endif ?>
+
+    <?php if (count($future_events)): ?>
+        <details open>
+            <summary>Événements à venir</summary>
+            <table role="grid">
+                <thead class=header-responsive>
+                    <tr>
+                        <th></th>
+                        <th>Nom</th>
+                        <th colspan=2>Dates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($future_events as $event) {
+                        render_event($event);
+                    } ?>
+
+                </tbody>
+            </table>
+        </details>
+
+    <?php endif ?>
+
+    <?php if (count($past_events)): ?>
+        <details>
+            <summary>Événements passés</summary>
+            <table role="grid">
+                <thead class=header-responsive>
+                    <tr>
+                        <th></th>
+                        <th>Nom</th>
+                        <th colspan=2>Dates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($past_events as $event) {
+                        render_event($event);
+                    } ?>
+                </tbody>
+            </table>
+        </details>
+    <?php endif ?>
+<?php else: ?>
+    <p class="center">Pas d'événement pour le moment 😴</p>
+<?php endif ?>
 </table>
