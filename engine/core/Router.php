@@ -5,7 +5,7 @@ class Router extends Singleton
     private array $dynamicSegments;
     private int $level = 0;
 
-    private function render($path_to_include = "pages/404.php")
+    private function render($path_to_include = "pages/404.php", $clean = false)
     {
         try {
             $this->level = ob_get_level();
@@ -17,7 +17,7 @@ class Router extends Singleton
                 Page::getInstance()->setContent($content);
                 ob_start();
                 require_once app_path() . "/template/layout.php";
-            } else {
+            } elseif (!$clean) {
                 Toast::renderOob();
             }
             ob_end_flush();
@@ -67,7 +67,7 @@ class Router extends Singleton
         return $found_param;
     }
 
-    static function add($route, $path_to_include)
+    static function add($route, $path_to_include, $clean = false)
     {
         $router = self::getInstance();
         $_SESSION['current_route'] = $route;
@@ -110,6 +110,6 @@ class Router extends Singleton
             exit;
         }
 
-        $router->render($path_to_include);
+        $router->render($path_to_include, $clean);
     }
 }

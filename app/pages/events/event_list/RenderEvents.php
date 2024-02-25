@@ -1,0 +1,51 @@
+<?php
+
+function render_event(EventDto $event)
+{
+    $diff = date_create('now')->diff($event->deadline->add(new DateInterval("PT23H59M59S")));
+    $td_class = $tooltip_content = "";
+    if ($diff->invert) {
+        $td_class = "passed";
+        $tooltip_content = "data-tooltip='Deadline dépassée'";
+    } elseif ($diff->days < 7) {
+        $td_class = "warning";
+        $tooltip_content = "data-tooltip=\""
+            . ($diff->days == 0 ?
+                $diff->format("Plus que %h heures!") :
+                $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")))
+            . "\"";
+    } ?>
+    <tr class="event-row clickable" tabindex="0" hx-trigger="click,keyup[key=='Enter']"
+        hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true">
+        <td class="event-entry">
+
+            <?php if ($event->open):
+                if ($event->registered == true): ?>
+                    <ins><i class="fas fa-check"></i></ins>
+                <?php elseif ($event->registered === false): ?>
+                    <del><i class="fas fa-xmark"></i></del>
+                <?php else: ?>
+                    <i class="fas fa-question"></i>
+                <?php endif; else: ?>
+                <i class="fas fa-file"></i>
+            <?php endif ?>
+
+        </td>
+        <td class="event-name"><b>
+                <?= $event->name ?>
+            </b></td>
+        <td class="event-date">
+            <span>
+                <?= format_date($event->start) ?>
+            </span><i class="fas fa-arrow-right"></i><span>
+                <?= format_date($event->end) ?>
+            </span>
+        </td>
+        <td class="event-limit <?= $td_class ?>">
+            <i class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>
+                <?= format_date($event->deadline) ?>
+            </span>
+        </td>
+    </tr>
+
+<?php } ?>
