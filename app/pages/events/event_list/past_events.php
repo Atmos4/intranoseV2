@@ -7,6 +7,6 @@ $past_events = Event::listAllPastOpen($user->id);
 
 if (count($past_events)) {
     foreach ($past_events as $event) {
-        render_event($event);
+        render_events_article($event);
     }
 }

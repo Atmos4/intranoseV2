@@ -72,27 +72,16 @@ foreach ($birthday_users as $birthday_user): ?>
     <?php endif ?>
 
     <?php if (count($future_events)): ?>
-        <table role="grid">
-            <thead class=header-responsive>
-                <tr>
-                    <th></th>
-                    <th>Nom</th>
-                    <th colspan=2>Dates</th>
-                </tr>
-            </thead>
-            <tbody id="main">
-                <?php foreach ($future_events as $event) {
-                    render_event($event);
-                } ?>
-                <tr id="loadEvents">
-                </tr>
-            </tbody>
-        </table>
+        <?php foreach ($future_events as $event): ?>
+            <?= render_events_article($event); ?>
+        <?php endforeach ?>
 
-        <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="#loadEvents">Charger les
-            événements
-            passés</button>
-
+        <div id="loadEvents">
+            <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="#loadEvents">Charger
+                les
+                événements
+                passés</button>
+        </div>
     <?php endif ?>
 
 

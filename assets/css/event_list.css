@@ -4,6 +4,7 @@ tr.delimiter {
 .event-date,
 .event-limit {
   white-space: nowrap;
+  grid-area: event-limit;
 }
 .event-date > *,
 .event-limit > * {
@@ -69,4 +70,50 @@ tr.delimiter {
   background-color: var(--card-background-color);
   padding: 10px;
   margin-bottom: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 15% auto auto 20%;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "icon title title button"
+    "icon dates event-limit button";
+  align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 10% auto auto 15%;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "icon title title button"
+      "icon dates event-limit button";
+  }
+}
+
+.icon {
+  grid-area: icon;
+  text-align: center;
+  align-items: center;
+}
+
+.title {
+  grid-area: title;
+}
+
+.dates {
+  grid-area: dates;
+}
+
+.info-button {
+  grid-area: button;
+  justify-self: center;
+  align-items: center;
+}
+
+.event-article {
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 0.75);
+  margin: calc(var(--spacing)) 0;
 }
