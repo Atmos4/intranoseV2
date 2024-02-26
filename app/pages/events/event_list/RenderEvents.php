@@ -66,7 +66,7 @@ function render_events_article(EventDto $event)
             . "\"";
     } ?>
 
-    <article class="event-article">
+    <article class="event-article" onclick="location.href='/evenements/<?= $event->id ?>';" style="cursor: pointer;">
         <div class="grid">
             <div class="icon">
                 <?php if ($event->open):

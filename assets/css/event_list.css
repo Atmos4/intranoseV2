@@ -117,3 +117,8 @@ tr.delimiter {
   padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 0.75);
   margin: calc(var(--spacing)) 0;
 }
+
+article.event-article:where(:hover, :focus) {
+  background-color: var(--secondary-focus) !important;
+  outline: none;
+}
