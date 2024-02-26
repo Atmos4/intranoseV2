@@ -28,7 +28,7 @@ class SharedFile
     public Permission $permission_level = Permission::USER;
 
     #[ManyToOne]
-    public Race|null $race = null;
+    public Activity|null $activity = null;
 
     #[ManyToOne]
     public Event|null $event = null;

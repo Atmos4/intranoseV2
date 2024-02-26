@@ -127,63 +127,83 @@ page($event->name)->css("event_view.css");
         </blockquote>
     <?php endif; ?>
 
-    <?php if (count($event->races)): ?>
-        <h4>Courses :
-            <a href="#" class="secondary" title="Afficher tous les détails" onclick="
-                    htmx.findAll(htmx.closest(this, 'article'),'details').forEach(e => {e.open=true});
-                    return false
-                ">
-                <i class="fa fa-up-down"></i>
-            </a>
-        </h4>
+    <?php if (count($event->activities)): ?>
+        <h3>Activités :
+        </h3>
 
-        <?php foreach ($event->races as $race):
-            $race_entry = $race->entries[0] ?? null; ?>
+        <?php foreach ($event->activities as $activity):
+            if ($activity->type == ActivityType::RACE) {
+                $icon = "fa-stopwatch";
+            } elseif ($activity->type == ActivityType::TRAINING) {
+                $icon = "fa-dumbbell";
+            } else {
+                $icon = "fa-bowl-food";
+            }
+            $activity_entry = $activity->entries[0] ?? null; ?>
             <details>
                 <summary>
-                    <?= ConditionalIcon($race_entry && $race_entry->present) . " " . $race->name ?>
+                    <i class="fa <?= $icon ?>"></i>
+                    <?= ConditionalIcon($activity_entry && $activity_entry->present) . " " ?>
+                    <b>
+                        <?= $activity->name ?>
+                    </b>
                 </summary>
+                <h6>Description</h6>
                 <div class="row">
                     <div class="col-sm-12 col-md-6">
                         <ul class="fa-ul">
                             <li><span class="fa-li"><i class="fa fa-calendar"></i></span>
-                                <?= format_date($race->date) ?>
-                            </li>
-                            <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
-                                <?= $race->place ?>
+                                <?= format_date($activity->date) ?>
                             </li>
                         </ul>
+                        <?php if ($can_edit): ?>
+                            <a role="button" class="outline secondary"
+                                href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>'>
+                                <i class="fa fa-pen"></i>
+                                Modifier</a>
+                        <?php endif ?>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <ul class="fa-ul">
-                            <?php if ($race_entry?->present): ?>
-                                <li><span class="fa-li"><i class="fa fa-check"></i></span><ins>Je participe</ins></li>
-                            <?php else: ?>
-                                <li><span class="fa-li"><i class="fa fa-xmark"></i></span><del>
-                                        <?= $race_entry ? "Je ne participe pas" : "Pas inscrit" ?>
-                                    </del></li>
-                            <?php endif; ?>
-                            <?php if ($race_entry?->category): ?>
-                                <li><span class="fa-li"><i class="fa fa-person-running"></i></span>
-                                    <?= $race_entry->category?->name ?>
-                                </li>
-                            <?php endif ?>
+                            <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
+                                <?= $activity->place ?>
+                            </li>
                         </ul>
                     </div>
                 </div>
-                <?php if ($race_entry?->comment): ?>
-                    <div>
-                        <cite>Remarque : </cite>
-                        <?= $race_entry->comment ?>
-                    </div>
-                    <br>
-                <?php endif;
-                if ($can_edit): ?>
-                    <a role="button" class="outline secondary" href='/evenements/<?= $event->id ?>/course/<?= $race->id ?>'>
-                        <i class="fa fa-pen"></i>
-                        Modifier</a>
+                <blockquote>
+                    <h6>Inscription</h6>
+                    <div class="row">
 
-                <?php endif ?>
+                        <div class="col-sm-12 col-md-6">
+                            <ul class="fa-ul">
+                                <?php if ($activity_entry?->present): ?>
+                                    <li><span class="fa-li"><i class="fa fa-check"></i></span><ins>Je participe</ins></li>
+                                <?php else: ?>
+                                    <li><span class="fa-li"><i class="fa fa-xmark"></i></span><del>
+                                            <?= $activity_entry ? "Je ne participe pas" : "Pas inscrit" ?>
+                                        </del></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                        <?php if ($activity_entry?->category): ?>
+                            <div class="col-sm-12 col-md-6">
+                                <ul class="fa-ul">
+                                    <li><span class="fa-li"><abbr title="Catégorie"><i
+                                                    class="fa fa-person-running"></i></abbr></span>
+                                        <?= $activity_entry->category?->name ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        <?php endif ?>
+                    </div>
+                    <?php if ($activity_entry?->comment): ?>
+                        <div>
+                            <cite>Remarque : </cite>
+                            <?= $activity_entry->comment ?>
+                        </div>
+                    <?php endif; ?>
+                </blockquote>
             </details>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -191,8 +211,8 @@ page($event->name)->css("event_view.css");
 
     <?php if ($can_edit): ?>
         <p>
-            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-course">
-                <i class="fas fa-plus"></i> Ajouter une course</a>
+            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-activite">
+                <i class="fas fa-plus"></i> Ajouter une activité</a>
         </p>
     <?php endif ?>
 </article>

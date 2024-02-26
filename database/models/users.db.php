@@ -72,10 +72,6 @@ class User
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $event_entries;
 
-    /** @var Collection<int,RaceEntry> entries */
-    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "user", cascade: ["remove"])]
-    public Collection $race_entries;
-
     /** @var Collection<int,ActivityEntry> entries */
     #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $activity_entries;
@@ -136,7 +132,7 @@ class User
         if (!has_session("user_id")) {
             return null;
         }
-        if (isset ($_SESSION['controlled_user_id'])) {
+        if (isset($_SESSION['controlled_user_id'])) {
             Page::getInstance()->controlled();
         }
         self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
