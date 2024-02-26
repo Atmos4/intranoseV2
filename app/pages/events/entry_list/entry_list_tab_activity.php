@@ -3,7 +3,7 @@ $activityId = Component::prop("activity_id");
 $activityEntries = ActivityService::getActivityEntries($activityId);
 ?>
 <?php if (!$activityEntries): ?>
-    <p style="padding: 1rem" class="center">Pas d'inscrits sur cette course</p>
+    <p style="padding: 1rem" class="center">Pas d'inscrits sur cette activité</p>
     <?php return;
 endif ?>
 <figure>
