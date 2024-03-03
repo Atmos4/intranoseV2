@@ -1,10 +1,10 @@
 tr.delimiter {
   background-color: var(--card-sectionning-background-color) !important;
 }
-.event-date,
 .event-limit {
   white-space: nowrap;
   grid-area: event-limit;
+  justify-self: end;
 }
 .event-date > *,
 .event-limit > * {
@@ -44,6 +44,7 @@ tr.delimiter {
   }
   table .event-limit {
     grid-area: limit;
+    justify-self: right;
   }
   .header-responsive {
     display: none;
@@ -74,22 +75,23 @@ tr.delimiter {
 
 .grid {
   display: grid;
-  grid-template-columns: 15% auto auto 20%;
+  grid-template-columns: 15% auto auto;
   grid-template-rows: auto auto;
   grid-template-areas:
-    "icon title title button"
-    "icon dates event-limit button";
+    "icon title title"
+    "icon dates event-limit";
   align-items: center;
 }
 
 @media screen and (max-width: 768px) {
   .grid {
     display: grid;
-    grid-template-columns: 10% auto auto 15%;
+    gap: 10px;
+    grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto;
     grid-template-areas:
-      "icon title title button"
-      "icon dates event-limit button";
+      "icon title title"
+      "dates dates event-limit";
   }
 }
 
@@ -97,28 +99,26 @@ tr.delimiter {
   grid-area: icon;
   text-align: center;
   align-items: center;
+  padding: 0.2rem;
+  margin: 0 0 0.2rem;
 }
 
 .title {
   grid-area: title;
+  text-decoration: none;
 }
 
 .dates {
   grid-area: dates;
 }
 
-.info-button {
-  grid-area: button;
-  justify-self: center;
-  align-items: center;
-}
-
 .event-article {
-  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 0.75);
-  margin: calc(var(--spacing)) 0;
+  padding: var(--spacing);
+  margin: 0 0 var(--spacing);
+  cursor: pointer;
 }
 
-article.event-article:where(:hover, :focus) {
+.event-article:where(:hover, :focus, :focus-within) {
   background-color: var(--secondary-focus) !important;
   outline: none;
 }

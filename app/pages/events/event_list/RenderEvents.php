@@ -66,7 +66,8 @@ function render_events_article(EventDto $event)
             . "\"";
     } ?>
 
-    <article class="event-article" onclick="location.href='/evenements/<?= $event->id ?>';" style="cursor: pointer;">
+    <article class="event-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" onkeydown="console.log(event.key)"
+        hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true" tabindex=0>
         <div class="grid">
             <div class="icon">
                 <?php if ($event->open):
@@ -85,7 +86,6 @@ function render_events_article(EventDto $event)
                 <b>
                     <?= $event->name ?>
                 </b>
-                <hr>
             </div>
             <div class="dates">
                 <span>
@@ -99,8 +99,6 @@ function render_events_article(EventDto $event)
                     <?= format_date($event->deadline) ?>
                 </span>
             </div>
-            <div class="info-button"><a href="/evenements/<?= $event->id ?>" role="button" class="secondary"><i
-                        class="fas fa-info fa-lg"></i></a></div>
         </div>
     </article>
     <?php

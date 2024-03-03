@@ -17,7 +17,7 @@ class Router extends Singleton
                 Page::getInstance()->setContent($content);
                 ob_start();
                 require_once app_path() . "/template/layout.php";
-            } elseif (!$clean) {
+            } else {
                 Toast::renderOob();
             }
             ob_end_flush();
