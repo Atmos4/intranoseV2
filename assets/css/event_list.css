@@ -81,6 +81,7 @@ tr.delimiter {
     "icon title title"
     "icon dates event-limit";
   align-items: center;
+  row-gap: 0.3rem;
 }
 
 @media screen and (max-width: 768px) {
