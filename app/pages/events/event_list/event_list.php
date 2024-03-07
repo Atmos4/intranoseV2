@@ -52,22 +52,10 @@ foreach ($birthday_users as $birthday_user): ?>
     if ($can_edit && count($draft_events)): ?>
 
         <h6>Événements en attente</h6>
-        <table role="grid">
-            <thead class=header-responsive>
-                <tr>
-                    <th></th>
-                    <th>Nom</th>
-                    <th colspan=2>Dates</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                foreach ($draft_events as $draft_event) {
-                    render_event($draft_event);
-                } ?>
-
-            </tbody>
-        </table>
+        <?php
+        foreach ($draft_events as $draft_event) {
+            render_events_article($draft_event);
+        } ?>
         <h6>Événements publiés</h6>
     <?php endif ?>
 

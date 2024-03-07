@@ -72,13 +72,13 @@ function render_events_article(EventDto $event)
             <div class="icon">
                 <?php if ($event->open):
                     if ($event->registered == true): ?>
-                        <ins><i class="fas fa-check fa-xl"></i></ins>
+                        <ins><i class="fas fa-check fa-xl" title="Inscrit !"></i></ins>
                     <?php elseif ($event->registered === false): ?>
-                        <del><i class="fas fa-xmark fa-xl"></i></del>
+                        <del><i class="fas fa-xmark fa-xl" title="Pas inscrit"></i></del>
                     <?php else: ?>
-                        <i class="fas fa-question fa-xl"></i>
+                        <i class="fas fa-question fa-xl" title="Pas encore inscrit"></i>
                     <?php endif; else: ?>
-                    <i class="fas fa-file"></i>
+                    <i class="fas fa-file" title="Brouillon"></i>
                 <?php endif ?>
             </div>
 
@@ -95,7 +95,7 @@ function render_events_article(EventDto $event)
                 </span>
             </div>
             <div class="event-limit <?= $limit_class ?>">
-                <i class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>
+                <i title="Deadline" class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>
                     <?= format_date($event->deadline) ?>
                 </span>
             </div>
