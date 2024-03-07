@@ -6,7 +6,6 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 
 formatter("d MMM");
 $user = User::getCurrent();
-$events = Event::listAllOpen($user->id);
 $future_events = Event::listAllFutureOpen($user->id);
 if ($can_edit)
     $draft_events = Event::listDrafts();
@@ -46,34 +45,31 @@ foreach ($birthday_users as $birthday_user): ?>
     </nav>
 <?php endif ?>
 
-<?php if (count($events) || ($can_edit && count($draft_events))): ?>
-    <?php
-    // Draft events
-    if ($can_edit && count($draft_events)): ?>
-
-        <h6>Événements en attente</h6>
-        <?php
-        foreach ($draft_events as $draft_event) {
-            render_events_article($draft_event);
-        } ?>
-        <h6>Événements publiés</h6>
-    <?php endif ?>
-
-    <?php if (count($future_events)): ?>
-        <?php foreach ($future_events as $event): ?>
-            <?= render_events_article($event); ?>
-        <?php endforeach ?>
-
-        <div id="loadEvents">
-            <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="#loadEvents">Charger
-                les
-                événements
-                passés</button>
-        </div>
-    <?php endif ?>
-
-
-
-<?php else: ?>
+<?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
+    <?php return;
+endif ?>
+
+<?php // Draft events 
+if ($can_edit && count($draft_events)): ?>
+
+    <h6>Événements en attente</h6>
+    <?php
+    foreach ($draft_events as $draft_event) {
+        render_events_article($draft_event);
+    } ?>
+    <h6>Événements publiés</h6>
+<?php endif ?>
+
+<?php if (count($future_events)): ?>
+    <?php foreach ($future_events as $event): ?>
+        <?= render_events_article($event); ?>
+    <?php endforeach ?>
+
+    <div id="loadEvents">
+        <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger
+            les
+            événements
+            passés</button>
+    </div>
 <?php endif ?>

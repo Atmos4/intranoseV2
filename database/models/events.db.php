@@ -177,7 +177,7 @@ class Event
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
                 " LEFT JOIN ev.entries en WITH en.user = ?1" .
                 " WHERE ev.open = 1" .
-                " AND ev.start_date > CURRENT_DATE()" .
+                " AND ev.end_date > CURRENT_DATE()" .
                 " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
@@ -192,7 +192,7 @@ class Event
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
                 " LEFT JOIN ev.entries en WITH en.user = ?1" .
                 " WHERE ev.open = 1" .
-                " AND ev.start_date <= CURRENT_DATE()" .
+                " AND ev.end_date <= CURRENT_DATE()" .
                 " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
