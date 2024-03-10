@@ -18,7 +18,7 @@ if ($v->valid()) {
         $info->value--;
     }
 }
-page("Test toats");
+page("Toasts");
 ?>
 <form method="post">
     <?= $v->render_validation() ?>

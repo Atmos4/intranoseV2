@@ -4,7 +4,7 @@ class FactoryDependency
     /** @var callable[] */
     private static $factoryMethods = [];
 
-    public static function create()
+    public static function create(): static
     {
         $cls = static::class;
         if (!isset(self::$factoryMethods[$cls])) {

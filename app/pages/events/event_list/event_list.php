@@ -25,15 +25,19 @@ $birthday_users = em()->createQueryBuilder()
 
 page("Événements")->css("event_list.css")->heading(false);
 
-$vowels = array("a", "e", "i", "o", "u");
-foreach ($birthday_users as $birthday_user): ?>
-    <div class="birthday">
-        <span>🎂 C'est l'anniversaire
-            <?= ((in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)) ? "d'" : "de ")
-                . "$birthday_user->first_name $birthday_user->last_name 🎉" ?>
-        </span>
+$vowels = array("a", "e", "i", "o", "u"); ?>
+
+<?php if ($birthday_users): ?>
+    <div class="birthday-wrapper">
+        <?php foreach ($birthday_users as $birthday_user): ?>
+            <div class="birthday">
+                🎂 C'est l'anniversaire
+                <?= ((in_array(strtolower(substr($birthday_user->first_name, 0, 1)), $vowels)) ? "d'" : "de ")
+                    . "$birthday_user->first_name $birthday_user->last_name 🎉" ?>
+            </div>
+        <?php endforeach ?>
     </div>
-<?php endforeach ?>
+<?php endif ?>
 
 <h2 class="center">Événements</h2>
 
