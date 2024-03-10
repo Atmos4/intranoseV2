@@ -1,13 +1,62 @@
-tr.delimiter {
-  background-color: var(--card-sectionning-background-color) !important;
+.birthday-wrapper {
+  margin-bottom: 1rem;
 }
-.event-date,
+.birthday {
+  border-left: solid 5px;
+  border-color: var(--primary-focus);
+  background-color: var(--card-background-color);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "icon title title"
+    "dates dates event-limit";
+}
+
+@media screen and (min-width: 768px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 15% auto auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "icon title title"
+      "icon dates event-limit";
+    align-items: center;
+    row-gap: 0.3rem;
+  }
+}
+
+.icon {
+  grid-area: icon;
+  text-align: center;
+  align-self: center;
+  padding: 0.2rem;
+}
+
+.title {
+  grid-area: title;
+  text-decoration: none;
+  align-self: center;
+}
+
+.dates {
+  grid-area: dates;
+}
+
 .event-limit {
   white-space: nowrap;
+  grid-area: event-limit;
+  justify-self: end;
 }
-.event-date > *,
+.dates > *,
 .event-limit > * {
   margin-right: 0.5rem;
+  white-space: nowrap;
 }
 .event-limit.warning {
   color: orange;
@@ -18,55 +67,13 @@ tr.delimiter {
   color: red;
 }
 
-@media screen and (max-width: 768px) {
-  table tr {
-    display: grid;
-    grid:
-      "icon name name"
-      "date date limit" / auto 1fr;
-    border-bottom: var(--border-width) solid var(--table-border-color);
-    align-items: center;
-  }
-  table td {
-    border-bottom: none;
-  }
-  table .event-entry {
-    grid-area: icon;
-    padding-bottom: 0;
-  }
-  table .event-name {
-    grid-area: name;
-    padding-bottom: 0;
-  }
-  table .event-date {
-    grid-area: date;
-  }
-  table .event-limit {
-    grid-area: limit;
-  }
-  .header-responsive {
-    display: none;
-  }
+.event-article {
+  padding: var(--spacing);
+  margin: 0 0 var(--spacing);
+  cursor: pointer;
 }
 
-@media (min-width: 768px) {
-  .responsive-description {
-    display: none;
-  }
-
-  .competition-date div {
-    display: grid;
-    grid: auto-flow / auto 1fr;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-  }
-}
-
-.birthday {
-  border-left: solid 5px;
-  border-color: var(--primary-focus);
-  background-color: var(--card-background-color);
-  padding: 10px;
-  margin-bottom: 10px;
+.event-article:where(:hover, :focus, :focus-within) {
+  background-color: var(--secondary-focus) !important;
+  outline: none;
 }

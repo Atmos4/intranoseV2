@@ -33,7 +33,8 @@ if (env("DEVELOPMENT")) {
 }
 
 // Events
-Router::add('/evenements', 'pages/events/event_list');
+Router::add('/evenements', 'pages/events/event_list/event_list');
+Router::add('/evenements/passes', 'pages/events/event_list/past_events');
 Router::add('/evenements/nouveau', 'pages/events/event_edit');
 Router::add('/evenements/$event_id/modifier', 'pages/events/event_edit');
 Router::add('/evenements/$event_id/ajouter-course', 'pages/events/race_edit');
