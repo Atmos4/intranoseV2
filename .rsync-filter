@@ -9,3 +9,6 @@
 - /logs/
 # Exclude tests
 - /tests
+# Exclude all files in uploads folder (except download_file.php)
+- /app/uploads/*
++ /app/uploads/download_file.php
