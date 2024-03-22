@@ -4,7 +4,7 @@ restrict_access(Access::$ADD_EVENTS);
 $v = new Validator();
 $file_upload = $v->upload("file_upload")->required()->mime(UploadField::$FILE_MIME);
 $permission = $v->select("permission")->options(["USER" => 'Public', "COACH" => "Admin"])->label("Niveau de permission");
-$name = $v->text("name")->label("Nom du fichier");
+$name = $v->text("name")->label("Nom du fichier (optionel)");
 
 
 if ($v->valid()) {
@@ -28,20 +28,12 @@ page("Ajouter un document");
 </nav>
 <form method="post" enctype="multipart/form-data">
     <?= $v->render_validation() ?>
-    <div>
-        <?= $file_upload->render() ?>
-    </div>
-
-    <div class="col-sm-6 col-12">
-        <?= $permission->render() ?>
-    </div>
-
-    <div class="col-sm-6 col-12">
-        <?= $name->render() ?>
-    </div>
-    <div>
-        <button type=" submit" class="outline">
-            Enregistrer
-        </button>
-    </div>
+    <i>Formats autorisés: images, PDF, Word, Excel. S'il manque des formats <a href="/feedback">faites une
+            suggestion!</a></i>
+    <?= $file_upload->render() ?>
+    <?= $permission->render() ?>
+    <?= $name->render() ?>
+    <button type=" submit" class="outline">
+        Enregistrer
+    </button>
 </form>

@@ -51,4 +51,10 @@ class SharedFile
         return em()->find(SharedFile::class, $file_id);
     }
 
+    /** @return self[] */
+    static function findBy($permission): array
+    {
+        return em()->getRepository(self::class)->findBy(['permission_level' => $permission]);
+    }
+
 }
