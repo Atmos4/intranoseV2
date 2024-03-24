@@ -31,9 +31,6 @@ class SharedFile
     public Race|null $race = null;
 
     #[ManyToOne]
-    public Activity|null $activity = null;
-
-    #[ManyToOne]
     public Event|null $event = null;
 
     function __construct()
