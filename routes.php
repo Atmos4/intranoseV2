@@ -91,8 +91,8 @@ Router::add('/feedback-list/supprimer/$user_id', 'pages/user_feedback_list');
 
 // Logout
 Router::add('/logout', function () {
-    session_destroy();
-    redirect("login");
+    AuthService::create()->logout();
+    redirect("/login");
 });
 
 // Special route, see router

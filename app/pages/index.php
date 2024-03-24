@@ -1,5 +1,5 @@
 <?php
-if (empty($_SESSION['user_id'])) {
+if (empty ($_SESSION['user_id'])) {
     redirect("login");
 } else {
     //redirect("accueil");

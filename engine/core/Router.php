@@ -41,17 +41,18 @@ class Router extends Singleton
     static function abort(string $message = null, int $code = 404)
     {
         http_response_code($code);
+        Page::reset();
+        $instance = self::getInstance()->cleanBuffer();
         if (env('DEVELOPMENT')) {
             echo $message;
         }
-        Page::reset();
-        self::getInstance()->cleanBuffer()->render();
+        $instance->render();
     }
 
     static function getParameter($param, $strict = true, $numeric = true, $pattern = null)
     {
         $router = self::getInstance();
-        if (empty($router->dynamicSegments[$param])) {
+        if (empty ($router->dynamicSegments[$param])) {
             if ($strict) {
                 self::abort(message: "Route parameter $param was not found");
             }

@@ -1,5 +1,5 @@
 <?php
-$token = AccessToken::retrieve($_GET['token'] ?? "");
+$token = AccessToken::retrieveOrFail($_GET['token'] ?? "");
 $v = new Validator(["username" => $token->user->login], action: "reset_password_form");
 $username = $v->text("username")->autocomplete("username")->label("Login")->readonly();
 $new_password = $v->password("new_password")->autocomplete("new-password")->placeholder("Nouveau mot de passe")->required()->secure();
