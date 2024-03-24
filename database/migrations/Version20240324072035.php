@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240323182018 extends AbstractMigration
+final class Version20240324072035 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add activities and activity entries tables';
+        return '';
     }
 
     public function up(Schema $schema): void
@@ -29,16 +29,12 @@ final class Version20240323182018 extends AbstractMigration
         $this->addSql('ALTER TABLE orm_categories ADD activity_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE orm_categories ADD CONSTRAINT FK_5598E1CD81C06096 FOREIGN KEY (activity_id) REFERENCES orm_activities (id)');
         $this->addSql('CREATE INDEX IDX_5598E1CD81C06096 ON orm_categories (activity_id)');
-        $this->addSql('ALTER TABLE orm_shared_documents ADD activity_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE orm_shared_documents ADD CONSTRAINT FK_24F818CF81C06096 FOREIGN KEY (activity_id) REFERENCES orm_activities (id)');
-        $this->addSql('CREATE INDEX IDX_24F818CF81C06096 ON orm_shared_documents (activity_id)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE orm_categories DROP FOREIGN KEY FK_5598E1CD81C06096');
-        $this->addSql('ALTER TABLE orm_shared_documents DROP FOREIGN KEY FK_24F818CF81C06096');
         $this->addSql('ALTER TABLE orm_activities DROP FOREIGN KEY FK_DA9A084071F7E88B');
         $this->addSql('ALTER TABLE orm_activity_entries DROP FOREIGN KEY FK_9D0FAE1A76ED395');
         $this->addSql('ALTER TABLE orm_activity_entries DROP FOREIGN KEY FK_9D0FAE181C06096');
@@ -47,7 +43,5 @@ final class Version20240323182018 extends AbstractMigration
         $this->addSql('DROP TABLE orm_activity_entries');
         $this->addSql('DROP INDEX IDX_5598E1CD81C06096 ON orm_categories');
         $this->addSql('ALTER TABLE orm_categories DROP activity_id');
-        $this->addSql('DROP INDEX IDX_24F818CF81C06096 ON orm_shared_documents');
-        $this->addSql('ALTER TABLE orm_shared_documents DROP activity_id');
     }
 }
