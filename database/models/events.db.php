@@ -101,6 +101,10 @@ class Event
     #[OneToMany(targetEntity: Race::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $races;
 
+    /** @var Collection<int, Activity> */
+    #[OneToMany(targetEntity: Activity::class, mappedBy: 'event', cascade: ["remove"])]
+    public Collection $activities;
+
     function __construct()
     {
         $this->start_date = date_create();
@@ -263,7 +267,7 @@ class EventDto
                 $event['end_date'],
                 $event['deadline'],
                 $event['open'],
-                isset($event['present']) ? $event['present'] : null
+                isset ($event['present']) ? $event['present'] : null
             );
         }
         return $result;

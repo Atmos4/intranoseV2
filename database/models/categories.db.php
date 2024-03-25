@@ -18,6 +18,9 @@ class Category
     #[ManyToOne(targetEntity: Race::class, inversedBy: "categories")]
     public Race|null $race = null;
 
+    #[ManyToOne(targetEntity: Activity::class, inversedBy: "categories")]
+    public Activity|null $activity = null;
+
     #[Column]
     public string $name = "";
 
@@ -27,6 +30,10 @@ class Category
     /** @var Collection<int,RaceEntry> entries */
     #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "category", cascade: ["remove"])]
     public Collection $entries;
+
+    /** @var Collection<int,ActivityEntry> entries */
+    #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "category", cascade: ["remove"])]
+    public Collection $activity_entries;
 
     /** @param Collection<int,Category> categories */
     static function toSelectOptions($categories): array
