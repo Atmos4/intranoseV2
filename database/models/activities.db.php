@@ -59,7 +59,13 @@ class Activity
     public string $name;
 
     #[Column]
-    public string $place;
+    public string $location_label;
+
+    #[Column]
+    public string $location_url;
+
+    #[Column]
+    public string $description;
 
     #[ManyToOne]
     public Event|null $event = null;
@@ -77,11 +83,13 @@ class Activity
         $this->categories = new ArrayCollection();
     }
 
-    function set(string $name, DateTime $date, string $place, Event $event)
+    function set(string $name, DateTime $date, Event $event, string $location_label = "", string $location_url = "", string $description = "")
     {
         $this->name = $name;
-        $this->place = $place;
         $this->date = $date;
         $this->event = $event;
+        $this->location_label = $location_label;
+        $this->location_url = $location_url;
+        $this->description = $description;
     }
 }

@@ -88,6 +88,9 @@ class Event
     public DateTime $deadline;
 
     #[Column]
+    public string $description;
+
+    #[Column]
     public bool $open = false;
 
     #[Column]
