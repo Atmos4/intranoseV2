@@ -1,7 +1,5 @@
 <?php
-if (empty ($_SESSION['user_id'])) {
-    redirect("login");
-} else {
-    //redirect("accueil");
+if (AuthService::create()->isUserLoggedIn()) {
     redirect("evenements");
 }
+redirect("login");
