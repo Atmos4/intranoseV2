@@ -251,6 +251,7 @@ enum AccessTokenType: string
     case ACTIVATE = 'ACTIVATE';
     case INVITE = 'INVITE';
     case RESET_PASSWORD = 'RESET_PASSWORD';
+    case REMEMBER_ME = 'REMEMBER_ME';
 }
 
 #[Entity, Table(name: 'access_tokens')]
@@ -262,6 +263,9 @@ class AccessToken
 
     #[ManyToOne]
     public User|null $user = null;
+
+    #[Column]
+    public string|null $hashed_validator = null;
 
     #[Column]
     public DateTime $expiration;
@@ -277,20 +281,37 @@ class AccessToken
         $this->expiration = date_create()->add($duration);
     }
 
-    static function retrieve(string $uuid): AccessToken
+    /** This is added security against
+     * - compromised DB with the hash
+     * - timing attacks
+     * Use this for long lived tokens */
+    function createHashedValidator(): string
+    {
+        $validator = bin2hex(random_bytes(32));
+        $this->hashed_validator = password_hash($validator, PASSWORD_DEFAULT);
+        return $validator;
+    }
+
+    static function retrieve(string $uuid, bool $forceExit = false): ?AccessToken
     {
         if (!Uuid::isValid($uuid)) {
-            force_404("invalid token");
+            return $forceExit ? force_404("invalid token") : null;
         }
+        // TODO: optimize with DQL if perf problems.
         $token = em()->find(AccessToken::class, $uuid);
         if (!$token) {
-            force_404("token not found");
+            return $forceExit ? force_404("token not found") : null;
         }
         if (date_create() > $token->expiration) {
             em()->remove($token);
             em()->flush();
-            force_404("token expired");
+            return $forceExit ? force_404("token expired") : null;
         }
         return $token;
+    }
+
+    static function retrieveOrFail(string $uuid): AccessToken
+    {
+        return self::retrieve($uuid, true) ?? throw new Exception("Token not found");
     }
 }

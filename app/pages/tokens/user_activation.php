@@ -1,5 +1,5 @@
 <?php
-$token = AccessToken::retrieve($_GET['token'] ?? "");
+$token = AccessToken::retrieveOrFail($_GET['token'] ?? "");
 page("Activer le compte")->disableNav()->heading(false);
 $v = new Validator(["username" => $token->user->login], action: "validate_form");
 $username = $v->text("username")->autocomplete("username")->label("Votre nom d'utilisateur")->readonly();

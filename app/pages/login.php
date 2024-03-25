@@ -2,8 +2,9 @@
 $v = new Validator();
 $login = $v->text("login")->placeholder("Login")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
+$rememberMe = $v->switch("remember_me")->label("Rester connecté");
 if ($v->valid()) {
-    AuthService::create()->tryLogin($login->value, $password->value, $v);
+    AuthService::create()->tryLogin($login->value, $password->value, $rememberMe->value, $v);
 }
 
 page("Login")->css("login.css")->disableNav()->heading(false);
@@ -18,6 +19,7 @@ page("Login")->css("login.css")->disableNav()->heading(false);
                 data-placement="left"><i class="fas fa-circle-info"></i></ins>
         </div>
         <?= $password->render() ?>
+        <?= $rememberMe->render() ?>
         <?= $v->render_validation() ?>
         <button type="submit">Se connecter</button>
     </form>
