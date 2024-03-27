@@ -1,9 +1,9 @@
 <?php
-$raceId = Component::prop("race_id");
-$raceEntries = RaceService::getRaceEntries($raceId);
+$activityId = Component::prop("activity_id");
+$activityEntries = ActivityService::getActivityEntries($activityId);
 ?>
-<?php if (!$raceEntries): ?>
-    <p style="padding: 1rem" class="center">Pas d'inscrits sur cette course</p>
+<?php if (!$activityEntries): ?>
+    <p style="padding: 1rem" class="center">Pas d'inscrits sur cette activité</p>
     <?php return;
 endif ?>
 <figure>
@@ -19,7 +19,7 @@ endif ?>
             <?php
             ob_start();
             $totalEntries = 0;
-            foreach ($raceEntries as $entry): ?>
+            foreach ($activityEntries as $entry): ?>
                 <?php if ($entry->present):
                     $totalEntries++ ?>
                     <tr class="clickable" tabindex=0 <?= UserModal::props($entry->user->id) ?>>

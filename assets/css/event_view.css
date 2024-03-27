@@ -20,17 +20,17 @@ header > .row > .col-sm-6 {
   table td {
     border-bottom: none;
   }
-  table .race-name {
+  table .activity-name {
     grid-area: name;
     padding-bottom: 0;
   }
-  table .race-date {
+  table .activity-date {
     grid-area: date;
   }
-  table .race-place {
+  table .activity-place {
     grid-area: place;
   }
-  table .race-entry {
+  table .activity-entry {
     grid-area: icon;
     align-self: center;
   }
@@ -58,4 +58,8 @@ textarea {
 
 details summary:focus:not([role="button"]) {
   color: var(--accordion-close-summary-color);
+}
+
+ul {
+  margin-bottom: 0.5rem;
 }

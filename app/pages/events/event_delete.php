@@ -26,7 +26,7 @@ page("Confirmation de suppression");
             <span>
                 <i class="fa fa-chevron-right"></i>
                 Courses:
-                <?= count($event->races) ?>
+                <?= count($event->activities) ?>
             </span>
             <span>
                 <i class="fa fa-chevron-right"></i>
