@@ -83,13 +83,11 @@ class Activity
         $this->categories = new ArrayCollection();
     }
 
-    function set(string $name, DateTime $date, Event $event, string $location_label = "", string $location_url = "", string $description = "")
+    function set(string $name, DateTime $date, string $place, Event $event)
     {
         $this->name = $name;
+        $this->place = $place;
         $this->date = $date;
         $this->event = $event;
-        $this->location_label = $location_label;
-        $this->location_url = $location_url;
-        $this->description = $description;
     }
 }
