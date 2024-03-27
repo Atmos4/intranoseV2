@@ -26,6 +26,7 @@ if (env("DEVELOPMENT")) {
 
     // --- migration ---
     Router::add('/dev/migrate', '../database/migrate_db');
+    Router::add('/dev/migrate_activities', '../database/race_to_activity');
 
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');

@@ -59,7 +59,13 @@ class Activity
     public string $name;
 
     #[Column]
-    public string $place;
+    public string $location_label;
+
+    #[Column]
+    public string $location_url;
+
+    #[Column]
+    public string $description;
 
     #[ManyToOne]
     public Event|null $event = null;
