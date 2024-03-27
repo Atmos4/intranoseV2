@@ -30,9 +30,8 @@ page($activity->name)->css("event_view.css");
             $type = "Autre";
         } ?>
 
-        <div style="margin-bottom: 1rem;"><i class="fas <?= $icon ?> fa-2xl"></i></div>
         <p>
-            <kbd>
+            Type : <kbd>
                 <?= $type ?>
             </kbd>
         </p>
@@ -63,7 +62,11 @@ page($activity->name)->css("event_view.css");
             <?php endif ?>
         </div>
     </header>
-
+    <?php if ($activity->description): ?>
+        <p>
+            <?= $activity->description ?>
+        </p>
+    <?php endif; ?>
     <?php if ($activity->event->open): ?>
         <blockquote>
             <h6>Inscription</h6>

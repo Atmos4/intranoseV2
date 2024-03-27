@@ -15,7 +15,8 @@ if ($activity_id) {
         //TODO
         "name" => $activity->name,
         "date" => date_format($activity->date, "Y-m-d"),
-        "place" => $activity->place
+        "location_label" => $activity->location_label,
+        "location_url" => $activity->location_url
     ];
     foreach ($activity->categories as $index => $category) {
         $form_values["category_{$index}_name"] = $category->name;
@@ -35,7 +36,9 @@ $date = $v->date("date")
     ->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'événement")
     ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'événement")
     ->required();
-$place = $v->text("place")->label("Lieu")->required();
+$location_label = $v->text("location_label")->label("Nom du Lieu")->required();
+$location_url = $v->url("location_url")->label("URL du lieu");
+$description = $v->textarea("description")->label("Description de l'activité");
 
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
@@ -45,7 +48,7 @@ foreach ($activity->categories as $index => $category) {
 
 
 if ($v->valid()) {
-    $activity->set($name->value, date_create($date->value), $place->value, $event);
+    $activity->set($name->value, date_create($date->value), $event, $location_label->value, $location_url->value, $description->value);
     $activity->type = ActivityType::from($type->value);
     foreach ($activity->categories as $index => $category) {
         $category->name = $category_rows[$index]['name']->value;
@@ -84,13 +87,19 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
     <article class="row">
         <?= $v->render_validation() ?>
         <?= $name->render() ?>
-        <?= $type->render() ?>
+        <div class="col-md-6">
+            <?= $type->render() ?>
+        </div>
         <div class="col-md-6">
             <?= $date->render() ?>
         </div>
         <div class="col-md-6">
-            <?= $place->render() ?>
+            <?= $location_label->render() ?>
         </div>
+        <div class="col-md-6">
+            <?= $location_url->render() ?>
+        </div>
+        <?= $description->render() ?>
         <div class="col-auto">
             <h2>Catégories</h2>
         </div>

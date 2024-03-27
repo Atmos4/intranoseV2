@@ -106,7 +106,11 @@ page($event->name)->css("event_view.css");
             </a>
         <?php endif ?>
     </header>
-
+    <?php if ($event->description): ?>
+        <p>
+            <?= $event->description ?>
+        </p>
+    <?php endif ?>
     <?php if ($event->open): ?>
         <blockquote>
             <h6>Inscription</h6>
@@ -160,18 +164,23 @@ page($event->name)->css("event_view.css");
                         <?= $activity->name ?>
                     </b>
                 </summary>
-                <h6>Description</h6>
                 <div class="grid">
                     <ul class="fa-ul">
                         <li><span class="fa-li"><i class="fa fa-calendar"></i></span>
                             <?= format_date($activity->date) ?>
                         </li>
                     </ul>
-                    <ul class="fa-ul">
-                        <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
-                            <?= $activity->place ?>
-                        </li>
-                    </ul>
+                    <?php if ($activity->location_label): ?>
+                        <ul class="fa-ul">
+                            <li><span class="fa-li"><i class="fa fa-location-dot"></i></span>
+                                <?php if ($activity->location_url): ?>
+                                    <a href=<?= $activity->location_url ?> target=”_blank”><?= $activity->location_label ?></a>
+                                <?php else: ?>
+                                    <?= $activity->location_label ?>
+                                <?php endif ?>
+                            </li>
+                        </ul>
+                    <?php endif ?>
 
                 </div>
                 <a role="button" class="outline secondary" href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>'>
