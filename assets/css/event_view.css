@@ -59,3 +59,7 @@ textarea {
 details summary:focus:not([role="button"]) {
   color: var(--accordion-close-summary-color);
 }
+
+ul {
+  margin-bottom: 0.5rem;
+}

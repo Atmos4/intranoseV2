@@ -159,7 +159,11 @@ page("Inscription - " . $event->name)->css("event_view.css");
                                 <?= format_date($activity->date) ?>
                             </td>
                             <td class="activity-place">
-                                <?= $activity->place ?>
+                                <?php if ($activity->location_url): ?>
+                                    <a href=<?= $activity->location_url ?> target=”_blank”><?= $activity->location_label ?></a>
+                                <?php else: ?>
+                                    <?= $activity->location_label ?>
+                                <?php endif ?>
                             </td>
                         </tr>
                         <tr class="edit">

@@ -50,12 +50,17 @@ page($activity->name)->css("event_view.css");
             if ($activity->event->open): ?>
                 <?php if ($activity_entry): ?>
                     <?php if ($activity_entry->present): ?>
-                        <ins><i class="fas fa-check fa-lg"></i></ins>
+                        <ins><i class="fas fa-check fa-lg"></i>
+                            <b>Inscrit</b></ins>
                     <?php else: ?>
-                        <del><i class="fas fa-xmarkf fa-lg"></i></del>
+                        <del><i class="fas fa-xmark fa-lg"></i>
+                            <b>Je ne participe pas</b></del>
                     <?php endif; ?>
                 <?php else: ?>
-                    <i class="fas fa-question fa-lg"></i>
+                    <span>
+                        <i class="fas fa-question fa-lg"></i>
+                        <b>Pas encore inscrit</b>
+                    </span>
                 <?php endif; ?>
             <?php else: ?>
                 <del>Pas encore publié</del>
@@ -69,7 +74,6 @@ page($activity->name)->css("event_view.css");
     <?php endif; ?>
     <?php if ($activity->event->open): ?>
         <blockquote>
-            <h6>Inscription</h6>
             <div class="grid">
                 <ul class="fa-ul">
                     <?php if ($activity_entry?->present): ?>
