@@ -25,7 +25,7 @@
     ]
   },
   "scripts": {
-    "install:all": [
+    "sync": [
       "@composer install",
       "@db:migrate"
     ],
