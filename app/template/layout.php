@@ -29,7 +29,8 @@ $page = Page::getInstance(); ?>
     <link rel="stylesheet" href="/assets/css/theme-toggle.css">
 
     <!-- Pico.css -->
-    <link rel="stylesheet" href="/assets/css/pico.min.css">
+    <link rel="stylesheet" href="/assets/css/picov2.min.css">
+    <link rel="stylesheet" href="/assets/css/bsg.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
     <!-- Custom CSS -->

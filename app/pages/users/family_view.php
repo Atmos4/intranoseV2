@@ -14,7 +14,7 @@ if (isset($_POST['add_members']) && count($_POST['add_members'])) {
     $dql = "UPDATE User u SET u.family = ?$count where u.id IN ("
         . implode(",", array_map(function ($value) {
             if (!is_numeric($value)) {
-                die("Méchant Dobby");
+                die ("Méchant Dobby");
             }
             return "?$value";
         }, array_keys($_POST['add_members']))) . ")";
@@ -34,9 +34,9 @@ page($family->name)->css("family_list.css") ?>
     <nav id="page-actions">
         <a href="/familles" class="secondary"><i class="fa fa-caret-left"></i> Retour</a>
         <li>
-            <details role="list" dir="rtl">
-                <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
-                <ul role="listbox">
+            <details class="dropdown">
+                <summary class="contrast">Actions</summary>
+                <ul dir="rtl">
                     <li>
                         <a href="<?= $family->id ?>/supprimer" class="destructive outline">
                             <i class="fa fa-trash"></i> Supprimer la famille
@@ -63,11 +63,11 @@ page($family->name)->css("family_list.css") ?>
                     <ul>
                         <li>
                             <?php if ($f_member != $user || check_auth(Access::$EDIT_USERS)): ?>
-                                <details role="list" dir="rtl">
+                                <details class="dropdown" dir="rtl">
                                     <summary aria-haspopup="listbox" class="contrast actions">
                                         <i class="fa fa-ellipsis-vertical"></i>
                                     </summary>
-                                    <ul role="listbox">
+                                    <ul dir="rtl">
                                         <li><a href="<?= "$family->id/change/$f_member->id" ?>" class="contrast">
                                                 Changer rôle
                                                 <i class="fa fa-arrow-<?= $f_member->family_leader ? "down" : "up" ?>"></i>
@@ -90,9 +90,9 @@ page($family->name)->css("family_list.css") ?>
 <?php if (check_auth(Access::$EDIT_USERS)): ?>
     <form method="post">
         <h4>Ajouter un membre</h4>
-        <details role="list">
+        <details class="dropdown">
             <summary aria-haspopup="listbox">Ajouter à la famille...</summary>
-            <ul role="listbox">
+            <ul data-placement=top>
                 <?php foreach ($add_member_list as $add_member): ?>
                     <li>
                         <label>

@@ -9,9 +9,9 @@ page("Les licenciés")->css("user_list.css");
     <nav id="page-actions">
         <a href="/licencies/ajouter"><i class="fas fa-plus"></i> Ajouter un licencié</a>
         <li>
-            <details role="list" dir="rtl">
-                <summary role="link" aria-haspopup="listbox" class="contrast">Plus</summary>
-                <ul role="listbox">
+            <details class="dropdown">
+                <summary class="contrast">Plus</summary>
+                <ul dir="rtl">
                     <li><a href="/familles" class="contrast"><i class="fas fa-users"></i> Familles</a></li>
                     <li>
                         <a href="/licencies/desactive" class="contrast"><i class="fas fa-bed"></i> Licenciés désactivés</a>

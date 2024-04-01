@@ -51,8 +51,7 @@ $vowels = array("a", "e", "i", "o", "u"); ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
-    <?php return;
-endif ?>
+<?php endif ?>
 
 <?php // Draft events 
 if ($can_edit && count($draft_events)): ?>
@@ -69,11 +68,11 @@ if ($can_edit && count($draft_events)): ?>
     <?php foreach ($future_events as $event): ?>
         <?= render_events_article($event); ?>
     <?php endforeach ?>
-
-    <div id="loadEvents">
-        <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger
-            les
-            événements
-            passés</button>
-    </div>
 <?php endif ?>
+
+<div id="loadEvents">
+    <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger
+        les
+        événements
+        passés</button>
+</div>

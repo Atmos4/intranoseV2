@@ -40,7 +40,7 @@ if (check_auth([Permission::ROOT])) {
             <?php endforeach ?>
             <?php if ($main_user->family_leader): ?>
                 <li>
-                    <details role="list" id="family-dropdown">
+                    <details class="dropdown" id="family-dropdown">
                         <summary role="link" class="contrast"><i class="fa fa-fw fa-users"></i> Famille
                         </summary>
                         <ul>

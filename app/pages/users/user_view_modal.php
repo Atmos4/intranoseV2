@@ -54,9 +54,9 @@ if (!Component::mounted()) {
             <nav>
                 <li><a href="/user-control/<?= $user->id ?>" class="outline">Contrôler</a></li>
                 <li>
-                    <details role="list" dir="rtl">
-                        <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
-                        <ul role="listbox" data-placement="top">
+                    <details class="dropdown">
+                        <summary class="contrast">Actions</summary>
+                        <ul dir="rtl" data-placement="top">
                             <li><a href="/licencies/<?= $user->id ?>/modifier">Modifier</a>
                             </li>
                             <li>

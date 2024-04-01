@@ -12,10 +12,17 @@
   cursor: pointer;
 }
 
-.profile > span {
+.profile > i {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  border-radius: 999ch;
+  padding: 0.5rem;
+  background-color: var(--secondary-background);
+  transition: background-color var(--transition);
+}
+.profile:hover > i {
+  background-color: var(--primary-background);
 }
 
 .grid-clip {
