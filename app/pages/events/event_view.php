@@ -29,9 +29,9 @@ page($event->name)->css("event_view.css");
 
     <?php if ($can_edit): ?>
         <li>
-            <details role="list" dir="rtl">
-                <summary role="link" aria-haspopup="listbox" class="contrast">Actions</summary>
-                <ul role="listbox">
+            <details class="dropdown">
+                <summary>Actions</summary>
+                <ul dir="rtl">
                     <li><a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
                             <i class="fas fa-pen"></i> Modifier
                         </a></li>

@@ -12,10 +12,11 @@
   cursor: pointer;
 }
 
-.profile > span {
+.profile > i {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  border-radius: 999ch;
 }
 
 .grid-clip {

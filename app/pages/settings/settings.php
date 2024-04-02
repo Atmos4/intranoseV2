@@ -116,9 +116,9 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
     <?= $v_picture->render_validation() ?>
-    <label class="profile">
+    <label class="profile" title="Modifier la photo de profil">
         <img class="profile-picture" src="<?= $profile_picture ?>">
-        <span type="button" class="secondary"><i class="fa fa-pen"></i></span>
+        <i class="fa fa-pen"></i>
         <?= $picture
             ->attributes([
                 "style" => "width: auto",

@@ -53,7 +53,10 @@
 }
 
 /* change these rules to not be bothr*/
-details[dir="rtl"] ul > li {
+details.dropdown[open] > summary::before {
+  width: unset;
+}
+details ul[dir="rtl"] > li {
   left: auto;
   direction: ltr;
 }
@@ -69,6 +72,11 @@ details[dir="rtl"] ul > li {
 }
 .row.end {
   justify-content: flex-end;
+}
+/* fix styles for role=link */
+:is(a, button)[role="link"] {
+  border: none;
+  background: transparent;
 }
 /* Disable article margin top because what's the point */
 article {
@@ -206,8 +214,10 @@ dialog article > header .close:is(:hover, :focus) {
 }
 
 /* --- pico dropdown extra direction --- */
-details[role="list"] summary + ul[data-placement="top"] {
+details.dropdown summary + ul[data-placement="top"] {
   bottom: 100%;
+  max-height: 400px;
+  overflow: auto;
 }
 
 /* --- pico modal animation --- */
