@@ -50,7 +50,8 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/theme.js"></script>
 </head>
 
-<body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator">
+<body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"
+    hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
     <?php
     if ($page->nav) {
         require_once app_path() . "/template/nav.php";
