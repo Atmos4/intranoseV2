@@ -116,7 +116,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
     <?= $v_picture->render_validation() ?>
-    <label class="profile">
+    <label class="profile" title="Modifier la photo de profil">
         <img class="profile-picture" src="<?= $profile_picture ?>">
         <i class="fa fa-pen"></i>
         <?= $picture

@@ -73,6 +73,11 @@ details ul[dir="rtl"] > li {
 .row.end {
   justify-content: flex-end;
 }
+/* fix styles for role=link */
+:is(a, button)[role="link"] {
+  border: none;
+  background: transparent;
+}
 /* Disable article margin top because what's the point */
 article {
   margin-top: 0;

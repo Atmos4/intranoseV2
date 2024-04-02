@@ -6,11 +6,13 @@ formatter("d MMM");
 $user = User::getCurrent();
 $past_events = Event::listAllPastOpen($user->id);
 
+?>
+<h4>Évenements passés</h4>
+<?php
 if (count($past_events)) {
-    ?>
-    <h4>Évenements passés</h4>
-    <?php
     foreach ($past_events as $event) {
         render_events_article($event);
     }
-}
+} else { ?>
+    <p>Pas d'événements passés 😿</p>
+<?php }

@@ -18,11 +18,11 @@ if (check_auth([Permission::ROOT])) {
 
 ?>
 <div id="nav-button">
-    <button class="outline contrast" onclick="document.getElementById('mySidenav').classList.toggle('open')">
+    <button class="outline contrast" onclick="openNav()">
         &#9776; Menu
     </button>
 </div>
-<aside id="mySidenav" class="sidenav">
+<aside id="mySidenav" class="sidenav notvisible">
     <nav>
         <ul>
             <li>
@@ -71,3 +71,16 @@ if (check_auth([Permission::ROOT])) {
         </div>
     </nav>
 </aside>
+<script>
+    function openNav() {
+        const navBar = document.getElementById('mySidenav');
+        if (navBar.classList.contains('open')) {
+            navBar.classList.remove('open');
+            setTimeout(() => { navBar.classList.add("notvisible") }, 200);
+        }
+        else {
+            navBar.classList.remove("notvisible");
+            navBar.classList.add('open');
+        }
+    }
+</script>

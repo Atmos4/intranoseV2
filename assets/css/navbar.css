@@ -36,6 +36,9 @@
   background: var(--card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
+.sidenav.notvisible {
+  visibility: hidden;
+}
 
 .sidenav > nav {
   /*just so that we are safe from overflowing*/
@@ -138,6 +141,9 @@ body > main > .spacing-div {
   .sidenav {
     width: 250px;
     padding-top: 1rem;
+  }
+  .sidenav.notvisible {
+    visibility: visible;
   }
 
   body {
