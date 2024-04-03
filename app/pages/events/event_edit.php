@@ -15,7 +15,7 @@ if ($event_id) {
         "end_date" => date_format($event->end_date, "Y-m-d"),
         "limit_date" => date_format($event->deadline, "Y-m-d"),
         "bulletin_url" => $event->bulletin_url,
-
+        "description" => $event->description
     ];
 } else {
     $event = new Event();
@@ -31,9 +31,11 @@ $limit_date = $v->date("limit_date")
     ->label("Deadline")->required()
     ->max($start_date->value ? date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d") : "", "Doit être avant le jour de départ");
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
+$description = $v->textarea("description")->label("Description");
 
 if (!empty($_POST) && $v->valid()) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
+    $event->description = $description->value;
     em()->persist($event);
     em()->flush();
     redirect("/evenements/$event->id");
@@ -63,9 +65,8 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
             <div class="col-lg-4">
                 <?= $limit_date->render() ?>
             </div>
-            <div>
-                <?= $bulletin_url->render() ?>
-            </div>
+            <?= $bulletin_url->render() ?>
+            <?= $description->render() ?>
         </div>
     </article>
 </form>

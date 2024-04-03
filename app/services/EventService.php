@@ -1,12 +1,12 @@
 <?php
 class EventService
 {
-    /** @return RaceInfoDto[] */
-    static function getRaceIdList(string $eventId)
+    /** @return ActivityInfoDto[] */
+    static function getActivityIdList(string $eventId)
     {
         return em()->createQueryBuilder()
-            ->select("NEW RaceInfoDto(r.id, r.name)")
-            ->from(Race::class, "r")
+            ->select("NEW ActivityInfoDto(r.id, r.name)")
+            ->from(Activity::class, "r")
             ->where("r.event = :eid")
             ->setParameter("eid", $eventId)
             ->getQuery()->getResult();
@@ -40,7 +40,7 @@ class EventInfoDto
     }
 }
 
-class RaceInfoDto
+class ActivityInfoDto
 {
     function __construct(public int $id, public string $name)
     {
