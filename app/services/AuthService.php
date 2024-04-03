@@ -77,8 +77,9 @@ class AuthService extends FactoryDependency
 
     function createRememberMeToken(User $user)
     {
-        // Dele
-        $this->deleteUserTokens($user->id);
+        // Delete user tokens
+        // AP 2024-04 - commenting this for now. Let's see if this poses a security issue.
+        //$this->deleteUserTokens($user->id);
 
         $token = new AccessToken($user, AccessTokenType::REMEMBER_ME, new DateInterval('P1M')); // 1month
         $validator = $token->createHashedValidator();
@@ -106,7 +107,7 @@ class AuthService extends FactoryDependency
 
     function isUserLoggedIn()
     {
-        if (isset ($_SESSION['user_permission'])) {
+        if (isset($_SESSION['user_permission'])) {
             return true;
         }
 
