@@ -38,7 +38,7 @@ page($family->name)->css("family_list.css") ?>
                 <summary class="contrast">Actions</summary>
                 <ul dir="rtl">
                     <li>
-                        <a href="<?= $family->id ?>/supprimer" class="destructive outline">
+                        <a href="/famille/<?= $family->id ?>/supprimer" class="destructive outline">
                             <i class="fa fa-trash"></i> Supprimer la famille
                         </a>
                     </li>
@@ -68,11 +68,11 @@ page($family->name)->css("family_list.css") ?>
                                         <i class="fa fa-ellipsis-vertical"></i>
                                     </summary>
                                     <ul dir="rtl">
-                                        <li><a href="<?= "$family->id/change/$f_member->id" ?>" class="contrast">
+                                        <li><a href="<?= "/famille/$family->id/change/$f_member->id" ?>" class="contrast">
                                                 Changer rôle
                                                 <i class="fa fa-arrow-<?= $f_member->family_leader ? "down" : "up" ?>"></i>
                                             </a></li>
-                                        <li><a href="<?= "$family->id/supprimer/$f_member->id" ?>" class="destructive">
+                                        <li><a href="<?= "/famille/$family->id/supprimer/$f_member->id" ?>" class="destructive">
                                                 Retirer
                                                 <i class="fa fa-xmark"></i>
                                             </a></li>

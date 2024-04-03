@@ -66,11 +66,13 @@ Router::add('/licencies/$user_id', 'pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', 'pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', 'pages/users/user_delete_confirm.php');
 Router::add('/licencies/$user_id/creer-famille', 'pages/users/family_create.php');
+// Familles
 Router::add('/familles', 'pages/users/family_list.php');
 Router::add('/famille/$family_id', 'pages/users/family_view.php');
 Router::add('/famille/$family_id/supprimer', 'pages/users/family_remove.php');
 Router::add('/famille/$family_id/change/$member_id', 'pages/users/family_change.php');
 Router::add('/famille/$family_id/supprimer/$member_id', 'pages/users/family_remove.php');
+
 Router::add('/user-control/$user_id', 'pages/users/take_user_control.php');
 
 // Tokens
