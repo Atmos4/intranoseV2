@@ -24,14 +24,14 @@ if (env("DEVELOPMENT")) {
     Router::add('/dev/ovh/redirections/$id', 'pages/dev/ovh/redirections');
     Router::add('/dev/ovh/test-api', 'pages/dev/ovh/test_api.php');
 
-    // --- migration ---
-    Router::add('/dev/migrate', '../database/migrate_db');
-    Router::add('/dev/migrate_activities', '../database/race_to_activity');
-
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
 }
+// DANGER ZONE: migrations - Make sure to protect those routes with `restrict_environment`
+Router::add('/dev/migrate', '../database/data_migrations/migrate_db');
+Router::add('/dev/migrate_activities', '../database/data_migrations/race_to_activity');
+// END OF DANGER ZONE
 
 // Events
 Router::add('/evenements', 'pages/events/event_list/event_list');
