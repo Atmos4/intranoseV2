@@ -24,21 +24,20 @@ if (env("DEVELOPMENT")) {
     Router::add('/dev/ovh/redirections/$id', 'pages/dev/ovh/redirections');
     Router::add('/dev/ovh/test-api', 'pages/dev/ovh/test_api.php');
 
-    // --- migration ---
-    Router::add('/dev/migrate', '../database/migrate_db');
-
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
 }
+// DANGER ZONE: migrations - Make sure to protect those routes with `restrict_environment`
+Router::add('/dev/migrate', '../database/data_migrations/migrate_db');
+Router::add('/dev/migrate_activities', '../database/data_migrations/race_to_activity');
+// END OF DANGER ZONE
 
 // Events
 Router::add('/evenements', 'pages/events/event_list/event_list');
 Router::add('/evenements/passes', 'pages/events/event_list/past_events');
 Router::add('/evenements/nouveau', 'pages/events/event_edit');
 Router::add('/evenements/$event_id/modifier', 'pages/events/event_edit');
-Router::add('/evenements/$event_id/ajouter-course', 'pages/events/race_edit');
-Router::add('/evenements/$event_id/course/$race_id', 'pages/events/race_edit');
 Router::add('/evenements/$event_id', 'pages/events/event_view');
 Router::add('/evenements/$event_id/inscription', 'pages/events/event_register');
 Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
@@ -48,6 +47,11 @@ Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
 Router::add('/evenements/$event_id/participants', 'pages/events/entry_list/entry_list');
 Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/entry_list_tabs');
 // Router::add('/download', 'uploads/download_file');
+
+// Activities
+Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/activity_edit');
+Router::add('/evenements/$event_id/ajouter-activite', 'pages/events/activity_edit');
+Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/activity_view');
 
 // Settings
 Router::add('/mon-profil', 'pages/settings/settings');

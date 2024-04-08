@@ -135,7 +135,7 @@ class Event
         $qb->select('e', 'ee', 'r', 're', 'c')
             ->from(Event::class, 'e')
             ->leftJoin('e.entries', 'ee', Join::WITH, 'ee.user = :uid')
-            ->leftJoin('e.races', 'r')
+            ->leftJoin('e.activities', 'r')
             ->leftJoin('r.entries', 're', Join::WITH, 're.user = :uid')
             ->leftJoin('re.category', 'c')
             ->where('e.id = :eid')
@@ -157,7 +157,7 @@ class Event
             ->from(EventEntry::class, 'e')
             ->join('e.event', 'ev')
             ->leftJoin('e.user', 'u')
-            ->leftJoin('u.race_entries', 're', JOIN::WITH, 're.user = e.user and re.race MEMBER OF ev.races', 're.race')
+            ->leftJoin('u.activity_entries', 're', JOIN::WITH, 're.user = e.user and re.activity MEMBER OF ev.activities', 're.activity')
             ->where('e.event = :eid')
             ->setParameters(['eid' => $event_id])
             ->getQuery()->getResult();
@@ -270,7 +270,7 @@ class EventDto
                 $event['end_date'],
                 $event['deadline'],
                 $event['open'],
-                isset ($event['present']) ? $event['present'] : null
+                isset($event['present']) ? $event['present'] : null
             );
         }
         return $result;

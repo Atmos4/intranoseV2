@@ -121,7 +121,7 @@ function restrict_access($permissions = [])
 
     if (!AuthService::create()->isUserLoggedIn())
         redirect("/");
-    if (!isset ($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
+    if (!isset($_SESSION['user_permission']) || (count($permissions) && !in_array($_SESSION['user_permission'], $permissions))) {
         $permission = $_SESSION['user_permission']?->value ?? "non authenticated user";
         if (get_header('HX-Request')) {
             // This is a bit lazy but it's the idea
@@ -138,13 +138,20 @@ function force_404($message = "")
 
 function has_session($key): bool
 {
-    return isset ($_SESSION[$key]);
+    return isset($_SESSION[$key]);
 }
 
 function restrict_dev()
 {
     if (!env('DEVELOPMENT')) {
         force_404("Not in dev environement");
+    }
+}
+
+function restrict_environment($key)
+{
+    if (!env('DEVELOPMENT') && !env($key)) {
+        force_404();
     }
 }
 
@@ -163,14 +170,14 @@ function format_date($date, string $format = null)
 /** CSRF Protection */
 function set_csrf()
 {
-    if (!isset ($_SESSION["csrf"])) {
+    if (!isset($_SESSION["csrf"])) {
         $_SESSION["csrf"] = bin2hex(random_bytes(50));
     }
     return '<input type="hidden" name="csrf" value="' . $_SESSION["csrf"] . '">';
 }
 function is_csrf_valid()
 {
-    if (!isset ($_SESSION['csrf']) || !isset ($_POST['csrf'])) {
+    if (!isset($_SESSION['csrf']) || !isset($_POST['csrf'])) {
         return false;
     }
     if ($_SESSION['csrf'] != $_POST['csrf']) {

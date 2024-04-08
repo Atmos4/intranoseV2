@@ -1,5 +1,5 @@
 <?php
-restrict_dev();
+restrict_environment("ENABLE_FULL_MIGRATION");
 
 function map_permission(string $p): Permission
 {

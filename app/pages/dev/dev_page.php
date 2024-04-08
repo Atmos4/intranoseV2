@@ -30,3 +30,9 @@ page("Dev") ?>
         <?= DevButton("/dev/random", "Random") ?>
     </ul>
 </nav>
+<b>Migrations</b>
+<nav>
+    <ul>
+        <?= DevButton("/dev/migrate_activities", "Migration des course") ?>
+    </ul>
+</nav>
