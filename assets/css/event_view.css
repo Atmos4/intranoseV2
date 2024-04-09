@@ -1,65 +1,22 @@
 del {
   text-decoration: none;
 }
-header > .row {
-  justify-content: center;
-  margin-bottom: 2rem;
-}
 header > .row > .col-sm-6 {
   width: fit-content;
 }
-@media screen and (max-width: 768px) {
-  tr.display {
-    display: grid;
-    grid:
-      "icon name name"
-      "icon date place" / auto auto 1fr;
-    border-bottom: var(--border-width) solid var(--table-border-color);
-  }
-
-  table td {
-    border-bottom: none;
-  }
-  table .activity-name {
-    grid-area: name;
-    padding-bottom: 0;
-  }
-  table .activity-date {
-    grid-area: date;
-  }
-  table .activity-place {
-    grid-area: place;
-  }
-  table .activity-entry {
-    grid-area: icon;
-    align-self: center;
-  }
-}
-
-.file-button {
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-textarea {
-  resize: none;
-}
-
-#conditionalText {
-  display: none;
-}
-.eventForm.hidden ~ #conditionalText {
-  display: block;
-}
-
-.fa-ul li {
-  list-style: none;
-}
-
 details summary:focus:not([role="button"]) {
   color: var(--accordion-close-summary-color);
 }
-
-ul {
-  margin-bottom: 0.5rem;
+.entry-summary {
+  border: 1px solid var(--secondary-border);
+}
+.entry-summary.not-entered {
+  border-color: var(--del-color);
+}
+.entry-summary.entered {
+  border-color: var(--primary-border);
+}
+.entry-header {
+  display: flex;
+  justify-content: space-between;
 }

@@ -41,6 +41,24 @@ enum ActivityType: string
     case RACE = "RACE";
     case TRAINING = "TRAINING";
     case OTHER = "OTHER";
+
+    function toIcon()
+    {
+        return match ($this) {
+            self::RACE => "fa-flag-checkered",
+            self::TRAINING => "fa-dumbbell",
+            self::OTHER => "fa-bowl-food",
+        };
+    }
+
+    function toName()
+    {
+        return match ($this) {
+            self::RACE => "Course",
+            self::TRAINING => "Entrainement",
+            self::OTHER => "Autre",
+        };
+    }
 }
 
 #[Entity, Table(name: 'activities')]
