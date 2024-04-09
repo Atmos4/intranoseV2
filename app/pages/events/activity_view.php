@@ -31,7 +31,7 @@ page($activity->name)->css("event_view.css");
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>
         </div>
         <div>
-            <?= format_date($activity->date) ?>
+            <?= IconText("fa-calendar", format_date($activity->date)) ?>
         </div>
     </div>
     <?php if ($activity->event->open): ?>

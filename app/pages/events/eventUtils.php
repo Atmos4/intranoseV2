@@ -14,8 +14,7 @@ function ActivityEntry(?ActivityEntry $activity_entry)
             <div class="col-sm-12 col-md-6">
                 <div class="row g-2">
                     <?= match (true) {
-                        !$activity_entry => IconText("fa-question", "Pas encore inscrit", "span"),
-                        !$activity_entry->present => IconText("fa-xmark", "Je ne participe pas", "del"),
+                        !$activity_entry?->present => IconText($activity_entry ? "fa-xmark" : "fa-question", "Pas inscrit", "span"),
                         $activity_entry->present => IconText("fa-check", "Inscrit", "ins"),
                         default => "Erreur"
                     } ?>

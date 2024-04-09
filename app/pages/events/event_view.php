@@ -109,8 +109,8 @@ page($event->name)->css("event_view.css");
             <div class="col-auto">
                 <div class="row g-2">
                     <?php if ($event->bulletin_url): ?>
-                        <a role="button" href="<?= $event->bulletin_url ?>" target="_blank"> <i
-                                class="fa fa-paperclip secondary"></i>
+                        <a role="button" href="<?= $event->bulletin_url ?>" target="_blank" class="secondary"> <i
+                                class="fa fa-paperclip"></i>
                             Bulletin
                             <i class="fa fa-external-link"></i></a>
                     <?php endif ?>
