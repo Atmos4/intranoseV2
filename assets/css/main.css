@@ -6,6 +6,7 @@
   --primary-hover: hsl(121, 78%, 33%);
   --primary-focus: hsla(123, 78%, 38%, 0.125);
   --primary-inverse: #fff;
+  --del-color: #ad332d;
 }
 
 /* Green Dark scheme (Auto) */
@@ -16,6 +17,7 @@
     --primary-hover: hsl(125, 82%, 52%);
     --primary-focus: hsla(123, 78%, 48%, 0.25);
     --primary-inverse: #fff;
+    --del-color: #df625e;
   }
 }
 
@@ -26,6 +28,7 @@
   --primary-hover: hsl(125, 82%, 52%);
   --primary-focus: hsla(123, 78%, 48%, 0.25);
   --primary-inverse: #fff;
+  --del-color: #df625e;
 }
 
 /* Green (Common styles) */

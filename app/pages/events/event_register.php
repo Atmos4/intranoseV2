@@ -4,7 +4,7 @@ restrict_access();
 $user = User::getCurrent();
 $event = Event::getWithGraphData(get_route_param('event_id'), $user->id);
 
-if (!$event->open || $event->deadline < date_create("today")) {
+if (!check_auth(Access::$ADD_EVENTS) && (!$event->open || $event->deadline < date_create("today"))) {
     force_404("this event is closed for entry");
 }
 
@@ -92,7 +92,7 @@ function getToggleClass($selector, $initialState)
     return $selector . ($initialState ? "" : " hidden");
 }
 
-page("Inscription - " . $event->name)->css("event_view.css");
+page("Inscription - " . $event->name)->css("event_register.css");
 ?>
 <form id="mainForm" method="post">
     <nav id="page-actions">

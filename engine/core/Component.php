@@ -6,9 +6,10 @@ class Component
     static function render(string $location, array $props = []): string
     {
         ob_start();
-        self::$_props[ob_get_level()] = $props;
+        $level = ob_get_level();
+        self::$_props[$level] = $props;
         include $location;
-        self::$_props[ob_get_level()] = [];
+        self::$_props[$level] = [];
         return ob_get_clean();
     }
 

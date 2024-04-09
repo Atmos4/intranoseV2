@@ -1,6 +1,8 @@
 <?php
 restrict_access();
 
+include __DIR__ . "/eventUtils.php";
+
 $activity = em()->find(Activity::class, get_route_param("activity_id"));
 
 if ($activity->type == ActivityType::RACE) {
@@ -10,6 +12,7 @@ if ($activity->type == ActivityType::RACE) {
 } else {
     $icon = "fa fa-bowl-food";
 }
+$activity_entry = $activity->entries[0] ?? null;
 
 page($activity->name)->css("event_view.css");
 ?>
@@ -20,62 +23,20 @@ page($activity->name)->css("event_view.css");
 
 </nav>
 
+<?= ActivityEntry($activity_entry) ?>
+
 <article>
-    <header class="center">
-        <?php if ($activity->type == ActivityType::RACE) {
-            $type = "Course";
-        } elseif ($activity->type == ActivityType::TRAINING) {
-            $type = "Entrainement";
-        } else {
-            $type = "Autre";
-        } ?>
-
-        <p>
-            Type : <kbd>
-                <?= $type ?>
-            </kbd>
-        </p>
-        <div class="row">
-            <div>
-                <?php include app_path() . "/components/start_icon.php" ?>
-                <span>
-                    <?= "Date : " . format_date($activity->date) ?>
-                </span>
-            </div>
+    <div class="grid">
+        <div>
+            <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>
         </div>
-    </header>
+        <div>
+            <?= format_date($activity->date) ?>
+        </div>
+    </div>
     <?php if ($activity->event->open): ?>
-        <div class="grid">
-            <?php $activity_entry = $activity->entries[0] ?? null; ?>
-            <ul class="fa-ul">
-                <?php if ($activity_entry?->present): ?>
-
-                    <li><ins><span class="fa-li"><i class="fa fa-check"></i></span>Inscrit</ins></li>
-
-                <?php else: ?>
-                    <del>
-                        <li><span class="fa-li"><i class="fa fa-xmark"></i></span>
-                            <?= $activity_entry ? "Je ne participe pas" : "Pas encore inscrit" ?>
-                        </li>
-                    </del>
-                <?php endif; ?>
-            </ul>
-            <?php if ($activity_entry?->category): ?>
-                <ul class="fa-ul">
-                    <li><span class="fa-li"><abbr title="Catégorie"><i class="fa fa-person-running"></i></abbr></span>
-                        <?= $activity_entry->category?->name ?>
-                    </li>
-                </ul>
-            <?php endif ?>
-        </div>
-        <?php if ($activity_entry?->comment): ?>
-            <div>
-                <cite>Remarque : </cite>
-                <?= $activity_entry->comment ?>
-            </div>
-        <?php endif; ?>
         <?php if ($activity->description): ?>
-            <h5>Description</h5>
+            <h3>Description</h3>
             <p>
                 <?= $activity->description ?>
             </p>
