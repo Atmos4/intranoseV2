@@ -279,9 +279,8 @@ class DateField extends Field
     }
 
     /** Set upper date limit */
-    function max(string|null $date, string $msg = null, bool $addAttribute = true)
+    function max(string|null $date, string $msg = null)
     {
-        $addAttribute ? $this->attributes(["max" => $date ?? ""]) : null;
         if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
         }
@@ -289,9 +288,8 @@ class DateField extends Field
     }
 
     /** Set lower date limit */
-    function min(string|null $date, string $msg = null, bool $addAttribute = true)
+    function min(string|null $date, string $msg = null)
     {
-        $addAttribute ? $this->attributes(["min" => $date ?? ""]) : null;
         if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
         }
@@ -365,12 +363,14 @@ class UploadField extends Field
             'image/jp2',
             'image/heif'
         ],
-        'doc' => ['application/msword',
+        'doc' => [
+            'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.ms-word.document.macroEnabled.12',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
             'application/vnd.ms-word.template.macroEnabled.12',
-            'application/vnd.oasis.opendocument.text',],
+            'application/vnd.oasis.opendocument.text',
+        ],
         'pdf' => ['application/pdf'],
         'excel' => [
             'application/vnd.ms-excel',
