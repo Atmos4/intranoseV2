@@ -66,7 +66,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
                 <?= $limit_date->render() ?>
             </div>
             <?= $bulletin_url->render() ?>
-            <?= $description->render() ?>
+            <?= $description->attributes(["rows" => "8"])->render() ?>
         </div>
     </article>
 </form>
