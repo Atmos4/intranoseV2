@@ -26,19 +26,17 @@ page($activity->name)->css("event_view.css");
 <?= ActivityEntry($activity_entry) ?>
 
 <article>
-    <div class="grid">
+    <header class="grid">
         <div>
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>
         </div>
         <div>
             <?= IconText("fa-calendar", format_date($activity->date)) ?>
         </div>
-    </div>
-    <?php if ($activity->event->open): ?>
-        <?php if ($activity->description): ?>
+    </header>
+    <?php if ($activity->description): ?>
+        <section>
             <h3>Description</h3>
-            <p>
-                <?= $activity->description ?>
-            </p>
-        <?php endif; ?>
-    <?php endif ?>
+            <p class="description"><?= $activity->description ?></p>
+        </section>
+    <?php endif; ?>

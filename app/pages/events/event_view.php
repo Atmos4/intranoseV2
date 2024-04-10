@@ -89,7 +89,7 @@ page($event->name)->css("event_view.css");
 
 <article>
     <header>
-        <div class="row g-2 center">
+        <div class="row g-2 center align-center">
             <div class="col-sm-12 col-md">
                 <?php include app_path() . "/components/start_icon.php" ?>
                 <span>
@@ -124,60 +124,64 @@ page($event->name)->css("event_view.css");
             </div>
         </div>
     </header>
-    <?php if (count($event->activities)): ?>
-        <h3>Activités</h3>
-        <?php foreach ($event->activities as $i => $activity):
-            $activity_entry = $activity->entries[0] ?? null; ?>
-            <details>
-                <summary>
-                    <?= ConditionalIcon($activity_entry && $activity_entry->present) . " " ?>
-                    <?= $activity->name ?>
-                    <i class="fa <?= $activity->type->toIcon() ?>" title=<?= $activity->type->toName() ?>></i>
-                </summary>
-                <?= ActivityEntry($activity_entry) ?>
-                <p class="grid">
-                    <span><i class="fa fa-calendar fa-fw"></i>
-                        <?= format_date($activity->date) ?>
-                    </span>
-                    <?php if ($activity->location_label): ?>
-                        <span>
-                            <i class="fa fa-location-dot fa-fw"></i>
-                            <?php if ($activity->location_url): ?>
-                                <a href=<?= $activity->location_url ?> target="_blank"><?= $activity->location_label ?></a>
-                            <?php else: ?>
-                                <?= $activity->location_label ?>
-                            <?php endif ?>
+    <section>
+        <?php if (count($event->activities)): ?>
+            <h3>Activités</h3>
+            <?php foreach ($event->activities as $i => $activity):
+                $activity_entry = $activity->entries[0] ?? null; ?>
+                <details>
+                    <summary>
+                        <?= ConditionalIcon($activity_entry && $activity_entry->present) . " " ?>
+                        <?= $activity->name ?>
+                        <i class="fa <?= $activity->type->toIcon() ?>" title=<?= $activity->type->toName() ?>></i>
+                    </summary>
+                    <?= ActivityEntry($activity_entry) ?>
+                    <p class="grid">
+                        <span><i class="fa fa-calendar fa-fw"></i>
+                            <?= format_date($activity->date) ?>
                         </span>
-                    <?php endif ?>
-                </p>
-                <p>
-                    <a role="button" class="outline secondary"
-                        href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>'>
-                        <i class="fa fa-circle-info"></i>
-                        Détails</a>
-                    <?php if ($can_edit): ?>
+                        <?php if ($activity->location_label): ?>
+                            <span>
+                                <i class="fa fa-location-dot fa-fw"></i>
+                                <?php if ($activity->location_url): ?>
+                                    <a href=<?= $activity->location_url ?> target="_blank"><?= $activity->location_label ?></a>
+                                <?php else: ?>
+                                    <?= $activity->location_label ?>
+                                <?php endif ?>
+                            </span>
+                        <?php endif ?>
+                    </p>
+                    <p>
                         <a role="button" class="outline secondary"
-                            href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>/modifier'>
-                            <i class="fa fa-pen"></i>
-                            Modifier</a>
-                    <?php endif ?>
-                </p>
-            </details>
-            <hr>
-        <?php endforeach; ?>
-    <?php endif; ?>
+                            href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>'>
+                            <i class="fa fa-circle-info"></i>
+                            Détails</a>
+                        <?php if ($can_edit): ?>
+                            <a role="button" class="outline secondary"
+                                href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>/modifier'>
+                                <i class="fa fa-pen"></i>
+                                Modifier</a>
+                        <?php endif ?>
+                    </p>
+                </details>
+                <hr>
+            <?php endforeach; ?>
+        <?php endif; ?>
 
 
-    <?php if ($can_edit): ?>
-        <p>
-            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-activite">
-                <i class="fas fa-plus"></i> Ajouter une activité</a>
-        </p>
-    <?php endif ?>
+        <?php if ($can_edit): ?>
+            <p>
+                <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-activite">
+                    <i class="fas fa-plus"></i> Ajouter une activité</a>
+            </p>
+        <?php endif ?>
+    </section>
     <?php if ($event->description): ?>
-        <h3>Description</h3>
-        <?= $event->description ?>
-        </details>
+        <br>
+        <section>
+            <h3>Description</h3>
+            <p class="description"><?= $event->description ?></p>
+        </section>
     <?php endif ?>
 </article>
 

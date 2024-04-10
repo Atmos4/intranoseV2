@@ -79,8 +79,9 @@ class Field
 
     function props()
     {
+        $v = e($this->value);
         return
-            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\" value=\"$v\" "
             . ($this->valid() ? "" : " aria-invalid=true autofocus")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
@@ -365,12 +366,14 @@ class UploadField extends Field
             'image/jp2',
             'image/heif'
         ],
-        'doc' => ['application/msword',
+        'doc' => [
+            'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.ms-word.document.macroEnabled.12',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
             'application/vnd.ms-word.template.macroEnabled.12',
-            'application/vnd.oasis.opendocument.text',],
+            'application/vnd.oasis.opendocument.text',
+        ],
         'pdf' => ['application/pdf'],
         'excel' => [
             'application/vnd.ms-excel',
