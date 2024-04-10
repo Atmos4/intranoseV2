@@ -92,7 +92,7 @@ function redirect($href)
 /** escape characters */
 function e($s)
 {
-    return htmlspecialchars($s);
+    return htmlspecialchars($s ?? "");
 }
 
 /** Setup page */
