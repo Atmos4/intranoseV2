@@ -37,6 +37,6 @@ page($activity->name)->css("event_view.css");
     <?php if ($activity->description): ?>
         <section>
             <h3>Description</h3>
-            <p class="description"><?= $activity->description ?></p>
+            <?= (new Parsedown)->text($activity->description) ?>
         </section>
     <?php endif; ?>

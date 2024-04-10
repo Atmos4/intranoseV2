@@ -225,6 +225,14 @@ class StringField extends Field
 
 class TextAreaField extends StringField
 {
+    // budget xss protection
+    function check(string $msg = null)
+    {
+        if ($this->test('/<script>/')) {
+            $this->set_error($msg ?? "Format invalide");
+        }
+    }
+
     function render()
     {
         $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
