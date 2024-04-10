@@ -87,7 +87,7 @@ class Event
     #[Column]
     public DateTime $deadline;
 
-    #[Column]
+    #[Column(type: "text")]
     public string $description;
 
     #[Column]

@@ -20,3 +20,7 @@ details summary:focus:not([role="button"]) {
   display: flex;
   justify-content: space-between;
 }
+/* this is placeholder. We probably want markdown instead */
+.description {
+  white-space: pre-wrap;
+}

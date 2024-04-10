@@ -82,7 +82,7 @@ class Activity
     #[Column]
     public string $location_url;
 
-    #[Column]
+    #[Column(type: "text")]
     public string $description;
 
     #[ManyToOne]

@@ -77,10 +77,12 @@ class Field
         return "<input {$this->props()}>";
     }
 
-    function props()
+    function props(bool $includeValue = true)
     {
+        $v = e($this->value);
         return
-            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\" value=\"$this->value\" "
+            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\""
+            . ($includeValue ? " value=\"$v\"" : "")
             . ($this->valid() ? "" : " aria-invalid=true autofocus")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
             . ($this->disabled ? " disabled" : "")
@@ -226,7 +228,7 @@ class TextAreaField extends StringField
     function render()
     {
         $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
-        $result = "<textarea {$this->props()}>$this->value</textarea>";
+        $result = "<textarea {$this->props(false)}>$this->value</textarea>";
         return $this->render_label($result);
     }
 }

@@ -89,6 +89,12 @@ function redirect($href)
     exit;
 }
 
+/** escape characters */
+function e($s)
+{
+    return htmlspecialchars($s ?? "");
+}
+
 /** Setup page */
 function page(string $title)
 {

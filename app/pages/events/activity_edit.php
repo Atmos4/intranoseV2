@@ -12,11 +12,11 @@ if (!$event) {
 if ($activity_id) {
     $activity = em()->find(Activity::class, $activity_id);
     $form_values = [
-        //TODO
         "name" => $activity->name,
         "date" => date_format($activity->date, "Y-m-d"),
         "location_label" => $activity->location_label,
-        "location_url" => $activity->location_url
+        "location_url" => $activity->location_url,
+        "description" => $activity->description,
     ];
     foreach ($activity->categories as $index => $category) {
         $form_values["category_{$index}_name"] = $category->name;

@@ -73,6 +73,9 @@ details ul[dir="rtl"] > li {
 .row.center {
   justify-content: center;
 }
+.row.align-center {
+  align-items: center;
+}
 .align-right {
   text-align: right;
 }
