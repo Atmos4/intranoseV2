@@ -180,7 +180,7 @@ page($event->name)->css("event_view.css");
         <br>
         <section>
             <h3>Description</h3>
-            <p class="description"><?= $event->description ?></p>
+            <?= (new Parsedown)->text($event->description) ?>
         </section>
     <?php endif ?>
 </article>
