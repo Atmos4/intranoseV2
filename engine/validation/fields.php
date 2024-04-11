@@ -29,7 +29,7 @@ class Field
 
     private array $attributes = [];
 
-    function __construct(string $key, mixed $value = null, $context = null)
+    function __construct(string $key, mixed $value = null, Validator $context = null)
     {
         $this->key = $key;
         $this->value = $value;
@@ -42,20 +42,19 @@ class Field
     /**
      * Adds a label to the field
      * @param string $label
-     * @return Field
      */
-    function label(string $label)
+    function label(string $label): static
     {
         $this->label = $label;
         return $this;
     }
 
-    function get_label()
+    function get_label(): string
     {
         return $this->label;
     }
 
-    function attributes(array $attrs)
+    function attributes(array $attrs): static
     {
         $this->attributes = array_merge($this->attributes, $attrs);
         return $this;
@@ -72,12 +71,12 @@ class Field
         return $this->render_label($this->render_core());
     }
 
-    protected function render_core()
+    protected function render_core(): string
     {
         return "<input {$this->props()}>";
     }
 
-    function props(bool $includeValue = true)
+    function props(bool $includeValue = true): string
     {
         $v = e($this->value);
         return
@@ -93,10 +92,10 @@ class Field
 
     protected function render_attrs(): string
     {
-        return array_reduce(array_keys($this->attributes), fn($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
+        return array_reduce(array_keys($this->attributes), fn ($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
     }
 
-    protected function render_label($input_render, $reverse = false)
+    protected function render_label(string $input_render, bool $reverse = false): string
     {
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
@@ -106,18 +105,18 @@ class Field
     }
 
     /** Adds a validation error */
-    public function set_error($err)
+    public function set_error(string $err): void
     {
         $this->error = $err;
     }
 
-    function valid()
+    function valid(): bool
     {
         return !$this->error;
     }
 
     /** Outputs a variable (Decorator pattern) */
-    function out(&$var)
+    function out(string &$var): static
     {
         $var = $this->value;
         return $this;
@@ -125,28 +124,29 @@ class Field
 
     protected function should_test(): bool
     {
-        return !$this->context->empty && !$this->error;
+        return !$this->context?->empty && !$this->error;
     }
 
-    function disabled()
+    function disabled(): static
     {
         $this->disabled = true;
         return $this;
     }
 
-    function readonly()
+    function readonly(): static
     {
         $this->readonly = true;
         return $this;
     }
 
-    protected function test(string $preg, $value = null)
+    /** @param non-empty-string $preg */
+    protected function test(string $preg, string $value = null): false|int
     {
         return preg_match($preg, $value ?? $this->value ?? "");
     }
 
     /** Makes the field required */
-    function required(string $msg = null)
+    function required(string $msg = null): static
     {
         $this->required = true;
         if ($this->should_test() && !$this->value) {
@@ -155,17 +155,17 @@ class Field
         return $this;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
     }
 
-    protected function set_type()
+    protected function set_type(): void
     {
         $this->type = FieldType::Text;
     }
 
     /** Add a condition that if false will set the according error message */
-    function condition(bool $condition, string $error_msg)
+    function condition(bool $condition, string $error_msg): static
     {
         if ($this->should_test() and !$condition) {
             $this->set_error($error_msg);
@@ -174,7 +174,7 @@ class Field
     }
 
     /** See more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete */
-    function autocomplete($autocomplete = "")
+    function autocomplete(string $autocomplete = ""): static
     {
         $this->autocomplete = $autocomplete;
         return $this;
@@ -187,13 +187,13 @@ class StringField extends Field
     public ?string $placeholder = "";
 
     /** Defines the placeholder. Call the method without params to use the label as placeholder */
-    function placeholder(string $text = null)
+    function placeholder(string $text = null): static
     {
         $this->placeholder = $text;
         return $this;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if (!$this->test('/^[\w\sÀ-ÿ\p{P}-]*$/')) {
             $this->set_error($msg ?? "Format invalide");
@@ -206,7 +206,7 @@ class StringField extends Field
         return parent::render();
     }
 
-    function max_length(int $count, string $msg = null)
+    function max_length(int $count, string $msg = null): static
     {
         if ($this->should_test() && strlen($this->value) > $count) {
             $this->set_error($msg ?? "Trop long");
@@ -214,7 +214,7 @@ class StringField extends Field
         return $this;
     }
 
-    function min_length(int $count, string $msg = null)
+    function min_length(int $count, string $msg = null): static
     {
         if ($this->should_test() && strlen($this->value ?? "") < $count) {
             $this->set_error($msg ?? "Trop court");
@@ -226,7 +226,7 @@ class StringField extends Field
 class TextAreaField extends StringField
 {
     // budget xss protection
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if ($this->test('/<script>/')) {
             $this->set_error($msg ?? "Format invalide");
@@ -243,12 +243,12 @@ class TextAreaField extends StringField
 
 class NumberField extends StringField
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Number;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if (!$this->test("/^[\d]*$/")) {
             $this->set_error($msg ?? "Format invalide");
@@ -256,7 +256,7 @@ class NumberField extends StringField
     }
 
     /** Set upper limit for the number field */
-    function max(int $count, string $msg = null)
+    function max(int $count, string $msg = null): static
     {
         if ($this->should_test() && $this->value > $count) {
             $this->set_error($msg ?? "Trop grand");
@@ -265,7 +265,7 @@ class NumberField extends StringField
     }
 
     /** Set lower limit for the number field */
-    function min(int $count, string $msg = null)
+    function min(int $count, string $msg = null): static
     {
         if ($this->should_test() && $this->value < $count) {
             $this->set_error($msg ?? "Trop petit");
@@ -276,12 +276,12 @@ class NumberField extends StringField
 
 class DateField extends Field
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Date;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if (!$this->test("/^[\d-]*$/")) {
             $this->set_error($msg ?? "Format invalide");
@@ -289,7 +289,7 @@ class DateField extends Field
     }
 
     /** Set upper date limit */
-    function max(string|null $date, string $msg = null)
+    function max(string|null $date, string $msg = null): static
     {
         if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
@@ -298,7 +298,7 @@ class DateField extends Field
     }
 
     /** Set lower date limit */
-    function min(string|null $date, string $msg = null)
+    function min(string|null $date, string $msg = null): static
     {
         if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
@@ -309,7 +309,7 @@ class DateField extends Field
 
 class SwitchField extends Field
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Checkbox;
     }
@@ -317,21 +317,21 @@ class SwitchField extends Field
     public string $true_label = "";
     public string $false_label = "";
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if (!$this->test('/\D*$/')) {
             $this->set_error($msg ?? "Format invalide");
         }
     }
 
-    function set_labels(string $true_label, string $false_label)
+    function set_labels(string $true_label, string $false_label): static
     {
         $this->true_label = $true_label;
         $this->false_label = $false_label;
         return $this;
     }
 
-    function get_label()
+    function get_label(): string
     {
         return $this->true_label;
     }
@@ -350,7 +350,7 @@ class SwitchField extends Field
 
 class UploadField extends Field
 {
-    public static $FILE_MIME = [
+    public static array $FILE_MIME = [
         'image' => [
             'image/webp',
             'image/tiff',
@@ -404,7 +404,8 @@ class UploadField extends Field
             'application/vnd.oasis.opendocument.presentation',
         ]
     ];
-    public static $IMAGE_MIME = [
+    /** @var array<array> */
+    public static array $IMAGE_MIME = [
         'image' => [
             'image/webp',
             'image/tiff',
@@ -428,7 +429,7 @@ class UploadField extends Field
             'image/heif'
         ]
     ];
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::File;
     }
@@ -440,7 +441,7 @@ class UploadField extends Field
 
     public array $allowed_mime = array();
 
-    function __construct(string $key, mixed $value = null, $context = null)
+    function __construct(string $key, mixed $value = null, Validator $context = null)
     {
         parent::__construct($key, $value, $context);
         $this->file_name = $_FILES[$this->key]["name"] ?? "";
@@ -449,7 +450,7 @@ class UploadField extends Field
         $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
     }
 
-    function required(string $msg = null)
+    function required(string $msg = null): static
     {
         if ($this->should_test() && !$this->file_name) {
             $this->set_error($msg ?? "Requis");
@@ -457,7 +458,7 @@ class UploadField extends Field
         return $this;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
@@ -490,12 +491,11 @@ class UploadField extends Field
                         $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
                     }
                 }
-
             }
         }
     }
 
-    function mime(array $mimes)
+    function mime(array $mimes): static
     {
         if ($this->should_test()) {
             $this->allowed_mime = $mimes;
@@ -516,7 +516,7 @@ class UploadField extends Field
         return $this;
     }
 
-    function max_size(int $size)
+    function max_size(int $size): static
     {
         // Check custom filesize here. 
         if ($this->should_test() && $_FILES[$this->key]['size'] > $size) {
@@ -526,7 +526,7 @@ class UploadField extends Field
     }
 
 
-    function save_file()
+    function save_file(): bool
     {
         $file_exists = file_exists($this->target_file);
         if ($file_exists)
@@ -539,14 +539,14 @@ class UploadField extends Field
         return $result;
     }
 
-    function set_file_name(string $name)
+    function set_file_name(string $name): static
     {
         $this->file_name = $name;
         $this->target_file = $this->target_dir . $name;
         return $this;
     }
 
-    function set_target_dir(string $directory)
+    function set_target_dir(string $directory): static
     {
         if (!is_dir($directory)) {
             mkdir($directory);
@@ -558,12 +558,12 @@ class UploadField extends Field
 
 class EmailField extends StringField
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Email;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if ($this->should_test() && $this->value && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             $this->set_error($msg ?? "Format d'email invalide");
@@ -573,12 +573,12 @@ class EmailField extends StringField
 
 class PhoneField extends StringField
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Phone;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         /** The regex now match for between 9 and 14 numbers with an optional + in the begining */
         if ($this->should_test() && $this->required && !$this->test("/^[+]?(\d\s*?){9,14}$/")) {
@@ -589,30 +589,29 @@ class PhoneField extends StringField
 
 class PasswordField extends StringField
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Password;
     }
 
     public bool $new = false;
 
-    function check(string|null $msg = null)
+    function check(string|null $msg = null): void
     {
-        return true;
     }
 
-    function set_new()
+    function set_new(): static
     {
         $this->new = true;
         return $this;
     }
 
-    function secure()
+    function secure(): static
     {
         return $this->with_lowercase()->with_uppercase()->with_number()->min_length(8);
     }
 
-    function with_number(string $msg = null)
+    function with_number(string $msg = null): static
     {
         if ($this->should_test() && !$this->test("/[0-9]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins un chiffre");
@@ -620,7 +619,7 @@ class PasswordField extends StringField
         return $this;
     }
 
-    function with_uppercase(string $msg = null)
+    function with_uppercase(string $msg = null): static
     {
         if ($this->should_test() && !$this->test("/[A-Z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre majuscule");
@@ -628,7 +627,7 @@ class PasswordField extends StringField
         return $this;
     }
 
-    function with_lowercase(string $msg = null)
+    function with_lowercase(string $msg = null): static
     {
         if ($this->should_test() && !$this->test("/[a-z]+/")) {
             $this->set_error($msg ?? "Doit contenir au moins une lettre minuscule");
@@ -659,7 +658,7 @@ class SelectField extends Field
         return $this->render_label($result . "</select>");
     }
 
-    function option($value, $label)
+    function option(string $value, string $label): static
     {
         $option = new SelectFieldOption();
         $option->value = $value;
@@ -669,7 +668,7 @@ class SelectField extends Field
         return $this;
     }
 
-    function options(array $options)
+    function options(array $options): static
     {
         foreach ($options as $value => $label) {
             $this->option($value, $label);
@@ -680,12 +679,12 @@ class SelectField extends Field
 
 class UrlField extends StringField
 {
-    function set_type()
+    function set_type(): void
     {
         $this->type = FieldType::Url;
     }
 
-    function check(string $msg = null)
+    function check(string $msg = null): void
     {
         if ($this->should_test() && $this->value && !filter_var($this->value, FILTER_VALIDATE_URL)) {
             $this->set_error("Format de l'url invalide");
