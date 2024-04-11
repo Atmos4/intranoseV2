@@ -48,7 +48,7 @@ textarea {
 #conditionalText {
   display: none;
 }
-.eventForm.hidden ~ #conditionalText {
+.toggleDiv.hidden ~ #conditionalText {
   display: block;
 }
 
