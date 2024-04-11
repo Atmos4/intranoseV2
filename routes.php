@@ -52,6 +52,8 @@ Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/
 Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/activity_edit');
 Router::add('/evenements/$event_id/ajouter-activite', 'pages/events/activity_edit');
 Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/activity_view');
+Router::add('/evenements/$event_id/activite/$activity_id/inscription', 'pages/events/activity_register');
+Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/activity_delete');
 
 // Settings
 Router::add('/mon-profil', 'pages/settings/settings');

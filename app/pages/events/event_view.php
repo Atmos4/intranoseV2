@@ -135,7 +135,7 @@ page($event->name)->css("event_view.css");
                         <?= $activity->name ?>
                         <i class="fa <?= $activity->type->toIcon() ?>" title=<?= $activity->type->toName() ?>></i>
                     </summary>
-                    <?= ActivityEntry($activity_entry) ?>
+                    <?= ActivityEntry($activity, $activity_entry) ?>
                     <p class="grid">
                         <span><i class="fa fa-calendar fa-fw"></i>
                             <?= format_date($activity->date) ?>

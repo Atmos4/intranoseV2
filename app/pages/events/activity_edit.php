@@ -77,7 +77,7 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
 ?>
 <form method="post">
     <nav id="page-actions">
-        <a href="/evenements/<?= $event_id ?>" class="secondary">
+        <a href="/evenements/<?= $event_id ?>/activite/<?= $activity_id ?>" class="secondary">
             <i class="fas fa-xmark"></i> Annuler
         </a>
         <button type="submit">
