@@ -123,7 +123,7 @@ class Validator
         return $this->create($key, DateField::class, $msg);
     }
 
-    function switch (string $key, string $msg = null): SwitchField
+    function switch(string $key, string $msg = null): SwitchField
     {
         return $this->create($key, SwitchField::class, $msg);
     }
