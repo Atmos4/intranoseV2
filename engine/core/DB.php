@@ -21,7 +21,7 @@ class DB extends SingletonDependency
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: !!env("DEVELOPMENT"));
+        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
         $config->addCustomDatetimeFunction('MONTH', Month::class);
         $config->addCustomDatetimeFunction('DAY', Day::class);
 
