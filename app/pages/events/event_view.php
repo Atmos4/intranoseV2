@@ -13,35 +13,17 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 
 page($event->name)->css("event_view.css");
+
 ?>
-<nav id="page-actions">
-    <a href="/evenements" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
 
-    <?php if ($can_edit): ?>
-        <li>
-            <details class="dropdown">
-                <summary>Actions</summary>
-                <ul dir="rtl">
-                    <li><a href="/evenements/<?= $event->id ?>/modifier" class="secondary">
-                            <i class="fas fa-pen"></i> Éditer
-                        </a></li>
-                    <li>
-                        <?php if (!$event->open): ?>
-                            <a href="/evenements/<?= $event->id ?>/supprimer" class="destructive">
-                                <i class="fas fa-trash"></i> Supprimer
-                            </a>
-                        <?php elseif ($event->open): ?>
-                            <a href="/evenements/<?= $event->id ?>/publier" class="destructive">
-                                <i class="fas fa-calendar-minus"></i> Retirer
-                            </a>
-                        <?php endif; ?>
-                    </li>
-                </ul>
-            </details>
-        </li>
-
-    <?php endif ?>
-</nav>
+<?= actions()
+    ->back("/evenements")
+    ->dropdown(function ($dropdown) use ($event) {
+        $dropdown->link("/evenements/$event->id/modifier", "Éditer", "fa-pen", ["class" => "secondary"]);
+        $event->open ?
+            $dropdown->link("/evenements/$event->id/publier", "Retirer", "fa-calendar-minus", ["class" => "destructive"]) :
+            $dropdown->link("/evenements/$event->id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
+    }) ?>
 
 <?php if (!$event->open): ?>
     <article class="entry-summary entry-header">
