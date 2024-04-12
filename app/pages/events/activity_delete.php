@@ -6,7 +6,6 @@ $event_id = get_route_param("event_id");
 $activity = em()->find(Activity::class, $activity_id);
 if (!$activity) {
     force_404("the activity of id $activity_id doesn't exist");
-    return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
     em()->remove($activity);

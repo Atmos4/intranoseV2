@@ -5,11 +5,9 @@ $event_id = get_route_param("event_id");
 $event = em()->find(Event::class, $event_id);
 if (!$event) {
     force_404("the event of id $event_id doesn't exist");
-    return;
 }
 if ($event->open) {
     force_404("Cannot delete published event");
-    return;
 }
 if (!empty($_POST) and isset($_POST['delete'])) {
     em()->remove($event);
