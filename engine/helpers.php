@@ -101,6 +101,12 @@ function page(string $title)
     return Page::getInstance()->title($title);
 }
 
+/** setup page actions */
+function actions()
+{
+    return new PageActionBuilder();
+}
+
 /** Checks authentication and authorization stored in session
  * @param Permission[] $levels
  */
