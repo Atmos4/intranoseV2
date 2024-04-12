@@ -22,4 +22,20 @@ final class ComponentTest extends BaseTestCase
         $this->assertStringContainsString("<h2>Hello world</h2>", $comp);
         $this->assertStringContainsString("<p>Welcome to my blog</p>", $comp);
     }
+
+    public function testSectionComponent(): void
+    {
+        $comp = component(__DIR__ . "/components/compWithSectionsDemo.php")->render(["header"]);
+        $this->assertStringStartsWith("<main>", $comp);
+        $this->assertStringContainsString("<h1>Hello world</h1>", $comp);
+        $this->assertStringContainsString("<p>Main content</p>", $comp);
+    }
+
+    public function testComponentWithEmptySection(): void
+    {
+        $comp = component(__DIR__ . "/components/compWithSectionsDemo.php")->render(["noHeader" => true]);
+        $this->assertStringStartsWith("<main>", $comp);
+        $this->assertStringNotContainsString("<h1>Hello world</h1>", $comp);
+        $this->assertStringContainsString("<p>Main content</p>", $comp);
+    }
 }
