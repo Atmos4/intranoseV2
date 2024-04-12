@@ -20,5 +20,5 @@ $getProps = fn($isSelected) =>
     <?php endforeach ?>
 </div>
 
-<?= $selectedActivityId ? Component::render(__DIR__ . "/entry_list_tab_activity.php", ["activity_id" => $selectedActivityId])
-    : Component::render(__DIR__ . "/entry_list_tab_event.php", ["event_id" => $eventId]) ?>
+<?= $selectedActivityId ? component(__DIR__ . "/entry_list_tab_activity.php")->render(["activity_id" => $selectedActivityId])
+    : component(__DIR__ . "/entry_list_tab_event.php")->render(["event_id" => $eventId]) ?>

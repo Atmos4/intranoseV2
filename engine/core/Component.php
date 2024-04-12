@@ -2,13 +2,20 @@
 
 class Component
 {
+    public int $level = 0;
+
     public static array $_props = [];
-    static function render(string $location, array $props = []): string
+
+    function __construct(public string $location, public array $props = [])
+    {
+    }
+
+    function render(array $props = []): string
     {
         ob_start();
         $level = ob_get_level();
         self::$_props[$level] = $props;
-        include $location;
+        include $this->location;
         self::$_props[$level] = [];
         return ob_get_clean();
     }
@@ -16,6 +23,27 @@ class Component
     static function prop($key)
     {
         return self::$_props[ob_get_level()][$key] ?? null;
+    }
+
+    function open(array $props = []): void
+    {
+        ob_start();
+        if ($props)
+            $this->props = $props;
+        $this->level = ob_get_level();
+    }
+
+    function close()
+    {
+        $l = ob_get_level();
+        if ($l != $this->level)
+            throw new Exception("output buffer level doesn't match");
+        return $this->render([...$this->props, "children" => ob_get_clean()]);
+    }
+
+    static function children()
+    {
+        return self::prop("children");
     }
 
     static function mounted()
