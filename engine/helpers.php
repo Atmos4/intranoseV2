@@ -14,6 +14,11 @@ function app_path(): string
     return BASE_PATH . "/app";
 }
 
+function component(string $location): Component
+{
+    return new Component($location);
+}
+
 /** Returns an env variable */
 function env(string $key)
 {

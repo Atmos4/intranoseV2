@@ -14,7 +14,7 @@ class UserModal
     static function renderRoot()
     {
         $id = get_query_param("user");
-        $content = $id ? Component::render(app_path() . "/pages/users/user_view_modal.php", ["user_id" => $id, "open" => !!$id]) : "";
+        $content = $id ? component(app_path() . "/pages/users/user_view_modal.php")->render(["user_id" => $id, "open" => !!$id]) : "";
 
         return <<<HTML
         <div id="userViewDialogRoot">

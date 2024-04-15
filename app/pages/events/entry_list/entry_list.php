@@ -17,7 +17,7 @@ page($event_infos->name . " : Inscrits")->css("entry_list.css") ?>
     </p>
 <?php else: ?>
     <div id="tabs" hx-target="#tabs" hx-swap="innerHTML">
-        <?= Component::render(__DIR__ . "/entry_list_tabs.php", ["event_id" => $event_id]) ?>
+        <?= component(__DIR__ . "/entry_list_tabs.php")->render(["event_id" => $event_id]) ?>
     </div>
     <script src="/assets/js/select-table.js"></script>
 <?php endif ?>
