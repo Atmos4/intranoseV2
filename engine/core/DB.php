@@ -8,11 +8,15 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Proxy\Autoloader;
 use Doctrine\ORM\Query\TokenType;
-
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 class DB extends SingletonDependency
 {
+    private const PATH_PROXIES = "database/proxies";
+
     private EntityManager $entityManager;
 
     function __construct(Doctrine\DBAL\Connection $connection = null)
@@ -20,10 +24,29 @@ class DB extends SingletonDependency
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+        $devMode = !!env("DEVELOPMENT");
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: true);
+        if ($devMode) {
+            $queryCache = new ArrayAdapter();
+            $metadataCache = new ArrayAdapter();
+        } else {
+            $queryCache = new PhpFilesAdapter('doctrine_queries');
+            $metadataCache = new PhpFilesAdapter('doctrine_metadata');
+        }
+
+        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
+        $config->setMetadataCache($metadataCache);
+        $config->setQueryCache($queryCache);
         $config->addCustomDatetimeFunction('MONTH', Month::class);
         $config->addCustomDatetimeFunction('DAY', Day::class);
+
+
+        if ($devMode) {
+            $config->setAutoGenerateProxyClasses(true);
+        } else {
+            $config->setAutoGenerateProxyClasses(false);
+            Autoloader::register(self::PATH_PROXIES, "");
+        }
 
         $connection ??= DriverManager::getConnection([
             'driver' => 'pdo_mysql',
