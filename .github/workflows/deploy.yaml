@@ -22,9 +22,6 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --no-progress --no-suggest --no-dev --optimize-autoloader
 
-      - name: Generate proxies
-        run: php bin/doctrine orm:generate-proxies
-
       - name: Deploy with rsync
         uses: burnett01/rsync-deployments@5.2.2
         with:
@@ -45,3 +42,4 @@ jobs:
           passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
           script: |
             php bin/doctrine migrations:migrate
+            php bin/doctrine orm:generate-proxies
