@@ -44,8 +44,19 @@ $vowels = array("a", "e", "i", "o", "u"); ?>
 
 <?php if ($can_edit): ?>
     <nav id="page-actions">
-        <a href="/evenements/nouveau"><i class="fas fa-plus"></i> Ajouter un
-            événement</a>
+        <li>
+            <details class="dropdown">
+                <summary>Actions</summary>
+                <ul>
+                    <li><a href="/evenements/nouveau" class="secondary">
+                            <i class="fas fa-plus"></i> Ajouter un événement
+                        </a></li>
+                    <!-- <li><a href="/ajouter-activite" class="secondary">
+                            <i class="fas fa-plus"></i> Ajouter une activité
+                        </a></li> -->
+                </ul>
+            </details>
+        </li>
     </nav>
 <?php endif ?>
 

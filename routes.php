@@ -46,13 +46,14 @@ Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
 // Event entry lists
 Router::add('/evenements/$event_id/participants', 'pages/events/entry_list/entry_list');
 Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/entry_list_tabs');
-// Router::add('/download', 'uploads/download_file');
 
 // Activities
 Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/activity_edit');
+Router::add('/activite/$activity_id/modifier', 'pages/events/activity_edit');
 Router::add('/evenements/$event_id/ajouter-activite', 'pages/events/activity_edit');
 Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/activity_view');
 Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/activity_delete');
+Router::add('/ajouter-activite', 'pages/events/activity_edit');
 
 // Settings
 Router::add('/mon-profil', 'pages/settings/settings');
