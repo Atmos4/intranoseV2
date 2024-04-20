@@ -12,10 +12,10 @@ if ($event_id && !$event) {
 if ($activity_id) {
     $activity = em()->find(Activity::class, $activity_id);
     if (!$activity) {
-        redirect($event_id ? "/evenements/$event_id/ajouter-activite" : "/ajouter-activite");
+        redirect($event_id ? "/evenements/$event_id/activite/nouveau" : "/activite/nouveau");
     }
     if ($activity->event->id != $event_id) {
-        redirect("/evenements/$activity->event->id/activite/$activity_id/modifier");
+        redirect("/evenements/{$activity->event->id}/activite/$activity_id/modifier");
     }
     $form_values = [
         "name" => $activity->name,

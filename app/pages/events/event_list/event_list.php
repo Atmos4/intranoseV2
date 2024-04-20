@@ -51,7 +51,7 @@ $vowels = array("a", "e", "i", "o", "u"); ?>
                     <li><a href="/evenements/nouveau" class="secondary">
                             <i class="fas fa-plus"></i> Ajouter un événement
                         </a></li>
-                    <!-- <li><a href="/ajouter-activite" class="secondary">
+                    <!-- <li><a href="/activite/nouveau" class="secondary">
                             <i class="fas fa-plus"></i> Ajouter une activité
                         </a></li> -->
                 </ul>
