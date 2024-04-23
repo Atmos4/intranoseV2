@@ -3,14 +3,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 restrict_access(Access::$ADD_EVENTS);
 
-$event_id = get_route_param("event_id");
+$event_id = get_route_param("event_id", strict: false);
 $activity_id = get_route_param("activity_id", false);
-$event = em()->find(Event::class, $event_id);
-if (!$event) {
+$event = $event_id ? em()->find(Event::class, $event_id) : null;
+if ($event_id && !$event) {
     return "this event does not exist";
 }
 if ($activity_id) {
     $activity = em()->find(Activity::class, $activity_id);
+    if (!$activity) {
+        redirect($event_id ? "/evenements/$event_id/activite/nouveau" : "/activite/nouveau");
+    }
+    if ($activity->event->id != $event_id) {
+        redirect("/evenements/{$activity->event->id}/activite/$activity_id/modifier");
+    }
     $form_values = [
         "name" => $activity->name,
         "date" => date_format($activity->date, "Y-m-d"),
@@ -28,14 +34,17 @@ if ($activity_id) {
 
 $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
-$v = new Validator($form_values ?? ["date" => $event->start_date->format("Y-m-d")]);
+$v = new Validator($form_values ?? $event_id ? ["date" => $event->start_date->format("Y-m-d")] : []);
 $name = $v->text("name")->label("Nom de l'activité")->placeholder()->required();
 $type = $v->select("type")->options($type_array)->label("Type d'activité");
 $date = $v->date("date")
     ->label("Date")
-    ->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'événement")
-    ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'événement")
-    ->required();
+    ->min(date("Y-m-d"), "Dans le futur c'est mieux");
+if ($event_id) {
+    $date->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'événement")
+        ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'événement");
+}
+$date->required();
 $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
 $location_url = $v->url("location_url")->label("URL du lieu");
 $description = $v->textarea("description")->label("Description de l'activité");
@@ -46,9 +55,11 @@ foreach ($activity->categories as $index => $category) {
     $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle")->set_labels(" ", "Supprimer");
 }
 
+$return_link = $event_id ? "/evenements/$event->id" : "/evenements";
 
 if ($v->valid()) {
-    $activity->set($name->value, date_create($date->value), $event, $location_label->value, $location_url->value, $description->value);
+    $activity->set($name->value, date_create($date->value), $location_label->value, $location_url->value, $description->value);
+    $activity->event = $event;
     $activity->type = ActivityType::from($type->value);
     foreach ($activity->categories as $index => $category) {
         $category->name = $category_rows[$index]['name']->value;
@@ -70,14 +81,14 @@ if ($v->valid()) {
     }
     em()->persist($activity);
     em()->flush();
-    redirect("/evenements/$event->id");
+    redirect($return_link);
 }
 
 page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
 ?>
 <form method="post">
     <nav id="page-actions">
-        <a href="/evenements/<?= $event_id ?>" class="secondary">
+        <a href=<?= $return_link ?> class="secondary">
             <i class="fas fa-xmark"></i> Annuler
         </a>
         <button type="submit">

@@ -171,7 +171,7 @@ page($event->name)->css("event_view.css");
 
         <?php if ($can_edit): ?>
             <p>
-                <a role=button class="secondary" href="/evenements/<?= $event->id ?>/ajouter-activite">
+                <a role=button class="secondary" href="/evenements/<?= $event->id ?>/activite/nouveau">
                     <i class="fas fa-plus"></i> Ajouter une activité</a>
             </p>
         <?php endif ?>
