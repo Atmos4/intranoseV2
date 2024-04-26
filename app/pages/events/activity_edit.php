@@ -23,6 +23,7 @@ if ($activity_id) {
         "location_label" => $activity->location_label,
         "location_url" => $activity->location_url,
         "description" => $activity->description,
+        "deadline" => $activity->deadline,
     ];
     foreach ($activity->categories as $index => $category) {
         $form_values["category_{$index}_name"] = $category->name;
@@ -48,7 +49,9 @@ $date->required();
 $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
 $location_url = $v->url("location_url")->label("URL du lieu");
 $description = $v->textarea("description")->label("Description de l'activité");
-
+$deadline = $v->date("deadline")
+    ->max($date->value ? date_create($date->value)->format("Y-m-d") : "", "Doit être avant le jour de l'activité")
+    ->label("Date limite d'inscription");
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
     $category_rows[$index]['name'] = $v->text("category_{$index}_name")->required();
@@ -61,6 +64,7 @@ if ($v->valid()) {
     $activity->set($name->value, date_create($date->value), $location_label->value, $location_url->value, $description->value);
     $activity->event = $event;
     $activity->type = ActivityType::from($type->value);
+    $activity->deadline = $deadline->value ? date_create($deadline->value) : null;
     foreach ($activity->categories as $index => $category) {
         $category->name = $category_rows[$index]['name']->value;
         $category->removed = !$category_rows[$index]['toggle']->value ?? 0;
@@ -110,6 +114,11 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
         <div class="col-md-6">
             <?= $location_url->render() ?>
         </div>
+        <?php if (!$event_id): ?>
+            <div class="col-md-6">
+                <?= $deadline->render() ?>
+            </div>
+        <?php endif ?>
         <?= $description->render() ?>
         <div class="col-auto">
             <h2>Catégories</h2>

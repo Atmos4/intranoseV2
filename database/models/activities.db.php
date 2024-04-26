@@ -74,6 +74,9 @@ class Activity
     public DateTime $date;
 
     #[Column]
+    public DateTime|null $deadline = null;
+
+    #[Column]
     public string $name;
 
     #[Column]
