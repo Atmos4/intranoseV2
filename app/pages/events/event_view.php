@@ -3,7 +3,7 @@ restrict_access();
 
 include __DIR__ . "/eventUtils.php";
 
-$event = Event::getWithGraphData(get_route_param('event_id'), User::getCurrent()->id);
+$event = EventService::getEventWithAllData(get_route_param('event_id'), User::getCurrent()->id);
 if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }

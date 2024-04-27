@@ -6,9 +6,11 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 
 formatter("d MMM");
 $user = User::getCurrent();
-$future_events = Event::listAllFutureOpen($user->id);
+$future_events = EventService::listAllFutureOpenEvents($user->id);
 if ($can_edit)
-    $draft_events = Event::listDrafts();
+    $draft_events = EventService::listDrafts();
+
+$activities = EventService::listAllActivities($user->id);
 
 // Get the current date
 $current_date_month = date('m');
@@ -51,9 +53,11 @@ $vowels = array("a", "e", "i", "o", "u"); ?>
                     <li><a href="/evenements/nouveau" class="secondary">
                             <i class="fas fa-plus"></i> Ajouter un événement
                         </a></li>
-                    <!-- <li><a href="/activite/nouveau" class="secondary">
-                            <i class="fas fa-plus"></i> Ajouter une activité
-                        </a></li> -->
+                    <?php if (is_dev()): ?>
+                        <li><a href="/activite/nouveau" class="secondary">
+                                <i class="fas fa-plus"></i> Ajouter une activité
+                            </a></li>
+                    <?php endif ?>
                 </ul>
             </details>
         </li>
@@ -75,11 +79,9 @@ if ($can_edit && count($draft_events)): ?>
     <h6>Événements publiés</h6>
 <?php endif ?>
 
-<?php if (count($future_events)): ?>
-    <?php foreach ($future_events as $event): ?>
-        <?= render_events_article($event); ?>
-    <?php endforeach ?>
-<?php endif ?>
+<?php foreach ($future_events as $event): ?>
+    <?= render_events_article($event); ?>
+<?php endforeach ?>
 
 <div id="loadEvents">
     <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger
@@ -87,3 +89,15 @@ if ($can_edit && count($draft_events)): ?>
         événements
         passés</button>
 </div>
+
+<?php if (is_dev()): ?>
+    <h6>Activités (en cours de dévelopement)</h6>
+    <?php if (!count($activities)): ?>
+        <p class="center">Pas d'activités pour le moment 😴</p>
+    <?php endif ?>
+    <?php foreach ($activities as $act): ?>
+
+        <?= render_events_article($act) ?>
+
+    <?php endforeach ?>
+<?php endif ?>

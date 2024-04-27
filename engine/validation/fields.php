@@ -92,7 +92,7 @@ class Field
 
     protected function render_attrs(): string
     {
-        return array_reduce(array_keys($this->attributes), fn ($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
+        return array_reduce(array_keys($this->attributes), fn($carry, $item) => ("$carry $item=\"" . htmlspecialchars($this->attributes[$item]) . "\""), "");
     }
 
     protected function render_label(string $input_render, bool $reverse = false): string
@@ -291,7 +291,7 @@ class DateField extends Field
     /** Set upper date limit */
     function max(string|null $date, string $msg = null): static
     {
-        if ($this->should_test() && $date && strtotime($this->value) > strtotime($date)) {
+        if ($this->should_test() && $date && $this->value && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
         }
         return $this;

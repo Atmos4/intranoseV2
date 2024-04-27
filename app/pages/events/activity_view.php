@@ -3,35 +3,28 @@ restrict_access();
 
 include __DIR__ . "/eventUtils.php";
 
-$event_id = get_route_param("event_id");
+$event_id = get_route_param("event_id", false);
 $activity = em()->find(Activity::class, get_route_param("activity_id"));
 
-if ($activity->type == ActivityType::RACE) {
-    $icon = "fa fa-stopwatch";
-} elseif ($activity->type == ActivityType::TRAINING) {
-    $icon = "fa fa-dumbbell";
-} else {
-    $icon = "fa fa-bowl-food";
-}
 $activity_entry = $activity->entries[0] ?? null;
 $can_edit = check_auth(Access::$ADD_EVENTS);
+$link = $event_id ? "/evenements/$event_id" : "";
 
 page($activity->name)->css("event_view.css");
 ?>
 
 <nav id="page-actions">
-    <?php $link = $activity->event ? "/evenements/{$activity->event->id}" : "/evenements" ?>
-    <a href="<?= $link ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
+    <a href="<?= $link ?: "/evenements" ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
     <?php if ($can_edit): ?>
         <li>
             <details class="dropdown">
                 <summary>Actions</summary>
                 <ul dir="rtl">
-                    <li><a href="/evenements/<?= $event_id ?>/activite/<?= $activity->id ?>/modifier" class="secondary">
+                    <li><a href="<?= $link ?>/activite/<?= $activity->id ?>/modifier" class="secondary">
                             <i class="fas fa-pen"></i> Éditer
                         </a></li>
                     <li>
-                        <a href="/evenements/<?= $event_id ?>/activite/<?= $activity->id ?>/supprimer" class="destructive">
+                        <a href="<?= $link ?>/activite/<?= $activity->id ?>/supprimer" class="destructive">
                             <i class="fas fa-trash"></i> Supprimer
                         </a>
                     </li>

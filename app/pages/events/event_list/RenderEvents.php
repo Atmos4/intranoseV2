@@ -1,6 +1,11 @@
 <?php
 function render_events_article(EventDto $event)
 {
+    $url = match ($event->type) {
+        EventType::Event => "/evenements/$event->id",
+        EventType::Activity => "/activite/$event->id",
+    };
+
     $diff = date_create('now')->diff($event->deadline->add(new DateInterval("PT23H59M59S")));
     $limit_class = $tooltip_content = "";
     if ($diff->invert) {
@@ -16,7 +21,7 @@ function render_events_article(EventDto $event)
     } ?>
 
     <article class="event-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" onkeydown="console.log(event.key)"
-        hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true" tabindex=0>
+        hx-get="<?= $url ?>" hx-target="body" hx-push-url="true" tabindex=0>
         <div class="grid">
             <div class="icon">
                 <?php if ($event->open):
@@ -40,10 +45,12 @@ function render_events_article(EventDto $event)
                 <span>
                     <?= format_date($event->start) ?>
                 </span>
-                <i class="fas fa-arrow-right"></i>
-                <span>
-                    <?= format_date($event->end) ?>
-                </span>
+                <?php if ($event->end): ?>
+                    <i class="fas fa-arrow-right"></i>
+                    <span>
+                        <?= format_date($event->end) ?>
+                    </span>
+                <?php endif ?>
             </div>
             <div class="event-limit <?= $limit_class ?>">
                 <i title="Deadline" class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>

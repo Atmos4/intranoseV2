@@ -4,7 +4,7 @@ include_once __DIR__ . "/RenderEvents.php";
 restrict_access();
 formatter("d MMM");
 $user = User::getCurrent();
-$past_events = Event::listAllPastOpen($user->id);
+$past_events = EventService::listAllPastOpen($user->id);
 
 ?>
 <h4>Évenements passés</h4>

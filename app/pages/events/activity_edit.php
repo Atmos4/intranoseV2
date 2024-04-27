@@ -1,11 +1,10 @@
 <?php
-use Doctrine\Common\Collections\ArrayCollection;
-
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id", strict: false);
 $activity_id = get_route_param("activity_id", false);
 $event = $event_id ? em()->find(Event::class, $event_id) : null;
+
 if ($event_id && !$event) {
     return "this event does not exist";
 }
@@ -14,7 +13,7 @@ if ($activity_id) {
     if (!$activity) {
         redirect($event_id ? "/evenements/$event_id/activite/nouveau" : "/activite/nouveau");
     }
-    if ($activity->event->id != $event_id) {
+    if ($activity->event && $activity->event->id != $event_id) {
         redirect("/evenements/{$activity->event->id}/activite/$activity_id/modifier");
     }
     $form_values = [
@@ -23,7 +22,7 @@ if ($activity_id) {
         "location_label" => $activity->location_label,
         "location_url" => $activity->location_url,
         "description" => $activity->description,
-        "deadline" => $activity->deadline,
+        "deadline" => date_format($activity->deadline, "Y-m-d"),
     ];
     foreach ($activity->categories as $index => $category) {
         $form_values["category_{$index}_name"] = $category->name;
@@ -35,7 +34,7 @@ if ($activity_id) {
 
 $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
-$v = new Validator($form_values ?? $event_id ? ["date" => $event->start_date->format("Y-m-d")] : []);
+$v = new Validator($form_values ?? ($event_id ? ["date" => $event->start_date->format("Y-m-d")] : []));
 $name = $v->text("name")->label("Nom de l'activité")->placeholder()->required();
 $type = $v->select("type")->options($type_array)->label("Type d'activité");
 $date = $v->date("date")
@@ -58,7 +57,12 @@ foreach ($activity->categories as $index => $category) {
     $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle")->set_labels(" ", "Supprimer");
 }
 
-$return_link = $event_id ? "/evenements/$event->id" : "/evenements";
+$return_link = match (true) {
+    $event_id && $activity_id => "/evenements/$event_id/activite/$activity_id",
+    !!$event_id => "/evenements/$event_id",
+    !!$activity_id => "/activite/$activity_id",
+    default => "/evenements",
+};
 
 if ($v->valid()) {
     $activity->set($name->value, date_create($date->value), $location_label->value, $location_url->value, $description->value);

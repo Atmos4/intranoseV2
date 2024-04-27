@@ -1,4 +1,8 @@
 <?php
+
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
+
 class EventService
 {
     /** @return ActivityInfoDto[] */
@@ -30,6 +34,98 @@ class EventService
             ->where("e.event = :eid AND e.present=1")
             ->setParameter("eid", $eventId)
             ->getQuery()->getSingleScalarResult();
+    }
+
+    static function getEventWithAllData($event_id, $user_id = null): Event|null
+    {
+        $qb = em()->createQueryBuilder();
+        $qb->select('e', 'ee', 'r', 're', 'c')
+            ->from(Event::class, 'e')
+            ->leftJoin('e.entries', 'ee', Join::WITH, 'ee.user = :uid')
+            ->leftJoin('e.activities', 'r')
+            ->leftJoin('r.entries', 're', Join::WITH, 're.user = :uid')
+            ->leftJoin('re.category', 'c')
+            ->where('e.id = :eid')
+            ->setParameters(['eid' => $event_id, 'uid' => $user_id]);
+        try {
+            return $qb->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException) {
+            force_404("this event does not exist");
+            return null;
+        }
+    }
+
+    /** @return EventDto[] */
+    static function listAllFutureOpenEvents($user_id)
+    {
+        $events = em()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
+                " LEFT JOIN ev.entries en WITH en.user = ?1" .
+                " WHERE ev.open = 1" .
+                " AND ev.end_date > CURRENT_DATE()" .
+                " ORDER BY ev.start_date DESC")
+            ->setParameter(1, $user_id)
+            ->getArrayResult();
+
+        return EventDto::fromEventList($events);
+    }
+
+    /** @return EventDto[] */
+    static function listAllActivities($user_id)
+    {
+        if (!is_dev())
+            return [];
+        $activities = em()
+            ->createQuery("SELECT act.id, act.name, act.date, act.deadline, act.open, en.present FROM Activity act" .
+                " LEFT JOIN act.entries en WITH en.user = ?1" .
+                " WHERE act.event IS NULL" .
+                //" WHERE act.open = 1" .
+                //" AND act.date > CURRENT_DATE()" .
+                " ORDER BY act.date DESC")
+            ->setParameter(1, $user_id)
+            ->getArrayResult();
+
+        return EventDto::fromActivityList($activities);
+    }
+
+    static function listDrafts()
+    {
+        $events = em()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
+                " WHERE ev.open = 0" .
+                " ORDER BY ev.start_date DESC")
+            ->getArrayResult();
+        return EventDto::fromEventList($events);
+    }
+
+    /** @return EventDto[] */
+    static function listAllPastOpen($user_id)
+    {
+        $events = em()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
+                " LEFT JOIN ev.entries en WITH en.user = ?1" .
+                " WHERE ev.open = 1" .
+                " AND ev.end_date <= CURRENT_DATE()" .
+                " ORDER BY ev.start_date DESC")
+            ->setParameter(1, $user_id)
+            ->getArrayResult();
+
+        return EventDto::fromEventList($events);
+    }
+
+    /** @return EventEntry[] */
+    static function getAllEntries($event_id): array
+    {
+        return em()->createQueryBuilder()
+            ->select('e', 'u', 're')
+            ->from(EventEntry::class, 'e')
+            ->join('e.event', 'ev')
+            ->leftJoin('e.user', 'u')
+            ->leftJoin('u.activity_entries', 're', JOIN::WITH, 're.user = e.user and re.activity MEMBER OF ev.activities', 're.activity')
+            ->where('e.event = :eid')
+            ->setParameters(['eid' => $event_id])
+            ->getQuery()->getResult();
     }
 }
 
