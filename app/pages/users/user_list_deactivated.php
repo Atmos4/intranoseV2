@@ -12,7 +12,7 @@ if (isset($_POST['action'])) {
         $dql = "SELECT u FROM User u where u.id IN ("
             . implode(",", array_map(function ($value) {
                 if (!is_numeric($value)) {
-                    die("Stupide hobbit joufflu !");
+                    die ("Stupide hobbit joufflu !");
                 }
                 return "?$value";
             }, array_keys($_POST['selected_users']))) . ")";
@@ -49,7 +49,7 @@ endif; ?>
 <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('search-users', 'users-table')">
 
 <form method="post" id="reactivate-form" hx-boost="false">
-    <figure>
+    <figure class="overflow-auto">
         <table id="users-table" class="reactivate">
             <thead>
                 <tr>

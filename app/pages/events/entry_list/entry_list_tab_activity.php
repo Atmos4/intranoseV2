@@ -6,7 +6,7 @@ $activityEntries = ActivityService::getActivityEntries($activityId);
     <p style="padding: 1rem" class="center">Pas d'inscrits sur cette activité</p>
     <?php return;
 endif ?>
-<figure>
+<figure class="overflow-auto">
     <table>
         <thead>
             <tr>

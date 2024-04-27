@@ -68,7 +68,7 @@ if ($v->valid()) {
     $activity->set($name->value, date_create($date->value), $location_label->value, $location_url->value, $description->value);
     $activity->event = $event;
     $activity->type = ActivityType::from($type->value);
-    $activity->deadline = $deadline->value ? date_create($deadline->value) : null;
+    $activity->deadline = $deadline->value ? date_create($deadline->value) : $event->deadline;
     foreach ($activity->categories as $index => $category) {
         $category->name = $category_rows[$index]['name']->value;
         $category->removed = !$category_rows[$index]['toggle']->value ?? 0;

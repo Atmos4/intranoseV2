@@ -3,7 +3,7 @@ $eventId = Component::prop("event_id");
 $all_event_entries = EventService::getAllEntries($eventId);
 $options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
 ?>
-<figure>
+<figure class="overflow-auto">
     <table>
         <thead>
             <tr>
