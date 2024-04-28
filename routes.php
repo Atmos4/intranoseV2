@@ -50,10 +50,11 @@ Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/
 // Activities
 Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/activity_edit');
 Router::add('/activite/$activity_id/modifier', 'pages/events/activity_edit');
+Router::add('/activite/nouveau', 'pages/events/activity_edit');
+Router::add('/activite/$activity_id', 'pages/events/activity_view');
 Router::add('/evenements/$event_id/activite/nouveau', 'pages/events/activity_edit');
 Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/activity_view');
 Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/activity_delete');
-Router::add('/activite/nouveau', 'pages/events/activity_edit');
 
 // Settings
 Router::add('/mon-profil', 'pages/settings/settings');

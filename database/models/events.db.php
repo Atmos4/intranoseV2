@@ -128,132 +128,26 @@ class Event
         $this->deadline = date_create($deadline);
         $this->bulletin_url = $bulletin_url;
     }
+}
 
-    static function getWithGraphData($event_id, $user_id = null): Event|null
-    {
-        $qb = em()->createQueryBuilder();
-        $qb->select('e', 'ee', 'r', 're', 'c')
-            ->from(Event::class, 'e')
-            ->leftJoin('e.entries', 'ee', Join::WITH, 'ee.user = :uid')
-            ->leftJoin('e.activities', 'r')
-            ->leftJoin('r.entries', 're', Join::WITH, 're.user = :uid')
-            ->leftJoin('re.category', 'c')
-            ->where('e.id = :eid')
-            ->setParameters(['eid' => $event_id, 'uid' => $user_id]);
-        try {
-            return $qb->getQuery()
-                ->getSingleResult();
-        } catch (NoResultException) {
-            force_404("this event does not exist");
-            return null;
-        }
-    }
-
-    /** @return EventEntry[] */
-    static function getAllEntries($event_id): array
-    {
-        return em()->createQueryBuilder()
-            ->select('e', 'u', 're')
-            ->from(EventEntry::class, 'e')
-            ->join('e.event', 'ev')
-            ->leftJoin('e.user', 'u')
-            ->leftJoin('u.activity_entries', 're', JOIN::WITH, 're.user = e.user and re.activity MEMBER OF ev.activities', 're.activity')
-            ->where('e.event = :eid')
-            ->setParameters(['eid' => $event_id])
-            ->getQuery()->getResult();
-    }
-
-    /** @return EventDto[] */
-    static function listAllOpen($user_id)
-    {
-        $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " ORDER BY ev.start_date DESC")
-            ->setParameter(1, $user_id)
-            ->getArrayResult();
-
-        return EventDto::fromEventList($events);
-    }
-
-    /** @return EventDto[] */
-    static function listAllFutureOpen($user_id)
-    {
-        $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " AND ev.end_date > CURRENT_DATE()" .
-                " ORDER BY ev.start_date DESC")
-            ->setParameter(1, $user_id)
-            ->getArrayResult();
-
-        return EventDto::fromEventList($events);
-    }
-
-    /** @return EventDto[] */
-    static function listAllPastOpen($user_id)
-    {
-        $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " AND ev.end_date <= CURRENT_DATE()" .
-                " ORDER BY ev.start_date DESC")
-            ->setParameter(1, $user_id)
-            ->getArrayResult();
-
-        return EventDto::fromEventList($events);
-    }
-
-
-    static function getById($event_id, $user_id = 0)
-    {
-        return em()
-            ->createQuery("SELECT ev, en FROM Event ev LEFT JOIN ev.entries en LEFT JOIN en.user u" .
-                " WHERE ev.id = :eid AND (u.id IS NULL OR u.id = :uid)")
-            ->setParameters(['eid' => $event_id, 'uid' => $user_id])
-            ->getSingleResult();
-    }
-
-    static function listDrafts()
-    {
-        $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
-                " WHERE ev.open = 0" .
-                " ORDER BY ev.start_date DESC")
-            ->getArrayResult();
-        return EventDto::fromEventList($events);
-    }
+enum EventType
+{
+    case Event;
+    case Activity;
 }
 
 class EventDto
 {
-    public int $id;
-    public string $name;
-    public DateTime $start;
-    public DateTime $end;
-    public DateTime $deadline;
-    public bool $open;
-    public bool|null $registered;
-
     function __construct(
-        $id,
-        $name,
-        $start,
-        $end,
-        $deadline,
-        $open,
-        $registered,
+        public EventType $type,
+        public int $id,
+        public string $name,
+        public DateTime $start,
+        public DateTime|null $end,
+        public DateTime $deadline,
+        public bool $open,
+        public bool|null $registered,
     ) {
-        $this->id = $id;
-        $this->name = $name;
-        $this->start = $start;
-        $this->end = $end;
-        $this->deadline = $deadline;
-        $this->open = $open;
-        $this->registered = $registered;
     }
 
     /** Used to transfer basic event data without graph
@@ -264,6 +158,7 @@ class EventDto
         foreach ($events as $event) {
 
             $result[] = new EventDto(
+                EventType::Event,
                 $event['id'],
                 $event['name'],
                 $event['start_date'],
@@ -271,6 +166,27 @@ class EventDto
                 $event['deadline'],
                 $event['open'],
                 isset($event['present']) ? $event['present'] : null
+            );
+        }
+        return $result;
+    }
+
+    /** Used to transfer basic event data without graph
+     *  @return EventDto[] */
+    static function fromActivityList(array $activities)
+    {
+        $result = [];
+        foreach ($activities as $activity) {
+
+            $result[] = new EventDto(
+                EventType::Activity,
+                $activity['id'],
+                $activity['name'],
+                $activity['date'],
+                null,
+                $activity['deadline'],
+                $activity['open'],
+                isset($activity['present']) ? $activity['present'] : null
             );
         }
         return $result;

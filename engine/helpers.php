@@ -152,16 +152,21 @@ function has_session($key): bool
     return isset($_SESSION[$key]);
 }
 
+function is_dev()
+{
+    return !!env('DEVELOPMENT');
+}
+
 function restrict_dev()
 {
-    if (!env('DEVELOPMENT')) {
+    if (!is_dev()) {
         force_404("Not in dev environement");
     }
 }
 
 function restrict_environment($key)
 {
-    if (!env('DEVELOPMENT') && !env($key)) {
+    if (!is_dev() && !env($key)) {
         force_404();
     }
 }
