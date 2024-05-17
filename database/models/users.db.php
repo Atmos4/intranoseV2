@@ -136,7 +136,7 @@ class User
         if (!has_session("user_id")) {
             return null;
         }
-        if (isset ($_SESSION['controlled_user_id'])) {
+        if (isset($_SESSION['controlled_user_id'])) {
             Page::getInstance()->controlled();
         }
         self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
@@ -264,7 +264,7 @@ class AccessToken
     #[ManyToOne]
     public User|null $user = null;
 
-    #[Column]
+    #[Column(nullable: true)]
     public string|null $hashed_validator = null;
 
     #[Column]
