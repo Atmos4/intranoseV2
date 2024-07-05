@@ -19,6 +19,7 @@ if (env("DEVELOPMENT")) {
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
+    Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
 }
 // DANGER ZONE: migrations - Make sure to protect those routes with `restrict_environment`
 Router::add('/dev/migrate', '../database/data_migrations/migrate_db');
@@ -85,6 +86,9 @@ Router::add('/documents/$doc_id/supprimer', 'pages/shared_documents/shared_docum
 Router::add('/feedback', 'pages/user_feedback_submit');
 Router::add('/feedback-list', 'pages/user_feedback_list');
 Router::add('/feedback-list/supprimer/$user_id', 'pages/user_feedback_list');
+
+//Notifications
+Router::add('/save-subscription', 'notifications/save_subscription');
 
 // Logout
 Router::add('/logout', function () {

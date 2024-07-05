@@ -35,3 +35,9 @@ page("Dev") ?>
         <?= DevButton("/dev/migrate_activities", "Migration des course") ?>
     </ul>
 </nav>
+<b>Notifications</b>
+<nav>
+    <ul>
+        <?= DevButton("/dev/notifications", "SW et Notifications") ?>
+    </ul>
+</nav>
