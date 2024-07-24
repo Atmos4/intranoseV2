@@ -23,9 +23,7 @@ if ($v->valid()) {
 
 page("Ajouter un document");
 ?>
-<nav id="page-actions">
-    <a href="/documents" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-</nav>
+<?= actions()->back("/documents") ?>
 <form method="post" enctype="multipart/form-data">
     <?= $v->render_validation() ?>
     <i>Formats autorisés: images, PDF, Word, Excel. S'il manque des formats <a href="/feedback">faites une

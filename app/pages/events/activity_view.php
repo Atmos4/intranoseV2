@@ -13,27 +13,14 @@ $link = $event_id ? "/evenements/$event_id" : "";
 page($activity->name)->css("event_view.css");
 ?>
 
-<nav id="page-actions">
-    <a href="<?= $link ?: "/evenements" ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <?php if ($can_edit): ?>
-        <li>
-            <details class="dropdown">
-                <summary>Actions</summary>
-                <ul dir="rtl">
-                    <li><a href="<?= $link ?>/activite/<?= $activity->id ?>/modifier" class="secondary">
-                            <i class="fas fa-pen"></i> Éditer
-                        </a></li>
-                    <li>
-                        <a href="<?= $link ?>/activite/<?= $activity->id ?>/supprimer" class="destructive">
-                            <i class="fas fa-trash"></i> Supprimer
-                        </a>
-                    </li>
-                </ul>
-            </details>
-        </li>
-
-    <?php endif ?>
-</nav>
+<?= actions()->back($link ?: "/evenements")
+    ->if(
+        $can_edit,
+        // I love functional programming :D
+        fn($a) => $a->dropdown(fn($b) => $b
+            ->link("$link/activite/$activity->id/modifier", "Éditer", "fas fa-pen")
+            ->link("$link/activite/$activity->id/supprimer", "Supprimer", "fas fa-trash", ["class" => "destructive"]))
+    ) ?>
 
 <?= ActivityEntry($activity_entry) ?>
 
