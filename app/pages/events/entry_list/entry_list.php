@@ -5,7 +5,7 @@ $event_infos = EventService::getEventInfos($event_id);
 page($event_infos->name . " : Inscrits")->css("entry_list.css") ?>
 
 <?= actions()
-    ->back("/evenements$event_id")
+    ->back("/evenements/$event_id")
     ->if(
         $event_infos->open && check_auth(Access::$ADD_EVENTS),
         fn($a) => $a->button("Copier le tableau", attributes: ["onclick" => "selectTable()"])
