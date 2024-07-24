@@ -48,6 +48,8 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/htmx1.9.5-loading.js" defer></script>
 
     <script src="/assets/js/theme.js"></script>
+
+    <?= viteScripts() ?>
 </head>
 
 <body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"

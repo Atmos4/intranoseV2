@@ -19,3 +19,6 @@ env.php
 
 # Doctrine Proxies
 /database/proxies
+
+# dev server
+usingVite.lockfile
