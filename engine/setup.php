@@ -2,7 +2,12 @@
 // User control
 require_once app_path() . "/components/user_control.php";
 // Load env
-$env = require_once base_path() . "/engine/load_env.php";
+$env = require_once __DIR__ . "/load_env.php";
+
+// vite setup
+if (is_dev()) {
+    require_once __DIR__ . "/vite.php";
+}
 
 // static
 $logger = new \Monolog\Logger('main');

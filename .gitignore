@@ -22,3 +22,6 @@ env.php
 
 #sqlite
 /.sqlite
+
+# dev server
+usingVite.lockfile

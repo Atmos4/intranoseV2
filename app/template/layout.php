@@ -51,6 +51,8 @@ $page = Page::getInstance(); ?>
 
     <!-- Notifications -->
     <script src="/assets/js/notifications.js"></script>
+
+    <?= is_dev() ? viteScripts() : "" ?>
 </head>
 
 <body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"

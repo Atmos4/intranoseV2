@@ -1,0 +1,17 @@
+{
+  "name": "carnet_ffco_v2",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Atmos4",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.1.6",
+    "vite": "5.3.4",
+    "vite-plugin-live-reload": "3.0.3"
+  },
+  "scripts": {
+    "dev": "bun run bin/dev.ts",
+    "dev:php": "php -S 127.0.0.1:8000 server.php",
+    "dev:vite": "vite dev"
+  }
+}
