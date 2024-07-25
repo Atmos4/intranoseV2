@@ -37,8 +37,14 @@ class DB extends SingletonDependency
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
-        $config->addCustomDatetimeFunction('MONTH', Month::class);
-        $config->addCustomDatetimeFunction('DAY', Day::class);
+
+        if (env('EXPERIMENTAL_SQLITE')) {
+            $config->addCustomDatetimeFunction('MONTH', Month_Sqlite::class);
+            $config->addCustomDatetimeFunction('DAY', Day_Sqlite::class);
+        } else {
+            $config->addCustomDatetimeFunction('MONTH', Month::class);
+            $config->addCustomDatetimeFunction('DAY', Day::class);
+        }
 
 
         if ($devMode) {
@@ -48,7 +54,7 @@ class DB extends SingletonDependency
             Autoloader::register(self::PATH_PROXIES, "");
         }
 
-        $connection ??= DriverManager::getConnection([
+        $connection ??= DriverManager::getConnection(env('EXPERIMENTAL_SQLITE') ? ['driver' => 'pdo_sqlite', 'path' => 'database/db.sqlite'] : [
             'driver' => 'pdo_mysql',
             'user' => env("DB_USER"),
             'password' => env("DB_PASSWORD"),
@@ -90,6 +96,26 @@ class Month extends FunctionNode
     }
 }
 
+class Month_Sqlite extends FunctionNode
+{
+    public $date;
+
+    public function getSql(SqlWalker $sqlWalker): string
+    {
+        return "strftime('%m', " . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
+    }
+
+    public function parse(Parser $parser): void
+    {
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
+
+        $this->date = $parser->ArithmeticPrimary();
+
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
+    }
+}
+
 class Day extends FunctionNode
 {
     public $date;
@@ -97,6 +123,28 @@ class Day extends FunctionNode
     public function getSql(SqlWalker $sqlWalker): string
     {
         return 'DAY(' . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
+    }
+
+    public function parse(Parser $parser): void
+    {
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
+
+        $this->date = $parser->ArithmeticPrimary();
+
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
+    }
+}
+
+
+
+class Day_Sqlite extends FunctionNode
+{
+    public $date;
+
+    public function getSql(SqlWalker $sqlWalker): string
+    {
+        return "strftime('%d', " . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
     }
 
     public function parse(Parser $parser): void
