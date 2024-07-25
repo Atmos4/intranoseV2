@@ -1,4 +1,6 @@
 <?php
+
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\ORM\EntityManager;
@@ -20,7 +22,7 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    function __construct(Doctrine\DBAL\Connection $connection, $sqlite = false)
+    function __construct(Connection $connection, $sqlite = false)
     {
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
@@ -62,32 +64,42 @@ class DB extends SingletonDependency
     {
         return self::getInstance()->entityManager;
     }
+
+    static function setup()
+    {
+        $sqlite = !!env("EXPERIMENTAL_SQLITE");
+        self::factory(fn() => new self($sqlite ? DBFactory::sqlite() : DBFactory::mysql(), $sqlite));
+    }
+
+    static function test()
+    {
+        $connection = DBFactory::mysql(env("TEST_DB_NAME") ?? 'intranose_test');
+        self::factory(fn() => new self($connection));
+        // We need the connection for test bootstrap
+        return $connection;
+    }
 }
 
 class DBFactory
 {
-    static function setup()
-    {
-        env("EXPERIMENTAL_SQLITE") ? self::sqlite() : self::mysql();
-    }
-
-    static function sqlite($fileName = 'database/db.sqlite')
-    {
-        DB::factory(fn() => new DB(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]), true));
-    }
-
     static function mysql($dbName = null)
     {
-        DB::factory(fn() => new DB(DriverManager::getConnection([
+        return DriverManager::getConnection([
             'driver' => 'pdo_mysql',
             'user' => env("DB_USER"),
             'password' => env("DB_PASSWORD"),
             'dbname' => $dbName ?? env("DB_NAME"),
             'host' => env("DB_HOST"),
             'charset' => 'utf8mb4',
-        ])));
+        ]);
     }
 
+    static function sqlite($fileName = 'database/db.sqlite')
+    {
+        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
+    }
+
+    // Configuration factory
     static function getConfig()
     {
         return env("EXPERIMENTAL_SQLITE") ? self::getSqliteConfig() : self::getMySqlConfig();

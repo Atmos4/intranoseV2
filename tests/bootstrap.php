@@ -10,11 +10,9 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
 
-DBFactory::mysql(env("TEST_DB_NAME") ?? 'intranose_test');
-$configFile = DBFactory::getMySqlConfig();
-
+$connection = DB::test();
 $dependencyFactory = DependencyFactory::fromConnection(
-    $configFile,
+    DBFactory::getMySqlConfig(),
     new ExistingConnection($connection),
 );
 

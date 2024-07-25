@@ -2,7 +2,6 @@
 <?php
 
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
-use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
@@ -11,7 +10,7 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
-DBFactory::setup();
+DB::setup();
 $deps = DependencyFactory::fromEntityManager(DBFactory::getConfig(), new ExistingEntityManager(em()));
 
 ConsoleRunner::run(new SingleManagerProvider(em()), [
