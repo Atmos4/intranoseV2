@@ -53,7 +53,7 @@ $page = Page::getInstance(); ?>
 <body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"
     hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
     <?php
-    if ($page->nav) {
+    if ($page->nav && has_session("user_id")) {
         require_once app_path() . "/template/nav.php";
     } ?>
     <div id="hx-indicator" aria-busy="true"></div>
