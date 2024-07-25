@@ -1,5 +1,6 @@
 <?php
 use Doctrine\DBAL\DriverManager;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 
@@ -19,7 +20,7 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    function __construct(Doctrine\DBAL\Connection $connection = null)
+    function __construct(Doctrine\DBAL\Connection $connection, $sqlite = false)
     {
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
@@ -38,7 +39,7 @@ class DB extends SingletonDependency
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
-        if (env('EXPERIMENTAL_SQLITE')) {
+        if ($sqlite) {
             $config->addCustomDatetimeFunction('MONTH', Month_Sqlite::class);
             $config->addCustomDatetimeFunction('DAY', Day_Sqlite::class);
         } else {
@@ -54,21 +55,52 @@ class DB extends SingletonDependency
             Autoloader::register(self::PATH_PROXIES, "");
         }
 
-        $connection ??= DriverManager::getConnection(env('EXPERIMENTAL_SQLITE') ? ['driver' => 'pdo_sqlite', 'path' => 'database/db.sqlite'] : [
-            'driver' => 'pdo_mysql',
-            'user' => env("DB_USER"),
-            'password' => env("DB_PASSWORD"),
-            'dbname' => env("DB_NAME"),
-            'host' => env("DB_HOST"),
-            'charset' => 'utf8mb4',
-        ], $config);
-
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 
     static function get()
     {
         return self::getInstance()->entityManager;
+    }
+}
+
+class DBFactory
+{
+    static function setup()
+    {
+        env("EXPERIMENTAL_SQLITE") ? self::sqlite() : self::mysql();
+    }
+
+    static function sqlite($fileName = 'database/db.sqlite')
+    {
+        DB::factory(fn() => new DB(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]), true));
+    }
+
+    static function mysql($dbName = null)
+    {
+        DB::factory(fn() => new DB(DriverManager::getConnection([
+            'driver' => 'pdo_mysql',
+            'user' => env("DB_USER"),
+            'password' => env("DB_PASSWORD"),
+            'dbname' => $dbName ?? env("DB_NAME"),
+            'host' => env("DB_HOST"),
+            'charset' => 'utf8mb4',
+        ])));
+    }
+
+    static function getConfig()
+    {
+        return env("EXPERIMENTAL_SQLITE") ? self::getSqliteConfig() : self::getMySqlConfig();
+    }
+
+    static function getMySqlConfig()
+    {
+        return new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+    }
+
+    static function getSqliteConfig()
+    {
+        return new PhpFile(__DIR__ . "/../../database/config/sqlite.php");
     }
 }
 

@@ -11,8 +11,8 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
-$configFile = new PhpFile(env('EXPERIMENTAL_SQLITE') ? __DIR__ . "/../database/config/sqlite.php" : __DIR__ . "/../database/config/migrations.php");
-$deps = DependencyFactory::fromEntityManager($configFile, new ExistingEntityManager(em()));
+DBFactory::setup();
+$deps = DependencyFactory::fromEntityManager(DBFactory::getConfig(), new ExistingEntityManager(em()));
 
 ConsoleRunner::run(new SingleManagerProvider(em()), [
     new Command\ExecuteCommand($deps),
