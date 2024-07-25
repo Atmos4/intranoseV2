@@ -4,12 +4,12 @@ $event_id = get_route_param("event_id");
 $event_infos = EventService::getEventInfos($event_id);
 page($event_infos->name . " : Inscrits")->css("entry_list.css") ?>
 
-<nav id="page-actions">
-    <a href="/evenements/<?= $event_id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <?php if ($event_infos->open && check_auth(Access::$ADD_EVENTS)): ?>
-        <button onclick="selectTable()">Copier le tableau</button>
-    <?php endif ?>
-</nav>
+<?= actions()
+    ->back("/evenements/$event_id")
+    ->if(
+        $event_infos->open && check_auth(Access::$ADD_EVENTS),
+        fn($a) => $a->button("Copier le tableau", attributes: ["onclick" => "selectTable()"])
+    ) ?>
 
 <?php if (!$event_infos->open): ?>
     <p class="center">

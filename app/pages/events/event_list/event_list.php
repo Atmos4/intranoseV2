@@ -27,7 +27,8 @@ $birthday_users = em()->createQueryBuilder()
 
 page("Événements")->css("event_list.css")->heading(false);
 
-$vowels = array("a", "e", "i", "o", "u"); ?>
+$vowels = array("a", "e", "i", "o", "u");
+?>
 
 <?php if ($birthday_users): ?>
     <div class="birthday-wrapper">
@@ -43,26 +44,14 @@ $vowels = array("a", "e", "i", "o", "u"); ?>
 
 <h2 class="center">Événements</h2>
 
-
-<?php if ($can_edit): ?>
-    <nav id="page-actions">
-        <li>
-            <details class="dropdown">
-                <summary>Actions</summary>
-                <ul>
-                    <li><a href="/evenements/nouveau" class="secondary">
-                            <i class="fas fa-plus"></i> Ajouter un événement
-                        </a></li>
-                    <?php if (is_dev()): ?>
-                        <li><a href="/activite/nouveau" class="secondary">
-                                <i class="fas fa-plus"></i> Ajouter une activité
-                            </a></li>
-                    <?php endif ?>
-                </ul>
-            </details>
-        </li>
-    </nav>
-<?php endif ?>
+<?= actions($can_edit)?->dropdown(
+    fn($b) => $b
+        ->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus")
+        ->if(
+            is_dev(),
+            fn($c) => $c->link("/activite/nouveau", "Ajouter une activité", "fas fa-plus")
+        )
+) ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>

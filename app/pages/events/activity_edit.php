@@ -95,14 +95,7 @@ if ($v->valid()) {
 page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
 ?>
 <form method="post">
-    <nav id="page-actions">
-        <a href=<?= $return_link ?> class="secondary">
-            <i class="fas fa-xmark"></i> Annuler
-        </a>
-        <button type="submit">
-            <?= $activity_id ? "Modifier" : "Créer" ?>
-        </button>
-    </nav>
+    <?= actions()->back($return_link, "Annuler", "fas fa-xmark")->submit($activity_id ? "Modifier" : "Créer") ?>
     <article class="row">
         <?= $v->render_validation() ?>
         <?= $name->render() ?>

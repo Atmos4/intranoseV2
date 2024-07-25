@@ -14,7 +14,7 @@ if (isset($_POST['add_members']) && count($_POST['add_members'])) {
     $dql = "UPDATE User u SET u.family = ?$count where u.id IN ("
         . implode(",", array_map(function ($value) {
             if (!is_numeric($value)) {
-                die ("Méchant Dobby");
+                die("Méchant Dobby");
             }
             return "?$value";
         }, array_keys($_POST['add_members']))) . ")";
@@ -30,23 +30,11 @@ $add_member_list = em()->createQueryBuilder()
     ->getQuery()->getArrayResult();
 
 page($family->name)->css("family_list.css") ?>
-<?php if (check_auth(Access::$EDIT_USERS)): ?>
-    <nav id="page-actions">
-        <a href="/familles" class="secondary"><i class="fa fa-caret-left"></i> Retour</a>
-        <li>
-            <details class="dropdown">
-                <summary class="contrast">Actions</summary>
-                <ul dir="rtl">
-                    <li>
-                        <a href="/famille/<?= $family->id ?>/supprimer" class="destructive outline">
-                            <i class="fa fa-trash"></i> Supprimer la famille
-                        </a>
-                    </li>
-                </ul>
-            </details>
-        </li>
-    </nav>
-<?php endif ?>
+
+<?= actions(check_auth(Access::$EDIT_USERS))
+    ->back("/familles")
+    ->dropdown(fn($b) => $b->link("/famille/$family->id/supprimer", "Supprimer la famille", "fa fa-trash", ["class" => "destructive outline"])) ?>
+
 <section class="row">
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">

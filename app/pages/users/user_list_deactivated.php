@@ -12,7 +12,7 @@ if (isset($_POST['action'])) {
         $dql = "SELECT u FROM User u where u.id IN ("
             . implode(",", array_map(function ($value) {
                 if (!is_numeric($value)) {
-                    die ("Stupide hobbit joufflu !");
+                    die("Stupide hobbit joufflu !");
                 }
                 return "?$value";
             }, array_keys($_POST['selected_users']))) . ")";
@@ -31,21 +31,16 @@ if (isset($_POST['action'])) {
 $users = UserService::getDeactivatedUserList();
 
 echo $form->render_validation();
+$actions = actions()->back("/licencies");
 // No user found. Return early
 if (!$users): ?>
-    <nav id="page-actions">
-        <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    </nav>
+    <?= $actions ?>
     <p class="center">Aucun utilisateur désactivé 😴</p>
     <?php
     return;
 endif; ?>
 
-<nav id="page-actions">
-    <a href="/licencies" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-    <button name="action" value="reactivate" form="reactivate-form">Réactiver</button>
-</nav>
-
+<?= $actions->submit("Réactiver", attributes: ["name" => "action", "value" => "reactivate", "form" => "reactivate-form"]) ?>
 <input type="search" id="search-users" placeholder="Rechercher..." onkeyup="searchTable('search-users', 'users-table')">
 
 <form method="post" id="reactivate-form" hx-boost="false">

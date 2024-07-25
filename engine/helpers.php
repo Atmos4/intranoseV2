@@ -107,9 +107,9 @@ function page(string $title)
 }
 
 /** setup page actions */
-function actions()
+function actions($condition = true)
 {
-    return new PageActionBuilder();
+    return $condition ? new PageActionBuilder() : null;
 }
 
 /** Checks authentication and authorization stored in session

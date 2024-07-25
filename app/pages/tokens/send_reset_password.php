@@ -31,11 +31,8 @@ if ($v->valid()) {
 
 page("Réinitialisation du mot de passe")->disableNav()->heading(false);
 ?>
-<nav id="page-actions">
-    <a href="/login" class="secondary">
-        <i class="fa fa-caret-left"></i> Retour</a>
-</nav>
 
+<?= actions()->back("/login") ?>
 <article>
     <form method="post">
         <h2 class="center">Réinitialisation du mot de passe</h2>

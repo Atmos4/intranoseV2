@@ -95,10 +95,7 @@ function getToggleClass($selector, $initialState)
 page("Inscription - " . $event->name)->css("event_register.css");
 ?>
 <form id="mainForm" method="post">
-    <nav id="page-actions">
-        <a href="/evenements/<?= $event->id ?>" class="secondary"><i class="fas fa-caret-left"></i> Retour</a>
-        <button type="submit" role="button">Enregistrer</button>
-    </nav>
+    <?= actions()->back("/evenements/$event->id")->submit("Enregistrer") ?>
     <article>
         <header class="center">
             <?= $v->render_validation() ?>

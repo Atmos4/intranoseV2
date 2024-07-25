@@ -6,8 +6,7 @@ $event_id = get_route_param("event_id", strict: false);
 if ($event_id) {
     $event = em()->find(Event::class, $event_id);
     if ($event == null) {
-        echo "Error: the event with id $event_id does not exist";
-        return;
+        force_404("Error: the event with id $event_id does not exist");
     }
     $event_mapping = [
         "event_name" => $event->name,
@@ -33,7 +32,7 @@ $limit_date = $v->date("limit_date")
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
 $description = $v->textarea("description")->label("Description");
 
-if (!empty($_POST) && $v->valid()) {
+if ($v->valid()) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
     $event->description = $description->value;
     em()->persist($event);
@@ -44,14 +43,7 @@ if (!empty($_POST) && $v->valid()) {
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 ?>
 <form method="post">
-    <nav id="page-actions">
-        <a href="/evenements<?= $event_id ? "/$event_id" : "" ?>" class="secondary">
-            <i class="fas fa-caret-left"></i> Annuler
-        </a>
-        <button type="submit">
-            <?= $event_id ? "Modifier" : "Créer" ?>
-        </button>
-    </nav>
+    <?= actions()?->back("/evenements" . $event_id ? "/$event_id" : "", "Annuler")->submit($event_id ? "Modifier" : "Créer") ?>
     <article>
         <div class="row">
             <?= $v->render_validation() ?>
