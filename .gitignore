@@ -21,4 +21,4 @@ env.php
 /database/proxies
 
 #sqlite
-/database/db.sqlite
+/.sqlite

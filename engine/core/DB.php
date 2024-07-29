@@ -22,11 +22,26 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    function __construct(Connection $connection, $sqlite = false)
+    public string|false $sqlite;
+
+    function isSqlite()
     {
+        return !!$this->sqlite;
+    }
+    function em()
+    {
+        return $this->entityManager;
+    }
+
+    function __construct(Connection $connection)
+    {
+        $this->sqlite = $connection->getDriver() instanceof \Doctrine\DBAL\Driver\PDO\SQLite\Driver;
+
+        // ORM Tables prefix
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+
         $devMode = !!env("DEVELOPMENT");
 
         if ($devMode) {
@@ -41,7 +56,7 @@ class DB extends SingletonDependency
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
-        if ($sqlite) {
+        if ($this->sqlite) {
             $config->addCustomDatetimeFunction('MONTH', Month_Sqlite::class);
             $config->addCustomDatetimeFunction('DAY', Day_Sqlite::class);
         } else {
@@ -62,21 +77,18 @@ class DB extends SingletonDependency
 
     static function get()
     {
-        return self::getInstance()->entityManager;
+        return self::getInstance()->em();
     }
 
-    static function setup()
+    static function setupForApp($sqlite = null)
     {
-        $sqlite = !!env("EXPERIMENTAL_SQLITE");
-        self::factory(fn() => new self($sqlite ? DBFactory::sqlite() : DBFactory::mysql(), $sqlite));
+        self::factory(fn() => new self(!!$sqlite ? DBFactory::sqlite($sqlite) : DBFactory::mysql()));
     }
 
-    static function test()
+    static function setupForTest()
     {
-        $connection = DBFactory::mysql(env("TEST_DB_NAME") ?? 'intranose_test');
-        self::factory(fn() => new self($connection));
-        // We need the connection for test bootstrap
-        return $connection;
+        $dbName = env("TEST_DB_NAME") ?? 'db_test.sqlite';
+        self::factory(fn() => new self(DBFactory::sqlite($dbName)));
     }
 }
 
@@ -94,25 +106,27 @@ class DBFactory
         ]);
     }
 
-    static function sqlite($fileName = 'database/db.sqlite')
+    static function sqlite($fileName = null)
     {
-        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
+        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => '.sqlite/' . $fileName ?? self::getSqliteDbName()]);
     }
 
     // Configuration factory
     static function getConfig()
     {
-        return env("EXPERIMENTAL_SQLITE") ? self::getSqliteConfig() : self::getMySqlConfig();
+        return !!DB::getInstance()->sqlite ?
+            new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
+            new PhpFile(__DIR__ . "/../../database/config/migrations.php");
     }
 
-    static function getMySqlConfig()
+    static function getSqliteDbName($file = null)
     {
-        return new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+        return $file ?? env("SQLITE_DB_NAME") ?? 'db.sqlite';
     }
 
-    static function getSqliteConfig()
+    static function getSqliteLocation($file)
     {
-        return new PhpFile(__DIR__ . "/../../database/config/sqlite.php");
+        return __DIR__ . "/../../.sqlite/$file";
     }
 }
 

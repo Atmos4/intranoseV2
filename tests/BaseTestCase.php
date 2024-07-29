@@ -12,7 +12,7 @@ abstract class BaseTestCase extends TestCase
         InstanceDependency::reset();
         Toast::$toasts = [];
         $this->handler = new TestHandler;
-        DB::test();
+        DB::setupForTest();
         MainLogger::instance(new MainLogger(new Monolog\Logger("test", [$this->handler])));
     }
 

@@ -3,8 +3,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(base_path());
 $dotenv->load();
 
 // Database
-$dotenv->ifPresent('EXPERIMENTAL_SQLITE')->isBoolean();
-if (!env("EXPERIMENTAL_SQLITE")) {
+if (env("DB_HOST")) {
     $dotenv->required('DB_NAME');
     $dotenv->required('DB_HOST');
     $dotenv->required('DB_USER');
