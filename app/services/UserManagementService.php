@@ -28,7 +28,8 @@ class UserManagementService
             }
         }
         em()->flush();
-        Toast::create("Emails mis à jour !");
+        Toast::success("Emails mis à jour");
+        Toast::warning("Pensez à mettre à jour sur Gmail !");
     }
 
     static function deactivateUser($user)

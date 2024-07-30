@@ -35,10 +35,6 @@ if ($v->valid()) {
         em()->persist($new_user);
         em()->flush();
         logger()->info("User {login} created and activation email sent", ["login" => $new_user->login]);
-
-        // Optional: set up OVH redirection
-        OvhService::create()->addUser($nose_email, $real_email->value);
-
         Toast::success('Email envoyé!');
         redirect('/licencies');
     } else {

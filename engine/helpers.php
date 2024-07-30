@@ -213,19 +213,3 @@ function logger()
 {
     return MainLogger::get();
 }
-
-// OVH API
-function ovh_api(): OvhClientInterface
-{
-    if (env("MOCK_OVH") || !env("OVH_APPLICATION_KEY")) {
-        return new OvhMock();
-    }
-    return new OvhClient(
-        new OvhHttpClient(
-            env("OVH_APPLICATION_KEY"),
-            env("OVH_APPLICATION_SECRET"),
-            "ovh-eu",
-            env("OVH_CONSUMER_KEY")
-        )
-    );
-}

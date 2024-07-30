@@ -16,14 +16,6 @@ if (env("DEVELOPMENT")) {
     //Router::add('/dev/reset-pw/$user_id', 'pages/dev/reset_pw');
     Router::add('/dev/send-email', 'pages/dev/send_test_email');
 
-    // --- ovh ---
-    Router::add('/dev/ovh', 'pages/dev/ovh/main_page');
-    Router::add('/dev/ovh/mailing-lists', 'pages/dev/ovh/mailing_lists');
-    Router::add('/dev/ovh/mailing-list/$name', 'pages/dev/ovh/mailing_list_view');
-    Router::add('/dev/ovh/redirections', 'pages/dev/ovh/redirections');
-    Router::add('/dev/ovh/redirections/$id', 'pages/dev/ovh/redirections');
-    Router::add('/dev/ovh/test-api', 'pages/dev/ovh/test_api.php');
-
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
@@ -60,10 +52,6 @@ Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/even
 Router::add('/mon-profil', 'pages/settings/settings');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', 'pages/settings/settings');
-// OVH Settings
-Router::add('/licencies/$user_id/ovh', 'pages/settings/ovh_settings');
-Router::add('/licencies/$user_id/ovh/redirections', 'pages/settings/ovh/redirections');
-Router::add('/licencies/$user_id/ovh/mailing', 'pages/settings/ovh/mailing');
 
 // Users
 Router::add('/licencies', 'pages/users/user_list.php');

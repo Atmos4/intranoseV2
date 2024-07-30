@@ -181,12 +181,6 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     <?php endif ?>
 </form>
 
-<?php if ($can_change_emails): ?>
-    <section hx-get="/licencies/<?= $user->id ?>/ovh" hx-swap="outerHTML" hx-trigger="load">
-        <div aria-busy="true"></div>
-    </section>
-<?php endif ?>
-
 <hr>
 
 <?php

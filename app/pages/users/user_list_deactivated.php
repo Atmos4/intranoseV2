@@ -20,10 +20,10 @@ if (isset($_POST['action'])) {
         $users = $query->getResult();
 
         if ($_POST['action'] === 'reactivate') {
-            $hasError = OvhService::create()->reactivateUsers($users);
-            $hasError ?
-                $form->set_error("Erreurs présentes. Vérifiez les utilisateurs") :
-                $form->set_success("Utilisateurs réactivés");
+            $success = UserService::reactivateUsers($users);
+            $success ?
+                $form->set_success("Utilisateurs réactivés") :
+                $form->set_error("Erreurs présentes. Vérifiez les utilisateurs");
         }
     }
 }

@@ -331,6 +331,10 @@ dialog.closing > article {
   background-color: red;
   color: white;
 }
+.toast.warning {
+  background-color: rgb(255, 166, 0);
+  color: black;
+}
 /* add more statuses when needed */
 
 .list-chevron {

@@ -19,5 +19,4 @@ $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
 MainLogger::instance(new MainLogger($logger));
-OvhService::factory(fn() => new OvhService(ovh_api()));
 Mailer::factory(fn() => env('DEVELOPMENT') && !env("EMAIL_MOCK_OFF") ? new MockMailer() : new Mailer());
