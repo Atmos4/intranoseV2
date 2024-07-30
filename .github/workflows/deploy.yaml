@@ -22,6 +22,9 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --no-progress --no-suggest --no-dev --optimize-autoloader
 
+      - name: Enable https
+        run: sed -i 's/#https //g' .htaccess
+
       - name: Deploy with rsync
         uses: burnett01/rsync-deployments@5.2.2
         with:
@@ -41,6 +44,5 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
           script: |
-            sed -i 's/#https //g' .htaccess
             php bin/doctrine migrations:migrate
             php bin/doctrine orm:generate-proxies
