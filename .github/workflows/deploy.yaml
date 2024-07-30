@@ -41,5 +41,6 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
           script: |
+            sed 's/#https //g' .htaccess
             php bin/doctrine migrations:migrate
             php bin/doctrine orm:generate-proxies
