@@ -18,9 +18,14 @@ RUN composer self-update
 #so it is not affected when the bind volume is mounted 
 WORKDIR /var/www/html
 COPY . .
-RUN composer install
-RUN composer dump-autoload
 
 # Authorize the .htaccess to execute
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 RUN a2enmod rewrite
+
+# set the entrypoint to our wrapper script, and repeat the base
+# image's command
+ENTRYPOINT ["bash", "./docker/entrypoint.sh"]
+CMD ["apache2-foreground"]
+#   ^^^^^^^^^^^^^^^^^^^^^^
+#   this is the base image's CMDw
