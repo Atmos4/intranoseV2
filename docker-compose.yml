@@ -24,7 +24,6 @@ services:
       dockerfile: docker/php.Dockerfile
     volumes:
       - .:/var/www/html/
-      #- vendor:/var/www/html/vendor
     env_file:
       - .env
     depends_on:
@@ -33,4 +32,3 @@ services:
   
 volumes:
   dbData:
-  #vendor:

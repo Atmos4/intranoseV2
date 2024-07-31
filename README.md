@@ -25,12 +25,15 @@ Next:
 ## Docker Version
 
 1. Install docker. I recommend installing docker desktop.
-2. If you are on Windows, install WSL and put the directory in a Linux install. This way, docker will be much faster.
+2. Create a `.env` file based on the env values contained in the `.devcontainer/devcontainer.json` file
 3. Run `docker compose up`
 
-Next:
+When you run `docker compose up`, composer packages will be installed and migrations executed automatically.
 
-1. Create a new database. You can deal with the database through the PhpMyAdmin image.
-2. Create a `.env` file based on `example.env`.
-3. Run `yarn setup` from inside the php-apache container. It should install composer dependencies and setup the database.
-4. Whenever you pull new changes or create new files in `database/models`, run `yarn update` also from the php-apache container to keep your DB and autoload up to date!
+4. Go to http://localhost/dev/create-user to create a first user
+
+You're good to go !
+
+### Alternate - DevContainer
+
+An other solution is to use the dev container defined in the `.devcontainer` folder. Then, you can either develop locally on you computer using devcontainer extensions on vscode or other IDE, or use a **codespace** on github.
