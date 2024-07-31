@@ -22,6 +22,32 @@ class UserService
         return em()->createQuery("SELECT COUNT(u) FROM User u WHERE u.real_email = :email")
             ->setParameters(['email' => $email])->getSingleScalarResult();
     }
+
+    /** @param User[] $users
+     * @return bool true if successful, false otherwise
+     */
+    static function reactivateUsers(array $users): bool
+    {
+        foreach ($users as $user) {
+            $user->status = UserStatus::INACTIVE;
+            logger()->info(
+                "User reactivated",
+                ["login" => $user->login, "adminUserId" => User::getMainUserId()]
+            );
+            Toast::success("$user->first_name réactivé");
+        }
+        em()->flush();
+        return true;
+    }
+
+    static function deactivateUser(User $user)
+    {
+        $user->status = UserStatus::DEACTIVATED;
+        em()->flush();
+        Toast::success("Utilisateur désactivé");
+        redirect("/licencies/desactive");
+        return true;
+    }
 }
 
 class UserHelper

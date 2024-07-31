@@ -9,7 +9,7 @@ if (!$user) {
     $form->set_error("L'utilisateur numéro $user_id n'existe pas");
 }
 if ($form->valid()) {
-    OvhService::create()->deactivateUser($user);
+    UserService::deactivateUser($user);
 }
 
 page("Confirmation de désactivation");

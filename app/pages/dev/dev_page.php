@@ -20,7 +20,6 @@ page("Dev") ?>
 <nav>
     <ul>
         <?= DevButton("/dev/send-email", "Email") ?>
-        <?= DevButton("/dev/ovh", "OVH") ?>
     </ul>
 </nav>
 <b>Tests</b>

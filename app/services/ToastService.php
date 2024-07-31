@@ -74,6 +74,10 @@ class Toast
     {
         return self::create($message, ToastLevel::Info);
     }
+    static function warning(string $message)
+    {
+        return self::create($message, ToastLevel::Warning);
+    }
 }
 
 enum ToastLevel: string
