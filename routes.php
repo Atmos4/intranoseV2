@@ -19,8 +19,9 @@ if (env("DEVELOPMENT")) {
     // ---experiments
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
-    Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
 }
+//Notifications
+Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
 // DANGER ZONE: migrations - Make sure to protect those routes with `restrict_environment`
 Router::add('/dev/migrate', '../database/data_migrations/migrate_db');
 Router::add('/dev/migrate_activities', '../database/data_migrations/race_to_activity');

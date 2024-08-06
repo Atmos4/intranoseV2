@@ -2,8 +2,7 @@
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
-restrict_dev();
-restrict_access();
+restrict_access(Access::$ADD_EVENTS);
 
 $subscriptions = em()->getRepository('NotificationSubscription')->findAll();
 $last_subscription = end($subscriptions);
