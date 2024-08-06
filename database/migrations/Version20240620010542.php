@@ -14,7 +14,7 @@ final class Version20240620010542 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add notification subscriptions';
     }
 
     public function up(Schema $schema): void

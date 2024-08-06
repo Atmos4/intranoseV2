@@ -79,17 +79,17 @@ page("Test Service Worker and Push Notifications");
 <h4>Test Service Worker</h4>
 <nav>
     <ul>
-        <li><a role=button onclick="registerSW()">Register</a></li>
-        <li><a role=button onclick="unregisterSW()">Unregister</a></li>
-        <li><a role=button onclick="updateSW()">Update</a></li>
+        <li><a role=button onclick="sw_register()">Register</a></li>
+        <li><a role=button onclick="sw_unregister()">Unregister</a></li>
+        <li><a role=button onclick="sw_update()">Update</a></li>
     </ul>
 </nav>
 <h4>Test Notifications subscription</h4>
 <nav>
     <ul>
-        <li><a role=button onclick="push_subscribe()">Subscribe</a></li>
-        <li><a role=button onclick="push_updateSubscription()">Update</a></li>
-        <li><a role=button onclick="push_unsubscribe()">Delete</a></li>
+        <li><a role=button onclick="pn_subscribe()">Subscribe</a></li>
+        <li><a role=button onclick="pn_updateSubscription()">Update</a></li>
+        <li><a role=button onclick="pn_unsubscribe()">Delete</a></li>
     </ul>
 </nav>
 <h3>Send Notification</h3>

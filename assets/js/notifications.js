@@ -1,5 +1,3 @@
-// TODO : Separate the service worker part to the notification part
-
 // VAPID appPublic key
 const strAppPublicKey =
   "BHa8YXOafmKseRbEAIcd3b_ZCe8GKYkb5PkMagrtq_ZR_0kkySggKXWAOUcpld6RKP1NHHncsP4NOsXgTBRqGWo";
@@ -21,9 +19,9 @@ function encodeToUint8Array(strBase64) {
 /**
  * check if PN already subscribed
  */
-async function isSwSubscribed() {
+async function sw_isSubscribed() {
   var swReg;
-  if (pnAvailable()) {
+  if (pn_isAvailable()) {
     swReg = await navigator.serviceWorker.getRegistration();
   }
   return swReg !== undefined;
@@ -38,7 +36,7 @@ async function isSwSubscribed() {
  *    - window.PushManager
  *    - window.Notification
  */
-function pnAvailable() {
+function pn_isAvailable() {
   var bAvailable = false;
   if (window.isSecureContext) {
     // running in secure context - check for available Push-API
@@ -57,7 +55,7 @@ function pnAvailable() {
  * there is no check for multiple registration necessary - browser/Push-API
  * takes care if same service-worker ist already registered
  */
-async function registerSW() {
+async function sw_register() {
   if ("serviceWorker" in navigator) {
     try {
       const registration = await navigator.serviceWorker.register(
@@ -79,8 +77,8 @@ async function registerSW() {
 /**
  * unregister the service worker.
  */
-async function unregisterSW() {
-  if (await isSwSubscribed()) {
+async function sw_unregister() {
+  if (await sw_isSubscribed()) {
     navigator.serviceWorker.getRegistration().then(function (reg) {
       reg.unregister().then(function (response) {
         if (response) {
@@ -96,7 +94,7 @@ async function unregisterSW() {
 /**
  * update service worker.
  */
-async function updateSW() {
+async function sw_update() {
   navigator.serviceWorker.getRegistration().then(function (reg) {
     reg.update().then(function (response) {
       if (response) {
@@ -112,7 +110,7 @@ async function updateSW() {
  * check for notification permission
  * if permission is default, ask for it
  */
-function checkNotificationPermission() {
+function pn_checkPermission() {
   return new Promise((resolve, reject) => {
     if (Notification.permission === "denied") {
       return reject(new Error("Push messages are blocked."));
@@ -139,11 +137,11 @@ function checkNotificationPermission() {
 /**
  * send notification subscription to the server for registration
  */
-function push_subscribe() {
-  if (pnAvailable()) {
+function pn_subscribe() {
+  if (pn_isAvailable()) {
     var appPublicKey = encodeToUint8Array(strAppPublicKey);
 
-    return checkNotificationPermission()
+    return pn_checkPermission()
       .then(() => navigator.serviceWorker.ready)
       .then((serviceWorkerRegistration) =>
         serviceWorkerRegistration.pushManager.subscribe({
@@ -154,7 +152,7 @@ function push_subscribe() {
       .then((subscription) => {
         // Subscription was successful
         // create subscription on your server
-        return push_sendSubscriptionToServer(subscription, "POST");
+        return pn_sendSubscriptionToServer(subscription, "POST");
       })
       .catch((e) => {
         if (Notification.permission === "denied") {
@@ -177,7 +175,7 @@ function push_subscribe() {
 /**
  * send subscription to the server when updating
  */
-function push_updateSubscription() {
+function pn_updateSubscription() {
   navigator.serviceWorker.ready
     .then((serviceWorkerRegistration) =>
       serviceWorkerRegistration.pushManager.getSubscription()
@@ -185,11 +183,11 @@ function push_updateSubscription() {
     .then((subscription) => {
       if (!subscription) {
         // Not subscribed to push
-        push_subscribe();
+        pn_subscribe();
         return;
       }
       // Keep your server in sync with the latest endpoint
-      return push_sendSubscriptionToServer(subscription, "PUT");
+      return pn_sendSubscriptionToServer(subscription, "PUT");
     })
     .catch((e) => {
       console.error("Error when updating the subscription", e);
@@ -197,10 +195,10 @@ function push_updateSubscription() {
 }
 
 /**
- * unsubscribe to pusb notifications.
+ * unsubscribe to push notifications.
  * this does not reset the authorisations on the browser though
  */
-async function push_unsubscribe() {
+async function pn_unsubscribe() {
   try {
     const serviceWorkerRegistration = await navigator.serviceWorker.ready;
     const subscription =
@@ -212,10 +210,7 @@ async function push_unsubscribe() {
     }
 
     // Unsubscribe from the push service
-    const response = await push_sendSubscriptionToServer(
-      subscription,
-      "DELETE"
-    );
+    const response = await pn_sendSubscriptionToServer(subscription, "DELETE");
 
     if (response.ok) {
       await subscription.unsubscribe();
@@ -234,7 +229,7 @@ async function push_unsubscribe() {
  * @param {string} method
  * @returns {Promise<string>}
  */
-async function push_sendSubscriptionToServer(sub, method) {
+async function pn_sendSubscriptionToServer(sub, method) {
   // stringify and parse again to add 'custom' property
   // otherwise added property will be ignored when stringify subscription direct to body
   console.log("Send Subscription command");
@@ -281,7 +276,7 @@ function subscriptionsInformations() {
       "Permission was denied in the past...";
   } else {
     var strMsg;
-    isSwSubscribed().then(function (subscribed) {
+    sw_isSubscribed().then(function (subscribed) {
       if (subscribed) {
         document.getElementById("msg").innerHTML =
           "PUSH Notifications are subscribed<br/><br/>" + msg;
@@ -294,4 +289,4 @@ function subscriptionsInformations() {
 }
 
 //Potential problem : this way, service worker and subscription are updated every time the page is reloaded
-registerSW().then(() => push_updateSubscription());
+sw_register().then(() => pn_updateSubscription());

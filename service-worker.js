@@ -17,8 +17,7 @@ function pushNotification(event) {
   const data = event.data?.json() ?? {};
   const title = data.title || strDefTitle;
   const url = data.url || "www.intra.nose42.fr";
-  const message =
-    data.message || "Here's something you might want to check out.";
+  const message = data.message;
   const icon = strDefIcon;
 
   var promise = self.registration.showNotification(title, {
