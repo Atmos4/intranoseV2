@@ -152,7 +152,7 @@ function pn_subscribe() {
       .then((subscription) => {
         // Subscription was successful
         // create subscription on your server
-        return pn_sendSubscriptionToServer(subscription, "POST");
+        return pn_sendSubscriptionToServer(subscription, "PUT");
       })
       .catch((e) => {
         if (Notification.permission === "denied") {
@@ -192,6 +192,20 @@ function pn_updateSubscription() {
     .catch((e) => {
       console.error("Error when updating the subscription", e);
     });
+}
+
+function pn_getSubscription() {
+  navigator.serviceWorker.ready
+    .then((serviceWorkerRegistration) =>
+      serviceWorkerRegistration.pushManager.getSubscription()
+    )
+    .then((subscription) =>
+      pn_sendSubscriptionToServer(subscription, "POST").then((response) =>
+        response
+          .text()
+          .then((text) => (document.getElementById("pn").innerHTML = text))
+      )
+    );
 }
 
 /**
@@ -267,15 +281,12 @@ function subscriptionsInformations() {
   msg += "serviceWorker" in navigator ? "defined<br/>" : "not defined<br/>";
   msg += "Notification.permission: " + window.Notification.permission + "<br/>";
 
-  window.Notification.permission;
-
   document.getElementById("msg").innerHTML = msg;
 
   if (window.Notification.permission === "denied") {
     document.getElementById("subscribe").innerHTML =
       "Permission was denied in the past...";
   } else {
-    var strMsg;
     sw_isSubscribed().then(function (subscribed) {
       if (subscribed) {
         document.getElementById("msg").innerHTML =

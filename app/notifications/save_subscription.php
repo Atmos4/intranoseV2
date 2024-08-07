@@ -16,13 +16,14 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
 
     switch ($method) {
         case 'POST':
-            $subscription = new NotificationSubscription();
-            $subscription->endpoint = $json['endpoint'];
-            $subscription->p256dh = $json['keys']['p256dh'];
-            $subscription->auth = $json['keys']['auth'];
-            em()->persist($subscription);
-            $state = true;
-            break;
+            $subscription = em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]);
+            if ($subscription) {
+                echo "The browser is already registered : $subscription->endpoint";
+                return;
+            } else {
+                echo "The browser is not registered.";
+                return;
+            }
         case 'PUT':
             // update the key and token of subscription corresponding to the endpoint
             $subscription = em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]);
@@ -32,7 +33,12 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
                 em()->persist($subscription);
                 $state = true;
             } else {
-                logger()->error("subscription {$subscription->id} not found!");
+                $subscription = new NotificationSubscription();
+                $subscription->endpoint = $json['endpoint'];
+                $subscription->p256dh = $json['keys']['p256dh'];
+                $subscription->auth = $json['keys']['auth'];
+                em()->persist($subscription);
+                $state = true;
             }
             break;
         case 'DELETE':
