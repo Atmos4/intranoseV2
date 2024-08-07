@@ -48,6 +48,9 @@ $page = Page::getInstance(); ?>
     <script src="/assets/js/htmx1.9.5-loading.js" defer></script>
 
     <script src="/assets/js/theme.js"></script>
+
+    <!-- Notifications -->
+    <script src="/assets/js/notifications.js"></script>
 </head>
 
 <body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"

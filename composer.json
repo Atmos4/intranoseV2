@@ -10,7 +10,8 @@
     "ramsey/uuid": "^4.7",
     "vlucas/phpdotenv": "^5.5",
     "monolog/monolog": "^3.4",
-    "erusev/parsedown": "^1.7"
+    "erusev/parsedown": "^1.7",
+    "minishlink/web-push": "^8.0"
   },
   "autoload": {
     "classmap": [
