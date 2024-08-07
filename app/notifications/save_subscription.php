@@ -2,6 +2,8 @@
 
 restrict_access([Permission::ROOT]);
 
+$user = User::getMain();
+
 // only serve POST request containing valid json data
 if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE']) == 'application/json')) {
     //decode json passed through the http request
@@ -30,6 +32,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
             if ($subscription) {
                 $subscription->p256dh = $json['keys']['p256dh'];
                 $subscription->auth = $json['keys']['auth'];
+                $subscription->user_id = $user->id;
                 em()->persist($subscription);
                 $state = true;
             } else {
@@ -37,6 +40,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
                 $subscription->endpoint = $json['endpoint'];
                 $subscription->p256dh = $json['keys']['p256dh'];
                 $subscription->auth = $json['keys']['auth'];
+                $subscription->user_id = $user->id;
                 em()->persist($subscription);
                 $state = true;
             }
@@ -48,7 +52,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
                 em()->remove($subscription);
                 $state = true;
             } else {
-                logger()->error("subscription {$subscription->id} not found!");
+                logger()->error("subscription not found for endpoint {$json['endpoint']}!");
             }
             break;
         default:
@@ -57,6 +61,6 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
     }
     if ($state) {
         em()->flush();
-        logger()->info("subscription {$subscription->id} saved on server!");
+        logger()->info("subscription {$subscription->id} saved on server for {$user->login}!");
     }
 }
