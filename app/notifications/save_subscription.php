@@ -32,7 +32,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
             if ($subscription) {
                 $subscription->p256dh = $json['keys']['p256dh'];
                 $subscription->auth = $json['keys']['auth'];
-                $subscription->user_id = $user->id;
+                $subscription->user = $user;
                 em()->persist($subscription);
                 $state = true;
             } else {
@@ -40,7 +40,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
                 $subscription->endpoint = $json['endpoint'];
                 $subscription->p256dh = $json['keys']['p256dh'];
                 $subscription->auth = $json['keys']['auth'];
-                $subscription->user_id = $user->id;
+                $subscription->user = $user;
                 em()->persist($subscription);
                 $state = true;
             }
