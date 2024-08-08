@@ -14,7 +14,7 @@ final class Version20240808101854 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Notification model fix';
     }
 
     public function up(Schema $schema): void
