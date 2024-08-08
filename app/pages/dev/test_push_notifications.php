@@ -9,7 +9,7 @@ $last_subscription = end($subscriptions);
 
 $auth = array(
     'VAPID' => array(
-        'subject' => 'intra.nose42.fr',
+        'subject' => 'Intranose',
         'publicKey' => env("PUBLIC_VAPID_KEY"),
         'privateKey' => env("PRIVATE_VAPID_KEY"),
     ),
@@ -86,11 +86,12 @@ page("Test Service Worker and Push Notifications");
 <h4>Test Notifications subscription</h4>
 <nav>
     <ul>
-        <li><a role=button onclick="pn_subscribe()">Subscribe</a></li>
-        <li><a role=button onclick="pn_updateSubscription()">Update</a></li>
-        <li><a role=button onclick="pn_unsubscribe()">Delete</a></li>
+        <li><a role=button onclick="pn_updateSubscription()">Subscribe</a></li>
+        <li><a role=button onclick="pn_unsubscribe()">Delete Subscription</a></li>
+        <li><a role="button" onclick="pn_getSubscription()">Get Subscription Status</a></li>
     </ul>
 </nav>
+<div id=pn></div>
 <h3>Send Notification</h3>
 <form method="post">
     <?= $v->render_validation() ?>

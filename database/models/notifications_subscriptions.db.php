@@ -17,4 +17,6 @@ class NotificationSubscription
     public string $p256dh = "";
     #[Column]
     public string $auth = "";
+    #[Column]
+    public int|null $user_id = null;
 }
