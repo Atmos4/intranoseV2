@@ -1,4 +1,7 @@
 <?php
+
+restrict_access([Permission::ROOT]);
+
 $lines = file('logs/app.log');
 
 //Put the last rows first
