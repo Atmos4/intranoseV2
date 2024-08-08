@@ -1,0 +1,38 @@
+.log-container {
+  height: 80vh; /* 80% of the viewport height */
+  padding: 10px;
+  margin: auto;
+  overflow: auto;
+  background-color: var(--background-color);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  min-width: 150px;
+}
+.debug {
+  color: #00d9ff;
+}
+.info {
+  color: #007bff;
+}
+.notice {
+  color: #0055ff;
+}
+.warning {
+  color: #ffc400;
+}
+.error {
+  color: #ff0015;
+}
+.critical {
+  color: #ff0019;
+}
+.alert {
+  color: #ff0019;
+}
+.emergency {
+  color: #ff0059;
+}

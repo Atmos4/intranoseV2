@@ -13,7 +13,8 @@ if (env('DEVELOPMENT')) {
 $main_user = User::getMain();
 
 if (check_auth([Permission::ROOT])) {
-    $menu->addItem("Feedbacks", "/feedback-list", "fa-bug");
+    $menu->addItem("Feedbacks", "/feedback-list", "fa-bug")
+        ->addItem("Logs", "/admin/logs", "fa-file-waveform");
 }
 
 ?>
