@@ -224,26 +224,13 @@ async function pn_unsubscribe() {
  * @returns {Promise<string>}
  */
 async function pn_sendSubscriptionToServer(sub, method) {
-  // stringify and parse again to add 'custom' property
-  // otherwise added property will be ignored when stringify subscription direct to body
   console.log("Send Subscription command");
-  var body = JSON.parse(JSON.stringify(sub));
-
-  //debug
-  //console.log(JSON.stringify(body));
-
-  body.userAgent = navigator.userAgent;
   var fetchdata = {
     method: method,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(sub),
   };
   var response = await fetch(strSubscriberURL, fetchdata);
-
-  // debug output
-  //var cloned = response.clone();
-  //console.log("Response: ", await cloned.text());
-
   return response;
 }
 
