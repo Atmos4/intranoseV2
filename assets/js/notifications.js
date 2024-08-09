@@ -37,17 +37,15 @@ async function sw_isSubscribed() {
  *    - window.Notification
  */
 function pn_isAvailable() {
-  var bAvailable = false;
-  if (window.isSecureContext) {
-    // running in secure context - check for available Push-API
-    bAvailable =
-      "serviceWorker" in navigator &&
-      "PushManager" in window &&
-      "Notification" in window;
-  } else {
+  if (!window.isSecureContext) {
     console.log("site have to run in secure context!");
+    return false;
   }
-  return bAvailable;
+  return (
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
 }
 
 /**
@@ -78,16 +76,16 @@ async function sw_register() {
  * unregister the service worker.
  */
 async function sw_unregister() {
-  if (await sw_isSubscribed()) {
-    navigator.serviceWorker.getRegistration().then(function (reg) {
-      reg.unregister().then(function (response) {
-        if (response) {
-          console.log("unregister service worker succeeded.");
-        } else {
-          console.log("unregister service worker failed.");
-        }
-      });
-    });
+  if (!(await sw_isSubscribed())) {
+    return;
+  }
+  const reg = await navigator.serviceWorker.getRegistration();
+  const response = await reg.unregister();
+
+  if (response) {
+    console.log("unregister service worker succeeded.");
+  } else {
+    console.log("unregister service worker failed.");
   }
 }
 
@@ -95,15 +93,14 @@ async function sw_unregister() {
  * update service worker.
  */
 async function sw_update() {
-  navigator.serviceWorker.getRegistration().then(function (reg) {
-    reg.update().then(function (response) {
-      if (response) {
-        console.log("update of service worker succeeded.");
-      } else {
-        console.log("update of service worker failed.");
-      }
-    });
-  });
+  const reg = await navigator.serviceWorker.getRegistration();
+  const response = await reg.update();
+
+  if (response) {
+    console.log("update of service worker succeeded.");
+  } else {
+    console.log("update of service worker failed.");
+  }
 }
 
 /**
@@ -137,7 +134,7 @@ function pn_checkPermission() {
 /**
  * send notification subscription to the server for registration
  */
-function pn_subscribe() {
+async function pn_subscribe() {
   if (pn_isAvailable()) {
     var appPublicKey = encodeToUint8Array(strAppPublicKey);
 
@@ -150,20 +147,13 @@ function pn_subscribe() {
         })
       )
       .then((subscription) => {
-        // Subscription was successful
-        // create subscription on your server
+        // create subscription on server
         return pn_sendSubscriptionToServer(subscription, "PUT");
       })
       .catch((e) => {
         if (Notification.permission === "denied") {
-          // The user denied the notification permission which
-          // means we failed to subscribe and the user will need
-          // to manually change the notification permission to
-          // subscribe to push messages
           console.warn("Notifications are denied by the user.");
         } else {
-          // A problem occurred with the subscription; common reasons
-          // include network errors or the user skipped the permission
           console.error("Impossible to subscribe to push notifications", e);
         }
       });
@@ -175,37 +165,27 @@ function pn_subscribe() {
 /**
  * send subscription to the server when updating
  */
-function pn_updateSubscription() {
-  navigator.serviceWorker.ready
-    .then((serviceWorkerRegistration) =>
-      serviceWorkerRegistration.pushManager.getSubscription()
-    )
-    .then((subscription) => {
-      if (!subscription) {
-        // Not subscribed to push
-        pn_subscribe();
-        return;
-      }
-      // Keep your server in sync with the latest endpoint
-      return pn_sendSubscriptionToServer(subscription, "PUT");
-    })
-    .catch((e) => {
-      console.error("Error when updating the subscription", e);
-    });
+async function pn_updateSubscription() {
+  try {
+    const { pushManager } = await navigator.serviceWorker.ready;
+    const subscription = await pushManager.getSubscription();
+    if (!subscription) {
+      pn_subscribe();
+      return;
+    }
+    return await pn_sendSubscriptionToServer(subscription, "PUT");
+  } catch (e) {
+    console.error("Error when updating the subscription", e);
+  }
 }
 
-function pn_getSubscription() {
-  navigator.serviceWorker.ready
-    .then((serviceWorkerRegistration) =>
-      serviceWorkerRegistration.pushManager.getSubscription()
-    )
-    .then((subscription) =>
-      pn_sendSubscriptionToServer(subscription, "POST").then((response) =>
-        response
-          .text()
-          .then((text) => (document.getElementById("pn").innerHTML = text))
-      )
-    );
+async function pn_getSubscription() {
+  const { pushManager } = await navigator.serviceWorker.ready;
+  const subscription = await pushManager.getSubscription();
+  const text = await pn_sendSubscriptionToServer(subscription, "POST").then(
+    (r) => r.text()
+  );
+  document.getElementById("pn").innerHTML = text;
 }
 
 /**
@@ -219,7 +199,7 @@ async function pn_unsubscribe() {
       await serviceWorkerRegistration.pushManager.getSubscription();
 
     if (!subscription) {
-      console.log("No subscription object to unsubscribe.");
+      console.log("No subscription found");
       return;
     }
 
@@ -264,7 +244,7 @@ async function pn_sendSubscriptionToServer(sub, method) {
   //var cloned = response.clone();
   //console.log("Response: ", await cloned.text());
 
-  return await response;
+  return response;
 }
 
 /**
@@ -300,4 +280,4 @@ function subscriptionsInformations() {
 }
 
 //Potential problem : this way, service worker and subscription are updated every time the page is reloaded
-sw_register().then(() => pn_updateSubscription());
+sw_register().then(pn_updateSubscription);
