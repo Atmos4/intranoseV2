@@ -68,7 +68,7 @@ class Activity
     public int|null $id = null;
 
     #[Column]
-    public ActivityType $type;
+    public ActivityType $type = ActivityType::RACE;
 
     #[Column]
     public DateTime $date;
@@ -83,13 +83,13 @@ class Activity
     public string $name;
 
     #[Column]
-    public string $location_label;
+    public string $location_label = "";
 
     #[Column]
-    public string $location_url;
+    public string $location_url = "";
 
     #[Column(type: "text")]
-    public string $description;
+    public string $description = "";
 
     #[ManyToOne]
     public Event|null $event = null;

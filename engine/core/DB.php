@@ -1,5 +1,8 @@
 <?php
+
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 
@@ -19,11 +22,26 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    function __construct(Doctrine\DBAL\Connection $connection = null)
+    public string|false $sqlite;
+
+    function isSqlite()
     {
+        return !!$this->sqlite;
+    }
+    function em()
+    {
+        return $this->entityManager;
+    }
+
+    function __construct(Connection $connection)
+    {
+        $this->sqlite = $connection->getDriver() instanceof \Doctrine\DBAL\Driver\PDO\SQLite\Driver;
+
+        // ORM Tables prefix
         $evm = new \Doctrine\Common\EventManager;
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
+
         $devMode = !!env("DEVELOPMENT");
 
         if ($devMode) {
@@ -37,8 +55,14 @@ class DB extends SingletonDependency
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
-        $config->addCustomDatetimeFunction('MONTH', Month::class);
-        $config->addCustomDatetimeFunction('DAY', Day::class);
+
+        if ($this->sqlite) {
+            $config->addCustomDatetimeFunction('MONTH', Month_Sqlite::class);
+            $config->addCustomDatetimeFunction('DAY', Day_Sqlite::class);
+        } else {
+            $config->addCustomDatetimeFunction('MONTH', Month::class);
+            $config->addCustomDatetimeFunction('DAY', Day::class);
+        }
 
 
         if ($devMode) {
@@ -48,21 +72,61 @@ class DB extends SingletonDependency
             Autoloader::register(self::PATH_PROXIES, "");
         }
 
-        $connection ??= DriverManager::getConnection([
-            'driver' => 'pdo_mysql',
-            'user' => env("DB_USER"),
-            'password' => env("DB_PASSWORD"),
-            'dbname' => env("DB_NAME"),
-            'host' => env("DB_HOST"),
-            'charset' => 'utf8mb4',
-        ], $config);
-
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 
     static function get()
     {
-        return self::getInstance()->entityManager;
+        return self::getInstance()->em();
+    }
+
+    static function setupForApp($sqlite = null)
+    {
+        self::factory(fn() => new self(!!$sqlite ? DBFactory::sqlite($sqlite) : DBFactory::mysql()));
+    }
+
+    static function setupForTest()
+    {
+        $dbName = env("TEST_DB_NAME") ?? 'db_test.sqlite';
+        self::factory(fn() => new self(DBFactory::sqlite($dbName)));
+    }
+}
+
+class DBFactory
+{
+    static function mysql($dbName = null)
+    {
+        return DriverManager::getConnection([
+            'driver' => 'pdo_mysql',
+            'user' => env("DB_USER"),
+            'password' => env("DB_PASSWORD"),
+            'dbname' => $dbName ?? env("DB_NAME"),
+            'host' => env("DB_HOST"),
+            'charset' => 'utf8mb4',
+        ]);
+    }
+
+    static function sqlite($fileName = null)
+    {
+        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => '.sqlite/' . $fileName ?? self::getSqliteDbName()]);
+    }
+
+    // Configuration factory
+    static function getConfig()
+    {
+        return !!DB::getInstance()->sqlite ?
+            new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
+            new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+    }
+
+    static function getSqliteDbName($file = null)
+    {
+        return $file ?? env("SQLITE_DB_NAME") ?? 'db.sqlite';
+    }
+
+    static function getSqliteLocation($file)
+    {
+        return __DIR__ . "/../../.sqlite/$file";
     }
 }
 
@@ -90,6 +154,26 @@ class Month extends FunctionNode
     }
 }
 
+class Month_Sqlite extends FunctionNode
+{
+    public $date;
+
+    public function getSql(SqlWalker $sqlWalker): string
+    {
+        return "strftime('%m', " . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
+    }
+
+    public function parse(Parser $parser): void
+    {
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
+
+        $this->date = $parser->ArithmeticPrimary();
+
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
+    }
+}
+
 class Day extends FunctionNode
 {
     public $date;
@@ -97,6 +181,28 @@ class Day extends FunctionNode
     public function getSql(SqlWalker $sqlWalker): string
     {
         return 'DAY(' . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
+    }
+
+    public function parse(Parser $parser): void
+    {
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
+
+        $this->date = $parser->ArithmeticPrimary();
+
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
+    }
+}
+
+
+
+class Day_Sqlite extends FunctionNode
+{
+    public $date;
+
+    public function getSql(SqlWalker $sqlWalker): string
+    {
+        return "strftime('%d', " . $sqlWalker->walkArithmeticPrimary($this->date) . ')';
     }
 
     public function parse(Parser $parser): void

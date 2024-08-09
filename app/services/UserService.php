@@ -1,7 +1,9 @@
 <?php
+
+use Doctrine\ORM\EntityManager;
+
 class UserService
 {
-
     /** @return User[] */
     static function getActiveUserList()
     {
@@ -52,7 +54,7 @@ class UserService
 
 class UserHelper
 {
-    private static function sanitizeName(...$name): array
+    static function sanitizeName(...$name): array
     {
         $result = [];
         foreach ($name as $str) {
