@@ -18,7 +18,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
 
     switch ($method) {
         case 'POST':
-            $subscription = em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]);
+            $subscription = $json ? em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]) : null;
             if ($subscription) {
                 echo "The browser is already registered : $subscription->endpoint";
                 return;
@@ -28,7 +28,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
             }
         case 'PUT':
             // update the key and token of subscription corresponding to the endpoint
-            $subscription = em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]);
+            $subscription = $json ? em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]) : null;
             if ($subscription) {
                 $subscription->p256dh = $json['keys']['p256dh'];
                 $subscription->auth = $json['keys']['auth'];
