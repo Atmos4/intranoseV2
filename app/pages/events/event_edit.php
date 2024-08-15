@@ -43,7 +43,7 @@ if ($v->valid()) {
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 ?>
 <form method="post">
-    <?= actions()?->back("/evenements" . $event_id ? "/$event_id" : "", "Annuler")->submit($event_id ? "Modifier" : "Créer") ?>
+    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler")->submit($event_id ? "Modifier" : "Créer") ?>
     <article>
         <div class="row">
             <?= $v->render_validation() ?>
