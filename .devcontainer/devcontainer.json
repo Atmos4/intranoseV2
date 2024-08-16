@@ -1,0 +1,22 @@
+{
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "php-apache",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+          // Add the IDs of extensions you want installed when the container is created.
+          "extensions": ["devsense.composer-php-vscode", "devsense.intelli-php-vscode", "devsense.phptools-vscode", "devsense.profiler-php-vscode"]
+        }
+      },
+      "remoteEnv": {
+        "DB_HOST": "mysql",
+        "DB_NAME": "orm_nose42_intra",
+        "DB_USER":"root",
+        "DB_PASSWORD":"root",
+        "DEVELOPMENT": "true",
+        "BASE_URL": "localhost",
+        "MAIL_HOST": "smtp.gmail.com",
+        "MAIL_USER": "bob@examples.com"
+      }
+}
