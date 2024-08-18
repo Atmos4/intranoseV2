@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr\Join;
 
 #[Entity, Table(name: 'event_entries')]
 class EventEntry
@@ -88,7 +86,7 @@ class Event
     public DateTime $deadline;
 
     #[Column(type: "text")]
-    public string $description;
+    public string $description = "";
 
     #[Column]
     public bool $open = false;

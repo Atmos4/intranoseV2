@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+// Migration draft :D
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../engine/load_env.php';
+$db = new DB(DBFactory::mysql());
+//$sqliteDb = new DB(DBFactory::sqlite("db_production.sqlite"));
+
+$users = $db->em()->createQuery("SELECT u FROM User u")->getArrayResult();
+var_dump(count($users));
