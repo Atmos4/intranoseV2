@@ -139,7 +139,6 @@ function restrict_access($permissions = [], $no_redirect = false)
     if (!AuthService::create()->isUserLoggedIn()) {
         if (!$no_redirect) {
             $_SESSION["deep_url"] = $_SERVER['REQUEST_URI'];
-            logger()->debug($_SESSION["deep_url"]);
             redirect("/");
         }
         exit;
