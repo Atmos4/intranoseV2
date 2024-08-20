@@ -133,11 +133,11 @@ function check_auth($levels = [])
  * Should be used as early as possible, to prevent unnecessary data loading.
  * @param Permission[] $permissions
  */
-function restrict_access($permissions = [], $no_redirect = false)
+function restrict_access($permissions = [], $redirect = true)
 {
 
     if (!AuthService::create()->isUserLoggedIn()) {
-        if (!$no_redirect) {
+        if ($redirect) {
             $_SESSION["deep_url"] = $_SERVER['REQUEST_URI'];
             redirect("/");
         }

@@ -1,7 +1,7 @@
 <?php
 
 // not possible to access this page if not root, so subscription does not work for random users.
-restrict_access($permissions = [Permission::ROOT], $no_redirect = true);
+restrict_access([Permission::ROOT], false);
 
 $user = User::getMain();
 
