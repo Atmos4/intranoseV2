@@ -1,11 +1,18 @@
 <?php
 $dotenv = Dotenv\Dotenv::createImmutable(base_path());
 $dotenv->load();
-$dotenv->required('DB_NAME');
-$dotenv->required('DB_USER');
-$dotenv->required('DB_PASSWORD');
+
+// Database
+if (env("DB_HOST")) {
+    $dotenv->required('DB_NAME');
+    $dotenv->required('DB_USER');
+    $dotenv->required('DB_PASSWORD');
+}
+
 $dotenv->ifPresent('DEVELOPMENT')->isBoolean();
 
+// Mailing - unused at the moment
+// AP 2024-07 - TODO FIXME mailing does not work, we need to plug it into Gmail
 $dotenv->ifPresent('USE_DKIM')->isBoolean();
 if (env("USE_DKIM")) {
     $dotenv->required("DKIM_DOMAIN");

@@ -11,18 +11,6 @@ jobs:
     name: phpunit
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_DATABASE: test_database
-          MYSQL_USER: test_user
-          MYSQL_PASSWORD: test_password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,13 +26,7 @@ jobs:
 
       - name: Generate .env
         run: |
-          echo "DB_USER=test_user" > .env
-          echo "DB_PASSWORD=test_password" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "TEST_DB_NAME=test_database" >> .env
-          echo "DB_NAME=test_database" >> .env
-          echo "SKIP_TEST_DB_CREATE=yes" >> .env
+          echo "DEVELOPMENT=true" > .env
 
       - name: Run PHPUnit
         run: php bin/phpunit

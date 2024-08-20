@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../engine/load_env.php';
+
+if (env("PRODUCTION"))
+    Cli::abort("Cannot be used in production");
+
+// todo: make it possible to seed the normal DB
+if (env("DB_HOST"))
+    echo CLi::warning("Your environment is configured for MySQL. This will only affect the SQLite database");
+
+$firstName = readline("First name (Jon):") ?: "Jon";
+!preg_match('/[\w-]+/', $firstName) && Cli::abort("Invalid first name");
+$lastName = readline("Last name (Doe):") ?: "Doe";
+!preg_match('/[\w-]+/', $lastName) && Cli::abort("Invalid last name");
+
+DB::setupForApp(true);
+
+$existingDb = DBFactory::getSqliteLocation(DBFactory::getSqliteDbName());
+
+if (file_exists($existingDb)) {
+    echo Cli::warning("Warning: you are about to reset your SQLite database!");
+    $line = readline("Type 'y' to continue: ");
+    $line != "y" && Cli::abort("Operation cancelled");
+
+    unlink($existingDb);
+    echo Cli::ok("Deleted existing db");
+} else
+    echo Cli::warning("No existing db found");
+
+if (!SeedingService::applyMigrations())
+    Cli::abort("There was a problem applying migrations");
+echo Cli::ok("Migrations applied");
+
+[$login, $pw] = SeedingService::createTestUser($firstName, $lastName);
+echo Cli::ok("Created test user $firstName $lastName");
+echo " - Login: $login" . PHP_EOL;
+echo " - Password: $pw" . PHP_EOL;
+
+SeedingService::createTestEvent();
+echo Cli::ok("Created test event and activities");
+Cli::success();
+
+
+
