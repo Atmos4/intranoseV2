@@ -31,7 +31,11 @@ class AuthService extends FactoryDependency
                         if ($rememberMe) {
                             $this->createRememberMeToken($user);
                         }
-
+                        if ($_SESSION["deep_url"]) {
+                            redirect($_SESSION["deep_url"]);
+                            unset($_SESSION["deep_url"]);
+                            return;
+                        }
                         redirect("/");
                         return;
                     }
