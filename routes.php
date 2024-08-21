@@ -88,7 +88,7 @@ Router::add('/telecharger', 'uploads/download_file');
 Router::add('/documents/$doc_id/supprimer', 'pages/shared_documents/shared_documents_delete_confirm');
 
 //Report
-Router::add('/feedback', 'pages/user_feedback_submit');
+Router::add('/feedback/new', 'pages/user_feedback_submit');
 Router::add('/feedback-list', 'pages/user_feedback_list');
 Router::add('/feedback-list/supprimer/$user_id', 'pages/user_feedback_list');
 

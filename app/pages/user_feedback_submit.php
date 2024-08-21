@@ -4,18 +4,22 @@ $user = User::getMain();
 $v = new Validator();
 $description = $v->textarea("description")->placeholder("Description")->attributes(['height' => '200px'])->required();
 
+page("Bugs et suggestions");
+
 if ($v->valid()) {
     $new_user_feedback = new UserFeedback();
     $new_user_feedback->user = $user;
     $new_user_feedback->description = $description->value;
     em()->persist($new_user_feedback);
     em()->flush();
-    Toast::success("Merci pour ton retour !");
-    redirect("/feedback");
+    Toast::success("Retour posté ✉️"); ?>
+
+    <article>Merci pour ton retour !</article>
+
+    <?php
+    return;
 }
 
-
-page("Bugs et suggestions");
 ?>
 
 <article>
