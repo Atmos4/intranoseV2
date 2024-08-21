@@ -99,9 +99,18 @@ label.error {
 }
 .error,
 .destructive {
-  --primary: var(--del-color);
-  --dropdown-color: var(--del-color);
-  --primary-hover: var(--del-color);
+  /* based on https://picocss.com/docs/version-picker/red */
+  --text-selection-color: rgba(241, 121, 97, 0.1875);
+  --primary: #f17961;
+  --primary-background: #c52f21;
+  --primary-underline: rgba(241, 121, 97, 0.5);
+  --primary-hover: #f5a390;
+  --primary-hover-background: #d93526;
+  --primary-focus: rgba(241, 121, 97, 0.375);
+  --primary-inverse: #fff;
+  --primary-border: var(--primary-background);
+  --primary-hover-border: var(--primary-hover-background);
+  --dropdown-color: var(--primary);
 }
 label.error:hover {
   cursor: pointer;

@@ -3,7 +3,7 @@ $menu = MainMenu::create()
     ->addItem("Événements", "/evenements", "fa-calendar")
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Mon profil", "/mon-profil", "fa-gear")
-    ->addItem("Suggestions", "/feedback", "fa-lightbulb")
+    ->addItem("Suggestions", "/feedback/nouveau", "fa-lightbulb")
     ->addItem("Documents", "/documents", "fa-file")
 ;
 
