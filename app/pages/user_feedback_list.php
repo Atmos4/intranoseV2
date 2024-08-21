@@ -21,7 +21,10 @@ $user_feedbacks = em()->getRepository(UserFeedback::class)->findAll();
 page("Feedbacks")->css('user_feedback_list.css') ?>
 
 <article hx-confirm="Sûr de vouloir supprimer ?" hx-target="closest #row">
-    <?php foreach ($user_feedbacks as $user_feedback): ?>
+    <?php if (!count($user_feedbacks)): ?>
+        <p>Pas de retours pour le moment ☀️</p>
+    <?php endif;
+    foreach ($user_feedbacks as $user_feedback): ?>
 
         <div id="row">
             <div class="grid">
