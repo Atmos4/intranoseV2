@@ -15,9 +15,6 @@ class Category
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
 
-    #[ManyToOne(targetEntity: Race::class, inversedBy: "categories")]
-    public Race|null $race = null;
-
     #[ManyToOne(targetEntity: Activity::class, inversedBy: "categories")]
     public Activity|null $activity = null;
 
@@ -26,10 +23,6 @@ class Category
 
     #[Column]
     public bool $removed = false;
-
-    /** @var Collection<int,RaceEntry> entries */
-    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "category", cascade: ["remove"])]
-    public Collection $entries;
 
     /** @var Collection<int,ActivityEntry> entries */
     #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "category", cascade: ["remove"])]

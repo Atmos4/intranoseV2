@@ -98,10 +98,6 @@ class Event
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $entries;
 
-    /** @var Collection<int, Race> */
-    #[OneToMany(targetEntity: Race::class, mappedBy: 'event', cascade: ["remove"])]
-    public Collection $races;
-
     /** @var Collection<int, Activity> */
     #[OneToMany(targetEntity: Activity::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $activities;

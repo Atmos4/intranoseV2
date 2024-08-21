@@ -26,9 +26,6 @@ Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
 //Admin
 Router::add('/admin/logs', 'pages/admin/view_logs');
 
-// DANGER ZONE: migrations - Make sure to protect those routes with `restrict_environment`
-Router::add('/dev/migrate', '../database/data_migrations/migrate_db');
-Router::add('/dev/migrate_activities', '../database/data_migrations/race_to_activity');
 // END OF DANGER ZONE
 
 // Events

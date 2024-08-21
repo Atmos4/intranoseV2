@@ -72,10 +72,6 @@ class User
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $event_entries;
 
-    /** @var Collection<int,RaceEntry> entries */
-    #[OneToMany(targetEntity: RaceEntry::class, mappedBy: "user", cascade: ["remove"])]
-    public Collection $race_entries;
-
     /** @var Collection<int,ActivityEntry> entries */
     #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $activity_entries;
