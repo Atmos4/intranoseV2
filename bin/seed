@@ -1,44 +1,57 @@
 #!/usr/bin/env php
 <?php
+
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
 if (env("PRODUCTION"))
     Cli::abort("Cannot be used in production");
 
-// todo: make it possible to seed the normal DB
-if (env("DB_HOST"))
-    echo CLi::warning("Your environment is configured for MySQL. This will only affect the SQLite database");
+$isSqlite = !env("DB_HOST");
 
 $firstName = readline("First name (Jon):") ?: "Jon";
 !preg_match('/[\w-]+/', $firstName) && Cli::abort("Invalid first name");
 $lastName = readline("Last name (Doe):") ?: "Doe";
 !preg_match('/[\w-]+/', $lastName) && Cli::abort("Invalid last name");
 
-DB::setupForApp(true);
+if ($isSqlite) {
+    echo Cli::warning("Your environment is configured for SQLite");
+    $existingDb = DBFactory::getSqliteLocation(DBFactory::getSqliteDbName());
+    if (file_exists($existingDb)) {
+        echo Cli::warning("Warning: you are about to reset your SQLite database!");
+        $line = readline("Type 'y' to continue: ");
+        $line != "y" && Cli::abort("Operation cancelled");
 
-$existingDb = DBFactory::getSqliteLocation(DBFactory::getSqliteDbName());
+        unlink($existingDb);
+        echo Cli::ok("Deleted existing db");
+    } else
+        echo Cli::warning("No existing db found");
+}
 
-if (file_exists($existingDb)) {
-    echo Cli::warning("Warning: you are about to reset your SQLite database!");
-    $line = readline("Type 'y' to continue: ");
-    $line != "y" && Cli::abort("Operation cancelled");
+DB::setupForApp($isSqlite);
+$db = DB::getInstance();
 
-    unlink($existingDb);
-    echo Cli::ok("Deleted existing db");
-} else
-    echo Cli::warning("No existing db found");
-
-if (!SeedingService::applyMigrations())
+if (!SeedingService::applyMigrations($db))
     Cli::abort("There was a problem applying migrations");
 echo Cli::ok("Migrations applied");
 
-[$login, $pw] = SeedingService::createTestUser($firstName, $lastName);
+if (!$db->isSqlite()) {
+    echo Cli::warning("Your environment is configured for MySQL.");
+    $line = readline("Do you want to purge the DB before seeding? (y/n): ");
+    if ($line === 'y') {
+        (new ORMPurger($db->em()))->purge();
+        echo Cli::ok("DB purged");
+    }
+}
+
+[$login, $pw] = SeedingService::createTestUser($firstName, $lastName, $db->em());
 echo Cli::ok("Created test user $firstName $lastName");
 echo " - Login: $login" . PHP_EOL;
 echo " - Password: $pw" . PHP_EOL;
 
-SeedingService::createTestEvent();
+SeedingService::createTestEvent($db->em());
 echo Cli::ok("Created test event and activities");
 Cli::success();
 

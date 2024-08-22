@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class SeedingService
 {
-    static function createTestUser($fn, $ln)
+    static function createTestUser($fn, $ln, $em)
     {
         $login = strtolower($ln . "_" . substr($fn, 0, 1));
         if (User::getByLogin($login)) {
@@ -27,13 +27,13 @@ class SeedingService
         $newUser->gender = Gender::M;
         $newUser->birthdate = date_create("1996-01-01");
         $newUser->status = UserStatus::ACTIVE;
-        em()->persist($newUser);
-        em()->flush();
+        $em->persist($newUser);
+        $em->flush();
 
         return [$newUser->login, $fakePassword];
     }
 
-    static function createTestEvent()
+    static function createTestEvent($em)
     {
         $event = new Event();
         $event->name = "WE Championnats de France";
@@ -55,18 +55,18 @@ class SeedingService
         $activity_ld->name = "LD";
         $activity_ld->date = date_create()->add(new DateInterval("P11D"));
 
-        em()->persist($event);
-        em()->persist($activity_relay);
-        em()->persist($activity_ld);
-        em()->flush();
+        $em->persist($event);
+        $em->persist($activity_relay);
+        $em->persist($activity_ld);
+        $em->flush();
     }
 
-    static function applyMigrations()
+    static function applyMigrations(DB $db)
     {
         $migrateCommand = new MigrateCommand(
             DependencyFactory::fromEntityManager(
-                DBFactory::getConfig(),
-                new ExistingEntityManager(em()),
+                DBFactory::getConfig($db),
+                new ExistingEntityManager($db->em()),
             )
         );
         $input = new ArrayInput([]);

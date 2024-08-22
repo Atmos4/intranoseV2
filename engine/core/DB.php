@@ -83,14 +83,13 @@ class DB extends SingletonDependency
         return self::getInstance()->em();
     }
 
-    static function setupForApp($sqlite = false)
+    static function setupForApp($sqlite)
     {
-        self::factory(fn() => new self((!env("DB_HOST") || $sqlite) ? DBFactory::sqlite() : DBFactory::mysql()));
+        self::factory(fn() => new self($sqlite ? DBFactory::sqlite() : DBFactory::mysql()));
     }
 
-    static function setupForTest()
+    static function setupForTest($dbName)
     {
-        $dbName = env("TEST_DB_NAME") ?? 'db_test.sqlite';
         self::factory(fn() => new self(DBFactory::sqlite($dbName)));
     }
 }
@@ -124,9 +123,9 @@ class DBFactory
     }
 
     // Configuration factory
-    static function getConfig()
+    static function getConfig($db)
     {
-        return !!DB::getInstance()->sqlite ?
+        return !!$db->isSqlite() ?
             new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
             new PhpFile(__DIR__ . "/../../database/config/migrations.php");
     }

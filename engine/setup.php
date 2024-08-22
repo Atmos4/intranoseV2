@@ -13,6 +13,6 @@ $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path() . '/logs/app
 $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
-DB::setupForApp();
+DB::setupForApp(!env("DB_HOST"));
 MainLogger::instance(new MainLogger($logger));
 Mailer::factory(fn() => (env('DEVELOPMENT') && !env("EMAIL_MOCK_OFF")) || env("EMAIL_MOCK") ? new MockMailer() : new Mailer());
