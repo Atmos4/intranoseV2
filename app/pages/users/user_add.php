@@ -50,7 +50,7 @@ if ($v->valid()) {
 
 page("Nouveau licencié")->css("settings.css");
 ?>
-<?= actions()->back("/licencies")->submit("Créer") ?>
+<?= actions()->back("/licencies")->submit("Créer", attributes: ["form" => "add-user"]) ?>
 <form id="add-user" method="post" class="row">
 
     <?= $v->render_validation() ?>
