@@ -1,10 +1,10 @@
 <?php
-$v = new Validator();
+$v = new Validator(["remember_me" => true]);
 $login = $v->text("login")->placeholder("Login")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
 $rememberMe = $v->switch("remember_me")->label("Rester connecté");
 if ($v->valid()) {
-    AuthService::create()->tryLogin($login->value, $password->value, $rememberMe->value, $v);
+    AuthService::create()->tryLogin($login->value, $password->value, $rememberMe->value, $v) && redirect("/");
 }
 
 page("Login")->css("login.css")->disableNav()->heading(false);

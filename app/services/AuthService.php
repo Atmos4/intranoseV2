@@ -1,16 +1,24 @@
 <?php
+
+use Doctrine\ORM\EntityManager;
+
 class AuthService extends FactoryDependency
 {
     private const REMEMBERME_COOKIE = 'rememberme';
 
-    function tryLogin(string $login, string $password, bool|null $rememberMe, Validator &$v)
+    function __construct(private EntityManager $em)
     {
-        $user = User::getByLogin($login);
+    }
+
+    function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null)
+    {
+        $v ??= new Validator;
+        $user = UserService::getByLogin($this->em, $login);
         if ($user) {
             switch (true) {
                 case $user?->status == UserStatus::INACTIVE:
                     $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
-                    em()->persist($token);
+                    $this->em->persist($token);
 
                     $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
 
@@ -18,12 +26,13 @@ class AuthService extends FactoryDependency
                         logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
                         $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
                             . ". Utilisez-le pour activer votre compte.";
-                        em()->flush();
+                        $this->em->flush();
+                        return false;
                     } else {
                         logger()->warning("Activation email failed to send for user {login}", ["login" => $user->login]);
                         $v->set_error($result->message);
                     }
-                    return;
+                    return false;
                 case $user?->status == UserStatus::ACTIVE:
                     if (password_verify($password, $user->password)) {
                         logger()->info("Login successful for user {login}", ["login" => $user->login]);
@@ -31,33 +40,31 @@ class AuthService extends FactoryDependency
                         if ($rememberMe) {
                             $this->createRememberMeToken($user);
                         }
-                        if ($_SESSION["deep_url"]) {
+                        if (isset($_SESSION["deep_url"])) {
                             redirect($_SESSION["deep_url"]);
                             unset($_SESSION["deep_url"]);
-                            return;
+                            return false;
                         }
-                        redirect("/");
-                        return;
+                        return true;
                     }
                     logger()->info("Login failed for user {login}: wrong password", ["login" => $user->login]);
                     $v->set_error("Mauvais mot de passe");
-                    return;
+                    return false;
                 case $user?->status == UserStatus::DEACTIVATED:
                     logger()->info("Login failed for user {login}: deactivated account", ["login" => $user->login]);
                     $v->set_error("Votre compte est bloqué. Contactez un administrateur.");
-                    return;
+                    return false;
                 default:
                     break;
             }
         }
         logger()->info("Login failed: not found", ["login" => $login]);
         $v->set_error("Utilisateur non trouvé");
+        return false;
     }
 
     private function loginUserSession(User $user)
     {
-        // prevent session fixation/hijack
-        session_regenerate_id();
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_permission'] = $user->permission;
     }
@@ -74,8 +81,8 @@ class AuthService extends FactoryDependency
     function createActivationLink(User $user): string
     {
         $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
-        em()->persist($token);
-        em()->flush();
+        $this->em->persist($token);
+        $this->em->flush();
         return env("BASE_URL") . "/activation?token=$token->id";
     }
 
@@ -87,8 +94,8 @@ class AuthService extends FactoryDependency
 
         $token = new AccessToken($user, AccessTokenType::REMEMBER_ME, new DateInterval('P1M')); // 1month
         $validator = $token->createHashedValidator();
-        em()->persist($token);
-        em()->flush();
+        $this->em->persist($token);
+        $this->em->flush();
 
         setcookie(
             self::REMEMBERME_COOKIE,
@@ -102,7 +109,7 @@ class AuthService extends FactoryDependency
      * If you want more custom behavior, write another function. But maybe you shouldn't. */
     function deleteUserTokens(string $userId)
     {
-        em()->createQueryBuilder()
+        $this->em->createQueryBuilder()
             ->delete(AccessToken::class, 'a')
             ->where('a.user = :user_id')
             ->setParameter("user_id", $userId)

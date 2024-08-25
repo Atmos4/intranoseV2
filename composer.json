@@ -30,6 +30,8 @@
       "@composer install",
       "@db:migrate"
     ],
+    "dev": "php -S localhost:8000 server.php",
+    "seed": "php bin/seed",
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",
     "db:diff": "@php bin/doctrine --no-interaction migrations:diff",
     "test": "@php bin/phpunit"

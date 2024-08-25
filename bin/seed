@@ -46,9 +46,9 @@ if (!$db->isSqlite()) {
     }
 }
 
-[$login, $pw] = SeedingService::createTestUser($firstName, $lastName, $db->em());
+[$user, $pw] = SeedingService::createTestUser($firstName, $lastName, $db->em());
 echo Cli::ok("Created test user $firstName $lastName");
-echo " - Login: $login" . PHP_EOL;
+echo " - Login: $user->login" . PHP_EOL;
 echo " - Password: $pw" . PHP_EOL;
 
 SeedingService::createTestEvent($db->em());

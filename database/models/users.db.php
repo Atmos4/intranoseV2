@@ -115,12 +115,6 @@ class User
         $this->picture = $newPicture;
     }
 
-    static function getByLogin($login): User|null
-    {
-        $result = em()->getRepository(User::class)->findByLogin($login);
-        return count($result) ? $result[0] : null;
-    }
-
     /** Get user by ID */
     static function get($user_id): User
     {

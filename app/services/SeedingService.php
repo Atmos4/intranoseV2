@@ -11,7 +11,7 @@ class SeedingService
     static function createTestUser($fn, $ln, $em)
     {
         $login = strtolower($ln . "_" . substr($fn, 0, 1));
-        if (User::getByLogin($login)) {
+        if (UserService::getByLogin($em, $login)) {
             return false;
         }
         $fakePassword = strtolower($fn);
@@ -30,7 +30,7 @@ class SeedingService
         $em->persist($newUser);
         $em->flush();
 
-        return [$newUser->login, $fakePassword];
+        return [$newUser, $fakePassword];
     }
 
     static function createTestEvent($em)
