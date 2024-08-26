@@ -10,8 +10,8 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
-DB::setupForApp();
-$deps = DependencyFactory::fromEntityManager(DBFactory::getConfig(), new ExistingEntityManager(em()));
+DB::setupForApp(!env("DB_HOST"));
+$deps = DependencyFactory::fromEntityManager(DBFactory::getConfig(DB::getInstance()), new ExistingEntityManager(em()));
 
 ConsoleRunner::run(new SingleManagerProvider(em()), [
     new Command\ExecuteCommand($deps),

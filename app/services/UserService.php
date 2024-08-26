@@ -1,6 +1,14 @@
 <?php
+
+use Doctrine\ORM\EntityManager;
+
 class UserService
 {
+    static function getByLogin(EntityManager $em, $login): User|null
+    {
+        $result = $em->getRepository(User::class)->findByLogin($login);
+        return count($result) ? $result[0] : null;
+    }
 
     /** @return User[] */
     static function getActiveUserList()

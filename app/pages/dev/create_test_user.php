@@ -8,7 +8,7 @@ $lastname = $v_user->text("lastname")->required()->placeholder("Last name")->aut
 if ($v_user->valid()) {
     $fn = $firstname->value;
     $ln = $lastname->value;
-    if (SeedingService::createTestUser($fn, $ln)) {
+    if (SeedingService::createTestUser($fn, $ln, em())) {
         $v_user->set_success("Created user $newUser->first_name $newUser->last_name<br>"
             . "Login: $newUser->login<br>"
             . "Password: " . strtolower($fn));
