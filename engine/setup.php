@@ -6,7 +6,7 @@ $env = require_once base_path() . "/engine/load_env.php";
 
 // static
 $logger = new \Monolog\Logger('main');
-if (env('DEVELOPMENT')) {
+if (is_dev()) {
     $logger->pushHandler(new \Monolog\Handler\BrowserConsoleHandler(\Monolog\Level::Debug));
 }
 $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path() . '/logs/app.log'));
