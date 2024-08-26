@@ -165,7 +165,7 @@ function has_session($key): bool
 
 function is_dev()
 {
-    return !!env('DEVELOPMENT');
+    return !env('PRODUCTION');
 }
 
 function restrict_dev()

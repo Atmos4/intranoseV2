@@ -43,7 +43,7 @@ class Router extends Singleton
         http_response_code($code);
         Page::reset();
         $instance = self::getInstance()->cleanBuffer();
-        if (env('DEVELOPMENT')) {
+        if (is_dev()) {
             echo $message;
         }
         $instance->render();

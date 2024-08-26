@@ -24,9 +24,5 @@ jobs:
       - name: Composer install
         run: composer install --prefer-dist --no-progress --no-suggest --dev --optimize-autoloader
 
-      - name: Generate .env
-        run: |
-          echo "DEVELOPMENT=true" > .env
-
       - name: Run PHPUnit
         run: php bin/phpunit

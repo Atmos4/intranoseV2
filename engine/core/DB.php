@@ -45,7 +45,7 @@ class DB extends SingletonDependency
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
-        $devMode = !!env("DEVELOPMENT");
+        $devMode = !!is_dev();
 
         if ($devMode) {
             $queryCache = new ArrayAdapter();
