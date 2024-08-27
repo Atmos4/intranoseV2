@@ -6,7 +6,7 @@ $env = require_once base_path() . "/engine/load_env.php";
 
 // static
 $logger = new \Monolog\Logger('main');
-if (env('DEVELOPMENT')) {
+if (is_dev()) {
     $logger->pushHandler(new \Monolog\Handler\BrowserConsoleHandler(\Monolog\Level::Debug));
 }
 $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path() . '/logs/app.log'));
@@ -15,7 +15,7 @@ $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
 DB::setupForApp(!env("DB_HOST"));
 MainLogger::instance(new MainLogger($logger));
-Mailer::factory(fn() => (env('DEVELOPMENT') && !env("EMAIL_MOCK_OFF")) || env("EMAIL_MOCK") ? new MockMailer() : new Mailer());
+Mailer::factory(fn() => (is_dev() && !env("EMAIL_MOCK_OFF")) || env("EMAIL_MOCK") ? new MockMailer() : new Mailer());
 
 //services DI
 AuthService::factory(fn() => new AuthService(em()));

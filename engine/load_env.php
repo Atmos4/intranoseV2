@@ -9,8 +9,6 @@ if (env("DB_HOST")) {
     $dotenv->required('DB_PASSWORD');
 }
 
-$dotenv->ifPresent('DEVELOPMENT')->isBoolean();
-
 // Mailing - unused at the moment
 // AP 2024-07 - TODO FIXME mailing does not work, we need to plug it into Gmail
 $dotenv->ifPresent('USE_DKIM')->isBoolean();
