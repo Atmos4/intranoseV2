@@ -94,6 +94,9 @@ class Event
     #[Column]
     public string $bulletin_url = "";
 
+    #[Column]
+    public bool $is_simple = false;
+
     /** @var Collection<int, EventEntry> */
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $entries;
