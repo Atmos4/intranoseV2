@@ -71,24 +71,6 @@ class EventService
         return EventDto::fromEventList($events);
     }
 
-    /** @return EventDto[] */
-    static function listAllActivities($user_id)
-    {
-        if (!is_dev())
-            return [];
-        $activities = em()
-            ->createQuery("SELECT act.id, act.name, act.date, act.deadline, act.open, en.present FROM Activity act" .
-                " LEFT JOIN act.entries en WITH en.user = ?1" .
-                " WHERE act.event IS NULL" .
-                //" WHERE act.open = 1" .
-                //" AND act.date > CURRENT_DATE()" .
-                " ORDER BY act.date DESC")
-            ->setParameter(1, $user_id)
-            ->getArrayResult();
-
-        return EventDto::fromActivityList($activities);
-    }
-
     static function listDrafts()
     {
         $events = em()

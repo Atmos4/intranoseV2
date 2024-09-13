@@ -40,25 +40,21 @@ if ($v->valid()) {
     redirect("/evenements/$event->id");
 }
 
-page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 ?>
-<form method="post">
-    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler")->submit($event_id ? "Modifier" : "Créer") ?>
-    <article>
-        <div class="row">
-            <?= $v->render_validation() ?>
-            <?= $event_name->render() ?>
-            <div class="col-sm-6 col-lg-4">
-                <?= $start_date->render() ?>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <?= $end_date->render() ?>
-            </div>
-            <div class="col-lg-4">
-                <?= $limit_date->render() ?>
-            </div>
-            <?= $bulletin_url->render() ?>
-            <?= $description->attributes(["rows" => "8"])->render() ?>
+<article>
+    <div class="row">
+        <?= $v->render_validation() ?>
+        <?= $event_name->render() ?>
+        <div class="col-sm-6 col-lg-4">
+            <?= $start_date->render() ?>
         </div>
-    </article>
-</form>
+        <div class="col-sm-6 col-lg-4">
+            <?= $end_date->render() ?>
+        </div>
+        <div class="col-lg-4">
+            <?= $limit_date->render() ?>
+        </div>
+        <?= $bulletin_url->render() ?>
+        <?= $description->attributes(["rows" => "8"])->render() ?>
+    </div>
+</article>
