@@ -10,8 +10,6 @@ $future_events = EventService::listAllFutureOpenEvents($user->id);
 if ($can_edit)
     $draft_events = EventService::listDrafts();
 
-$activities = EventService::listAllActivities($user->id);
-
 // Get the current date
 $current_date_month = date('m');
 $current_date_day = date('d');
@@ -44,14 +42,7 @@ $vowels = array("a", "e", "i", "o", "u");
 
 <h2 class="center">Événements</h2>
 
-<?= actions($can_edit)?->dropdown(
-    fn($b) => $b
-        ->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus")
-        ->if(
-            is_dev(),
-            fn($c) => $c->link("/activite/nouveau", "Ajouter une activité", "fas fa-plus")
-        )
-) ?>
+<?= actions($can_edit)->link("#blank", "Ajouter un événement", "fas fa-plus", ["onclick" => "document.getElementById('eventDialog').setAttribute('open','')"]) ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
@@ -63,13 +54,13 @@ if ($can_edit && count($draft_events)): ?>
     <h6>Événements en attente</h6>
     <?php
     foreach ($draft_events as $draft_event) {
-        render_events_article($draft_event);
+        render_events($draft_event);
     } ?>
     <h6>Événements publiés</h6>
 <?php endif ?>
 
 <?php foreach ($future_events as $event): ?>
-    <?= render_events_article($event); ?>
+    <?= render_events($event); ?>
 <?php endforeach ?>
 
 <div id="loadEvents">
@@ -79,14 +70,31 @@ if ($can_edit && count($draft_events)): ?>
         passés</button>
 </div>
 
-<?php if (is_dev()): ?>
-    <h6>Activités (en cours de dévelopement)</h6>
-    <?php if (!count($activities)): ?>
-        <p class="center">Pas d'activités pour le moment 😴</p>
-    <?php endif ?>
-    <?php foreach ($activities as $act): ?>
 
-        <?= render_events_article($act) ?>
+<dialog id="eventDialog" onclick="event.target=== this && htmx.trigger(this, 'close-modal')" hx-on:close-modal="this.classList.add('closing');
+    this.addEventListener('animationend', () => {
+        this.close();
+    }, {once:true})" hx-on:close="this.close();this.classList.remove('closing');">
+    <article>
+        <header>
+            <button class=" close secondary" role="link" onclick="htmx.trigger(this, 'close-modal')">
+            </button>
+            <b>
+                Type d'événement
+            </b>
+        </header>
 
-    <?php endforeach ?>
-<?php endif ?>
+        <p>
+        <ul>
+            <li><b>Simple</b> si il ne contient qu'une seule activité sans déplacement (entraînement
+                au niveau local, événement ponctuel,...)</li>
+            <li><b>Complexe</b> si il s'agit d'un événement plus long avec déplacement et/ou plusieurs activités</li>
+        </ul>
+        </p>
+
+        <footer class="center">
+            <a role="button" href="/evenements/nouveau?type=simple">Simple</a>
+            <a role="button" href="/evenements/nouveau?type=complex">Complexe</a>
+        </footer>
+    </article>
+</dialog>

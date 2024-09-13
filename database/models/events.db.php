@@ -129,8 +129,6 @@ class Event
 
 enum EventType: string
 {
-    case Event = 'EVENT';
-    case Activity = 'ACTIVITY';
     case Simple = 'SIMPLE';
     case Complex = 'COMPLEX';
 }
@@ -138,7 +136,6 @@ enum EventType: string
 class EventDto
 {
     function __construct(
-        public EventType $type,
         public int $id,
         public string $name,
         public DateTime $start,
@@ -157,7 +154,6 @@ class EventDto
         foreach ($events as $event) {
 
             $result[] = new EventDto(
-                EventType::Event,
                 $event['id'],
                 $event['name'],
                 $event['start_date'],
@@ -165,27 +161,6 @@ class EventDto
                 $event['deadline'],
                 $event['open'],
                 isset($event['present']) ? $event['present'] : null
-            );
-        }
-        return $result;
-    }
-
-    /** Used to transfer basic event data without graph
-     *  @return EventDto[] */
-    static function fromActivityList(array $activities)
-    {
-        $result = [];
-        foreach ($activities as $activity) {
-
-            $result[] = new EventDto(
-                EventType::Activity,
-                $activity['id'],
-                $activity['name'],
-                $activity['date'],
-                null,
-                $activity['deadline'],
-                $activity['open'],
-                isset($activity['present']) ? $activity['present'] : null
             );
         }
         return $result;
