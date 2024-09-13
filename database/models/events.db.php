@@ -94,6 +94,9 @@ class Event
     #[Column]
     public string $bulletin_url = "";
 
+    #[Column(options: ["default" => "COMPLEX"])]
+    public EventType $type = EventType::Complex;
+
     /** @var Collection<int, EventEntry> */
     #[OneToMany(targetEntity: EventEntry::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $entries;
@@ -124,10 +127,12 @@ class Event
     }
 }
 
-enum EventType
+enum EventType: string
 {
-    case Event;
-    case Activity;
+    case Event = 'EVENT';
+    case Activity = 'ACTIVITY';
+    case Simple = 'SIMPLE';
+    case Complex = 'COMPLEX';
 }
 
 class EventDto
