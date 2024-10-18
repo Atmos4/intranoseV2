@@ -34,9 +34,11 @@ Router::add('/evenements/passes', 'pages/events/event_list/past_events');
 Router::add('/evenements/nouveau', 'pages/events/edit/event_edit');
 Router::add('/evenements/$event_id/modifier', 'pages/events/edit/event_edit');
 Router::add('/evenements/$event_id', 'pages/events/view/event_view');
-Router::add('/evenements/$event_id/inscription', 'pages/events/event_register');
+Router::add('/evenements/$event_id/inscription', 'pages/events/register/event_register_complex');
+Router::add('/evenements/$event_id/inscription_simple', 'pages/events/register/event_register_simple');
 Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
 Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
+Router::add('/evenements/$event_id/event_form', 'pages/events/edit/EventEditForm');
 
 // Event entry lists
 Router::add('/evenements/$event_id/participants', 'pages/events/entry_list/entry_list');

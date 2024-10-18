@@ -22,7 +22,6 @@ if ($event->type == EventType::Simple) {
 page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
 ?>
 <form method="post">
-    <?= actions()->back("/evenements/$event_id", "Annuler", "fas fa-xmark")->submit($activity_id ? "Modifier" : "Créer") ?>
     <?php
     require_once app_path() . "/pages/events/edit/ActivityEditForm.php";
     ?>

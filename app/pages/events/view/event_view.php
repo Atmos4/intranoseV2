@@ -9,8 +9,10 @@ if (!$event->open) {
 }
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
+$can_register = (($event->open && $event->deadline >= date_create("today")) || $can_edit);
 $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
+$is_simple = $event->type == EventType::Simple;
 
 page($event->name)->css("event_view.css");
 
@@ -26,7 +28,7 @@ page($event->name)->css("event_view.css");
     }) ?>
 
 <?php if (!$event->open): ?>
-    <article class="entry-summary entry-header">
+    <article class="notice horizontal">
         Cet évenement n'est pas publié
         <a href="/evenements/<?= $event->id ?>/publier" class="outline contrast">
             <i class="fas fa-paper-plane"></i> Publier
@@ -34,39 +36,7 @@ page($event->name)->css("event_view.css");
     </article>
 <?php endif ?>
 
-<article class="entry-summary <?= $entry?->present ? "entered" : "not-entered" ?>">
-    <header class="entry-header">
-        <b>
-            <?= match (true) {
-                !$entry => IconText("fa-question", "Pas encore inscrit", "span"),
-                !$entry->present => IconText("fa-xmark", "Je ne participe pas", "del"),
-                $entry->present => IconText("fa-check", "Inscrit", "ins"),
-                default => "Erreur"
-            } ?>
-        </b>
-        <?php if (($event->open && $event->deadline >= date_create("today")) || $can_edit): ?>
-            <a href="/evenements/<?= $event->id ?>/inscription" class="outline contrast">
-                <i class="fas fa-pen-to-square"></i> <?= $entry ? "Gérer l'inscription" : "S'inscrire" ?>
-            </a>
-        <?php endif ?>
-    </header>
-    <div class="row g-2">
-        <?php if ($entry && $entry->present): ?>
-            <div class="col-12 col-md-6">
-                <?= ConditionalIcon($entry->transport, "Transport avec le club") ?>
-            </div>
-            <div class="col-12 col-md-6">
-                <?= ConditionalIcon($entry->accomodation, "Hébergement avec le club") ?>
-            </div>
-        <?php endif ?>
-        <?php if ($entry && $entry->comment): ?>
-            <div class="col-12">
-                <i class="fa fa-comment fa-fw"></i>
-                <span class="space-before"><?= $entry->comment ?></span>
-            </div>
-        <?php endif; ?>
-    </div>
-</article>
+<?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
 
 <?php if ($event->type == EventType::Simple) {
     require_once app_path() . "/pages/events/view/ActivityView.php";
@@ -120,7 +90,7 @@ page($event->name)->css("event_view.css");
                             <?= $activity->name ?>
                             <i class="fa <?= $activity->type->toIcon() ?>" title=<?= $activity->type->toName() ?>></i>
                         </summary>
-                        <?= ActivityEntry($activity_entry) ?>
+                        <?= RenderActivityEntry($activity) ?>
                         <p class="grid">
                             <span><i class="fa fa-calendar fa-fw"></i>
                                 <?= format_date($activity->date) ?>

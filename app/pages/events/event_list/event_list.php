@@ -42,7 +42,7 @@ $vowels = array("a", "e", "i", "o", "u");
 
 <h2 class="center">Événements</h2>
 
-<?= actions($can_edit)->link("#blank", "Ajouter un événement", "fas fa-plus", ["onclick" => "document.getElementById('eventDialog').setAttribute('open','')"]) ?>
+<?= actions($can_edit)->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
@@ -69,32 +69,3 @@ if ($can_edit && count($draft_events)): ?>
         événements
         passés</button>
 </div>
-
-
-<dialog id="eventDialog" onclick="event.target=== this && htmx.trigger(this, 'close-modal')" hx-on:close-modal="this.classList.add('closing');
-    this.addEventListener('animationend', () => {
-        this.close();
-    }, {once:true})" hx-on:close="this.close();this.classList.remove('closing');">
-    <article>
-        <header>
-            <button class=" close secondary" role="link" onclick="htmx.trigger(this, 'close-modal')">
-            </button>
-            <b>
-                Type d'événement
-            </b>
-        </header>
-
-        <p>
-        <ul>
-            <li><b>Simple</b> si il ne contient qu'une seule activité sans déplacement (entraînement
-                au niveau local, événement ponctuel,...)</li>
-            <li><b>Complexe</b> si il s'agit d'un événement plus long avec déplacement et/ou plusieurs activités</li>
-        </ul>
-        </p>
-
-        <footer class="center">
-            <a role="button" href="/evenements/nouveau?type=simple">Simple</a>
-            <a role="button" href="/evenements/nouveau?type=complex">Complexe</a>
-        </footer>
-    </article>
-</dialog>

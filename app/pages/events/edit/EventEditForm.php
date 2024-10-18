@@ -1,6 +1,13 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
 
+$event_type = get_query_param("type", false, false);
+
+if ($event_type && $event_type == "simple") {
+    require_once app_path() . "/pages/events/edit/ActivityEditForm.php";
+    return;
+}
+
 $event_id = get_route_param("event_id", strict: false);
 
 if ($event_id) {
@@ -34,6 +41,7 @@ $description = $v->textarea("description")->label("Description");
 
 if ($v->valid()) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
+    $event->type = EventType::Complex;
     $event->description = $description->value;
     em()->persist($event);
     em()->flush();
@@ -41,8 +49,9 @@ if ($v->valid()) {
 }
 
 ?>
-<article>
-    <div class="row">
+<form method="post" hx-post="/evenements/<?= $event_id ?>/event_form">
+    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", "fas fa-xmark")->submit($event_id ? "Modifier" : "Créer") ?>
+    <article class="row">
         <?= $v->render_validation() ?>
         <?= $event_name->render() ?>
         <div class="col-sm-6 col-lg-4">
@@ -56,5 +65,5 @@ if ($v->valid()) {
         </div>
         <?= $bulletin_url->render() ?>
         <?= $description->attributes(["rows" => "8"])->render() ?>
-    </div>
-</article>
+    </article>
+</form>

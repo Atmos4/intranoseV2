@@ -8,6 +8,20 @@ $event = $event_id ? em()->find(Event::class, $event_id) : null;
 if ($event_id && !$event) {
     return "this event does not exist";
 }
+
+//TODO make this independent of language and routes
+$route_parts = explode('/', $_SESSION["request_url"]);
+$is_new_activity = end($route_parts) == "nouveau";
+
+if (!$activity_id && !$is_new_activity && ($event?->type == EventType::Complex)) {
+    ?>
+    <article class="notice invalid">
+        Impossible de passer d'un événement complexe à un événement simple
+    </article>
+    <?php
+    return;
+}
+
 if ($activity_id || $event?->type == EventType::Simple) {
     $activity = em()->find(Activity::class, $activity_id ?? $event?->activities[0]);
     $form_values = [
@@ -26,7 +40,7 @@ if ($activity_id || $event?->type == EventType::Simple) {
     $activity = new Activity();
 }
 
-$item_name = ($event && !$event?->type == EventType::Simple) ? "activité" : "événement";
+$item_name = ($event && !($event?->type == EventType::Simple)) ? "activité" : "événement";
 
 $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
@@ -94,47 +108,50 @@ if ($v->valid()) {
     redirect($return_link);
 }
 ?>
-<article class="row">
-    <?= $v->render_validation() ?>
-    <?= $name->render() ?>
-    <div class="col-md-6">
-        <?= $type->render() ?>
-    </div>
-    <div class="col-md-6">
-        <?= $date->render() ?>
-    </div>
-    <div class="col-md-6">
-        <?= $location_label->render() ?>
-    </div>
-    <div class="col-md-6">
-        <?= $location_url->render() ?>
-    </div>
-    <?php if (!$event_id || $event?->type == EventType::Simple): ?>
+<form method="post" hx-post="/evenements/<?= $event_id ?>/event_form?type=simple">
+    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", " fas fa-xmark")->submit($event_id ? "Modifier" : "Créer") ?>
+    <article class="row">
+        <?= $v->render_validation() ?>
+        <?= $name->render() ?>
         <div class="col-md-6">
-            <?= $deadline->render() ?>
+            <?= $type->render() ?>
         </div>
-    <?php endif ?>
-    <?= $description->render() ?>
-    <div class="col-auto">
-        <h2>Catégories</h2>
-    </div>
-    <div class="col-auto">
-        <button type="button" class="outline contrast" onclick="addCategory()"><i class="fa fa-plus"></i>
-            Ajouter</button>
-    </div>
-    <div id="categories" class="col-12">
-        <?php if (count($activity->categories)):
-            foreach ($activity->categories as $index => $category):
-                $entry_count = count($category->entries); ?>
-                <?= "$entry_count inscrits" ?>
-                <div class="category-row">
-                    <?= $category_rows[$index]["name"]->render() ?>
-                    <?= $category_rows[$index]["toggle"]->render() ?>
-                </div>
-            <?php endforeach;
-        endif ?>
-    </div>
-</article>
+        <div class="col-md-6">
+            <?= $date->render() ?>
+        </div>
+        <div class="col-md-6">
+            <?= $location_label->render() ?>
+        </div>
+        <div class="col-md-6">
+            <?= $location_url->render() ?>
+        </div>
+        <?php if (!$event_id || $event?->type == EventType::Simple): ?>
+            <div class="col-md-6">
+                <?= $deadline->render() ?>
+            </div>
+        <?php endif ?>
+        <?= $description->render() ?>
+        <div class="col-auto">
+            <h2>Catégories</h2>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="outline contrast" onclick="addCategory()"><i class="fa fa-plus"></i>
+                Ajouter</button>
+        </div>
+        <div id="categories" class="col-12">
+            <?php if (count($activity->categories)):
+                foreach ($activity->categories as $index => $category):
+                    $entry_count = count($category->activity_entries); ?>
+                    <?= "$entry_count inscrits" ?>
+                    <div class="category-row">
+                        <?= $category_rows[$index]["name"]->render() ?>
+                        <?= $category_rows[$index]["toggle"]->render() ?>
+                    </div>
+                <?php endforeach;
+            endif ?>
+        </div>
+    </article>
+</form>
 <script>
     function addCategory() {
         const categoriesDiv = document.getElementById("categories");

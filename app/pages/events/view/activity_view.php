@@ -21,6 +21,6 @@ page($activity->name)->css("event_view.css");
             ->link("/evenements/$event_id/activite/$activity->id/supprimer", "Supprimer", "fas fa-trash", ["class" => "destructive"]))
     ) ?>
 
-<?= ActivityEntry($activity_entry) ?>
+<?= RenderActivityEntry($activity) ?>
 
 <?php require_once app_path() . "/pages/events/view/ActivityView.php";
