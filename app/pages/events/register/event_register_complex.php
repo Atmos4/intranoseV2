@@ -39,7 +39,7 @@ $event_comment = $v->textarea("event_comment")->label("Remarques");
 $event_comment_noentry = $v->textarea("event_comment_noentry")->label("Remarque");
 $activity_rows = [];
 foreach ($event->activities as $index => $activity) {
-    $activity_rows[$index]["entry"] = $v->switch("activity_{$index}_entry")->set_labels("Je cours", "Je ne cours pas");
+    $activity_rows[$index]["entry"] = $v->switch("activity_{$index}_entry")->set_labels("Je participe", "Je ne participe pas");
     $activity_rows[$index]["comment"] = $v->textarea("activity_{$index}_comment")->label("Remarque");
     if (count($activity->categories)) {
         $activity_rows[$index]["category"] = $v->select("activity_{$index}_category")->label("Catégorie")
@@ -143,7 +143,7 @@ page("Inscription - " . $event->name)->css("event_register.css");
             </fieldset>
 
             <?php if (count($event->activities)): ?>
-                <h4>Courses : </h4>
+                <h4>Activités : </h4>
                 <table role="grid">
                     <?php foreach ($event->activities as $index => $activity):
                         $activity_form = $activity_rows[$index];

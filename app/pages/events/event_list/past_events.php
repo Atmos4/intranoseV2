@@ -11,7 +11,7 @@ $past_events = EventService::listAllPastOpen($user->id);
 <?php
 if (count($past_events)) {
     foreach ($past_events as $event) {
-        render_events_article($event);
+        render_events($event);
     }
 } else { ?>
     <p>Pas d'événements passés 😿</p>

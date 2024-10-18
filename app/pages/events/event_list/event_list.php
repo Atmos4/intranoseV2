@@ -10,8 +10,6 @@ $future_events = EventService::listAllFutureOpenEvents($user->id);
 if ($can_edit)
     $draft_events = EventService::listDrafts();
 
-$activities = EventService::listAllActivities($user->id);
-
 // Get the current date
 $current_date_month = date('m');
 $current_date_day = date('d');
@@ -44,14 +42,7 @@ $vowels = array("a", "e", "i", "o", "u");
 
 <h2 class="center">Événements</h2>
 
-<?= actions($can_edit)?->dropdown(
-    fn($b) => $b
-        ->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus")
-        ->if(
-            is_dev(),
-            fn($c) => $c->link("/activite/nouveau", "Ajouter une activité", "fas fa-plus")
-        )
-) ?>
+<?= actions($can_edit)->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
@@ -63,13 +54,13 @@ if ($can_edit && count($draft_events)): ?>
     <h6>Événements en attente</h6>
     <?php
     foreach ($draft_events as $draft_event) {
-        render_events_article($draft_event);
+        render_events($draft_event);
     } ?>
     <h6>Événements publiés</h6>
 <?php endif ?>
 
 <?php foreach ($future_events as $event): ?>
-    <?= render_events_article($event); ?>
+    <?= render_events($event); ?>
 <?php endforeach ?>
 
 <div id="loadEvents">
@@ -78,15 +69,3 @@ if ($can_edit && count($draft_events)): ?>
         événements
         passés</button>
 </div>
-
-<?php if (is_dev()): ?>
-    <h6>Activités (en cours de dévelopement)</h6>
-    <?php if (!count($activities)): ?>
-        <p class="center">Pas d'activités pour le moment 😴</p>
-    <?php endif ?>
-    <?php foreach ($activities as $act): ?>
-
-        <?= render_events_article($act) ?>
-
-    <?php endforeach ?>
-<?php endif ?>

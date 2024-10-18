@@ -86,7 +86,8 @@ function get_header($headerName): string|null
 function redirect($href)
 {
     Toast::stash();
-    if (get_header("HX-Boost")) {
+    logger()->debug("", [$_SERVER]);
+    if (get_header("HX-Request")) {
         header("HX-Location: $href");
     } else {
         header("Location: $href");

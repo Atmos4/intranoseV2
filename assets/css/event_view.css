@@ -7,19 +7,6 @@ header > .row > .col-sm-6 {
 details summary:focus:not([role="button"]) {
   color: var(--accordion-close-summary-color);
 }
-.entry-summary {
-  border: 1px solid var(--secondary-border);
-}
-.entry-summary.not-entered {
-  border-color: var(--del-color);
-}
-.entry-summary.entered {
-  border-color: var(--primary-border);
-}
-.entry-header {
-  display: flex;
-  justify-content: space-between;
-}
 /* this is placeholder. We probably want markdown instead */
 .description {
   white-space: pre-wrap;
