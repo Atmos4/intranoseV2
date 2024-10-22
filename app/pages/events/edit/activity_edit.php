@@ -21,8 +21,6 @@ if ($event->type == EventType::Simple) {
 
 page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
 ?>
-<form method="post">
-    <?php
-    require_once app_path() . "/pages/events/edit/ActivityEditForm.php";
-    ?>
-</form>
+<?php
+require_once app_path() . "/pages/events/edit/ActivityEditForm.php";
+?>

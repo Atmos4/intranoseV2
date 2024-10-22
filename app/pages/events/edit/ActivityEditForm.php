@@ -13,6 +13,8 @@ if ($event_id && !$event) {
 $route_parts = explode('/', $_SESSION["request_url"]);
 $is_new_activity = end($route_parts) == "nouveau";
 
+$post_link = "/evenements/$event_id" . ($is_new_activity ? "/activite/nouveau" : ($activity_id ? "/activite/$activity_id/modifier" : "/event_form?type=simple"));
+
 if (!$activity_id && !$is_new_activity && ($event?->type == EventType::Complex)) {
     ?>
     <article class="notice invalid">
@@ -108,8 +110,8 @@ if ($v->valid()) {
     redirect($return_link);
 }
 ?>
-<form method="post" hx-post="/evenements/<?= $event_id ?>/event_form?type=simple">
-    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", " fas fa-xmark")->submit($event_id ? "Modifier" : "Créer") ?>
+<form method="post" hx-post=<?= $post_link ?>>
+    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", " fas fa-xmark")->submit(($activity_id || $event?->type == EventType::Simple) ? "Modifier" : "Créer") ?>
     <article class="row">
         <?= $v->render_validation() ?>
         <?= $name->render() ?>
