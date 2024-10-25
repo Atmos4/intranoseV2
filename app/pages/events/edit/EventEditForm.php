@@ -4,7 +4,7 @@ restrict_access(Access::$ADD_EVENTS);
 $event_type = get_query_param("type", false, false);
 
 if ($event_type && $event_type == "simple") {
-    require_once app_path() . "/pages/events/edit/ActivityEditForm.php";
+    require_once __DIR__ . "/ActivityEditForm.php";
     return;
 }
 

@@ -23,4 +23,4 @@ page($activity->name)->css("event_view.css");
 
 <?= RenderActivityEntry($activity) ?>
 
-<?php require_once app_path() . "/pages/events/view/ActivityView.php";
+<?php require_once __DIR__ . "/ActivityView.php";

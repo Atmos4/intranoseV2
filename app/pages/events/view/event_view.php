@@ -39,7 +39,7 @@ page($event->name)->css("event_view.css");
 <?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
 
 <?php if ($event->type == EventType::Simple) {
-    require_once app_path() . "/pages/events/view/ActivityView.php";
+    require __DIR__ . "/ActivityView.php";
 } else {
     ?>
     <article>
