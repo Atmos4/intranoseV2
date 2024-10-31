@@ -237,7 +237,7 @@ if ($v_password->valid()) {
         <form method="post" hx-swap="innerHTML show:#login:top" class="col-sm-12 col-md-6 align-end">
             <h2 id="login">Login</h2>
             <?= $v_login->render_validation() ?>
-            <?= $can_reset_credentials ? "Login acuel: $user->login" : $current_login->render() ?>
+            <?= $can_reset_credentials ? "Login actuel: $user->login" : $current_login->render() ?>
             <?= $new_login->render() ?>
             <input type="submit" class="outline" name="submitLogin" value="Changer le login">
         </form>

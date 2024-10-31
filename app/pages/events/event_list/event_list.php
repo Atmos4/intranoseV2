@@ -42,7 +42,7 @@ $vowels = array("a", "e", "i", "o", "u");
 
 <h2 class="center">Événements</h2>
 
-<?= actions($can_edit)->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
+<?= actions($can_edit)?->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
