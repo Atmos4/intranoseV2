@@ -360,7 +360,9 @@ article.notice.valid {
   border-color: var(--ins-color);
 }
 article.notice.horizontal,
-article.notice > header {
+article.notice > header,
+.horizontal {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }

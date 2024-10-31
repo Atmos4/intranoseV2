@@ -12,7 +12,7 @@ if ($event->type == EventType::Simple) {
 ?>
 
 <article>
-    <header class="grid">
+    <div class="horizontal">
         <div>
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>
         </div>
@@ -29,11 +29,10 @@ if ($event->type == EventType::Simple) {
                 <?php endif ?>
             </span>
         </div>
-    </header>
+    </div>
     <?php if ($activity->description): ?>
-        <section>
-            <h3>Description</h3>
-            <?= (new Parsedown)->text($activity->description) ?>
-        </section>
+        <hr>
+        <h3>Description</h3>
+        <?= (new Parsedown)->text($activity->description) ?>
     <?php endif; ?>
 </article>

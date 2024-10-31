@@ -14,6 +14,19 @@ function app_path(): string
     return BASE_PATH . "/app";
 }
 
+/** readline polyfill because Linux sucks balls */
+if (!function_exists("readline")) {
+    function readline($prompt = null)
+    {
+        if ($prompt) {
+            echo $prompt;
+        }
+        $fp = fopen("php://stdin", "r");
+        $line = rtrim(fgets($fp, 1024));
+        return $line;
+    }
+}
+
 function component(string $location): Component
 {
     return new Component($location);

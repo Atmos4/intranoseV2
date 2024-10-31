@@ -50,19 +50,17 @@ if ($v->valid()) {
     }
 
     $activity_entry = $activity->entries[0] ?? new ActivityEntry();
-    $activity_present = $activity_present->value;
-    if ($activity_present) {
-        $activity_entry->set(
-            $user,
-            $activity,
-            $activity_present,
-            $activity_present ? $activity_comment->value : "",
-        );
-        $activity_entry->category = $activity_present ? $activity_category_map[$activity_category->value] : null;
-        em()->persist($activity_entry);
-        em()->flush();
-        redirect("/evenements/$event->id");
-    }
+    $is_present = $activity_present->value;
+    $activity_entry->set(
+        $user,
+        $activity,
+        $is_present ?? false,
+        $is_present ? $activity_comment->value : "",
+    );
+    $activity_entry->category = $is_present ? $activity_category_map[$activity_category->value] : null;
+    em()->persist($activity_entry);
+    em()->flush();
+    redirect("/evenements/$event->id");
 }
 
 function getToggleClass($selector, $initialState)
@@ -95,7 +93,7 @@ page("Inscription - " . $event->name)->css("event_register.css");
 
         <div class="row">
             <div class="col-sm-12 col-md-6">
-                <?= $activity_present->attributes(["onchange" => "toggleDisplay(this,'.activityToggle')"])->render() ?>
+                <?= $activity_present?->attributes(["onchange" => "toggleDisplay(this,'.activityToggle')"])->render() ?>
                 <?php $toggle_class = getToggleClass("activityToggle", $activity_present->value); ?>
             </div>
             <div class="col-sm-12 col-md-6 <?= $toggle_class ?>">

@@ -2,7 +2,7 @@
 // User control
 require_once app_path() . "/components/user_control.php";
 // Load env
-$env = require_once base_path() . "/engine/load_env.php";
+$env = require_once __DIR__ . "/load_env.php";
 
 // static
 $logger = new \Monolog\Logger('main');
