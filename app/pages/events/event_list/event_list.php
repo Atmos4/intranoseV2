@@ -25,7 +25,7 @@ $birthday_users = em()->createQueryBuilder()
 
 page("Événements")->css("event_list.css")->heading(false);
 
-$vowels = array("a", "e", "i", "o", "u");
+$vowels = ["a", "e", "i", "o", "u"];
 ?>
 
 <?php if ($birthday_users): ?>
