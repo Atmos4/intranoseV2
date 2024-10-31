@@ -1,4 +1,9 @@
 <?php
+// create empty .env file if not exist
+if (!file_exists(base_path() . "/.env")) {
+    fopen(".env", "");
+}
+
 $dotenv = Dotenv\Dotenv::createImmutable(base_path());
 $dotenv->load();
 

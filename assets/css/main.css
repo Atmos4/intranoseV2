@@ -349,3 +349,20 @@ dialog.closing > article {
 .list-chevron {
   text-align: end;
 }
+
+article.notice {
+  border: 1px solid var(--secondary-border);
+}
+article.notice.invalid {
+  border-color: var(--del-color);
+}
+article.notice.valid {
+  border-color: var(--ins-color);
+}
+article.notice.horizontal,
+article.notice > header,
+.horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

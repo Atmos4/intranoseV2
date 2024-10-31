@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240821184318 extends AbstractMigration
+final class Version20241031104315 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'wip sqlite - WARNING drop the db before you execute this';
+        return 'Regenerate on schema changes';
     }
 
     public function up(Schema $schema): void
@@ -33,7 +33,7 @@ final class Version20240821184318 extends AbstractMigration
         $this->addSql('CREATE TABLE orm_event_entries (user_id INTEGER NOT NULL, event_id INTEGER NOT NULL, present BOOLEAN NOT NULL, transport BOOLEAN NOT NULL, accomodation BOOLEAN NOT NULL, date DATETIME NOT NULL, comment VARCHAR(255) NOT NULL, PRIMARY KEY(user_id, event_id), CONSTRAINT FK_4C3A1770A76ED395 FOREIGN KEY (user_id) REFERENCES orm_users (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_4C3A177071F7E88B FOREIGN KEY (event_id) REFERENCES orm_events (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_4C3A1770A76ED395 ON orm_event_entries (user_id)');
         $this->addSql('CREATE INDEX IDX_4C3A177071F7E88B ON orm_event_entries (event_id)');
-        $this->addSql('CREATE TABLE orm_events (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, start_date DATETIME NOT NULL, end_date DATETIME NOT NULL, deadline DATETIME NOT NULL, description CLOB NOT NULL, open BOOLEAN NOT NULL, bulletin_url VARCHAR(255) NOT NULL)');
+        $this->addSql('CREATE TABLE orm_events (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, start_date DATETIME NOT NULL, end_date DATETIME NOT NULL, deadline DATETIME NOT NULL, description CLOB NOT NULL, open BOOLEAN NOT NULL, bulletin_url VARCHAR(255) NOT NULL, type VARCHAR(255) DEFAULT \'COMPLEX\' NOT NULL)');
         $this->addSql('CREATE TABLE orm_families (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE TABLE orm_notifications_subscriptions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER DEFAULT NULL, endpoint VARCHAR(255) NOT NULL, p256dh VARCHAR(255) NOT NULL, auth VARCHAR(255) NOT NULL, CONSTRAINT FK_14C0362BA76ED395 FOREIGN KEY (user_id) REFERENCES orm_users (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_14C0362BA76ED395 ON orm_notifications_subscriptions (user_id)');
