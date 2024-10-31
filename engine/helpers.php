@@ -122,7 +122,7 @@ function page(string $title)
 /** setup page actions */
 function actions($condition = true)
 {
-    return $condition ? new PageActionBuilder() : null;
+    return new PageActionBuilder($condition);
 }
 
 /** Checks authentication and authorization stored in session

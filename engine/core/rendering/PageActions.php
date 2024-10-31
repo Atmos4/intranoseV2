@@ -2,18 +2,22 @@
 
 class PageActionBuilder extends OutputBuilder
 {
+    function __construct($condition = true)
+    {
+        $this->condition = $condition;
+    }
+
     function __toString()
     {
-        return '<nav id="page-actions">'
+        return $this->condition ? '<nav id="page-actions">'
             . implode($this->output)
-            . '</nav>';
+            . '</nav>' : "";
     }
 
     /** Add a special link to return to the previous scene */
     function back($href, $label = "Retour", $icon = "fa-caret-left"): self
     {
-        $this->link($href, $label, $icon, ["class" => "secondary"]);
-        return $this;
+        return $this->link($href, $label, $icon, ["class" => "secondary"]);
     }
 
     /**
@@ -22,7 +26,7 @@ class PageActionBuilder extends OutputBuilder
      */
     function dropdown(callable $functor, $label = "Actions"): static
     {
-        $functor($this->output[] = new PageActionDropdownBuilder($label, $this, !!$this->output));
+        $this->condition && $functor($this->output[] = new PageActionDropdownBuilder($label, $this, !!$this->output));
         return $this;
     }
 }
@@ -35,6 +39,9 @@ class PageActionDropdownBuilder extends OutputBuilder
 
     function __toString()
     {
+        if (!$this->condition) {
+            return "";
+        }
         $output = array_reduce($this->output, fn($c, $i) => ("$c<li>$i</li>"), "");
         $rtl = $this->rtl ? 'dir="rtl"' : '';
         return <<<HTML
@@ -57,6 +64,7 @@ class PageActionDropdownBuilder extends OutputBuilder
 class OutputBuilder
 {
     public array $output = [];
+    public $condition = true;
 
     /**
      * @param Closure(static):void|static $functor 
@@ -67,8 +75,16 @@ class OutputBuilder
     {
         if ($condition) {
             $functor($this);
-        } else {
-            $elseFunctor && $elseFunctor();
+        } elseif ($elseFunctor) {
+            $elseFunctor();
+        }
+        return $this;
+    }
+
+    protected function add($s)
+    {
+        if ($this->condition) {
+            $this->output[] = $s;
         }
         return $this;
     }
@@ -76,22 +92,19 @@ class OutputBuilder
     /** Add a link */
     function link($href, $label, $icon = "", $attributes = []): static
     {
-        $this->output[] = "<a href=\"$href\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</a>";
-        return $this;
+        return $this->add("<a href=\"$href\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</a>");
     }
 
     /** Add a submit button */
     function submit($label, $icon = "", $attributes = []): static
     {
-        $this->output[] = "<button type=\"submit\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</button>";
-        return $this;
+        return $this->add("<button type=\"submit\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</button>");
     }
 
     /** Add a normal button */
     function button($label, $icon = "", $attributes = []): static
     {
-        $this->output[] = "<button type=\"button\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</button>";
-        return $this;
+        return $this->add("<button type=\"button\" {$this->attrs($attributes)}>{$this->iconLabel($label, $icon)}</button>");
     }
 
     /** Generate attributes from an array of [name]:value */
