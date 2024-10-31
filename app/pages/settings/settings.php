@@ -91,9 +91,9 @@ if ($v_emails->valid() && $can_change_emails) {
 $profile_picture = $user->picture && file_exists($user->picture) ? "/" . $user->picture : "/assets/images/profile/none.jpg";
 
 $image_mime_types = [
-    'jpg' => 'image/jpeg',
-    'png' => 'image/png',
-    'gif' => 'image/gif'
+    'jpg' => ['image/jpeg'],
+    'png' => ['image/png'],
+    'gif' => ['image/gif']
 ];
 $v_picture = new Validator(action: "picture_form");
 $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);

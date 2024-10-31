@@ -23,7 +23,7 @@ class Router extends Singleton
             ob_end_flush();
         } catch (Throwable $e) {
             $this->cleanBuffer();
-            logger()->error($e->getMessage());
+            logger()->error($e);
             Toast::error("Une erreur est survenue");
             Toast::renderOob();
         }
