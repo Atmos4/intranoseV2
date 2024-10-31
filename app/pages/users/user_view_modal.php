@@ -41,10 +41,15 @@ if (!Component::mounted()) {
                 <img class="profile-picture" src="<?= $profile_picture ?>">
             </figure>
             <p>
-                <?= $user->nose_email ?>
+                <a href="mailto:<?= $user->nose_email ?>"><?= $user->nose_email ?></a>
             </p>
+            <?php if ($user->phone): ?>
+                <p>
+                    📞 <a href="tel:<?= $user->phone ?>"><?= $user->phone ?></a>
+                </p>
+            <?php endif ?>
             <p>
-                <?= $user->phone ?: "" ?>
+                <?= $user->birthdate ? "🎂 " . date_format($user->birthdate, "d/m/Y") : "" ?>
             </p>
         </div>
 
