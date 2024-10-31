@@ -99,7 +99,6 @@ function get_header($headerName): string|null
 function redirect($href)
 {
     Toast::stash();
-    logger()->debug("", [$_SERVER]);
     if (get_header("HX-Request")) {
         header("HX-Location: $href");
     } else {
