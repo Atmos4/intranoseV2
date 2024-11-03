@@ -1,48 +1,46 @@
 {
-    "name": "Intranose",
-    "short_name": "Intranose",
-    "icons": [
-        {
-            "src": "/assets/favicon/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/assets/favicon/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "screenshots": [
-        {
-          "src": "/assets/images/webmanifest/login_wide.png",
-          "type": "image/png",
-          "sizes": "2560x1600",
-          "form_factor": "wide"
-        },
-        {
-          "src": "/assets/images/webmanifest/event_wide.png",
-          "type": "image/jpg",
-          "sizes": "2560x1600",
-          "form_factor": "wide"
-        },
-        {
-          "src": "/assets/images/webmanifest/login_narrow.png",
-          "type": "image/png",
-          "sizes": "750x1334",
-          "form_factor": "narrow"
-        },
-        {
-          "src": "/assets/images/webmanifest/event_narrow.png",
-          "type": "image/jpg",
-          "sizes": "750x1334",
-          "form_factor": "narrow"
-        }
-      ],
-    "start_url": "/",
-    "id": "/",
-    "theme_color": "#14ab1c",
-    "background_color": "#14ab1c",
-    "display": "standalone",
-    "description": "Plateforme d'inscription du club NOSE"
+  "name": "Intranose",
+  "short_name": "Intranose",
+  "icons": [
+    {
+      "src": "/assets/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/images/webmanifest/login_wide.png",
+      "type": "image/png",
+      "sizes": "2560x1600",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/assets/images/webmanifest/event_wide.png",
+      "type": "image/jpg",
+      "sizes": "2560x1600",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/assets/images/webmanifest/login_narrow.png",
+      "type": "image/png",
+      "sizes": "750x1334",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/images/webmanifest/event_narrow.png",
+      "type": "image/jpg",
+      "sizes": "750x1334",
+      "form_factor": "narrow"
+    }
+  ],
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "description": "Plateforme d'inscription du club NOSE"
 }

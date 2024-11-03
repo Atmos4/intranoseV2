@@ -20,6 +20,11 @@ if (is_dev()) {
     Router::add('/dev/toast', 'pages/dev/test_toast');
     Router::add('/dev/random', 'pages/dev/test_random');
 }
+if (env("STAGING")) {
+    // add staging user creation
+    Router::add('/create-user', 'pages/dev/create_test_user');
+}
+
 //Notifications
 Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
 
