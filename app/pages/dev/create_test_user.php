@@ -1,5 +1,5 @@
 <?php
-restrict_dev();
+restrict(!env("PRODUCTION"));
 
 $v_user = new Validator(action: "create_user");
 $firstname = $v_user->text("firstname")->required()->placeholder("First name")->autocomplete("given-name");
