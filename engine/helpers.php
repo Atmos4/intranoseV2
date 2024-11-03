@@ -178,21 +178,19 @@ function has_session($key): bool
 
 function is_dev()
 {
-    return !env('PRODUCTION');
+    return !env('PRODUCTION') && !env("STAGING");
+}
+
+function restrict($condition, $m = null)
+{
+    if (!$condition) {
+        force_404($m ?? "Condition wasn't met");
+    }
 }
 
 function restrict_dev()
 {
-    if (!is_dev()) {
-        force_404("Not in dev environement");
-    }
-}
-
-function restrict_environment($key)
-{
-    if (!is_dev() && !env($key)) {
-        force_404();
-    }
+    restrict(is_dev(), "Not in dev environment");
 }
 
 /**
