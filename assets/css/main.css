@@ -353,10 +353,14 @@ dialog.closing > article {
 article.notice {
   border: 1px solid var(--secondary-border);
 }
-article.notice.invalid {
+article.notice.invalid,
+article.notice.error {
   border-color: var(--del-color);
+  --primary: var(--del-color);
+  --primary-underline: var(--form-element-invalid-active-border-color);
 }
-article.notice.valid {
+article.notice.valid,
+article.notice.success {
   border-color: var(--ins-color);
 }
 article.notice.horizontal,

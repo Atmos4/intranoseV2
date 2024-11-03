@@ -24,10 +24,15 @@ class Router extends Singleton
         } catch (Throwable $e) {
             $this->cleanBuffer();
             logger()->error($e);
-            Toast::error("Une erreur est survenue");
-            Toast::renderOob();
+            if ($path_to_include != "pages/500.php") {
+                if (!get_header("hx-request") || get_header("hx-boosted")) {
+                    Page::reset();
+                    page("Erreur 500")->disableNav()->heading(false);
+                }
+                $this->render("pages/500.php");
+            }
         }
-        exit();
+        exit;
     }
 
     private function cleanBuffer(): self
