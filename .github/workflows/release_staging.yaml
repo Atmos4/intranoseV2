@@ -1,4 +1,4 @@
-name: Deploy on staging
+name: Release to staging
 
 on:
   push:
