@@ -106,7 +106,7 @@ class User
 
     function getPicture()
     {
-        return $this->picture && file_exists($this->picture) ? "/" . $this->picture : "/assets/images/profile/none.jpg";
+        return $this->picture && file_exists($this->picture) ? "/" . $this->picture : "/assets/images/none.jpg";
     }
 
     function replacePicture(string $newPicture)

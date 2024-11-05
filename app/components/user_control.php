@@ -5,7 +5,7 @@ if (isset($_POST['action']) and ($_POST['action'] == "reset-control")) {
 
 function ControlNotice()
 { ?>
-    <div class="control-notice">
+    <div class="control-notice" data-theme="light">
         Vous contrôlez actuellement
         <?= User::getCurrent()->first_name . " " . User::getCurrent()->last_name ?>
         <form method="post">

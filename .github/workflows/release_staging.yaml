@@ -44,6 +44,5 @@ jobs:
           key: ${{ secrets.STAGING_DEPLOY_SSH_KEY }}
           passphrase: ${{ secrets.STAGING_DEPLOY_SSH_KEY_PASS }}
           script: |
-            rm .sqlite/db.sqlite
             php bin/doctrine migrations:migrate
             php bin/doctrine orm:generate-proxies

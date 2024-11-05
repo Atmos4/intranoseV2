@@ -135,31 +135,32 @@ function pn_checkPermission() {
  * send notification subscription to the server for registration
  */
 async function pn_subscribe() {
-  if (pn_isAvailable()) {
-    var appPublicKey = encodeToUint8Array(strAppPublicKey);
-
-    return pn_checkPermission()
-      .then(() => navigator.serviceWorker.ready)
-      .then((serviceWorkerRegistration) =>
-        serviceWorkerRegistration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: appPublicKey,
-        })
-      )
-      .then((subscription) => {
-        // create subscription on server
-        return pn_sendSubscriptionToServer(subscription, "PUT");
-      })
-      .catch((e) => {
-        if (Notification.permission === "denied") {
-          console.warn("Notifications are denied by the user.");
-        } else {
-          console.error("Impossible to subscribe to push notifications", e);
-        }
-      });
-  } else {
+  if (!pn_isAvailable()) {
     console.warn("Push notifications not available.");
+    return;
   }
+
+  var appPublicKey = encodeToUint8Array(strAppPublicKey);
+
+  return await pn_checkPermission()
+    .then(() => navigator.serviceWorker.ready)
+    .then((serviceWorkerRegistration) =>
+      serviceWorkerRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: appPublicKey,
+      })
+    )
+    .then((subscription) => {
+      // create subscription on server
+      return pn_sendSubscriptionToServer(subscription, "PUT");
+    })
+    .catch((e) => {
+      if (Notification.permission === "denied") {
+        console.warn("Notifications are denied by the user.");
+      } else {
+        console.error("Impossible to subscribe to push notifications", e);
+      }
+    });
 }
 
 /**
@@ -170,8 +171,7 @@ async function pn_updateSubscription() {
     const { pushManager } = await navigator.serviceWorker.ready;
     const subscription = await pushManager.getSubscription();
     if (!subscription) {
-      pn_subscribe();
-      return;
+      return await pn_subscribe();
     }
     return await pn_sendSubscriptionToServer(subscription, "PUT");
   } catch (e) {
