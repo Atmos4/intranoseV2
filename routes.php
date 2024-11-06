@@ -85,7 +85,7 @@ Router::add('/nouveau-mot-de-passe', 'pages/tokens/reset_password.php');
 // Shared documents
 Router::add('/documents', 'pages/shared_documents/shared_documents');
 Router::add('/documents/ajouter', 'pages/shared_documents/add_shared_document');
-Router::add('/telecharger', 'uploads/download_file');
+Router::add('/telecharger', 'pages/files/download_file');
 Router::add('/documents/$doc_id/supprimer', 'pages/shared_documents/shared_documents_delete_confirm');
 
 //Report
