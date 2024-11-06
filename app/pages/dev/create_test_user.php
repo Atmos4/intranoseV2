@@ -8,10 +8,11 @@ $lastname = $v_user->text("lastname")->required()->placeholder("Last name")->aut
 if ($v_user->valid()) {
     $fn = $firstname->value;
     $ln = $lastname->value;
-    if (SeedingService::createTestUser($fn, $ln, em())) {
-        $v_user->set_success("Created user $newUser->first_name $newUser->last_name<br>"
-            . "Login: $newUser->login<br>"
-            . "Password: " . strtolower($fn));
+    if ($result = SeedingService::createTestUser($fn, $ln, em())) {
+        [$user, $pw] = $result;
+        $v_user->set_success("Created user $user->first_name $user->last_name<br>"
+            . "Login: $user->login<br>"
+            . "Password: " . $pw);
     } else {
         $v_user->set_error("User already exists");
     }

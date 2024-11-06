@@ -37,20 +37,26 @@ if (!Component::mounted()) {
         </header>
 
         <div class="row center">
-            <figure class="col">
-                <img class="profile-picture" src="<?= $profile_picture ?>">
-            </figure>
-            <p>
-                <a href="mailto:<?= $user->nose_email ?>"><?= $user->nose_email ?></a>
-            </p>
+            <section>
+                <figure class="col">
+                    <img class="profile-picture" src="<?= $profile_picture ?>">
+                </figure>
+            </section>
+            <section>
+                <a class="contrast" href="mailto:<?= $user->nose_email ?>">
+                    <?= $user->nose_email ?>
+                </a>
+            </section>
             <?php if ($user->phone): ?>
-                <p>
-                    📞 <a href="tel:<?= $user->phone ?>"><?= $user->phone ?></a>
-                </p>
+                <section>
+                    📞 <a class="contrast" href="tel:<?= $user->phone ?>">
+                        <?= $user->phone ?>
+                    </a>
+                </section>
             <?php endif ?>
-            <p>
+            <section>
                 <?= $user->birthdate ? "🎂 " . date_format($user->birthdate, "d/m/Y") : "" ?>
-            </p>
+            </section>
         </div>
 
         <?php if ($can_edit_users): ?>

@@ -88,7 +88,7 @@ if ($v_emails->valid() && $can_change_emails) {
 }
 
 // Picture
-$profile_picture = $user->picture && file_exists($user->picture) ? "/" . $user->picture : "/assets/images/profile/none.jpg";
+$profile_picture = $user->getPicture();
 
 $image_mime_types = [
     'jpg' => ['image/jpeg'],

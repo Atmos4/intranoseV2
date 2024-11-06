@@ -185,15 +185,8 @@ input[role="switch"]:not(:checked) ~ ins {
 
 /* Controlled users */
 .control-notice {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  align-items: center;
-  text-align: center;
   padding: 0.5rem 1rem;
   margin: 0 auto 2rem;
-  color: black;
-  background-color: var(--mark-background-color);
 }
 
 .control-notice > form {
@@ -208,7 +201,6 @@ input[role="switch"]:not(:checked) ~ ins {
   margin: 0;
   padding: 0.5rem;
   height: 1.5rem;
-  color: black;
 }
 
 .control-notice ~ main {
