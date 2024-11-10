@@ -8,20 +8,32 @@ class MockMailer extends Mailer
     function __construct()
     {
         $this->mockedMail = new MockedEmail();
+        $this->global_address = "test@test.fr";
+        $this->mockedMail->addresses = [];
     }
 
     function createEmail($address, $subject, $content): self
     {
-        $this->mockedMail->address = $address;
+        $this->mockedMail->addresses[] = $address;
         $this->mockedMail->subject = $subject;
         $this->mockedMail->content = $content;
+        return $this;
+    }
+
+    function createBulkEmails($addresses, $subject, $content): self
+    {
+        foreach ($addresses as $address => $name) {
+            array_push($this->mockedMail->addresses, $address);
+        }
+        $this->mail->Subject = $subject;
+        $this->mail->Body = $content;
         return $this;
     }
 
     function send(): MailResult
     {
         logger()->debug("MockMailer: sent email to {address} with subject {subject}", [
-            "address" => $this->mockedMail->address,
+            "address" => $this->mockedMail->addresses,
             "subject" => $this->mockedMail->subject,
             "content" => $this->mockedMail->content,
         ]);
@@ -31,7 +43,7 @@ class MockMailer extends Mailer
 
 class MockedEmail
 {
-    public string $address;
+    public array $addresses;
     public string $subject;
     public string $content;
 }

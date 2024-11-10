@@ -26,6 +26,8 @@ class Mailer extends FactoryDependency
 {
     public PHPMailer $mail;
 
+    public string $global_address;
+
     // Only allow new instance with create() function
     function __construct()
     {
@@ -33,6 +35,7 @@ class Mailer extends FactoryDependency
         $this->mail->CharSet = "UTF-8";
         $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $this->mail->isSMTP();
+        $this->mail->isHTML(true);
         $this->mail->Host = env("MAIL_HOST");
         $this->mail->SMTPAuth = true;
         $this->mail->Username = env("MAIL_USER");
@@ -40,6 +43,8 @@ class Mailer extends FactoryDependency
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $this->mail->Port = 465;
         $this->mail->setFrom(env("MAIL_USER"));
+
+        $this->global_address = env("STAGING") ? "devs@nose42.fr" : "nose@nose42.fr";
 
         // DKIM - not using for now
         if (env("USE_DKIM")) {
@@ -54,6 +59,16 @@ class Mailer extends FactoryDependency
     function createEmail($address, $subject, $content): self
     {
         $this->mail->addAddress($address);
+        $this->mail->Subject = $subject;
+        $this->mail->Body = $content;
+        return $this;
+    }
+
+    function createBulkEmails($addresses, $subject, $content): self
+    {
+        foreach ($addresses as $email => $name) {
+            $this->mail->addAddress($email, $name);
+        }
         $this->mail->Subject = $subject;
         $this->mail->Body = $content;
         return $this;
@@ -91,5 +106,14 @@ class MailerFactory
         $subject = "Activation du compte NOSE";
         $content = "Voici le lien pour activer ton compte: $base_url/activation?token=$token";
         return Mailer::create()->createEmail($address, $subject, $content);
+    }
+
+    static function createEventPublicationEmail(Event $event)
+    {
+        $base_url = env("BASE_URL");
+        $subject = "Nouvel événement sur l'intranose";
+        $content = "Un nouvel événement a été publié sur l'intranose ! Pour aller le voir : <a href = '$base_url/evenements/$event->id' >Nouvel événement</a>";
+        $mailer = Mailer::create();
+        return $mailer->createEmail($mailer->global_address, $subject, $content);
     }
 }

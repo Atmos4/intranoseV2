@@ -1,0 +1,3 @@
+label:has([type="checkbox"], [type="radio"]) {
+  width: auto;
+}
