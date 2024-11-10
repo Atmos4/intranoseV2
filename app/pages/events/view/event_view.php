@@ -64,7 +64,7 @@ page($event->name)->css("event_view.css");
                         <div class="timeline-start">
                             Départ
                         </div>
-                        <div class="timeline-middle">
+                        <div class="timeline-middle lg:rotate">
                             <?php include app_path() . "/components/start_icon.php" ?>
                         </div>
                         <div class="timeline-end timeline-box">
