@@ -45,35 +45,64 @@ page($event->name)->css("event_view.css");
 <article>
     <header>
         <div class="row g-2 center align-center">
-            <div class="col-sm-12 col-md">
-                <?php include app_path() . "/components/start_icon.php" ?>
-                <span>
-                    <?= "Départ : " . format_date($event->start_date) ?>
-                </span>
-                <br>
-                <?php include app_path() . "/components/finish_icon.php" ?>
-                <span>
-                    <?= "Retour : " . format_date($event->end_date) ?>
-                </span>
-                <br>
-                <i class="fas fa-clock"></i>
-                <span>
-                    <?= "Date limite : " . format_date($event->deadline) ?>
-                </span>
+            <div class="col-12">
+                <ul class="timeline timeline-vertical lg:timeline-horizontal">
+                    <li>
+                        <div class="timeline-start">
+                            Deadline
+                        </div>
+                        <div class="timeline-middle">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="timeline-end timeline-box">
+                            <?= format_date($event->deadline) ?>
+                        </div>
+                        <hr />
+                    </li>
+                    <li>
+                        <hr />
+                        <div class="timeline-start">
+                            Départ
+                        </div>
+                        <div class="timeline-middle">
+                            <?php include app_path() . "/components/start_icon.php" ?>
+                        </div>
+                        <div class="timeline-end timeline-box">
+                            <?= format_date($event->start_date) ?>
+                        </div>
+                        <hr />
+                    </li>
+                    <li>
+                        <hr />
+                        <div class="timeline-start">
+                            Retour
+                        </div>
+                        <div class="timeline-middle">
+                            <?php include app_path() . "/components/finish_icon.php" ?>
+                        </div>
+                        <div class="timeline-end timeline-box">
+                            <?= format_date($event->end_date) ?>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="col-auto">
-                <div class="row g-2">
+            <div class="col-12">
+                <div class="row g-2 center">
                     <?php if ($event->bulletin_url): ?>
-                        <a role="button" href="<?= $event->bulletin_url ?>" target="_blank" class="secondary"> <i
-                                class="fa fa-paperclip"></i>
-                            Bulletin
-                            <i class="fa fa-external-link"></i></a>
+                        <div class="col-auto">
+                            <a role="button" href="<?= $event->bulletin_url ?>" target="_blank"> <i
+                                    class="fa fa-paperclip"></i>
+                                Bulletin
+                                <i class="fa fa-external-link"></i></a>
+                        </div>
                     <?php endif ?>
                     <?php if ($event->open && $totalEntryCount): ?>
-                        <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary">
-                            <i class="fas fa-users"></i> Participants
-                            <?= "($totalEntryCount)" ?>
-                        </a>
+                        <div class="col-auto">
+                            <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary">
+                                <i class="fas fa-users"></i> Participants
+                                <?= "($totalEntryCount)" ?>
+                            </a>
+                        </div>
                     <?php endif ?>
                 </div>
             </div>
