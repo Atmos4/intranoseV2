@@ -14,7 +14,7 @@ if (!empty($_POST) and isset($_POST['publish'])) {
     if ($event->open && isset($_POST['send_email'])) {
         MailerFactory::createEventPublicationEmail($event)->send();
     }
-    #redirect("/evenements/$event->id");
+    redirect("/evenements/$event->id");
 }
 
 page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Attention")->css("event_publish.css");

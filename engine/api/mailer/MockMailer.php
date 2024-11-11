@@ -22,11 +22,9 @@ class MockMailer extends Mailer
 
     function createBulkEmails($addresses, $subject, $content): self
     {
-        foreach ($addresses as $address => $name) {
-            array_push($this->mockedMail->addresses, $address);
-        }
-        $this->mail->Subject = $subject;
-        $this->mail->Body = $content;
+        $this->mockedMail->addresses = $addresses;
+        $this->mockedMail->subject = $subject;
+        $this->mockedMail->content = $content;
         return $this;
     }
 

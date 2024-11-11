@@ -111,8 +111,16 @@ class MailerFactory
     static function createEventPublicationEmail(Event $event)
     {
         $base_url = env("BASE_URL");
-        $subject = "Nouvel événement sur l'intranose";
-        $content = "Un nouvel événement a été publié sur l'intranose ! Pour aller le voir : <a href = '$base_url/evenements/$event->id' >Nouvel événement</a>";
+        $subject = (env("STAGING") ? "[STAGING] " : "") . "Nouvel événement sur l'intranose";
+        $event_date = $event->deadline->format('d/m/Y');
+        $content = "<h3>Un nouvel événement <a href = '$base_url/evenements/$event->id' >$event->name</a> a été publié sur l'intranose !</h3>
+        La deadline pour s'inscrire est le $event_date.
+        Pour voir les infos : <a href = '$base_url/evenements/$event->id' >Lien de l'événement</a>.
+        Pour s'inscrire : <a href = '$base_url/evenements/$event->id/inscription' >Inscription</a>.
+        
+        A bientôt pour de nouveaux événements !
+        Le Nose
+        <a href = 'www.nose42.fr' >www.nose42.fr</a>";
         $mailer = Mailer::create();
         return $mailer->createEmail($mailer->global_address, $subject, $content);
     }
