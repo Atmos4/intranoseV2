@@ -77,7 +77,7 @@ if ($v->valid()) {
                 $activity_present,
                 $activity_present ? $activity_form["comment"]->value : "",
             );
-            $activity_entry->category = $activity_present ? $activity_category_map[$activity_form["category"]->value] : null;
+            $activity_entry->category = $activity_present && isset($activity_form["category"]) ? $activity_category_map[$activity_form["category"]->value] : null;
             em()->persist($activity_entry);
         } else {
             em()->remove($activity_entry);

@@ -57,7 +57,9 @@ if ($v->valid()) {
         $is_present ?? false,
         $is_present ? $activity_comment->value : "",
     );
-    $activity_entry->category = $is_present ? $activity_category_map[$activity_category->value] : null;
+    if (count($activity->categories)) {
+        $activity_entry->category = $is_present ? $activity_category_map[$activity_category->value] : null;
+    }
     em()->persist($activity_entry);
     em()->flush();
     redirect("/evenements/$event->id");
