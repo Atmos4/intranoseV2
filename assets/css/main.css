@@ -486,8 +486,8 @@ article.notice > header,
   grid-row-start: none;
 }
 :where(.timeline-vertical > li) {
-  --timeline-row-start: minmax(0, 10px);
-  --timeline-row-end: minmax(0, 10px);
+  --timeline-row-start: minmax(0, 1fr);
+  --timeline-row-end: minmax(0, 1fr);
   justify-items: center;
 }
 .timeline-vertical > li > hr {
