@@ -9,7 +9,7 @@ Router::add('/', 'pages/index');
 Router::add('/login', 'pages/login');
 
 // Developement
-if (is_dev()) {
+if (is_dev() || env("STAGING")) {
     Router::add('/dev', 'pages/dev/dev_page');
     Router::add('/dev/create-user', 'pages/dev/create_test_user');
     Router::add('/dev/change-access', 'pages/dev/change_user_access');
