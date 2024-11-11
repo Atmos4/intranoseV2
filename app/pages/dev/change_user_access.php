@@ -1,5 +1,6 @@
 <?php
-restrict_dev();
+restrict_staging();
+restrict_access([Permission::ROOT]);
 
 $user = User::getMain();
 

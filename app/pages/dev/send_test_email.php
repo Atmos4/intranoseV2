@@ -1,6 +1,6 @@
 <?php
-restrict_dev();
-restrict_access();
+restrict_staging();
+restrict_access([Permission::ROOT]);
 
 $v = new Validator();
 $address = $v->text("address")->placeholder("Destinataire")->required()->autocomplete("email");

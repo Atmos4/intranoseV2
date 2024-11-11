@@ -1,5 +1,6 @@
 <?php
-restrict_dev();
+restrict_staging();
+restrict_access([Permission::ROOT]);
 
 $user = em()->find(User::class, get_route_param("user_id"));
 if (!$user) {

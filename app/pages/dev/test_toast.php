@@ -1,4 +1,7 @@
 <?php
+restrict_staging();
+restrict_access([Permission::ROOT]);
+
 $v = new Validator(action: "toast");
 $success = $v->number("success")->placeholder("success count");
 $error = $v->number("error")->placeholder("error count");

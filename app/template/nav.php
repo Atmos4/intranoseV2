@@ -7,7 +7,7 @@ $menu = MainMenu::create()
     ->addItem("Documents", "/documents", "fa-file")
 ;
 
-if (is_dev()) {
+if (!env('PRODUCTION')) {
     $menu->addItem("Dev", "/dev", "fa-code");
 }
 $main_user = User::getMain();

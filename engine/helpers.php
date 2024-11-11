@@ -193,6 +193,11 @@ function restrict_dev()
     restrict(is_dev(), "Not in dev environment");
 }
 
+function restrict_staging()
+{
+    restrict(!env('PRODUCTION'), "Not in dev or staging environement");
+}
+
 /**
  * Format a date.
  * @param string|int|DateTime $date The date either as a string, a timestamp or a DateTime.
