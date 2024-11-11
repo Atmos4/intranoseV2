@@ -7,7 +7,7 @@ $menu = MainMenu::create()
     ->addItem("Documents", "/documents", "fa-file")
 ;
 
-if (is_dev()) {
+if (dev_or_staging()) {
     $menu->addItem("Dev", "/dev", "fa-code");
 }
 $main_user = User::getMain();

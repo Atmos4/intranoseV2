@@ -26,8 +26,6 @@ class Mailer extends FactoryDependency
 {
     public PHPMailer $mail;
 
-    public string $global_address;
-
     // Only allow new instance with create() function
     function __construct()
     {
@@ -44,8 +42,6 @@ class Mailer extends FactoryDependency
         $this->mail->Port = 465;
         $this->mail->setFrom(env("MAIL_USER"));
 
-        $this->global_address = env("STAGING") ? "devs@nose42.fr" : "nose@nose42.fr";
-
         // DKIM - not using for now
         if (env("USE_DKIM")) {
             $this->mail->DKIM_domain = env("DKIM_DOMAIN");
@@ -54,6 +50,11 @@ class Mailer extends FactoryDependency
             $this->mail->DKIM_passphrase = env("DKIM_PASSPHRASE");
             $this->mail->DKIM_identity = $this->mail->From;
         }
+    }
+
+    static function getGlobalAddress()
+    {
+        return env("MAIL_GLOBAL_ADDRESS") ?? "devs@nose42.fr";
     }
 
     function createEmail($address, $subject, $content): self
@@ -113,15 +114,16 @@ class MailerFactory
         $base_url = env("BASE_URL");
         $subject = (env("STAGING") ? "[STAGING] " : "") . "Nouvel événement sur l'intranose";
         $event_date = $event->deadline->format('d/m/Y');
-        $content = "<h3>Un nouvel événement <a href = '$base_url/evenements/$event->id' >$event->name</a> a été publié sur l'intranose !</h3>
-        La deadline pour s'inscrire est le $event_date.
-        Pour voir les infos : <a href = '$base_url/evenements/$event->id' >Lien de l'événement</a>.
-        Pour s'inscrire : <a href = '$base_url/evenements/$event->id/inscription' >Inscription</a>.
-        
-        A bientôt pour de nouveaux événements !
-        Le Nose
+        $content = "<h3>Un nouvel événement a été publié sur l'intranose !</h3>
+        Nom de l'événement : <b>$event->name</b><br>
+        La deadline pour s'inscrire est le $event_date.<br>
+        Pour voir les infos : <a href = '$base_url/evenements/$event->id' >Lien de l'événement</a>.<br>
+        Pour s'inscrire : <a href = '$base_url/evenements/$event->id/inscription' >Inscription</a>.<br>
+        <br>
+        A bientôt pour de nouveaux événements !<br>
+        Le Nose<br>
         <a href = 'www.nose42.fr' >www.nose42.fr</a>";
         $mailer = Mailer::create();
-        return $mailer->createEmail($mailer->global_address, $subject, $content);
+        return $mailer->createEmail(Mailer::getGlobalAddress(), $subject, $content);
     }
 }
