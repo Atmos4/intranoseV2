@@ -40,7 +40,7 @@ class Mailer extends FactoryDependency
         $this->mail->Password = env("MAIL_PASSWORD");
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $this->mail->Port = 465;
-        $this->mail->setFrom(env("MAIL_USER"));
+        $this->mail->setFrom(env("MAIL_USER"), "Intranose");
 
         // DKIM - not using for now
         if (env("USE_DKIM")) {
