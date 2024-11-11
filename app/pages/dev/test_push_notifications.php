@@ -2,6 +2,7 @@
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
+restrict(dev_or_staging());
 restrict_access([Permission::ROOT]);
 
 $subscriptions = em()->getRepository('NotificationSubscription')->findAll();

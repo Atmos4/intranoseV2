@@ -40,7 +40,8 @@ page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Att
             <p>
                 <label>
                     <input name="send_email" type="checkbox" role="switch" checked />
-                    Je veux notifier les licenciés
+                    Envoyer un mail à l'adresse
+                    <?= Mailer::getGlobalAddress() ?>
                 </label>
             </p>
         <?php endif ?>

@@ -9,7 +9,9 @@ if (!$event->open) {
 }
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
-$can_register = (($event->open && $event->deadline >= date_create("today")) || $can_edit);
+$today_date = date_create("today");
+$deadline_in_future = $event->deadline >= $today_date;
+$can_register = ($event->open && $deadline_in_future) || $can_edit;
 $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
@@ -41,13 +43,19 @@ page($event->name)->css("event_view.css");
 <?php if ($is_simple) {
     require __DIR__ . "/ActivityView.php";
     return;
-} ?>
+}
+
+$deadline_class = $deadline_in_future ? "" : ($entry?->present ? "completed" : "missed");
+$start_class = $event->start_date < $today_date ? $deadline_class : "";
+$end_class = $event->end_date < $today_date ? $deadline_class : "";
+
+?>
 <article>
     <header>
         <div class="row g-2 center align-center">
             <div class="col-12">
                 <ul class="timeline timeline-vertical lg:timeline-horizontal">
-                    <li>
+                    <li class="<?= $deadline_class ?>">
                         <div class="timeline-start">
                             Deadline
                         </div>
@@ -57,9 +65,9 @@ page($event->name)->css("event_view.css");
                         <div class="timeline-end timeline-box">
                             <?= format_date($event->deadline) ?>
                         </div>
-                        <hr />
+                        <hr>
                     </li>
-                    <li>
+                    <li class="<?= $start_class ?>">
                         <hr />
                         <div class="timeline-start">
                             Départ
@@ -70,9 +78,9 @@ page($event->name)->css("event_view.css");
                         <div class="timeline-end timeline-box">
                             <?= format_date($event->start_date) ?>
                         </div>
-                        <hr />
+                        <hr>
                     </li>
-                    <li>
+                    <li class="<?= $end_class ?>">
                         <hr />
                         <div class="timeline-start">
                             Retour
@@ -89,7 +97,7 @@ page($event->name)->css("event_view.css");
             <div class="col-12">
                 <div class="row g-2 center">
                     <?php if ($event->bulletin_url): ?>
-                        <div class="col-auto">
+                        <div class="col-12 col-lg-auto">
                             <a role="button" href="<?= $event->bulletin_url ?>" target="_blank"> <i
                                     class="fa fa-paperclip"></i>
                                 Bulletin
@@ -97,7 +105,7 @@ page($event->name)->css("event_view.css");
                         </div>
                     <?php endif ?>
                     <?php if ($event->open && $totalEntryCount): ?>
-                        <div class="col-auto">
+                        <div class="col-12 col-lg-auto">
                             <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary">
                                 <i class="fas fa-users"></i> Participants
                                 <?= "($totalEntryCount)" ?>
