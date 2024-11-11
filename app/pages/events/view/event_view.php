@@ -145,6 +145,12 @@ page($event->name)->css("event_view.css");
                                 href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>/modifier'>
                                 <i class="fa fa-pen"></i>
                                 Modifier</a>
+                            <a role="button" class="outline error"
+                                href="/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>/supprimer">
+                                <i class="fa fa-trash"></i>
+                                Supprimer
+                            </a>
+
                         <?php endif ?>
                     </p>
                 </details>

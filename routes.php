@@ -42,7 +42,7 @@ Router::add('/evenements/$event_id', 'pages/events/view/event_view');
 Router::add('/evenements/$event_id/inscription', 'pages/events/register/event_register_complex');
 Router::add('/evenements/$event_id/inscription_simple', 'pages/events/register/event_register_simple');
 Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
-Router::add('/evenements/$event_id/supprimer', 'pages/events/event_delete');
+Router::add('/evenements/$event_id/supprimer', 'pages/events/delete/event_delete');
 Router::add('/evenements/$event_id/event_form', 'pages/events/edit/EventEditForm');
 
 // Event entry lists
@@ -53,7 +53,7 @@ Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/
 Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/edit/activity_edit');
 Router::add('/evenements/$event_id/activite/nouveau', 'pages/events/edit/activity_edit');
 Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/view/activity_view');
-Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/activity_delete');
+Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/delete/activity_delete');
 
 // Settings
 Router::add('/mon-profil', 'pages/settings/settings');
