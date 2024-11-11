@@ -68,7 +68,7 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
                         <hr>
                     </li>
                     <li class="<?= $start_class ?>">
-                        <hr />
+                        <hr>
                         <div class="timeline-start">
                             Départ
                         </div>
@@ -81,7 +81,7 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
                         <hr>
                     </li>
                     <li class="<?= $end_class ?>">
-                        <hr />
+                        <hr>
                         <div class="timeline-start">
                             Retour
                         </div>
