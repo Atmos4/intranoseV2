@@ -11,10 +11,13 @@ if (!empty($_POST) and isset($_POST['publish'])) {
     $event->open = !$event->open;
     em()->persist($event);
     em()->flush();
+    if ($event->open && isset($_POST['send_email'])) {
+        MailerFactory::createEventPublicationEmail($event)->send();
+    }
     redirect("/evenements/$event->id");
 }
 
-page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Attention");
+page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Attention")->css("event_publish.css");
 ?>
 <form method="post">
     <div class="row center">
@@ -33,6 +36,14 @@ page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Att
                 L'événement sera alors visible et ouvert aux inscriptions.
             <?php endif ?>
         </p>
+        <?php if (!$event->open): ?>
+            <p>
+                <label>
+                    <input name="send_email" type="checkbox" role="switch" checked />
+                    Je veux notifier les licenciés
+                </label>
+            </p>
+        <?php endif ?>
         <div class="col-auto">
             <a class="secondary" role="button" href="/evenements/<?= $event_id ?>">Annuler</a>
         </div>
