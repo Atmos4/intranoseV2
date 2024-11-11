@@ -542,14 +542,18 @@ article.notice > header,
 .timeline-vertical > li > hr {
   width: var(--hr-stroke);
 }
-.timeline .legend {
+.timeline .timeline-start {
   color: var(--fill-start-color);
 }
 .timeline .completed {
   --fill-color: var(--ins-color);
   --fill-start-color: var(--ins-color);
 }
-@media (min-width: 1024px) {
+.timeline .missed {
+  --fill-color: var(--del-color);
+  --fill-start-color: var(--del-color);
+}
+@media (min-width: 992px) {
   .lg\:timeline-horizontal.timeline-compact {
     --timeline-row-start: 0;
   }

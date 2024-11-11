@@ -181,6 +181,11 @@ function is_dev()
     return !env('PRODUCTION') && !env("STAGING");
 }
 
+function dev_or_staging()
+{
+    return !env('PRODUCTION');
+}
+
 function restrict($condition, $m = null)
 {
     if (!$condition) {

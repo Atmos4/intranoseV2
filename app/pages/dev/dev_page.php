@@ -1,5 +1,5 @@
 <?php
-restrict_dev();
+restrict(dev_or_staging());
 
 function DevButton($href, $label)
 {
@@ -9,13 +9,17 @@ function DevButton($href, $label)
 }
 
 page("Dev") ?>
-<b>User control</b>
-<nav>
-    <ul>
-        <?= DevButton("/dev/create-user", "Créer utilisateur") ?>
-        <?= DevButton("/dev/change-access", "Change access") ?>
-    </ul>
-</nav>
+
+<?php if (is_dev()): ?>
+    <b>User control</b>
+    <nav>
+        <ul>
+            <?= DevButton("/dev/create-user", "Créer utilisateur") ?>
+            <?= DevButton("/dev/change-access", "Change access") ?>
+        </ul>
+    </nav>
+<?php endif ?>
+
 <b>APIs</b>
 <nav>
     <ul>
