@@ -3,7 +3,7 @@ require_once app_path() . "/components/conditional_icon.php";
 
 function IconText($icon, $text, $wrapper = null)
 {
-    $text = "<i class=\"fas fa-fw $icon\"></i><span class=\"space-before\">$text</span>";
+    $text = "<i class=\"fas fa-fw $icon\"></i> $text";
     return $wrapper ? "<$wrapper>$text</$wrapper>" : $text;
 }
 
@@ -31,17 +31,17 @@ function RenderActivityEntry(?Activity $activity, bool $can_register = null)
 
         <?php if ($extra_info): ?>
             <div class="row g-2">
-                <div class="col-sm-12 col-md-6">
-                    <div class="row g-2">
-                        <?php if ($activity_entry?->category): ?>
+                <?php if ($activity_entry?->category): ?>
+                    <div class="col-sm-12 col-md">
+                        <div class="row g-2">
                             <span title="Catégorie">
                                 <?= IconText("fa-person-running", $activity_entry->category?->name) ?>
                             </span>
-                        <?php endif ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif ?>
                 <?php if ($activity_entry?->comment): ?>
-                    <div class="col-sm-12 col-md-6" title="Remarque">
+                    <div class="col" title="Remarque">
                         <?= IconText("fa-comment", $activity_entry->comment) ?>
                     </div>
                 <?php endif; ?>
