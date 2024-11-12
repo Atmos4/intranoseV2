@@ -18,6 +18,7 @@ if ($event_entry) {
         "event_accomodation" => $event_entry->accomodation,
         "event_comment" => $event_entry->comment,
         "event_comment_noentry" => $event_entry->comment,
+        "has_car" => $event_entry->has_car,
     ];
 }
 
@@ -37,6 +38,7 @@ $transport = $v->switch("event_transport")->label("Transport");
 $accomodation = $v->switch("event_accomodation")->label("Hébergement");
 $event_comment = $v->textarea("event_comment")->label("Remarques");
 $event_comment_noentry = $v->textarea("event_comment_noentry")->label("Remarque");
+$has_car = $v->switch("has_car")->label("Voiture disponible");
 $activity_rows = [];
 foreach ($event->activities as $index => $activity) {
     $activity_rows[$index]["entry"] = $v->switch("activity_{$index}_entry")->set_labels("Je participe", "Je ne participe pas");
@@ -58,6 +60,7 @@ if ($v->valid()) {
         date_create(),
         $event_present->value ? $event_comment->value : $event_comment_noentry->value,
     );
+    $event_entry->has_car = $has_car->value ? true : false;
     em()->persist($event_entry);
 
     foreach ($event->activities as $index => $activity) {
@@ -141,7 +144,9 @@ page("Inscription - " . $event->name)->css("event_register.css");
             <fieldset>
                 <?= $event_comment->render() ?>
             </fieldset>
-
+            <fieldset>
+                <?= $has_car->render() ?>
+            </fieldset>
             <?php if (count($event->activities)): ?>
                 <h4>Activités : </h4>
                 <table role="grid">
