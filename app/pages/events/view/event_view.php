@@ -1,12 +1,16 @@
 <?php
 restrict_access();
-
 include __DIR__ . "/../eventUtils.php";
-
-$event = EventService::getEventWithAllData(get_route_param('event_id'), User::getCurrent()->id);
+$user_id = User::getCurrent()->id;
+$event = EventService::getEventWithAllData(get_route_param('event_id'), $user_id);
 if (!$event->open) {
     restrict_access(Access::$ADD_EVENTS);
 }
+
+$vehicles = em()->createQuery('SELECT v FROM Vehicle v WHERE v.event = ?1')->setParameter(
+    1,
+    $event->id
+)->getResult();
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
 $today_date = date_create("today");
@@ -105,7 +109,7 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
                             </span>
                         <?php endif ?>
                     </p>
-                    <p>
+                    <div class="buttons-grid">
                         <a role="button" class="outline secondary"
                             href='/evenements/<?= $event->id ?>/activite/<?= $activity->id ?>'>
                             <i class="fa fa-circle-info"></i>
@@ -122,7 +126,7 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
                             </a>
 
                         <?php endif ?>
-                    </p>
+                    </div>
                 </details>
                 <hr>
             <?php endforeach; ?>
@@ -144,3 +148,16 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
         </section>
     <?php endif ?>
 </article>
+
+<h2><i class="fas fa-car"></i> Véhicules</h2>
+
+<?php foreach ($vehicles as $vehicle): ?>
+    <div hx-get="/evenements/<?= $event->id ?>/vehicule/<?= $vehicle->id ?>/inscription/<?= $user_id ?>" hx-trigger="load"
+        hx-target="this">
+    </div>
+<?php endforeach ?>
+
+<a role=button class="secondary" href="/evenements/<?= $event->id ?>/vehicule/nouveau">
+    <i class="fas fa-plus"></i> Ajouter un véhicule</a>
+
+<?= UserModal::renderRoot() ?>

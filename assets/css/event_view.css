@@ -11,3 +11,64 @@ details summary:focus:not([role="button"]) {
 .description {
   white-space: pre-wrap;
 }
+
+.vehicle-article details {
+  margin: 0;
+}
+
+.vehicle-article details summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-template-areas: "vehicle-name location capacity button";
+}
+
+.vehicle-article:where(:hover, :focus, :focus-within) {
+  background-color: var(--secondary-focus) !important;
+  outline: none;
+}
+
+.vehicle-name {
+  grid-area: vehicle-name;
+  text-align: center;
+  align-self: center;
+  justify-self: start;
+}
+
+.vehicle-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "vehicle-article register vehicle-delete";
+}
+
+.location {
+  grid-area: location;
+  text-align: center;
+  align-self: center;
+}
+
+.capacity {
+  grid-area: capacity;
+  text-align: center;
+  align-self: center;
+}
+
+.register {
+  grid-area: register;
+  text-align: center;
+  align-self: center;
+  margin: 0 0 var(--spacing);
+}
+
+.vehicle-delete {
+  grid-area: vehicle-delete;
+  text-align: center;
+  align-self: center;
+  margin: 0 0 var(--spacing);
+}
+
+.passenger-flex {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
