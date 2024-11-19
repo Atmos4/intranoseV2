@@ -2,13 +2,12 @@
 restrict_access(Access::$ADD_EVENTS);
 
 $event_type = get_query_param("type", false, false);
+$event_id = get_route_param("event_id", strict: false);
 
 if ($event_type && $event_type == "simple") {
     require_once __DIR__ . "/ActivityEditForm.php";
     return;
 }
-
-$event_id = get_route_param("event_id", strict: false);
 
 if ($event_id) {
     $event = em()->find(Event::class, $event_id);
@@ -45,6 +44,7 @@ if ($v->valid()) {
     $event->description = $description->value;
     em()->persist($event);
     em()->flush();
+    Toast::success("Enregistré");
     redirect("/evenements/$event->id");
 }
 

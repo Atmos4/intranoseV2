@@ -39,7 +39,7 @@ try {
     $sqlite->beginTransaction();
     // first import things that would FK CONTRAINT
     foreach (ORM_TABLES_PRIORITY as $table) {
-        $sqlite->executeQuery($insertArray[$table]);
+        $sqlite->executeQuery(preg_replace('/\\\n/', "\n", $insertArray[$table]));
         unset($insertArray[$table]);
         echo "- Imported $table" . PHP_EOL;
     }

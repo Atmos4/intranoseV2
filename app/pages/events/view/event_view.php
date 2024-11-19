@@ -54,45 +54,7 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
     <header>
         <div class="row g-2 center align-center">
             <div class="col-12">
-                <ul class="timeline timeline-vertical lg:timeline-horizontal">
-                    <li class="<?= $deadline_class ?>">
-                        <div class="timeline-start">
-                            Deadline
-                        </div>
-                        <div class="timeline-middle">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="timeline-end timeline-box">
-                            <?= format_date($event->deadline) ?>
-                        </div>
-                        <hr>
-                    </li>
-                    <li class="<?= $start_class ?>">
-                        <hr>
-                        <div class="timeline-start">
-                            Départ
-                        </div>
-                        <div class="timeline-middle lg:rotate">
-                            <?php include app_path() . "/components/start_icon.php" ?>
-                        </div>
-                        <div class="timeline-end timeline-box">
-                            <?= format_date($event->start_date) ?>
-                        </div>
-                        <hr>
-                    </li>
-                    <li class="<?= $end_class ?>">
-                        <hr>
-                        <div class="timeline-start">
-                            Retour
-                        </div>
-                        <div class="timeline-middle">
-                            <?php include app_path() . "/components/finish_icon.php" ?>
-                        </div>
-                        <div class="timeline-end timeline-box">
-                            <?= format_date($event->end_date) ?>
-                        </div>
-                    </li>
-                </ul>
+                <?= RenderTimeline($event, !!$entry?->present) ?>
             </div>
             <div class="col-12">
                 <div class="row g-2 center">

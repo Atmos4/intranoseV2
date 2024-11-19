@@ -53,8 +53,8 @@ $date = $v->date("date")
     ->label("Date")
     ->min(date("Y-m-d"), "Dans le futur c'est mieux");
 if ($event_id) {
-    $date->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'$item_name")
-        ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'$item_name");
+    $date->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'$item_name", true)
+        ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'$item_name", true);
 }
 $date->required();
 $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
@@ -107,6 +107,7 @@ if ($v->valid()) {
     $activity->event = $event;
     em()->persist($activity);
     em()->flush();
+    Toast::success("Enregistré");
     redirect($return_link);
 }
 ?>
