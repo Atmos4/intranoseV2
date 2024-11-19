@@ -75,6 +75,11 @@ class Validator
         return $result;
     }
 
+    function __tostring()
+    {
+        return $this->render_validation();
+    }
+
     function set_success($success)
     {
         $this->success = $success;

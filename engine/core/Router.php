@@ -5,18 +5,18 @@ class Router extends Singleton
     private array $dynamicSegments;
     private int $level = 0;
 
-    private function render($path_to_include = "pages/404.php")
+    private function render($path_to_include = "app/pages/404.php")
     {
         try {
             $this->level = ob_get_level();
             ob_start();
-            include_once app_path() . "/$path_to_include";
+            include_once $path_to_include;
             $page = Page::getInstance();
             if ($page->title) {
                 $content = ob_get_clean();
                 Page::getInstance()->setContent($content);
                 ob_start();
-                require_once app_path() . "/template/layout.php";
+                require_once "app/template/layout.php";
             } else {
                 Toast::renderOob();
             }
@@ -24,12 +24,12 @@ class Router extends Singleton
         } catch (Throwable $e) {
             $this->cleanBuffer();
             logger()->error($e);
-            if ($path_to_include != "pages/500.php") {
+            if ($path_to_include != "app/pages/500.php") {
                 if (!get_header("hx-request") || get_header("hx-boosted")) {
                     Page::reset();
                     page("Erreur 500")->disableNav()->heading(false);
                 }
-                $this->render("pages/500.php");
+                $this->render("app/pages/500.php");
             }
         }
         exit;
@@ -78,11 +78,6 @@ class Router extends Singleton
         $router = self::getInstance();
         $_SESSION['current_route'] = $route;
         $callback = $path_to_include;
-        if (!is_callable($callback)) {
-            if (!strpos($path_to_include, '.php')) {
-                $path_to_include .= '.php';
-            }
-        }
         if ($route == "/404") {
             $router->render($path_to_include);
         }

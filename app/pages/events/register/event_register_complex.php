@@ -1,6 +1,8 @@
 <?php
 restrict_access();
 
+include __DIR__ . "/../eventUtils.php";
+
 $user = User::getCurrent();
 $event = EventService::getEventWithAllData(get_route_param('event_id'), $user->id);
 
@@ -84,6 +86,7 @@ if ($v->valid()) {
         }
     }
     em()->flush();
+    Toast::success("Inscription enregistrée");
     redirect("/evenements/$event->id");
 }
 
@@ -100,24 +103,8 @@ page("Inscription - " . $event->name)->css("event_register.css");
         <header class="center">
             <?= $v->render_validation() ?>
             <div class="row">
-                <div class="col-sm-6">
-                    <?php include app_path() . "/components/start_icon.php" ?>
-
-                    <span>
-                        <?= "Départ - " . format_date($event->start_date) ?>
-                    </span>
-                </div>
-                <div class="col-sm-6">
-                    <?php include app_path() . "/components/finish_icon.php" ?>
-                    <span>
-                        <?= "Retour - " . format_date($event->end_date) ?>
-                    </span>
-                </div>
-                <div>
-                    <i class="fas fa-clock"></i>
-                    <span>
-                        <?= "Date limite - " . format_date($event->deadline) ?>
-                    </span>
+                <div class="col-12">
+                    <?= RenderTimeline($event, true) ?>
                 </div>
             </div>
 

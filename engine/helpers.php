@@ -80,7 +80,7 @@ function get_query_param($param, $strict = false, $numeric = true, $pattern = nu
         Router::abort(message: "Query parameter $param is not numeric");
     }
     if ($pattern and !preg_match($pattern, $query_param)) {
-        Router::abort(message: "Route parameter $param doesn't match pattern $pattern");
+        Router::abort(message: "Query parameter $param doesn't match pattern $pattern");
     }
     return $query_param;
 }

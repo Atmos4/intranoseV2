@@ -5,89 +5,90 @@ session_start();
 require_once __DIR__ . "/engine/setup.php";
 
 // ---routes---
-Router::add('/', 'pages/index');
-Router::add('/login', 'pages/login');
+Router::add('/', __DIR__ . '/app/pages/index.php');
+Router::add('/login', __DIR__ . '/app/pages/login.php');
 
 // Developement
 if (is_dev() || env("STAGING")) {
-    Router::add('/dev', 'pages/dev/dev_page');
-    Router::add('/dev/create-user', 'pages/dev/create_test_user');
-    Router::add('/dev/change-access', 'pages/dev/change_user_access');
-    //Router::add('/dev/reset-pw/$user_id', 'pages/dev/reset_pw');
-    Router::add('/dev/send-email', 'pages/dev/send_test_email');
+    Router::add('/dev', __DIR__ . '/app/pages/dev/dev_page.php');
+    Router::add('/dev/create-user', __DIR__ . '/app/pages/dev/create_test_user.php');
+    Router::add('/dev/change-access', __DIR__ . '/app/pages/dev/change_user_access.php');
+    //Router::add('/dev/reset-pw/$user_id', __DIR__.'/app/pages/dev/reset_pw.php');
+    Router::add('/dev/send-email', __DIR__ . '/app/pages/dev/send_test_email.php');
 
     // ---experiments
-    Router::add('/dev/toast', 'pages/dev/test_toast');
-    Router::add('/dev/random', 'pages/dev/test_random');
+    Router::add('/dev/toast', __DIR__ . '/app/pages/dev/test_toast.php');
+    Router::add('/dev/random', __DIR__ . '/app/pages/dev/test_random.php');
 }
 
 //Notifications
-Router::add('/dev/notifications', 'pages/dev/test_push_notifications');
+Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');
 
 //Admin
-Router::add('/admin/logs', 'pages/admin/view_logs');
+Router::add('/admin/logs', __DIR__ . '/app/pages/admin/view_logs.php');
 
 // END OF DANGER ZONE
 
 // Events
-Router::add('/evenements', 'pages/events/event_list/event_list');
-Router::add('/evenements/passes', 'pages/events/event_list/past_events');
-Router::add('/evenements/nouveau', 'pages/events/edit/event_edit');
-Router::add('/evenements/$event_id/modifier', 'pages/events/edit/event_edit');
-Router::add('/evenements/$event_id', 'pages/events/view/event_view');
-Router::add('/evenements/$event_id/inscription', 'pages/events/register/event_register_complex');
-Router::add('/evenements/$event_id/inscription_simple', 'pages/events/register/event_register_simple');
-Router::add('/evenements/$event_id/publier', 'pages/events/event_publish');
-Router::add('/evenements/$event_id/supprimer', 'pages/events/delete/event_delete');
-Router::add('/evenements/$event_id/event_form', 'pages/events/edit/EventEditForm');
+Router::add('/evenements', __DIR__ . '/app/pages/events/event_list/event_list.php');
+Router::add('/evenements/passes', __DIR__ . '/app/pages/events/event_list/past_events.php');
+Router::add('/evenements/nouveau', __DIR__ . '/app/pages/events/edit/event_edit.php');
+Router::add('/evenements/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
+Router::add('/evenements/$event_id/modifier', __DIR__ . '/app/pages/events/edit/event_edit.php');
+Router::add('/evenements/$event_id', __DIR__ . '/app/pages/events/view/event_view.php');
+Router::add('/evenements/$event_id/inscription', __DIR__ . '/app/pages/events/register/event_register_complex.php');
+Router::add('/evenements/$event_id/inscription_simple', __DIR__ . '/app/pages/events/register/event_register_simple.php');
+Router::add('/evenements/$event_id/publier', __DIR__ . '/app/pages/events/event_publish.php');
+Router::add('/evenements/$event_id/supprimer', __DIR__ . '/app/pages/events/delete/event_delete.php');
+Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
 
 // Event entry lists
-Router::add('/evenements/$event_id/participants', 'pages/events/entry_list/entry_list');
-Router::add('/evenements/$event_id/participants/tabs', 'pages/events/entry_list/entry_list_tabs');
+Router::add('/evenements/$event_id/participants', __DIR__ . '/app/pages/events/entry_list/entry_list.php');
+Router::add('/evenements/$event_id/participants/tabs', __DIR__ . '/app/pages/events/entry_list/entry_list_tabs.php');
 
 // Activities
-Router::add('/evenements/$event_id/activite/$activity_id/modifier', 'pages/events/edit/activity_edit');
-Router::add('/evenements/$event_id/activite/nouveau', 'pages/events/edit/activity_edit');
-Router::add('/evenements/$event_id/activite/$activity_id', 'pages/events/view/activity_view');
-Router::add('/evenements/$event_id/activite/$activity_id/supprimer', 'pages/events/delete/activity_delete');
+Router::add('/evenements/$event_id/activite/$activity_id/modifier', __DIR__ . '/app/pages/events/edit/activity_edit.php');
+Router::add('/evenements/$event_id/activite/nouveau', __DIR__ . '/app/pages/events/edit/activity_edit.php');
+Router::add('/evenements/$event_id/activite/$activity_id', __DIR__ . '/app/pages/events/view/activity_view.php');
+Router::add('/evenements/$event_id/activite/$activity_id/supprimer', __DIR__ . '/app/pages/events/delete/activity_delete.php');
 
 // Settings
-Router::add('/mon-profil', 'pages/settings/settings');
+Router::add('/mon-profil', __DIR__ . '/app/pages/settings/settings.php');
 // Settings/users
-Router::add('/licencies/$user_id/modifier', 'pages/settings/settings');
+Router::add('/licencies/$user_id/modifier', __DIR__ . '/app/pages/settings/settings.php');
 
 // Users
-Router::add('/licencies', 'pages/users/user_list.php');
-Router::add('/licencies/ajouter', 'pages/users/user_add.php');
-Router::add('/licencies/desactive', 'pages/users/user_list_deactivated.php');
-Router::add('/licencies/$user_id', 'pages/users/user_view_modal.php');
-Router::add('/licencies/$user_id/desactiver', 'pages/users/user_deactivation_confirm.php');
-Router::add('/licencies/$user_id/supprimer', 'pages/users/user_delete_confirm.php');
-Router::add('/licencies/$user_id/creer-famille', 'pages/users/family_create.php');
+Router::add('/licencies', __DIR__ . '/app/pages/users/user_list.php');
+Router::add('/licencies/ajouter', __DIR__ . '/app/pages/users/user_add.php');
+Router::add('/licencies/desactive', __DIR__ . '/app/pages/users/user_list_deactivated.php');
+Router::add('/licencies/$user_id', __DIR__ . '/app/pages/users/user_view_modal.php');
+Router::add('/licencies/$user_id/desactiver', __DIR__ . '/app/pages/users/user_deactivation_confirm.php');
+Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_delete_confirm.php');
+Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family_create.php');
 // Familles
-Router::add('/familles', 'pages/users/family_list.php');
-Router::add('/famille/$family_id', 'pages/users/family_view.php');
-Router::add('/famille/$family_id/supprimer', 'pages/users/family_remove.php');
-Router::add('/famille/$family_id/change/$member_id', 'pages/users/family_change.php');
-Router::add('/famille/$family_id/supprimer/$member_id', 'pages/users/family_remove.php');
+Router::add('/familles', __DIR__ . '/app/pages/users/family_list.php');
+Router::add('/famille/$family_id', __DIR__ . '/app/pages/users/family_view.php');
+Router::add('/famille/$family_id/supprimer', __DIR__ . '/app/pages/users/family_remove.php');
+Router::add('/famille/$family_id/change/$member_id', __DIR__ . '/app/pages/users/family_change.php');
+Router::add('/famille/$family_id/supprimer/$member_id', __DIR__ . '/app/pages/users/family_remove.php');
 
-Router::add('/user-control/$user_id', 'pages/users/take_user_control.php');
+Router::add('/user-control/$user_id', __DIR__ . '/app/pages/users/take_user_control.php');
 
 // Tokens
-Router::add('/activation', 'pages/tokens/user_activation.php');
-Router::add('/reinitialiser-mot-de-passe', 'pages/tokens/send_reset_password.php');
-Router::add('/nouveau-mot-de-passe', 'pages/tokens/reset_password.php');
+Router::add('/activation', __DIR__ . '/app/pages/tokens/user_activation.php');
+Router::add('/reinitialiser-mot-de-passe', __DIR__ . '/app/pages/tokens/send_reset_password.php');
+Router::add('/nouveau-mot-de-passe', __DIR__ . '/app/pages/tokens/reset_password.php');
 
 // Shared documents
-Router::add('/documents', 'pages/shared_documents/shared_documents');
-Router::add('/documents/ajouter', 'pages/shared_documents/add_shared_document');
-Router::add('/telecharger', 'pages/files/download_file');
-Router::add('/documents/$doc_id/supprimer', 'pages/shared_documents/shared_documents_delete_confirm');
+Router::add('/documents', __DIR__ . '/app/pages/shared_documents/shared_documents.php');
+Router::add('/documents/ajouter', __DIR__ . '/app/pages/shared_documents/add_shared_document.php');
+Router::add('/telecharger', __DIR__ . '/app/pages/files/download_file.php');
+Router::add('/documents/$doc_id/supprimer', __DIR__ . '/app/pages/shared_documents/shared_documents_delete_confirm.php');
 
 //Report
-Router::add('/feedback/nouveau', 'pages/user_feedback_submit');
-Router::add('/feedback-list', 'pages/user_feedback_list');
-Router::add('/feedback-list/supprimer/$user_id', 'pages/user_feedback_list');
+Router::add('/feedback/nouveau', __DIR__ . '/app/pages/user_feedback_submit.php');
+Router::add('/feedback-list', __DIR__ . '/app/pages/user_feedback_list.php');
+Router::add('/feedback-list/supprimer/$user_id', __DIR__ . '/app/pages/user_feedback_list.php');
 
 //Notifications
 Router::add('/save-subscription', 'notifications/save_subscription');
@@ -99,4 +100,4 @@ Router::add('/logout', function () {
 });
 
 // Special route, see router
-Router::add('/404', 'pages/404');
+Router::add('/404', __DIR__ . '/app/pages/404.php');
