@@ -13,8 +13,9 @@ if (dev_or_staging()) {
 $main_user = User::getMain();
 
 if (check_auth([Permission::ROOT])) {
-    $menu->addItem("Feedbacks", "/feedback-list", "fa-bug")
-        ->addItem("Logs", "/admin/logs", "fa-file-waveform");
+    $menu
+        ->addItem("Feedbacks", "/feedback-list", "fa-bug")
+        ->addItem("Admin", "/admin", "fa-file-waveform");
 }
 
 ?>
