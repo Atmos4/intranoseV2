@@ -14,6 +14,7 @@ if (!empty($_POST) and isset($_POST['publish'])) {
     if ($event->open && isset($_POST['send_email'])) {
         MailerFactory::createEventPublicationEmail($event)->send();
     }
+    $event->open ? Toast::success("Événement publié") : Toast::error("Événement retiré");
     redirect("/evenements/$event->id");
 }
 

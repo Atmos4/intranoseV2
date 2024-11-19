@@ -92,3 +92,51 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
         <?php endif ?>
     </article>
 <?php }
+
+function RenderTimeline(Event $event, bool $isPresent)
+{
+    $today_date = date_create("today");
+    $deadline_class = $event->deadline >= $today_date ? "" : ($isPresent ? "completed" : "missed");
+    $start_class = $event->start_date < $today_date ? $deadline_class : "";
+    $end_class = $event->end_date < $today_date ? $deadline_class : ""; ?>
+
+    <ul class="timeline timeline-vertical lg:timeline-horizontal">
+        <li class="<?= $deadline_class ?>">
+            <div class="timeline-start">
+                Deadline
+            </div>
+            <div class="timeline-middle">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="timeline-end timeline-box">
+                <?= format_date($event->deadline) ?>
+            </div>
+            <hr>
+        </li>
+        <li class="<?= $start_class ?>">
+            <hr>
+            <div class="timeline-start">
+                Départ
+            </div>
+            <div class="timeline-middle lg:rotate">
+                <?php include app_path() . "/components/start_icon.php" ?>
+            </div>
+            <div class="timeline-end timeline-box">
+                <?= format_date($event->start_date) ?>
+            </div>
+            <hr>
+        </li>
+        <li class="<?= $end_class ?>">
+            <hr>
+            <div class="timeline-start">
+                Retour
+            </div>
+            <div class="timeline-middle">
+                <?php include app_path() . "/components/finish_icon.php" ?>
+            </div>
+            <div class="timeline-end timeline-box">
+                <?= format_date($event->end_date) ?>
+            </div>
+        </li>
+    </ul>
+<?php }

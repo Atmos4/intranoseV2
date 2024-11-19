@@ -123,6 +123,7 @@ label.error:hover {
 /* Page actions */
 #page-actions {
   display: flex;
+  align-items: center;
   height: fit-content;
   padding: 0.5rem 1rem;
   position: sticky;
