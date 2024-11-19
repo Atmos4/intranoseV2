@@ -1,10 +1,22 @@
 <?php
+restrict_access(Access::$ROOT);
 
-restrict_access([Permission::ROOT]);
+$log_file = "logs/" . Router::getParameter("log_file", numeric: false);
 
-$lines = file('logs/app.log');
+if (!file_exists($log_file)) {
+    Router::abort("File not found");
+}
 
-//Put the last rows first
+$v = new Validator(action: "download");
+if ($v->valid()) {
+    header("Content-Type: application/octet-stream");
+    header('Content-Disposition: attachment; filename="' . basename($log_file) . '"');
+    header("Content-Length: " . filesize($log_file));
+    readfile($log_file);
+    exit;
+}
+
+$lines = file($log_file);
 $lines = array_reverse($lines);
 
 function getLogLevelDetails($level)
@@ -25,6 +37,10 @@ function getLogLevelDetails($level)
 
 page("Logs")->css("view_logs.css");
 ?>
+<form method="post" hx-boost="false">
+    <?= $v ?>
+    <?= actions()->back("/admin/logs")->submit("Download") ?>
+</form>
 <div class="log-container">
     <table>
         <thead>
@@ -67,8 +83,12 @@ page("Logs")->css("view_logs.css");
                 <tr>
                     <td class="level-column <?= $class ?>"><i class="fa <?= $icon; ?>"></i> <?= $level; ?>
                     </td>
-                    <td><?= $dateFormatted; ?></td>
-                    <td><?= htmlspecialchars($line); ?></td>
+                    <td>
+                        <?= $dateFormatted; ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($line); ?>
+                    </td>
                 </tr>
             <?php } ?>
         </tbody>
