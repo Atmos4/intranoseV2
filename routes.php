@@ -25,7 +25,11 @@ if (is_dev() || env("STAGING")) {
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');
 
 //Admin
-Router::add('/admin/logs', __DIR__ . '/app/pages/admin/view_logs.php');
+Router::add('/admin', __DIR__ . '/app/pages/admin/dashboard.php');
+Router::add('/admin/backups', __DIR__ . '/app/pages/admin/backup_view.php');
+Router::add('/admin/backups/download', __DIR__ . '/app/pages/admin/download_backup.php');
+Router::add('/admin/logs', __DIR__ . '/app/pages/admin/list_logs.php');
+Router::add('/admin/logs/$log_file', __DIR__ . '/app/pages/admin/view_logs.php');
 
 // END OF DANGER ZONE
 

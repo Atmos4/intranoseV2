@@ -9,7 +9,7 @@ $logger = new \Monolog\Logger('main');
 if (is_dev()) {
     $logger->pushHandler(new \Monolog\Handler\BrowserConsoleHandler(\Monolog\Level::Debug));
 }
-$logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path() . '/logs/app.log'));
+$logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(base_path() . '/logs/app.log', 30));
 $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
