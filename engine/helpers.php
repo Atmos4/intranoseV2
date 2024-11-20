@@ -49,6 +49,11 @@ function em(): EntityManager
     return DB::get();
 }
 
+function restrict_feature(Feature $feature, $uid = null)
+{
+    restrict($feature->enabled($uid), "User doesn't have access to feature $feature->value");
+}
+
 /** Get global formatter.
  * See {@see format_date()}
  * @param string|null $format When provided, sets custom global formatting, scoped to the entire script (the current page)
