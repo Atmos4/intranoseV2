@@ -5,7 +5,7 @@ $event_type = get_query_param("type", false, false);
 $event_id = get_route_param("event_id", strict: false);
 
 if ($event_type && $event_type == "simple") {
-    require_once __DIR__ . "/ActivityEditForm.php";
+    import(__DIR__ . "/ActivityEditForm.php")($event_id, is_simple: true, post_link: "/evenements" . ($event_id ? "/$event_id" : "") . "/event_form?type=simple");
     return;
 }
 
