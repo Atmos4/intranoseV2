@@ -9,7 +9,7 @@ require_once __DIR__ . '/../engine/load_env.php';
 if (env("PRODUCTION"))
     Cli::abort("Cannot be used in production");
 
-$isSqlite = !env("DB_HOST");
+$isSqlite = true; //!env("DB_HOST"); We use SQLite in production too now.
 
 $firstName = readline("First name (Jon):") ?: "Jon";
 !preg_match('/[\w-]+/', $firstName) && Cli::abort("Invalid first name");

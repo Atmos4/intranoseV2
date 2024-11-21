@@ -83,7 +83,7 @@ class DB extends SingletonDependency
         return self::getInstance()->em();
     }
 
-    static function setupForApp($sqlite)
+    static function setupForApp($sqlite = true)
     {
         self::factory(fn() => new self($sqlite ? DBFactory::sqlite() : DBFactory::mysql()));
     }
@@ -96,6 +96,9 @@ class DB extends SingletonDependency
 
 class DBFactory
 {
+    /**
+     * @deprecated We use SQLite now
+     */
     static function mysql($dbName = null)
     {
         return DriverManager::getConnection([
