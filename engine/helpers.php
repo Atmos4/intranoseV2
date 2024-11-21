@@ -32,6 +32,11 @@ function component(string $location): Component
     return new Component($location);
 }
 
+function import($file)
+{
+    return require $file;
+}
+
 /** Returns an env variable */
 function env(string $key)
 {

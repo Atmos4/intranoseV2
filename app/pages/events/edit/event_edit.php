@@ -12,11 +12,13 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement");
 <div class="row center">
     <label>
         <b>Complexe</b>
-        <input name="type" type="checkbox" role="switch" hx-get="/evenements<?= $event_id ? "/$event_id" : "" ?>/event_form"
-            hx-target="#form-div" hx-swap="innerHTML" hx-trigger="change" value="simple" <?= $is_simple ? "checked" : "" ?> />
+        <input name="type" type="checkbox" role="switch"
+            hx-get="/evenements<?= $event_id ? "/$event_id" : "" ?>/event_form" hx-target="#form-div"
+            hx-swap="innerHTML" hx-trigger="change" value="simple" <?= $is_simple ? "checked" : "" ?> />
         <b>Simple</b>
     </label>
 </div>
-<div id="form-div" hx-get="/evenements<?= $event_id ? "/$event_id" : "" ?>/event_form<?= $is_simple ? "?type=simple" : "" ?>"
+<div id="form-div"
+    hx-get="/evenements<?= $event_id ? "/$event_id" : "" ?>/event_form<?= $is_simple ? "?type=simple" : "" ?>"
     hx-trigger="load">
 </div>
