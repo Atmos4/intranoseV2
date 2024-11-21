@@ -20,7 +20,4 @@ if ($event->type == EventType::Simple) {
 }
 
 page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
-?>
-<?php
-require_once __DIR__ . "/ActivityEditForm.php";
-?>
+import(__DIR__ . "/ActivityEditForm.php")($event_id, $activity_id, post_link: "/evenements/$event_id/activite" . ($activity_id ? "/$activity_id/modifier" : "/nouveau"));
