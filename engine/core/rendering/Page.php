@@ -9,6 +9,7 @@ class Page extends SingletonDependency
     public string $content = "";
     public bool $controlled = false;
     public array $scripts = [];
+    public bool $no_padding = false;
 
     public function css(string $css)
     {
@@ -23,6 +24,11 @@ class Page extends SingletonDependency
     public function heading(string|false $heading)
     {
         $this->heading = $heading;
+        return $this;
+    }
+    function noPadding()
+    {
+        $this->no_padding = true;
         return $this;
     }
     public function disableNav()

@@ -19,6 +19,9 @@ if (is_dev() || env("STAGING")) {
     // ---experiments
     Router::add('/dev/toast', __DIR__ . '/app/pages/dev/test_toast.php');
     Router::add('/dev/random', __DIR__ . '/app/pages/dev/test_random.php');
+
+    // SQLITE
+    Router::add('/sqlite', __DIR__ . '/app/pages/dev/sqlite_db.php');
 }
 
 //Notifications
@@ -89,6 +92,10 @@ Router::add('/documents', __DIR__ . '/app/pages/shared_documents/shared_document
 Router::add('/documents/ajouter', __DIR__ . '/app/pages/shared_documents/add_shared_document.php');
 Router::add('/telecharger', __DIR__ . '/app/pages/files/download_file.php');
 Router::add('/documents/$doc_id/supprimer', __DIR__ . '/app/pages/shared_documents/shared_documents_delete_confirm.php');
+
+// Messages
+Router::add('/messages', __DIR__ . "/app/pages/messages/messages_overview.php");
+Router::add('/messages/direct/$user_id', __DIR__ . "/app/pages/messages/messages_direct");
 
 //Report
 Router::add('/feedback/nouveau', __DIR__ . '/app/pages/user_feedback_submit.php');

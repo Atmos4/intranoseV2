@@ -10,15 +10,17 @@ $menu = MainMenu::create()
 if (dev_or_staging()) {
     $menu->addItem("Dev", "/dev", "fa-code");
 }
+if (Feature::Messages->enabled()) {
+    $menu->addItem("Messages", "/messages", "fa-message");
+}
+
 $main_user = User::getMain();
 
 if (check_auth([Permission::ROOT])) {
     $menu
         ->addItem("Feedbacks", "/feedback-list", "fa-bug")
         ->addItem("Admin", "/admin", "fa-file-waveform");
-}
-
-?>
+} ?>
 <div id="nav-button">
     <button class="outline contrast" onclick="openNav()">
         &#9776; Menu
