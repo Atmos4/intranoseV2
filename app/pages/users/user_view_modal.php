@@ -8,7 +8,8 @@ if (!$user) {
     force_404("this user doesn't exist");
 }
 
-$can_edit_users = check_auth(Access::$EDIT_USERS) && $user != User::getMain();
+$isNotMe = $user != User::getMain();
+$can_edit_users = check_auth(Access::$EDIT_USERS) && $isNotMe;
 $is_root = check_auth([Permission::ROOT]);
 
 $profile_picture = $user->getPicture();
@@ -57,6 +58,11 @@ if (!Component::mounted()) {
             <section>
                 <?= $user->birthdate ? "🎂 " . date_format($user->birthdate, "d/m/Y") : "" ?>
             </section>
+            <?php if ($isNotMe && Feature::Messages->enabled()): ?>
+                <section>
+                    <a role="button" href="/messages/direct/<?= $user->id ?>">Message</a>
+                </section>
+            <?php endif ?>
         </div>
 
         <?php if ($can_edit_users): ?>

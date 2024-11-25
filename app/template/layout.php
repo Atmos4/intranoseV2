@@ -64,7 +64,7 @@ $page = Page::getInstance(); ?>
         require_once app_path() . "/template/nav.php";
     } ?>
     <div id="hx-indicator" aria-busy="true"></div>
-    <main class="container">
+    <main class="container" <?= $page->no_padding ? "style=\"padding:0\"" : "" ?>>
         <?php if ($page->controlled) {
             echo ControlNotice();
         } ?>
