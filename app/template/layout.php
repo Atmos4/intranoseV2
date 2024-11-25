@@ -52,6 +52,9 @@ $page = Page::getInstance(); ?>
 
     <!-- Notifications -->
     <script src="/assets/js/notifications.js"></script>
+
+    <!-- Shoelace -->
+    <?php include __DIR__ . "/shoelace.php" ?>
 </head>
 
 <body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"

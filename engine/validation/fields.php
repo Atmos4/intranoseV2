@@ -71,6 +71,11 @@ class Field
         return $this->render_label($this->render_core());
     }
 
+    function __tostring()
+    {
+        return $this->render();
+    }
+
     protected function render_core(): string
     {
         return "<input {$this->props()}>";

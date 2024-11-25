@@ -129,6 +129,8 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </label>
 </form>
 
+<?= actions($is_visiting && check_auth(Access::$ROOT))->link("/licencies/$user_id/debug", "Debug", "fa-laptop-code") ?>
+
 <h2 id="identity">Infos</h2>
 
 <form method="post" hx-swap="innerHTML show:#identity:top" class="row">
@@ -255,46 +257,4 @@ if ($v_password->valid()) {
         </form>
     </div>
 <?php endif ?>
-
-
-<?php if ($is_visiting && $can_reset_credentials && $user?->status == UserStatus::INACTIVE): ?>
-    <hr>
-    <?php
-    $v_activation = new Validator(action: "activation_form");
-    $activationLink = "";
-    if ($v_activation->valid()) {
-        // Generate activation link
-        $activationLink = AuthService::create()->createActivationLink($user);
-    }
-    ?>
-    <div class="row">
-        <form method="post" hx-swap="innerHTML show:#activation:top" class="col-sm-12 col-md-6 align-end">
-            <div class=activation-header>
-                <h2 id="activation">Activation</h2>
-                <ins tabindex="0" class="help"
-                    data-tooltip="A n'utiliser qu'en cas de problème &#xa; avec les emails d'activation"><i
-                        class="fas fa-circle-info"></i></ins>
-            </div>
-            <?= $v_activation->render_validation() ?>
-            <input type="submit" class="outline" name="createLink" value="Créer le lien">
-        </form>
-        <div class="grid-clip">
-            <input id="clip_text" type="text" value="<?= $activationLink ?>">
-            <button onclick="copyToClipboard(htmx.find(this.parentElement, 'input').value)
-            .then(()=>{
-                htmx.removeClass(htmx.find(this, 'i'),'fa-clipboard')
-                htmx.addClass(htmx.find(this, 'i'), 'fa-check')
-                htmx.addClass(htmx.find(this, 'i'), 'fa-clipboard', 5000)
-                htmx.removeClass(htmx.find(this, 'i'), 'fa-check', 5000)
-                span = htmx.find('#clip-result')
-                span.innerHTML = 'Lien copié !'
-                htmx.addClass(span, 'success')
-            })">
-                <i class="fa fa-clipboard"></i>
-            </button>
-        </div>
-        <span id="clip-result"></span>
-    </div>
-<?php endif ?>
-
 <script src="/assets/js/copy-clipboard.js"></script>

@@ -117,6 +117,11 @@ function redirect($href)
     exit;
 }
 
+function reload()
+{
+    redirect($_SESSION['request_url']);
+}
+
 /** escape characters */
 function e($s)
 {
