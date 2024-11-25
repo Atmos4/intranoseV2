@@ -1,7 +1,6 @@
 <?php
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
@@ -18,6 +17,12 @@ class UserFeature
     #[Column]
     public bool $enabled = false;
 
+    function __construct(User $user, Feature $feature)
+    {
+        $this->featureName = $feature->value;
+        $this->user = $user;
+    }
+
     /**
      * Get all feature from a user
      * @return bool
@@ -28,11 +33,21 @@ class UserFeature
             ->setParameters(["u" => $uid, "feature" => $feature, "enabled" => true])
             ->getSingleScalarResult();
     }
+
+    /**
+     * list all feature for one user
+     * @return UserFeature[]
+     */
+    static function list($uid)
+    {
+        return em()->createQuery("SELECT f from UserFeature f INDEX BY f.featureName WHERE f.user = :u")->setParameters(["u" => $uid])->getResult();
+    }
 }
 
 enum Feature: string
 {
-    case Messages = "messages";
+    case Messages = "Messages";
+    case Carpooling = "Carpooling";
 
     function globalEnabled()
     {
