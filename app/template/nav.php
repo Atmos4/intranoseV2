@@ -4,13 +4,12 @@ $menu = MainMenu::create()
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Mon profil", "/mon-profil", "fa-gear")
     ->addItem("Suggestions", "/feedback/nouveau", "fa-lightbulb")
-    ->addItem("Documents", "/documents", "fa-file")
-;
+    ->addItem("Documents", "/documents", "fa-file");
 
 if (dev_or_staging()) {
     $menu->addItem("Dev", "/dev", "fa-code");
 }
-if (Feature::Messages->enabled()) {
+if (Feature::Messages->on()) {
     $menu->addItem("Messages", "/messages", "fa-message");
 }
 

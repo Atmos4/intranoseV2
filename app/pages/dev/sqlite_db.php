@@ -9,9 +9,9 @@ $input = $v->text("sql")->placeholder("SQL");
 $values = $v->text("values")->placeholder("Values");
 $result = null;
 
-$db_name = env("SQLITE_DB_NAME");
+$db_name = env("SQLITE_DB_NAME") ?? "db.sqlite";
 try {
-    $pdo = new PDO('sqlite:.sqlite/' . env("SQLITE_DB_NAME"));
+    $pdo = new PDO('sqlite:.sqlite/' . $db_name);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 } catch (PDOException $e) {

@@ -64,6 +64,7 @@ class Conversation
 
     static function upsertPrivateConversation(User $u1, User $u2): Conversation
     {
+        assert($u1->id != $u2->id, "Cannot create a conversation with yourself");
         $ids = [$u1->id, $u2->id];
         sort($ids);
         $hash = implode("_", $ids);

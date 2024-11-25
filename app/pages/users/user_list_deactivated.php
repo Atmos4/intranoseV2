@@ -1,6 +1,6 @@
 <?php
 restrict_access(Access::$EDIT_USERS);
-page("Réactiver des licenciés")->css("user_list.css");
+page("Réactiver des licenciés");
 
 // Just for convenience
 $form = new Validator();
