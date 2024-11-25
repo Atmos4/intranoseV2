@@ -61,12 +61,16 @@ if (!Component::mounted()) {
 
         <?php if ($can_edit_users): ?>
             <footer>
-                <nav>
+                <nav al-center>
                     <li><a href="/user-control/<?= $user->id ?>" class="outline">Contrôler</a></li>
                     <li>
                         <details class="dropdown">
                             <summary class="contrast">Actions</summary>
                             <ul dir="rtl" data-placement="top">
+                                <?php if (check_auth(Access::$ROOT)): ?>
+                                    <li><a href="/licencies/<?= $user->id ?>/debug"><i class="fa fa-bug"></i> Debug</a>
+                                    </li>
+                                <?php endif ?>
                                 <li><a href="/licencies/<?= $user->id ?>/modifier">Modifier</a>
                                 </li>
                                 <li>
@@ -86,6 +90,7 @@ if (!Component::mounted()) {
                         </details>
                     </li>
                 </nav>
-            <?php endif ?>
+            </footer>
+        <?php endif ?>
     </article>
 </dialog>

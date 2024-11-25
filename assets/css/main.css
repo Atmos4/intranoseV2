@@ -91,6 +91,10 @@ details ul[dir="rtl"] > li {
 article {
   margin-top: 0;
 }
+/* fixes to nav in pico */
+nav[al-center] {
+  align-items: center;
+}
 .success {
   color: var(--ins-color);
 }
@@ -143,6 +147,7 @@ label.error:hover {
   margin: 0;
   padding: 0.65em;
   text-decoration: none;
+  border-radius: var(--border-radius);
 }
 #page-actions > :where(a, li):hover {
   --background-color: var(--secondary-focus);
