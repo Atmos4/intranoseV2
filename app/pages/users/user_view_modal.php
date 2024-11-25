@@ -58,7 +58,7 @@ if (!Component::mounted()) {
             <section>
                 <?= $user->birthdate ? "🎂 " . date_format($user->birthdate, "d/m/Y") : "" ?>
             </section>
-            <?php if ($isNotMe && Feature::Messages->enabled()): ?>
+            <?php if ($isNotMe && $user->hasFeature(Feature::Messages)): ?>
                 <section>
                     <a role="button" href="/messages/direct/<?= $user->id ?>">Message</a>
                 </section>

@@ -106,7 +106,12 @@ class User
 
     function getPicture()
     {
-        return $this->picture && file_exists($this->picture) ? "/" . $this->picture : "/assets/images/none.jpg";
+        return self::getUserPicture($this->picture);
+    }
+
+    static function getUserPicture($file)
+    {
+        return $file && file_exists($file) ? "/" . $file : "/assets/images/none.jpg";
     }
 
     function replacePicture(string $newPicture)

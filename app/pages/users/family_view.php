@@ -38,7 +38,7 @@ page($family->name)->css("family_list.css") ?>
 <section class="row">
     <?php foreach ($family->members as $f_member): ?>
         <div class="col-sm-12 col-md-6">
-            <article class="card">
+            <article class="user-card">
                 <img src="<?= $f_member->getPicture() ?>">
                 <div>
                     <a href="/licencies?user=<?= $f_member->id ?>" <?= UserModal::props($f_member->id) ?>>

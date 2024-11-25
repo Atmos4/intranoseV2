@@ -1,4 +1,6 @@
 <?php
+restrict_access();
+restrict_feature(Feature::Messages);
 // this page is supposed to be for private conversations only, so we will safeguard the usage.
 $other_user_id = Router::getParameter("user_id");
 $other_user = User::get($other_user_id);
@@ -25,7 +27,8 @@ page("Messages")->heading(false)->noPadding()->css("messages.css") ?>
     </h2>
     <?= actions()->back("/messages") ?>
     <section class="messages" hx-get="/messages/direct/<?= $other_user_id ?>" hx-select=".messages"
-        hx-target=".messages" hx-trigger="messagesUpdated" hx-swap="outerHTML scroll:bottom">
+        hx-target=".messages" hx-trigger="messagesUpdated" hx-swap="outerHTML scroll:bottom"
+        hx-indicator="#new_message">
         <?php foreach ($messages as $message):
             $fromMe = $message->sender == $me_user; ?>
 
@@ -53,11 +56,5 @@ page("Messages")->heading(false)->noPadding()->css("messages.css") ?>
         <button><i class="fa fa-paper-plane"></i></button>
     </form>
 </div>
-<script>
-    !function () {
-        const messagesContainer = document.querySelector('.messages');
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }()
-</script>
 <?php if ($has_firebase_updates)
     include __DIR__ . "/firebase_updater.php" ?>

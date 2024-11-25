@@ -4,9 +4,10 @@ restrict_feature(Feature::Messages);
 $user_id = User::getMainUserId();
 $conversations = Conversation::getAllFromUser($user_id);
 page("Messages")->css("messages.css") ?>
+<?= actions()->link("/messages/nouveau", "Nouveau", "fa-plus") ?>
 <ul>
     <?php if (!$conversations): ?>
-        <p>
+        <p class="center">
             Pas de messages pour le moment
         </p>
     <?php endif;

@@ -371,6 +371,37 @@ article.notice > header,
   gap: 1rem;
 }
 
+/* User card */
+
+.user-card {
+  height: 100px;
+  padding: 0;
+  margin-bottom: 1em;
+  align-items: center;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr auto;
+  border-radius: 50px;
+  box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+.user-card > img {
+  object-fit: cover;
+  height: 100px;
+  width: 100px;
+  border-radius: 50px;
+  margin-right: 1em;
+}
+.user-card details.dropdown > summary.actions {
+  margin-right: 1em;
+  border-radius: 3em;
+  width: 2em;
+  height: 2em;
+  display: grid;
+  place-items: center;
+}
+.user-card details.dropdown > summary.actions::after {
+  display: none;
+}
 /* Timeline */
 
 .timeline {

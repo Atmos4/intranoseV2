@@ -95,7 +95,9 @@ Router::add('/documents/$doc_id/supprimer', __DIR__ . '/app/pages/shared_documen
 
 // Messages
 Router::add('/messages', __DIR__ . "/app/pages/messages/messages_overview.php");
-Router::add('/messages/direct/$user_id', __DIR__ . "/app/pages/messages/messages_direct");
+Router::add('/messages/nouveau', __DIR__ . "/app/pages/messages//new/new_message.php");
+Router::add('/messages/search-users', __DIR__ . "/app/pages/messages//new/search_users.php");
+Router::add('/messages/direct/$user_id', __DIR__ . "/app/pages/messages/messages_direct.php");
 
 //Report
 Router::add('/feedback/nouveau', __DIR__ . '/app/pages/user_feedback_submit.php');

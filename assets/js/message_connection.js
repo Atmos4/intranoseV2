@@ -25,7 +25,12 @@ const db = getFirestore(app);
 const convDoc = doc(db, "conversations", window.conversationId);
 
 // Update message list when new message comes in
-onSnapshot(convDoc, () => htmx.trigger(".messages", "messagesUpdated"));
+onSnapshot(convDoc, (doc) => {
+  if (doc.metadata.hasPendingWrites) {
+    return;
+  }
+  htmx.trigger(".messages", "messagesUpdated");
+});
 
 // Update firebase document when sending a new message
 document.body.addEventListener("newMessageSent", async () => {
