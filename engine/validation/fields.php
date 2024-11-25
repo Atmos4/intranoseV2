@@ -60,6 +60,12 @@ class Field
         return $this;
     }
 
+    function reset(): static
+    {
+        $this->value = null;
+        return $this;
+    }
+
     /**
      * Renders the field as input
      * @param string $attrs
@@ -209,6 +215,11 @@ class StringField extends Field
     {
         $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
         return parent::render();
+    }
+
+    function __tostring()
+    {
+        return $this->render();
     }
 
     function max_length(int $count, string $msg = null): static
