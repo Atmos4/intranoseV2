@@ -184,6 +184,11 @@ class User
             ->setParameter('email', $email)
             ->getSingleColumnResult();
     }
+
+    function hasFeature(Feature $f)
+    {
+        return has_feature($f, $this->id);
+    }
 }
 
 enum UserStatus: string

@@ -49,23 +49,8 @@ enum Feature: string
     case Messages = "Messages";
     case Carpooling = "Carpooling";
 
-    function globalEnabled()
+    function on()
     {
-        return match ($this) {
-            Feature::Messages => false,
-            default => false
-        };
-    }
-
-    function enabled($uid = null)
-    {
-        if ($this->globalEnabled())
-            return true;
-
-        if (env("FEATURE_" . $this->value) == 'true')
-            return true;
-
-        $uid ??= User::getMainUserId();
-        return UserFeature::hasFeature($uid, $this->value);
+        return has_feature($this);
     }
 }
