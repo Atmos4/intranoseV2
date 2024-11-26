@@ -129,7 +129,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
     </label>
 </form>
 
-<?= actions($is_visiting && check_auth(Access::$ROOT))->link("/licencies/$user_id/debug", "Debug", "fa-laptop-code") ?>
+<?= actions($is_visiting && check_auth(Access::$ROOT))->link("/licencies/$user->id/debug", "Debug", "fa-laptop-code") ?>
 
 <h2 id="identity">Infos</h2>
 
