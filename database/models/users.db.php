@@ -116,38 +116,38 @@ class User
     }
 
     /** Get user by ID */
-    static function get($user_id): User
+    static function get($user_id): User|null
     {
-        return em()->find(User::class, $user_id);
+        return $user_id ? em()->find(User::class, $user_id) : null;
     }
 
-    static function getCurrent(): User|null
+    static function getControlledUserId(): int|null
     {
-        if (!has_session("user_id")) {
-            return null;
-        }
         if (isset($_SESSION['controlled_user_id'])) {
             Page::getInstance()->controlled();
         }
-        self::$currentUser ??= em()->find(User::class, $_SESSION['controlled_user_id'] ?? $_SESSION['user_id']);
-        return self::$currentUser;
+        return $_SESSION['controlled_user_id'] ?? null;
     }
 
     static function getMainUserId(): int|null
     {
-        // this way we don't need a DB call
-        if (!has_session("user_id")) {
-            return null;
-        }
-        return $_SESSION['user_id'];
+        return $_SESSION['user_id'] ?? null;
+    }
+
+    static function getCurrentUserId(): int|null
+    {
+        return self::getControlledUserId() ?? self::getMainUserId();
+    }
+
+    static function getCurrent(): User|null
+    {
+        self::$currentUser ??= User::get(self::getCurrentUserId());
+        return self::$currentUser;
     }
 
     static function getMain(): User|null
     {
-        if (!has_session("user_id")) {
-            return null;
-        }
-        self::$mainUser ??= em()->find(User::class, $_SESSION['user_id']);
+        self::$mainUser ??= User::get(self::getMainUserId());
         return self::$mainUser;
     }
 
