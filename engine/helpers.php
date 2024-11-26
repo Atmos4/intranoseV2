@@ -51,7 +51,12 @@ function em(): EntityManager
 
 function restrict_feature(Feature $feature, $uid = null)
 {
-    restrict($feature->enabled($uid), "User doesn't have access to feature $feature->value");
+    restrict(has_feature($feature, $uid), "User doesn't have access to feature $feature->value");
+}
+
+function has_feature(Feature $feature, $uid = null)
+{
+    return FeatureService::enabled($feature, $uid);
 }
 
 /** Get global formatter.
