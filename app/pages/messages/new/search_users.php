@@ -1,6 +1,8 @@
 <?php
 restrict_access();
-$search = strtolower(get_query_param("search", numeric: false));
+$search = strtolower(get_query_param("search", numeric: false) ?? "");
+if (!$search)
+    return;
 $users = em()->createQuery("SELECT u.id, u.last_name, u.first_name, u.picture 
     FROM User u 
     WHERE (u.first_name LIKE :s OR u.last_name LIKE :s) 
