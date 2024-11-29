@@ -18,7 +18,7 @@ if ($form->valid()) {
     em()->remove($vehicle);
     em()->flush();
     Toast::error("Véhicule supprimé");
-    redirect("/evenements/$event_id");
+    redirect("/evenements/$event_id?tab=vehicules");
 }
 
 page("Confirmation de suppression");
@@ -30,7 +30,7 @@ page("Confirmation de suppression");
             <?= "$vehicle->id" ?> ? Il sera définitivement supprimé!!
         </p>
         <div class="col-auto">
-            <a class="secondary" role="button" href="/evenements/<?= $event_id ?>">Annuler</a>
+            <a class="secondary" role="button" href="/evenements/<?= $event_id ?>?tab=vehicules">Annuler</a>
         </div>
         <div class="col-auto">
             <button type="submit" name="delete" value="true" class="destructive">Supprimer</button>

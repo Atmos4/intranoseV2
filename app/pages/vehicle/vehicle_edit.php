@@ -48,7 +48,7 @@ page(($vehicle_id ? "Modifier le véhicule" : "Ajouter un véhicule") . " pour $
 ?>
 
 <form method="post">
-    <?= actions()?->back("/evenements/$event_id", "Annuler")->submit($vehicle_id ? "Modifier" : "Ajouter") ?>
+    <?= actions()?->back("/evenements/$event_id?tab=vehicules", "Annuler")->submit($vehicle_id ? "Modifier" : "Ajouter") ?>
     <article>
         <div class="row">
             <?= $v->render_validation() ?>
