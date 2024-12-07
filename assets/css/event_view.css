@@ -11,3 +11,36 @@ details summary:focus:not([role="button"]) {
 .description {
   white-space: pre-wrap;
 }
+
+.vehicle-article details {
+  margin: 0;
+}
+
+.vehicle-article details summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+}
+
+.vehicle-article:where(:hover, :focus, :focus-within) {
+  background-color: var(--secondary-focus) !important;
+  outline: none;
+}
+
+.passenger-flex {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+sl-tab-group {
+  --indicator-color: var(--primary);
+  --sl-color-primary-600: var(--primary);
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-inline-start: 0;
+}

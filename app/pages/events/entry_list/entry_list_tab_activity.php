@@ -1,4 +1,6 @@
 <?php
+include_once __DIR__ . "/TotalRow.php";
+
 $activityId = Component::prop("activity_id");
 $activityEntries = ActivityService::getActivityEntries($activityId);
 ?>

@@ -371,6 +371,12 @@ article.notice > header,
   gap: 1rem;
 }
 
+.buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  grid-gap: 0.5rem;
+}
+
 /* User card */
 
 .user-card {
