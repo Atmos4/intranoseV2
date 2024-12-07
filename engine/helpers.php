@@ -43,6 +43,13 @@ function env(string $key)
     return $_ENV[$key] ?? null;
 }
 
+/** Temporary - remove once we have properly setup multi-club */
+function config(string $key, $fallback = null)
+{
+    static $conf = ["name" => "Intranose"];
+    return $conf[$key] ?? $fallback ?? "";
+}
+
 /** Get global entity manager */
 function em(): EntityManager
 {

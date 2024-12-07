@@ -32,7 +32,7 @@
   white-space: nowrap;
   overflow-x: hidden;
   transition: width 0.2s;
-  padding: 4.5rem 0 1rem;
+  padding: 3.5rem 0 1rem;
   background: var(--card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
@@ -49,10 +49,15 @@
 }
 
 .sidenav .nav-title {
-  margin: 0;
+  display: block;
+  margin: 0.25rem 0;
+  padding: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: "Faro Light";
 }
 
-body > header {
+body:has(.sidenav) > header {
   position: sticky;
   top: 0;
   z-index: 4;
@@ -65,26 +70,26 @@ body > header {
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
 
-body > header > * {
+body:has(.sidenav) > header > * {
   margin: 0;
   padding: 0.5rem;
 }
 
-body > main.container {
+body:has(.sidenav) > main.container {
   padding: 4rem 1rem 1rem;
 }
 
-body > main > .spacing-div {
+body:has(.sidenav) > main > .spacing-div {
   height: 3.75rem;
 }
 
-.icon-buttons {
+.sidenav .icon-buttons {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem 1rem;
 }
-.icon-buttons > :last-child {
+.sidenav .icon-buttons > :last-child {
   margin: 0;
   padding: 0;
   border: none;
@@ -95,7 +100,7 @@ body > main > .spacing-div {
   border-radius: 50%;
 }
 /* theme toggle */
-.icon-buttons > :first-child {
+.sidenav .icon-buttons > :first-child {
   --size: 1.4rem;
   line-height: 1rem;
   margin: 0;
@@ -127,7 +132,7 @@ body > main > .spacing-div {
   color: var(--primary);
 }
 
-.active > a {
+.sidenav .active > a {
   color: var(--primary);
 }
 
@@ -146,15 +151,15 @@ body > main > .spacing-div {
     visibility: visible;
   }
 
-  body {
+  body:has(.sidenav) {
     padding-left: 250px;
   }
 
-  body > main.container {
+  body:has(.sidenav) > main.container {
     padding: 4rem 2rem 1rem;
   }
 
-  body > header {
+  body:has(.sidenav) > header {
     width: calc(100% + 250px); /* twice the value of the parent's padding*/
     margin-left: -250px; /* -1 * parent's padding*/
     padding-left: 2rem;

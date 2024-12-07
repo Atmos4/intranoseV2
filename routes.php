@@ -8,6 +8,8 @@ require_once __DIR__ . "/engine/setup.php";
 Router::add('/', __DIR__ . '/app/pages/index.php');
 Router::add('/login', __DIR__ . '/app/pages/login.php');
 
+Router::add('/about', __DIR__ . '/app/pages/about.php');
+
 // Developement
 if (is_dev() || env("STAGING")) {
     Router::add('/dev', __DIR__ . '/app/pages/dev/dev_page.php');
@@ -105,7 +107,7 @@ Router::add('/feedback-list', __DIR__ . '/app/pages/user_feedback_list.php');
 Router::add('/feedback-list/supprimer/$user_id', __DIR__ . '/app/pages/user_feedback_list.php');
 
 //Notifications
-Router::add('/save-subscription', 'notifications/save_subscription');
+Router::add('/save-subscription', __DIR__ . '/app/notifications/save_subscription.php');
 
 // Logout
 Router::add('/logout', function () {

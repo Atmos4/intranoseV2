@@ -29,7 +29,9 @@ if (check_auth([Permission::ROOT])) {
     <nav>
         <ul>
             <li>
-                <h3 class="nav-title">Intranose</h3>
+                <h2 class="nav-title">
+                    <?php import(__DIR__ . "/../components/linklub_logo.php")(!!env("INTRANOSE")) ?>
+                </h2>
             </li>
             <?php foreach ($menu->items as $menu_item): ?>
                 <li class="<?= strpos($_SESSION['current_route'], $menu_item->url) !== false ? "active" : "" ?>">

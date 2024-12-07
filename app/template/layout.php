@@ -7,19 +7,11 @@ $page = Page::getInstance(); ?>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        <?= implode(" | ", array_filter([$page->title, "Intranose"])) ?>
+        <?= implode(" | ", array_filter([$page->title, config("name", "Linklub")])) ?>
     </title>
     <meta name="description" content="<?= $page->description ?>">
 
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/assets/favicon/site.webmanifest">
-    <link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#28b432">
-    <meta name="msapplication-TileColor" content="#00a300">
-    <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#13171f" media="(prefers-color-scheme: dark)">
+    <?php include __DIR__ . "/favicon.php" ?>
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="/assets/css/fontawesome.min.css">
@@ -39,9 +31,7 @@ $page = Page::getInstance(); ?>
         <link rel="stylesheet" href="<?= $css ?>">
     <?php endforeach ?>
 
-    <?php if ($page->nav): ?>
-        <link rel="stylesheet" href="/assets/css/navbar.css">
-    <?php endif ?>
+    <link rel="stylesheet" href="/assets/css/navbar.css">
 
     <!-- HTMX -->
     <script src="/assets/js/htmx1.9.5-core.min.js" defer></script>
@@ -57,8 +47,8 @@ $page = Page::getInstance(); ?>
     <?php include __DIR__ . "/shoelace.php" ?>
 </head>
 
-<body hx-ext="head-support,loading-states" hx-boost="true" hx-indicator="#hx-indicator"
-    hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
+<body hx-ext="head-support,loading-states" <?= has_session("user_id") ? 'hx-boost="true"' : "" ?>
+    hx-indicator="#hx-indicator" hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
     <?php
     if ($page->nav && has_session("user_id")) {
         require_once app_path() . "/template/nav.php";
@@ -69,7 +59,7 @@ $page = Page::getInstance(); ?>
             echo ControlNotice();
         } ?>
         <?php if ($page->heading !== false): ?>
-            <h2 class="center">
+            <h2 class="center main-heading">
                 <?= $page->heading ?: $page->title ?>
             </h2>
         <?php endif ?>
