@@ -10,6 +10,7 @@ $options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
                 <th></th>
                 <th class="center">Transport</th>
                 <th class="center">Hébergement</th>
+                <th>Voiture</th>
                 <th>Remarques</th>
             </tr>
         </thead>
@@ -34,13 +35,16 @@ $options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
                             <?= $options[$entry->accomodation] ?>
                         </td>
                         <td>
+                            <?= $entry->has_car ? "✅" : "" ?>
+                        </td>
+                        <td>
                             <?= $entry->comment ?>
                         </td>
                     </tr>
                 <?php endif ?>
             <?php endforeach;
             $table = ob_get_clean() ?>
-            <?= TotalRow("Total", [$totalTransport, true], [$totalAccomodation, true], "") ?>
+            <?= TotalRow("Total", [$totalTransport, true], [$totalAccomodation, true], "", "") ?>
             <?= $table ?>
         </tbody>
     </table>

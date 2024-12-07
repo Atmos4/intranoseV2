@@ -30,6 +30,9 @@ class EventEntry
     public DateTime $date;
 
     #[Column]
+    public bool|null $has_car = null;
+
+    #[Column]
     public string $comment = "";
 
     function __construct()
