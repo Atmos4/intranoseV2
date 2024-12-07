@@ -40,7 +40,7 @@ class Mailer extends FactoryDependency
         $this->mail->Password = env("MAIL_PASSWORD");
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $this->mail->Port = 465;
-        $this->mail->setFrom(env("MAIL_USER"), "Intranose");
+        $this->mail->setFrom(env("MAIL_USER"), config("name", "Intranose"));
 
         // DKIM - not using for now
         if (env("USE_DKIM")) {
@@ -112,9 +112,9 @@ class MailerFactory
     static function createEventPublicationEmail(Event $event)
     {
         $base_url = env("BASE_URL");
-        $subject = (env("STAGING") ? "[STAGING] " : "") . "Nouvel événement sur l'intranose";
+        $subject = (env("STAGING") ? "[STAGING] " : "") . "Nouvel événement sur " . config("name", "Linklub");
         $event_date = $event->deadline->format('d/m/Y');
-        $content = "<h3>Un nouvel événement a été publié sur l'intranose !</h3>
+        $content = "<h3>Un nouvel événement a été publié sur " . config("name", "Linklub") . " !</h3>
         Nom de l'événement : <b>$event->name</b><br>
         La deadline pour s'inscrire est le $event_date.<br>
         Pour voir les infos : <a href = '$base_url/evenements/$event->id' >Lien de l'événement</a>.<br>

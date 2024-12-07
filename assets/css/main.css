@@ -658,3 +658,12 @@ article.notice > header,
     rotate: -90deg;
   }
 }
+
+.main-heading {
+  font-family: "Faro Light";
+}
+
+@font-face {
+  font-family: "Faro Light";
+  src: url(../webfonts/Farro-Light.ttf);
+}

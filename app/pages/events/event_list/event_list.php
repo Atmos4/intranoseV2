@@ -22,10 +22,11 @@ $birthday_users = em()->createQueryBuilder()
     ->setParameter("month", $current_date_month)
     ->setParameter("day", $current_date_day)
     ->getQuery()->getResult();
-
-page("Événements")->css("event_list.css")->heading(false);
-
 $vowels = ["a", "e", "i", "o", "u"];
+
+page("Événements")->css("event_list.css")
+    ->css("about.css") // preload to prevent FOUC
+    ->heading(false);
 ?>
 
 <?php if ($birthday_users): ?>
@@ -40,7 +41,7 @@ $vowels = ["a", "e", "i", "o", "u"];
     </div>
 <?php endif ?>
 
-<h2 class="center">Événements</h2>
+<h2 class="center main-heading">Événements</h2>
 
 <?= actions($can_edit)?->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
 

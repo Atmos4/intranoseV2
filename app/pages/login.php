@@ -6,12 +6,13 @@ $rememberMe = $v->switch("remember_me")->label("Rester connecté");
 if ($v->valid()) {
     AuthService::create()->tryLogin($login->value, $password->value, $rememberMe->value, $v) && redirect("/");
 }
-
 page("Login")->css("login.css")->disableNav()->heading(false);
 ?>
 <article>
     <form method="post" hx-boost="false">
-        <h2 class="center">Intranose</h2>
+        <a href="/about" class="center login-logo contrast">
+            <?= import(__DIR__ . "/../components/linklub_logo.php")(env("INTRANOSE")) ?>
+        </a>
         <?= $login->render() ?>
         <?= $password->render() ?>
         <?= $rememberMe->render() ?>
