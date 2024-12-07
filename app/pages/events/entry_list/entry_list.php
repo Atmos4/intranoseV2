@@ -18,5 +18,3 @@ $is_simple = get_query_param("is_simple", false, false);
     </div>
     <script src="/assets/js/select-table.js"></script>
 <?php endif ?>
-
-<?= UserModal::renderRoot() ?>

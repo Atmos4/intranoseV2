@@ -26,6 +26,12 @@ class Vehicle
     #[Column]
     public string $capacity;
 
+    #[Column]
+    public DateTime $start_date;
+
+    #[Column]
+    public DateTime $return_date;
+
     #[ManyToOne]
     public User|null $manager = null;
 

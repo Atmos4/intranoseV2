@@ -19,6 +19,8 @@ if ($vehicle_id) {
         "start_location" => $vehicle->start_location,
         "return_location" => $vehicle->return_location,
         "capacity" => $vehicle->capacity,
+        "start_date" => date_format($vehicle->start_date, 'Y-m-d'),
+        "return_date" => date_format($vehicle->return_date, 'Y-m-d'),
     ];
 } else {
     $vehicle = new Vehicle();
@@ -30,6 +32,8 @@ $name = $v->text("name")->label("Nom du véhicule")->placeholder()->required();
 $start_location = $v->text("start_location")->label("Lieu de départ")->placeholder()->required();
 $return_location = $v->text("return_location")->label("Lieu de retour")->placeholder()->required();
 $capacity = $v->number("capacity")->label("Capacité du véhicule")->min($vehicle_id ? count(($vehicle->passengers)) : 1)->placeholder()->required();
+$start_date = $v->date("start_date")->label("Date de départ")->required();
+$return_date = $v->date("return_date")->label("Date de retour")->required();
 
 
 if ($v->valid()) {
@@ -39,6 +43,8 @@ if ($v->valid()) {
     $vehicle->manager = $user;
     $vehicle->event = $event;
     $vehicle->capacity = $capacity->value;
+    $vehicle->start_date = date_create($start_date->value);
+    $vehicle->return_date = date_create($return_date->value);
     em()->persist($vehicle);
     em()->flush();
     redirect("/evenements/$event->id");
@@ -63,6 +69,12 @@ page(($vehicle_id ? "Modifier le véhicule" : "Ajouter un véhicule") . " pour $
             </div>
             <div class="col-sm-12 col-lg-6">
                 <?= $capacity->render() ?>
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                <?= $start_date->render() ?>
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                <?= $return_date->render() ?>
             </div>
         </div>
     </article>

@@ -39,46 +39,79 @@ if ($method == "POST") {
 <article class="vehicle-article">
     <details <?= $method == "POST" ? "open" : "" ?>>
         <summary>
-            <div class="vehicle-name">
-                <?= $vehicle->name ?>
+            <div class="summary-content">
+                <div class="vehicle-name">
+                    <?= $vehicle->name ?>
+                </div>
             </div>
-            <div class="location">
-                <span>
-                    <?= $vehicle->start_location ?>
-                </span>
-                <i class="fas fa-arrow-right"></i>
-                <span>
-                    <?= $vehicle->start_location ?>
-                </span>
+            <div>
+                <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i class="fas fa-user"></i>
+                    <?= $vehicle->manager->first_name ?>
+                    <?= $vehicle->manager->last_name ?>
+                </a>
             </div>
             <div class="capacity">
                 <i class="fas fa-chair"></i> <?= count($vehicle->passengers) ?> / <?= $vehicle->capacity ?>
             </div>
         </summary>
 
-        <div class="grid">
-            <div>
-                <h6>Passagers</h6>
-                <?php if (!$vehicle->passengers[0]): ?>
-                    Pas de passagers pour l'instant 🚘
-                <?php endif ?>
-                <p class="passenger-flex">
-                    <?php foreach ($vehicle->passengers as $i => $passenger): ?>
+        <div class="row">
+            <div class="col-6 col-md-4">
+                <dl>
+                    <dt>Départ</dt>
+                    <dd>
+                        <i class="fas fa-location-dot"></i>
+                        <?= $vehicle->start_location ?> -
+                        <i class="fas fa-calendar"></i>
+                        <?= $vehicle->start_date->format("d M") ?>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-6 col-md-4">
+                <dl>
+                    <dt>Retour</dt>
+                    <dd>
+                        <i class="fas fa-location-dot"></i>
+                        <?= $vehicle->return_location ?> -
+                        <i class="fas fa-calendar"></i>
+                        <?= $vehicle->return_date->format("d M") ?>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-6 col-md-4">
+                <dl>
+                    <dt>Capacité</dt>
+                    <dd>
+                        <i class="fas fa-chair"></i> <?= count($vehicle->passengers) ?> / <?= $vehicle->capacity ?>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-6">
+                <dl>
+                    <dt>Responsable</dt>
+                    <dd>
                         <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i
                                 class="fas fa-user"></i>
-                            <?= $passenger->first_name ?>     <?= $passenger->last_name ?> </a>
-                    <?php endforeach ?>
-                </p>
+                            <?= $vehicle->manager->first_name ?>
+                            <?= $vehicle->manager->last_name ?>
+                        </a>
+                    </dd>
+                </dl>
             </div>
-            <div>
-                <h6>Responsable</h6>
-                <p>
-                    <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i
-                            class="fas fa-user"></i>
-                        <?= $vehicle->manager->first_name ?>
-                        <?= $vehicle->manager->last_name ?>
-                    </a>
-                </p>
+            <div class="col-sm-12 col-lg-6">
+                <dl>
+                    <dt>Passagers</dt>
+                    <?php if (!$vehicle->passengers[0]): ?>
+                        <dd>Pas de passagers pour l'instant 🚘</dd>
+                    <?php endif ?>
+                    <dd class="passenger-flex">
+                        <?php foreach ($vehicle->passengers as $i => $passenger): ?>
+                            <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i
+                                    class="fas fa-user"></i>
+                                <?= $passenger->first_name ?>     <?= $passenger->last_name ?> </a>
+                        <?php endforeach ?>
+                    </dd>
+                </dl>
             </div>
         </div>
         <div class="buttons-grid">
