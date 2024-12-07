@@ -50,10 +50,12 @@ page($event->name)->css("event_view.css")->css("entry_list.css");
         hx-target="#entry-list" <?= ($tab == "participants") ? "active" : "" ?>>
         Participants
     </sl-tab>
-    <sl-tab slot="nav" panel="vehicles" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/vehicules"
-        hx-target="#vehicles" <?= ($tab == "vehicules") ? "active" : "" ?>>
-        Véhicules
-    </sl-tab>
+    <?php if (Feature::Carpooling->on()): ?>
+        <sl-tab slot="nav" panel="vehicles" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/vehicules"
+            hx-target="#vehicles" <?= ($tab == "vehicules") ? "active" : "" ?>>
+            Véhicules
+        </sl-tab>
+    <?php endif ?>
 
     <sl-tab-panel name="information">
         <?php if ($is_simple) {
@@ -156,7 +158,9 @@ page($event->name)->css("event_view.css")->css("entry_list.css");
         <?php } ?>
     </sl-tab-panel>
     <sl-tab-panel name="entry-list" id="entry-list"></sl-tab-panel>
-    <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
+    <?php if (Feature::Carpooling->on()): ?>
+        <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
+    <?php endif ?>
 </sl-tab-group>
 
 <?= UserModal::renderRoot() ?>
