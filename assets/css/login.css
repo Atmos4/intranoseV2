@@ -28,3 +28,13 @@ body > main {
 .help::before {
   white-space: pre;
 }
+
+.login-logo {
+  display: block;
+  padding: 1rem;
+  margin: 0 auto 1rem;
+  font-family: "Faro Light";
+  font-size: 2rem;
+  font-weight: 600;
+  text-decoration: none;
+}
