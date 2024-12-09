@@ -108,7 +108,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         <article class="row">
             <?= $v->render_validation() ?>
             <?= $name->render() ?>
-            <div class="col-md-6">
+            <div class="col-md-6" data-intro="N'hésitez pas à changer le type d'événement !">
                 <?= $type->render() ?>
             </div>
             <div class="col-md-6">
@@ -120,8 +120,8 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
             <div class="col-md-6">
                 <?= $location_url->render() ?>
             </div>
-            <?php if (!$event_id || $event?->type == EventType::Simple): ?>
-                <div class="col-md-6">
+            <?php if ($is_simple): ?>
+                <div class="col-md-6" data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s'inscrire">
                     <?= $deadline->render() ?>
                 </div>
             <?php endif ?>
@@ -130,7 +130,9 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
                 <h2>Catégories</h2>
             </div>
             <div class="col-auto">
-                <button type="button" class="outline contrast" onclick="addCategory()"><i class="fa fa-plus"></i>
+                <button type="button" class="outline contrast" onclick="addCategory()"
+                    data-intro="Ajoutez des catégories selon vos besoin. H21 ou bien végétarien 😋"><i
+                        class="fa fa-plus"></i>
                     Ajouter</button>
             </div>
             <div id="categories" class="col-12">

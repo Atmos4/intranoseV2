@@ -26,7 +26,8 @@ $vowels = ["a", "e", "i", "o", "u"];
 
 page("Événements")->css("event_list.css")
     ->css("about.css") // preload to prevent FOUC
-    ->heading(false);
+    ->heading(false)
+    ->enableHelp();
 ?>
 
 <?php if ($birthday_users): ?>
@@ -43,7 +44,12 @@ page("Événements")->css("event_list.css")
 
 <h2 class="center main-heading">Événements</h2>
 
-<?= actions($can_edit)?->link("/evenements/nouveau", "Ajouter un événement", "fas fa-plus") ?>
+<?= actions($can_edit)?->link(
+    "/evenements/nouveau",
+    "Ajouter un événement",
+    "fas fa-plus",
+    ["data-intro" => 'Créez un événement']
+) ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
@@ -60,9 +66,11 @@ if ($can_edit && count($draft_events)): ?>
     <h6>Événements publiés</h6>
 <?php endif ?>
 
-<?php foreach ($future_events as $event): ?>
-    <?= render_events($event); ?>
-<?php endforeach ?>
+<div data-intro="Accédez aux événements">
+    <?php foreach ($future_events as $event): ?>
+        <?= render_events($event); ?>
+    <?php endforeach ?>
+</div>
 
 <div id="loadEvents">
     <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger

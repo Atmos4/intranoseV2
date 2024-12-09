@@ -17,8 +17,7 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
 
-page($event->name)->css("event_view.css")->css("entry_list.css");
-
+page($event->name)->css("event_view.css")->css("entry_list.css")->enableHelp();
 ?>
 
 <?= actions()
