@@ -16,7 +16,7 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
 
-page($event->name)->css("event_view.css");
+page($event->name)->css("event_view.css")->enableHelp();
 
 ?>
 
@@ -68,7 +68,8 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
                     <?php endif ?>
                     <?php if ($event->open && $totalEntryCount): ?>
                         <div class="col-12 col-lg-auto">
-                            <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary">
+                            <a role="button" href="/evenements/<?= $event->id ?>/participants" class="secondary"
+                                data-intro="Cliquez ici pour accéder aux licenciés déjà inscrits à l'événement">
                                 <i class="fas fa-users"></i> Participants
                                 <?= "($totalEntryCount)" ?>
                             </a>
@@ -78,9 +79,11 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
             </div>
         </div>
     </header>
-    <section>
+    <section
+        data-intro="Les activités sont le contenu d'un événement. Ce peut être des compétitions, des entraînements ou bien des barbeucs 🍴😉">
         <?php if (count($event->activities)): ?>
-            <h3>Activités</h3>
+            <h3>
+                Activités</h3>
             <?php foreach ($event->activities as $i => $activity):
                 $activity_entry = $activity->entries[0] ?? null; ?>
                 <details>
@@ -131,7 +134,8 @@ $end_class = $event->end_date < $today_date ? $deadline_class : "";
 
         <?php if ($can_edit): ?>
             <p>
-                <a role=button class="secondary" href="/evenements/<?= $event->id ?>/activite/nouveau">
+                <a role=button class="secondary" href="/evenements/<?= $event->id ?>/activite/nouveau"
+                    data-intro="Vous pouvez ajouter des activités à un événement complexe">
                     <i class="fas fa-plus"></i> Ajouter une activité</a>
             </p>
         <?php endif ?>

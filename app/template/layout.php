@@ -31,6 +31,9 @@ $page = Page::getInstance(); ?>
         <link rel="stylesheet" href="<?= $css ?>">
     <?php endforeach ?>
 
+    <!-- Intro.js -->
+    <link href="/assets/css/introjs.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/assets/css/navbar.css">
 
     <!-- HTMX -->
@@ -45,6 +48,10 @@ $page = Page::getInstance(); ?>
 
     <!-- Shoelace -->
     <?php include __DIR__ . "/shoelace.php" ?>
+
+    <!-- Intro.js -->
+    <script src="/assets/js/intro.min.js"></script>
+    <script>function start_intro() { introJs().start() }</script>
 </head>
 
 <body hx-ext="head-support,loading-states" <?= has_session("user_id") ? 'hx-boost="true"' : "" ?>
@@ -55,6 +62,9 @@ $page = Page::getInstance(); ?>
     } ?>
     <div id="hx-indicator" aria-busy="true"></div>
     <main class="container" <?= $page->no_padding ? "style=\"padding:0\"" : "" ?>>
+        <?php if ($page->help): ?>
+            <div class="help-button" onclick="start_intro()" id="help-button"><i class="fas fa-question"></i></div>
+        <?php endif ?>
         <?php if ($page->controlled) {
             echo ControlNotice();
         } ?>
@@ -68,6 +78,5 @@ $page = Page::getInstance(); ?>
 
     <?= Toast::renderRoot() ?>
 </body>
-
 
 </html>
