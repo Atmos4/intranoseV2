@@ -26,7 +26,29 @@ if (!Component::mounted()) {
     function start_modal_intro() {
         var dropdown = document.getElementById('actions-dropdown');
         dropdown.setAttribute('open', '');
-        introJs("#userViewDialog").start();
+        introJs("#userViewDialog").addSteps(
+            [
+                {
+                    intro: "Bienvenue sur la vue d'un utilisateur ! Ici, vous pouvez voir ses informations et effectuer des actions sur son profil."
+                },
+                {
+                    element: document.getElementById('user-control'),
+                    intro: "En contrôlant un utilisateur, vous pouvez par exemple l'inscrire à des événements à sa place."
+                },
+                {
+                    element: document.getElementById('user-modify'),
+                    intro: "Modifiez les informations de l'utilisateur ici."
+                },
+                {
+                    element: document.getElementById('user-family'),
+                    intro: "Un utilisateur peut être ajouté à une famille !"
+                },
+                {
+                    element: document.getElementById('user-deactivate'),
+                    intro: "Un utilisateur désactivé ne peut plus accéder à son compte, mais peut être réactivé plus tard."
+                }
+            ]
+        ).start();
     }
 </script>
 <dialog id="userViewDialog" <?= $open ?> onclick="event.target=== this && htmx.trigger(this, 'close-modal')"
@@ -80,8 +102,7 @@ if (!Component::mounted()) {
         <?php if ($can_edit_users): ?>
             <footer>
                 <nav al-center>
-                    <li><a href="/user-control/<?= $user->id ?>" class="outline" id="user-control"
-                            data-intro="En contrôlant un utilisateur, vous pouvez par exemple l'inscrire à des événements à sa place">Contrôler</a>
+                    <li><a href="/user-control/<?= $user->id ?>" class="outline" id="user-control">Contrôler</a>
                     </li>
                     <li>
                         <details class="dropdown" id="actions-dropdown">
@@ -92,19 +113,17 @@ if (!Component::mounted()) {
                                             Debug</a>
                                     </li>
                                 <?php endif ?>
-                                <li><a href="/licencies/<?= $user->id ?>/modifier" id="user-modify"
-                                        data-intro="Modifiez l'utilisateur ici">Modifier</a>
+                                <li><a href="/licencies/<?= $user->id ?>/modifier" id="user-modify">Modifier</a>
                                 </li>
                                 <li>
                                     <a href="<?= $user->family ? "/famille/{$user->family->id}" : "/licencies/$user->id/creer-famille" ?>"
-                                        id="user-family" data-intro="Un utilisateur peut être ajouté à une famille !">
+                                        id="user-family">
                                         <i class="fa fa-<?= $user->family ? "users" : "plus" ?>"></i> Famille
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/licencies/<?= $user->id ?>/desactiver" class="destructive"
-                                        id="user-deactivate"
-                                        data-intro="Un utilisateur désactivé ne peut plus accéder à son compte, mais peut être réactivé plus tard">
+                                        id="user-deactivate">
                                         <i class="fas fa-trash"></i>
                                         Désactiver
                                     </a>
