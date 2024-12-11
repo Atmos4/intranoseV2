@@ -44,11 +44,9 @@ class PageActionDropdownBuilder extends OutputBuilder
         }
         $output = array_reduce($this->output, fn($c, $i) => ("$c<li>$i</li>"), "");
         $rtl = $this->rtl ? 'dir="rtl"' : '';
-        $attr = $this->attributes;
-        $formatted_attributes = $this->attrs($attr);
         return <<<HTML
         <li>
-            <details class="dropdown" $formatted_attributes>
+            <details class="dropdown" {$this->attrs($this->attributes)}>
                 <summary>$this->label</summary>
                 <ul $rtl>$output</ul>
             </details>
