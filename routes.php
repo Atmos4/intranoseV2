@@ -51,6 +51,13 @@ Router::add('/evenements/$event_id/publier', __DIR__ . '/app/pages/events/event_
 Router::add('/evenements/$event_id/supprimer', __DIR__ . '/app/pages/events/delete/event_delete.php');
 Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
 
+//Vehicles
+Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');
+Router::add('/evenements/$event_id/vehicule/nouveau', __DIR__ . '/app/pages/vehicle/vehicle_edit.php');
+Router::add('/evenements/$event_id/vehicule/$vehicle_id', __DIR__ . '/app/pages/vehicle/vehicle_edit.php');
+Router::add('/evenements/$event_id/vehicule/$vehicle_id/supprimer', __DIR__ . '/app/pages/vehicle/vehicle_delete.php');
+Router::add('/evenements/$event_id/vehicule/$vehicle_id/inscription/$user_id', __DIR__ . '/app/pages/vehicle/vehicle_register.php');
+
 // Event entry lists
 Router::add('/evenements/$event_id/participants', __DIR__ . '/app/pages/events/entry_list/entry_list.php');
 Router::add('/evenements/$event_id/participants/tabs', __DIR__ . '/app/pages/events/entry_list/entry_list_tabs.php');
