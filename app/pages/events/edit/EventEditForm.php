@@ -60,10 +60,13 @@ if ($v->valid()) {
         <div class="col-sm-6 col-lg-4">
             <?= $end_date->render() ?>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4" data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s'inscrire">
             <?= $limit_date->render() ?>
         </div>
-        <?= $bulletin_url->render() ?>
-        <?= $description->attributes(["rows" => "8"])->render() ?>
+        <div data-intro="Vous pouvez ajouer un lien vers un bulletin en ligne"><?= $bulletin_url->render() ?></div>
+        <div
+            data-intro="Vous pouvez formatter le texte de la description en markdown. N'hésitez pas à aller voir <a href='https://www.markdownguide.org/' target='_blank'>cette ressource</a>">
+            <?= $description->attributes(["rows" => "8"])->render() ?>
+        </div>
     </article>
 </form>

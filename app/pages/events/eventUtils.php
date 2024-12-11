@@ -12,7 +12,8 @@ function RenderActivityEntry(?Activity $activity, bool $can_register = null)
     $activity_entry = $activity->entries[0];
     $extra_info = $activity_entry?->category || $activity_entry?->comment;
     [$open_tag, $close_tag] = $extra_info ? ["<header>", "</header>"] : ["<div class='horizontal'>", "</div>"] ?>
-    <article class="notice <?= $activity_entry?->present ? "valid" : "invalid" ?>">
+    <article class="notice <?= $activity_entry?->present ? "valid" : "invalid" ?>" <?php if ($can_register): ?>
+            data-intro="L'état de votre inscription est disponible ici" <?php endif ?>>
         <?= $open_tag ?>
         <b>
             <?= match (true) {
@@ -23,8 +24,9 @@ function RenderActivityEntry(?Activity $activity, bool $can_register = null)
             } ?>
         </b>
         <?php if ($can_register): ?>
-            <a href="/evenements/<?= $activity->event->id ?>/inscription_simple" class="outline contrast">
-                <i class="fas fa-pen-to-square"></i> <?= $activity_entry ? "Gérer l'inscription" : "S'inscrire" ?>
+            <a href="/evenements/<?= $activity->event->id ?>/inscription_simple" class="outline contrast"
+                data-intro="Cliquez ici pour " . <?= $activity_entry ? 'modifier votre inscription' : 'vous inscrire' ?>>
+                <i class=" fas fa-pen-to-square"></i> <?= $activity_entry ? "Gérer l'inscription" : "S'inscrire" ?>
             </a>
         <?php endif ?>
         <?= $close_tag ?>
@@ -54,7 +56,8 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
 {
     $extra_info = $entry?->present || $entry?->comment;
     [$open_tag, $close_tag] = $extra_info ? ["<header>", "</header>"] : ["<div class='horizontal'>", "</div>"] ?>
-    <article class="notice <?= $entry?->present ? "valid" : "invalid" ?>">
+    <article class="notice <?= $entry?->present ? "valid" : "invalid" ?>"
+        data-intro="L'état de votre inscription est disponible ici">
         <?= $open_tag ?>
         <b>
             <?= match (true) {
@@ -65,7 +68,8 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
             } ?>
         </b>
         <?php if (($event->open && $event->deadline >= date_create("today")) || $can_edit): ?>
-            <a href="/evenements/<?= $event->id ?>/inscription" class="outline contrast">
+            <a href="/evenements/<?= $event->id ?>/inscription" class="outline contrast" data-intro="Cliquez ici pour " .
+                <?= $entry ? 'modifier votre inscription' : 'vous inscrire' ?>>
                 <i class="fas fa-pen-to-square"></i> <?= $entry ? "Gérer l'inscription" : "S'inscrire" ?>
             </a>
         <?php endif ?>

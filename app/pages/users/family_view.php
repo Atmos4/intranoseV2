@@ -29,14 +29,14 @@ $add_member_list = em()->createQueryBuilder()
     ->orderBy('u.last_name')
     ->getQuery()->getArrayResult();
 
-page($family->name)->css("family_list.css") ?>
+page($family->name)->css("family_list.css")->enableHelp() ?>
 
 <?= actions(check_auth(Access::$EDIT_USERS))
     ->back("/familles")
     ->dropdown(fn($b) => $b->link("/famille/$family->id/supprimer", "Supprimer la famille", "fa fa-trash", ["class" => "destructive outline"])) ?>
 
 <section class="row">
-    <?php foreach ($family->members as $f_member): ?>
+    <?php foreach ($family->members as $key => $f_member): ?>
         <div class="col-sm-12 col-md-6">
             <article class="user-card">
                 <img src="<?= $f_member->getPicture() ?>">
@@ -45,14 +45,18 @@ page($family->name)->css("family_list.css") ?>
                         <?= "$f_member->first_name $f_member->last_name" ?>
                     </a>
                     <br>
-                    <?= $f_member->family_leader ? "Parent" : "Enfant" ?>
+                    <div <?= $key == 0 ?
+                        "data-intro=\"Un membre de la famille peut être Parent ou Enfant\"" : "" ?>>
+                        <?= $f_member->family_leader ? "Parent" : "Enfant" ?>
+                    </div>
                 </div>
                 <nav>
                     <ul>
                         <li>
                             <?php if ($f_member != $user || check_auth(Access::$EDIT_USERS)): ?>
                                 <details class="dropdown" dir="rtl">
-                                    <summary aria-haspopup="listbox" class="contrast actions">
+                                    <summary aria-haspopup="listbox" class="contrast actions" <?= $key == 0 ?
+                                        "data-intro=\"Vous pouvez modifier ce rôle\"" : "" ?>>
                                         <i class="fa fa-ellipsis-vertical"></i>
                                     </summary>
                                     <ul dir="rtl">
@@ -79,7 +83,8 @@ page($family->name)->css("family_list.css") ?>
     <form method="post">
         <h4>Ajouter un membre</h4>
         <details class="dropdown">
-            <summary aria-haspopup="listbox">Ajouter à la famille...</summary>
+            <summary aria-haspopup="listbox" data-intro="Ajoutez de nouveaux membres à la famille !">Ajouter à la
+                famille...</summary>
             <ul data-placement=top>
                 <?php foreach ($add_member_list as $add_member): ?>
                     <li>

@@ -2,17 +2,27 @@
 restrict_access();
 $can_add_user = check_auth(Access::$EDIT_USERS);
 $users = UserService::getActiveUserList();
-page("Les licenciés") ?>
+page("Les licenciés")->enableHelp() ?>
 <?= actions($can_add_user)->link("/licencies/ajouter", "Ajouter un licencié", "fa-plus")
     ->dropdown(
         fn($b) => $b
-            ->link("/familles", "Familles", "fa-users")
-            ->link("/licencies/desactive", "Licenciés désactivés", "fa-bed"),
-        "Plus"
+            ->link(
+                "/familles",
+                "Familles",
+                "fa-users",
+            )
+            ->link(
+                "/licencies/desactive",
+                "Licenciés désactivés",
+                "fa-bed",
+            ),
+        "Plus",
+        ["data-intro" => "Visualisez les familles et les licenciés désactivés ici"]
     ) ?>
 <form method="get">
     <input type="search" id="search-users" name="search" placeholder="Rechercher..."
-        onkeyup="searchSection('search-users','users-list')">
+        onkeyup="searchSection('search-users','users-list')"
+        data-intro="Utilisez la barre de recherche pour chercher votre licencié préféré !">
 </form>
 
 <section class="row" id="users-list">

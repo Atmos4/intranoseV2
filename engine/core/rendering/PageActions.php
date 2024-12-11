@@ -24,16 +24,16 @@ class PageActionBuilder extends OutputBuilder
      * @param Closure(PageActionDropdownBuilder):void|PageActionDropdownBuilder $functor 
      * @return static 
      */
-    function dropdown(callable $functor, $label = "Actions"): static
+    function dropdown(callable $functor, $label = "Actions", $attributes = []): static
     {
-        $this->condition && $functor($this->output[] = new PageActionDropdownBuilder($label, $this, !!$this->output));
+        $this->condition && $functor($this->output[] = new PageActionDropdownBuilder($label, $this, !!$this->output, $attributes));
         return $this;
     }
 }
 
 class PageActionDropdownBuilder extends OutputBuilder
 {
-    function __construct(public string $label, public PageActionBuilder|null $parent = null, public bool $rtl = false)
+    function __construct(public string $label, public PageActionBuilder|null $parent = null, public bool $rtl = false, public array $attributes = [])
     {
     }
 
@@ -46,7 +46,7 @@ class PageActionDropdownBuilder extends OutputBuilder
         $rtl = $this->rtl ? 'dir="rtl"' : '';
         return <<<HTML
         <li>
-            <details class="dropdown">
+            <details class="dropdown" {$this->attrs($this->attributes)}>
                 <summary>$this->label</summary>
                 <ul $rtl>$output</ul>
             </details>
