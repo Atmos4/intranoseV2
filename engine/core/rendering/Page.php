@@ -10,6 +10,7 @@ class Page extends SingletonDependency
     public bool $controlled = false;
     public array $scripts = [];
     public bool $no_padding = false;
+    public bool $help = false;
 
     public function css(string $css)
     {
@@ -53,6 +54,11 @@ class Page extends SingletonDependency
     public function script($script)
     {
         $this->scripts[] = "/assets/js/$script.js";
+        return $this;
+    }
+    public function enableHelp()
+    {
+        $this->help = true;
         return $this;
     }
 }

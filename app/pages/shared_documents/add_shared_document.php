@@ -21,16 +21,19 @@ if ($v->valid()) {
     }
 }
 
-page("Ajouter un document");
+page("Ajouter un document")->enableHelp();
 ?>
 <?= actions()->back("/documents") ?>
 <form method="post" enctype="multipart/form-data">
     <?= $v->render_validation() ?>
     <i>Formats autorisés: images, PDF, Word, Excel. S'il manque des formats <a href="/feedback">faites une
             suggestion!</a></i>
-    <?= $file_upload->render() ?>
-    <?= $permission->render() ?>
-    <?= $name->render() ?>
+    <div data-intro="Ajoutez des documents ici"><?= $file_upload->render() ?></div>
+    <div
+        data-intro="Vous pouvez décider de qui à accès aux documents. <b>Public</b> signifie tout le monde, <b>Admin</b> correspond aux coachs et à l'administration.">
+        <?= $permission->render() ?>
+    </div>
+    <div data-intro="En option, le nom d'affichage du fichier."><?= $name->render() ?></div>
     <button type=" submit" class="outline">
         Enregistrer
     </button>

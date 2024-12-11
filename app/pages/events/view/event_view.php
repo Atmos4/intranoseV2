@@ -17,8 +17,7 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
 
-page($event->name)->css("event_view.css")->css("entry_list.css");
-
+page($event->name)->css("event_view.css")->css("entry_list.css")->enableHelp();
 ?>
 
 <?= actions()
@@ -47,7 +46,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css");
     </sl-tab>
     <sl-tab slot="nav" panel="entry-list" hx-trigger="load"
         hx-post="/evenements/<?= $event->id ?>/participants<?= $is_simple ? "?is_simple=true" : "" ?>"
-        hx-target="#entry-list" <?= ($tab == "participants") ? "active" : "" ?>>
+        hx-target="#entry-list" <?= ($tab == "participants") ? "active" : "" ?>
+        data-intro="Cliquez ici pour accéder aux licenciés déjà inscrits à l'événement">
         Participants
     </sl-tab>
     <?php if (Feature::Carpooling->on()): ?>
@@ -87,7 +87,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css");
                         </div>
                     </div>
                 </header>
-                <section>
+                <section
+                    data-intro="Les activités sont le contenu d'un événement. Ce peut être des compétitions, des entraînements ou bien des barbeucs 🍴😉">
                     <?php if (count($event->activities)): ?>
                         <h3>Activités</h3>
                         <?php foreach ($event->activities as $i => $activity):
@@ -140,7 +141,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css");
 
                     <?php if ($can_edit): ?>
                         <p>
-                            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/activite/nouveau">
+                            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/activite/nouveau"
+                                data-intro="Vous pouvez ajouter des activités à un événement complexe">
                                 <i class="fas fa-plus"></i> Ajouter une activité</a>
                         </p>
                     <?php endif ?>

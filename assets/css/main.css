@@ -673,3 +673,17 @@ article.notice > header,
   font-family: "Faro Light";
   src: url(../webfonts/Farro-Light.ttf);
 }
+
+.help-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.help-button-modal {
+  cursor: pointer;
+  display: flex;
+  justify-content: end;
+}

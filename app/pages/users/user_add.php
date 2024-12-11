@@ -48,7 +48,7 @@ if ($v->valid()) {
 
 
 
-page("Nouveau licencié")->css("settings.css");
+page("Nouveau licencié")->css("settings.css")->enableHelp();
 ?>
 <?= actions()->back("/licencies")->submit("Créer", attributes: ["form" => "add-user"]) ?>
 <form id="add-user" method="post" class="row">
@@ -63,7 +63,10 @@ page("Nouveau licencié")->css("settings.css");
 
     <div class="col-sm-12 col-md-6">
         <?= $real_email->render() ?>
-        <?= $permission->render() ?>
+        <div
+            data-intro="Les différents rôles : <ul><li>Utilisateur : rôle de base</li><li>Coach et Administration : peuvent créer des événements et des licenciés</li></ul>">
+            <?= $permission->render() ?>
+        </div>
     </div>
 
 </form>
