@@ -237,13 +237,15 @@ function format_date($date, string $format = null)
     }
     return formatter($format)->format($date);
 }
+
 /** CSRF Protection */
 function set_csrf()
 {
-    if (!isset($_SESSION["csrf"])) {
-        $_SESSION["csrf"] = bin2hex(random_bytes(50));
-    }
-    return '<input type="hidden" name="csrf" value="' . $_SESSION["csrf"] . '">';
+    return '<input type="hidden" name="csrf" value="' . gen_csrf() . '">';
+}
+function gen_csrf()
+{
+    return $_SESSION["csrf"] ??= bin2hex(random_bytes(50));
 }
 function is_csrf_valid()
 {
@@ -260,4 +262,81 @@ function is_csrf_valid()
 function logger()
 {
     return MainLogger::get();
+}
+
+// --- nitty gritty
+
+/** Same as `rm -rf` */
+function rm_rf($path)
+{
+    if (!is_dir($path)) {
+        return unlink($path);
+    }
+    $items = scandir($path);
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        $itemPath = $path . DIRECTORY_SEPARATOR . $item;
+        if (is_dir($itemPath)) {
+            rm_rf($itemPath);
+        } else {
+            unlink($itemPath);
+        }
+    }
+    return rmdir($path);
+}
+
+/**
+ * Wrapper for success or failure of a procedure
+ */
+class Result
+{
+    function __construct(public $success, public $data, public $message)
+    {
+    }
+
+    static function wrap($data = null, $msg = "")
+    {
+        return new static(true, $data, $msg);
+    }
+
+    static function ok($msg = "")
+    {
+        return new static(true, null, $msg);
+    }
+
+    /**
+     * Wraps a closure with try catch
+     * @param Closure(void):Result $f
+     * @return Result
+     */
+    static function try(callable $f): Result
+    {
+        try {
+            return $f() ?? Result::ok();
+        } catch (Throwable $t) {
+            return Result::error($t->getMessage());
+        }
+    }
+
+    static function error($msg = "")
+    {
+        return new static(false, null, $msg);
+    }
+
+    function print()
+    {
+        return (string) $this->message;
+    }
+
+    function __tostring()
+    {
+        return $this->print();
+    }
+
+    function unwrap()
+    {
+        return $this->data;
+    }
 }

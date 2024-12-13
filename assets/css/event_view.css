@@ -32,11 +32,6 @@ details summary:focus:not([role="button"]) {
   flex-wrap: wrap;
 }
 
-sl-tab-group {
-  --indicator-color: var(--primary);
-  --sl-color-primary-600: var(--primary);
-}
-
 dt {
   font-weight: bold;
 }
