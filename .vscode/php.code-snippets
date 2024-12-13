@@ -1,0 +1,14 @@
+{
+  "PHP Template if": {
+    "scope": "php,html,plaintext",
+    "prefix": "pif",
+    "body": ["<?php if ($1): ?>", "\t$0", "<?php endif ?>"],
+    "description": "Log output to console"
+  },
+  "PHP Template foreach": {
+    "scope": "php,html,plaintext",
+    "prefix": "pfe",
+    "body": ["<?php foreach ($1 as $2): ?>", "\t$0", "<?php endforeach ?>"],
+    "description": "Log output to console"
+  }
+}

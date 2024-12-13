@@ -54,7 +54,7 @@ $page = Page::getInstance(); ?>
     <script>function start_intro() { introJs().start() }</script>
 </head>
 
-<body hx-ext="head-support,loading-states" <?= has_session("user_id") ? 'hx-boost="true"' : "" ?>
+<body hx-ext="head-support,loading-states" <?= has_session("user_id") || $page->_boost ? 'hx-boost="true"' : "" ?>
     hx-indicator="#hx-indicator" hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
     <?php
     if ($page->nav && has_session("user_id")) {

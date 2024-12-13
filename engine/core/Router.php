@@ -1,7 +1,6 @@
 <?php
 class Router extends Singleton
 {
-
     private array $dynamicSegments;
     private int $level = 0;
 
@@ -10,7 +9,7 @@ class Router extends Singleton
         try {
             $this->level = ob_get_level();
             ob_start();
-            include_once $path_to_include;
+            require $path_to_include;
             $page = Page::getInstance();
             if ($page->title) {
                 $content = ob_get_clean();
@@ -28,6 +27,9 @@ class Router extends Singleton
                 if (!get_header("hx-request") || get_header("hx-boosted")) {
                     Page::reset();
                     page("Erreur 500")->disableNav()->heading(false);
+                    if (is_dev()) {
+                        echo $e->getMessage();
+                    }
                 }
                 $this->render("app/pages/500.php");
             }

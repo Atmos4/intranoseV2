@@ -32,7 +32,8 @@
     ],
     "dev": [
       "Composer\\Config::disableProcessTimeout",
-      "php -S localhost:8000 server.php"
+      "# Server listening at http://localhost:8000",
+      "@php -S 0.0.0.0:8000 server.php"
     ],
     "seed": "php bin/seed",
     "db:migrate": "@php bin/doctrine --no-interaction migrations:migrate",

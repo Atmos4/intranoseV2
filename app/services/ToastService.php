@@ -78,6 +78,11 @@ class Toast
     {
         return self::create($message, ToastLevel::Warning);
     }
+
+    static function fromResult(Result $r)
+    {
+        return $r->success ? self::success($r->print()) : self::error($r->print());
+    }
 }
 
 enum ToastLevel: string

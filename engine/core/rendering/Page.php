@@ -11,10 +11,16 @@ class Page extends SingletonDependency
     public array $scripts = [];
     public bool $no_padding = false;
     public bool $help = false;
+    public bool $_boost = false;
 
     public function css(string $css)
     {
         $this->css_files[] = "/assets/css/$css";
+        return $this;
+    }
+    public function boost(bool $b = true)
+    {
+        $this->_boost = $b;
         return $this;
     }
     public function description(string $description)
