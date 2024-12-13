@@ -687,3 +687,9 @@ article.notice > header,
   display: flex;
   justify-content: end;
 }
+
+/* Shoelace */
+sl-tab-group {
+  --indicator-color: var(--primary);
+  --sl-color-primary-600: var(--primary);
+}

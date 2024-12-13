@@ -616,16 +616,8 @@ class PasswordField extends StringField
         $this->type = FieldType::Password;
     }
 
-    public bool $new = false;
-
     function check(string|null $msg = null): void
     {
-    }
-
-    function set_new(): static
-    {
-        $this->new = true;
-        return $this;
     }
 
     function secure(): static

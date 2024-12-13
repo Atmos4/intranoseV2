@@ -4,51 +4,30 @@ restrict_dev();
 restrict_access([Permission::ROOT]);
 restrict(DB::getInstance()->isSqlite());
 
-$v = new Validator();
+$v = new Validator(action: "bidule");
 $input = $v->text("sql")->placeholder("SQL");
 $values = $v->text("values")->placeholder("Values");
 $result = null;
 
-$db_name = env("SQLITE_DB_NAME") ?? "db.sqlite";
-try {
-    $pdo = new PDO('sqlite:.sqlite/' . $db_name);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
-
 if ($v->valid()) {
     try {
-        $sql = $input->value;
-        $stmt = $pdo->prepare($sql);
-        $result = $stmt->execute($values->value ? explode(",", $values->value) : null);
-        $rows = $stmt->fetchAll();
-    } catch (PDOException $e) {
+        $rows = em()->getConnection()->fetchAllAssociative($input->value, $values->value ? explode(",", $values->value) : []);
+    } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     }
 }
-
 page("SQLITE");
-
 ?>
-<p>Connected to
-    <?= $db_name ?>
-</p>
 <form method="post">
     <?= $v ?>
     <?= $input ?>
     <?= $values ?>
     <button>Execute</button>
 </form>
-<?php if ($result !== null): ?>
+<?php if ($input->value): ?>
     <section>Query:
         <?= $input->value ?>
     </section>
-    <section>Result:
-        <?= $result ? "success" : "error" ?>
-    </section>
-
     <section>
         Data:
         <pre><?= print_r($rows, true) ?></pre>
