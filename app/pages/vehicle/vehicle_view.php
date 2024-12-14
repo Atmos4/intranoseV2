@@ -16,5 +16,6 @@ $vehicles = em()->createQuery('SELECT v FROM Vehicle v WHERE v.event = ?1')->set
     </div>
 <?php endforeach ?>
 
-<a role=button class="secondary" href="/evenements/<?= $event->id ?>/vehicule/nouveau">
+<a role=button class="secondary" href="/evenements/<?= $event->id ?>/vehicule/nouveau"
+    data-intro="Il est possible d'ajouter votre véhicule pour covoiturer ! 🏎️">
     <i class="fas fa-plus"></i> Ajouter un véhicule</a>

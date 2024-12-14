@@ -6,11 +6,12 @@ $is_simple = get_query_param("is_simple", false, false);
 ?>
 
 <?php if ($event_infos->open && check_auth(Access::$ADD_EVENTS)): ?>
-    <div class="entries-header"><button onclick="selectTable()"> Copier le tableau</button></div>
+    <div class="entries-header"><button onclick="selectTable()"
+            data-intro="Vous pouvez copier le contenu du tableau affiché ici"> Copier le tableau</button></div>
 <?php endif ?>
 <?php if (!$event_infos->open): ?>
     <p class="center">
-        <?php "L'évenement n'est pas encore ouvert 🙃" ?>
+        <?= "L'évenement n'est pas encore ouvert 🙃" ?>
     </p>
 <?php else: ?>
     <div id="tabs" hx-target="#tabs" hx-swap="innerHTML">
