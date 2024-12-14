@@ -30,7 +30,7 @@ if (check_auth([Permission::ROOT])) {
         <ul>
             <li>
                 <h2 class="nav-title">
-                    <?php import(__DIR__ . "/../components/linklub_logo.php")(!!env("INTRANOSE")) ?>
+                    <?php import(__DIR__ . "/../components/linklub_logo.php")(!!env("DISPLAY_LOGO")) ?>
                 </h2>
             </li>
             <?php foreach ($menu->items as $menu_item): ?>

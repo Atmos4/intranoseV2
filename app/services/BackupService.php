@@ -2,18 +2,19 @@
 
 class BackupService
 {
-    public $backupDir = __DIR__ . '/../../.sqlite/backup';
+    public string $backupDir;
     public $cr;
 
-    function __construct(public bool $forCli = false)
+    function __construct(public bool $forCli = false, public string|null $dbPath = null)
     {
         $this->cr = $forCli ? PHP_EOL : "<br>";
+        $this->dbPath ??= DB::getInstance()->sqlitePath;
+        $this->backupDir = dirname($this->dbPath) . "/backup";
     }
 
     function createBackup($maxBackups = 6)
     {
-        $dbPath = DBFactory::getSqliteLocation(DBFactory::getSqliteDbName());
-        $backupFileName = "backup_" . date('Ymd_His') . ".sqlite";
+        $backupFileName = basename(dirname($this->dbPath)) . "_" . date('Ymd_His') . ".sqlite";
         $backupFile = $this->getBackupFile($backupFileName);
 
         if (!is_dir($this->backupDir)) {
@@ -26,7 +27,7 @@ class BackupService
         }
 
         // backup db
-        if (copy($dbPath, $backupFile)) {
+        if (copy($this->dbPath, $backupFile)) {
             echo "Created $backupFileName" . $this->cr;
         } else {
             echo "Failed to create backup.";
@@ -51,7 +52,7 @@ class BackupService
 
     function getBackups()
     {
-        return glob("$this->backupDir/backup_*.sqlite");
+        return glob("$this->backupDir/*.sqlite");
     }
 
     function getBackupFile($filename)

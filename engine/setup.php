@@ -13,9 +13,14 @@ $logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(base_path() . '/lo
 $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
-DB::setupForApp();
+$selected_club = ClubManagementService::getSelectedClub();
+
+$selected_club && DB::setupForClub($selected_club);
+// TODO - one logger per club would be nice
 MainLogger::instance(new MainLogger($logger));
 Mailer::factory(fn() => (is_dev() && !env("EMAIL_MOCK_OFF")) || env("EMAIL_MOCK") ? new MockMailer() : new Mailer());
 
 //services DI
 AuthService::factory(fn() => new AuthService(em()));
+
+return $selected_club;

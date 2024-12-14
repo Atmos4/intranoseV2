@@ -4,7 +4,7 @@ class Router extends Singleton
     private array $dynamicSegments;
     private int $level = 0;
 
-    private function render($path_to_include = "app/pages/404.php")
+    function render($path_to_include = "app/pages/404.php")
     {
         try {
             $this->level = ob_get_level();

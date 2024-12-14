@@ -14,6 +14,11 @@ function app_path(): string
     return BASE_PATH . "/app";
 }
 
+function club_data_path($slug = null)
+{
+    return base_path() . "/.sqlite/.clubs" . ($slug ? "/$slug" : "");
+}
+
 /** readline polyfill because Linux sucks balls */
 if (!function_exists("readline")) {
     function readline($prompt = null)
@@ -46,8 +51,11 @@ function env(string $key)
 /** Temporary - remove once we have properly setup multi-club */
 function config(string $key, $fallback = null)
 {
-    static $conf = ["name" => "Intranose"];
-    return $conf[$key] ?? $fallback ?? "";
+    $c = match ($key) {
+        "name" => $_SESSION["selected_club_name"] ?? "Intranose",
+        default => null
+    };
+    return $c ?? $fallback ?? "";
 }
 
 /** Get global entity manager */
@@ -118,10 +126,10 @@ function get_header($headerName): string|null
 }
 
 /** Redirect helper method */
-function redirect($href)
+function redirect($href, $force = false)
 {
     Toast::stash();
-    if (get_header("HX-Request")) {
+    if (get_header("HX-Request") && !$force) {
         header("HX-Location: $href");
     } else {
         header("Location: $href");
@@ -144,6 +152,12 @@ function e($s)
 function page(string $title)
 {
     return Page::getInstance()->title($title);
+}
+
+function managementPage(string $title, $restrict = true)
+{
+    $restrict && restrict(ClubManagementService::isLoggedIn(), "You are unauthorized");
+    return page($title)->disableNav()->boost();
 }
 
 /** setup page actions */

@@ -22,21 +22,22 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    public string|false $sqlite;
-
     function isSqlite()
     {
-        return !!$this->sqlite;
+        return true; //!!$this->sqlite; Uncomment if we switch back to another system
     }
     function em()
     {
         return $this->entityManager;
     }
 
-    function __construct(Connection $connection)
+    function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null)
     {
-        $this->sqlite = $connection->getDriver() instanceof \Doctrine\DBAL\Driver\PDO\SQLite\Driver;
-        if ($this->sqlite) {
+        if (!$sqlitePath && !$connection) {
+            throw new Error("Unable to create DB connection");
+        }
+        $connection ??= DBFactory::sqlite($sqlitePath);
+        if ($this->sqlitePath) {
             $connection->executeQuery("PRAGMA journal_mode = WAL;"); // speeds up sqlite
         }
 
@@ -59,7 +60,7 @@ class DB extends SingletonDependency
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
-        if ($this->sqlite) {
+        if ($this->sqlitePath) {
             $config->addCustomDatetimeFunction('MONTH', Month_Sqlite::class);
             $config->addCustomDatetimeFunction('DAY', Day_Sqlite::class);
         } else {
@@ -83,14 +84,18 @@ class DB extends SingletonDependency
         return self::getInstance()->em();
     }
 
-    static function setupForApp($sqlite = true)
+    /**
+     * This uses the SQLite DB driver
+     */
+    static function setupForApp(/* $sqlite = true */)
     {
-        self::factory(fn() => new self($sqlite ? DBFactory::sqlite() : DBFactory::mysql()));
+        self::factory(fn() => new self(SqliteFactory::mainPath()));
     }
 
-    static function setupForTest($dbName)
+    static function setupForClub($slug)
     {
-        self::factory(fn() => new self(DBFactory::sqlite($dbName)));
+        assert(!!$slug, "Club namespace should be defined"); // TODO - refactor this in the future
+        self::factory(fn() => new self(SqliteFactory::clubPath($slug)));
     }
 }
 
@@ -111,36 +116,41 @@ class DBFactory
         ]);
     }
 
-    static function sqlite($fileName = null)
+    static function sqlite($fileName)
     {
-        self::createSqliteDirIfNotExists();
-        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => self::getSqliteLocation($fileName ?? self::getSqliteDbName())]);
+        self::mkDir(dirname($fileName));
+        return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
     }
 
-    static function createSqliteDirIfNotExists()
+    static function mkDir($path)
     {
-        $sqliteDir = __DIR__ . "/../../.sqlite";
-        if (!file_exists($sqliteDir)) {
-            mkdir($sqliteDir);
-        }
+        if (!file_exists($path))
+            mkdir($path);
     }
 
     // Configuration factory
-    static function getConfig($db)
+    static function getConfig(DB $db)
     {
         return !!$db->isSqlite() ?
             new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
             new PhpFile(__DIR__ . "/../../database/config/migrations.php");
     }
+}
 
-    static function getSqliteDbName($file = null)
+class SqliteFactory
+{
+    static function clubPath($slug)
     {
-        return $file ?? env("SQLITE_DB_NAME") ?? 'db.sqlite';
+        return club_data_path($slug) . "/db.sqlite";
     }
-
-    static function getSqliteLocation($file)
+    static function mainPath($file = null)
     {
-        return __DIR__ . "/../../.sqlite/$file";
+        $file ??= self::mainName();
+        return base_path() . "/.sqlite/$file";
+    }
+    static function mainName()
+    {
+        return env("SQLITE_DB_NAME") ?? 'db.sqlite';
     }
 }
 

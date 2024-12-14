@@ -1,9 +1,9 @@
 <?php
 
-return function ($display = false) { ?>
-    <?php if (!$display)
+return function ($displayLogo = false) { ?>
+    <?php if (!$displayLogo)
         include "assets/svg/linklub_icon.svg"; ?>
     <span>
-        <?= $display ? config("name", "linklub") : "linklub" ?>
+        <?= config("name", "linklub") ?>
     </span>
 <?php } ?>

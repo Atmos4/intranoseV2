@@ -39,7 +39,7 @@ if ($v->valid()) {
 ?>
 
 <article>
-    <h2 class="center">Bienvenue au NOSE !</h2>
+    <h2 class="center">Bienvenue au club !</h2>
     <p>
         Bienvenue,
         <?= "{$token->user->first_name} {$token->user->last_name}" ?> ! Remplis ces dernières informations avant de

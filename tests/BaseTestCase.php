@@ -19,11 +19,12 @@ abstract class BaseTestCase extends TestCase
         MainLogger::instance(new MainLogger(new Monolog\Logger("test", [$this->handler])));
 
         // create tests directory and copy temp db
-        !file_exists(DBFactory::getSqliteLocation('tests')) && mkdir(DBFactory::getSqliteLocation('tests'));
-        $this->tempDbFile = 'tests/' . $this::class . "." . $this->name() . ".sqlite";
-        if (copy(DBFactory::getSqliteLocation(self::getTestDBName()), DBFactory::getSqliteLocation($this->tempDbFile))) // this will also delete the previous test data
+        $testDir = SqliteFactory::mainPath('tests');
+        !file_exists($testDir) && mkdir($testDir);
+        $this->tempDbFile = "$testDir/" . $this::class . "." . $this->name() . ".sqlite";
+        if (copy(SqliteFactory::mainPath(self::getTestDBName()), $this->tempDbFile)) // this will also delete the previous test data
         {
-            $this->db = new DB(DBFactory::sqlite($this->tempDbFile));
+            $this->db = new DB($this->tempDbFile);
             // warning: remove this as singletons are not usable in phpunit
             DB::factory(fn() => $this->db);
         } else
@@ -34,7 +35,7 @@ abstract class BaseTestCase extends TestCase
     protected function tearDown(): void
     {
         // Commenting this out for now. It's not useful to delete those replicates now. Maybe later when we have more tests
-        //file_exists(DBFactory::getSqliteLocation($this->tempDbFile)) && unlink(DBFactory::getSqliteLocation($this->tempDbFile));
+        //file_exists($this->tempDbFile) && unlink($this->tempDbFile);
     }
 
     /** @return Monolog\LogRecord[] */
