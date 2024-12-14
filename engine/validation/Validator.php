@@ -13,8 +13,7 @@ class Validator
     function __construct(array $form_values = [], $action = null)
     {
         $this->action = $action;
-        $_POST['action'] ??= null;
-        if ((!empty($_POST) or !empty($_FILES)) and ((!$action && !$_POST['action']) or $_POST['action'] == $action)) {
+        if ((!empty($_POST) or !empty($_FILES)) and ((!$action && !isset($_POST['action'])) or $_POST['action'] == $action)) {
             $this->empty = false;
             $form_values = $_POST;
         }
@@ -52,9 +51,11 @@ class Validator
      * To be used with a standalone hx-post / hx-delete
      * @return string
      */
-    function hx_action(): string
+    function hx_action($vals = []): string
     {
-        return "hx-vals='{\"action\":\"$this->action\",\"csrf\":\"" . gen_csrf() . "\"}'";
+        $vals["action"] = $this->action;
+        $vals["csrf"] = gen_csrf();
+        return "hx-vals='" . json_encode($vals) . "'";
     }
 
     function render_validation(): string
