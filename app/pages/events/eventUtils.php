@@ -25,7 +25,7 @@ function RenderActivityEntry(?Activity $activity, bool $can_register = null)
         </b>
         <?php if ($can_register): ?>
             <a href="/evenements/<?= $activity->event->id ?>/inscription_simple" class="outline contrast"
-                data-intro="Cliquez ici pour " . <?= $activity_entry ? 'modifier votre inscription' : 'vous inscrire' ?>>
+                data-intro="<?= "Vous pouvez " . ($activity_entry ? 'modifier votre inscription' : 'vous inscrire') ?> ici">
                 <i class=" fas fa-pen-to-square"></i> <?= $activity_entry ? "Gérer l'inscription" : "S'inscrire" ?>
             </a>
         <?php endif ?>
@@ -68,8 +68,8 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
             } ?>
         </b>
         <?php if (($event->open && $event->deadline >= date_create("today")) || $can_edit): ?>
-            <a href="/evenements/<?= $event->id ?>/inscription" class="outline contrast" data-intro="Cliquez ici pour " .
-                <?= $entry ? 'modifier votre inscription' : 'vous inscrire' ?>>
+            <a href="/evenements/<?= $event->id ?>/inscription" class="outline contrast"
+                data-intro="<?= "Vous pouvez " . ($entry ? 'modifier votre inscription' : 'vous inscrire') ?> ici">
                 <i class="fas fa-pen-to-square"></i> <?= $entry ? "Gérer l'inscription" : "S'inscrire" ?>
             </a>
         <?php endif ?>

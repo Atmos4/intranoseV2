@@ -9,7 +9,7 @@ $getProps = fn($isSelected) =>
     . ($isSelected ? 'aria-selected="true" class="contrast" autofocus' : 'class="secondary outline" aria-selected="false"');
 ?>
 
-<div class="tab-list" role="tablist">
+<div class="tab-list" role="tablist" data-intro="Cliquez sur un onglet pour afficher les participants">
     <button hx-get="<?= "/evenements/$eventId/participants/tabs" ?>" <?= $getProps(!$selectedActivityId) ?>>Déplacement</button>
     <?php foreach ($activities as $activity): ?>
         <button id="<?= "activity$activity->id" ?>" hx-swap="innerHTML show:#<?= "activity$activity->id" ?>:top"

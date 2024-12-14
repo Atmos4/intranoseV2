@@ -19,6 +19,20 @@ $is_simple = $event->type == EventType::Simple;
 
 page($event->name)->css("event_view.css")->css("entry_list.css")->enableHelp();
 ?>
+<script>function start_intro() {
+        const tabGroup = document.querySelector('sl-tab-group');
+        const intro = introJs();
+
+        intro.onbeforechange((element) => {
+            // Find the closest tab-panel that contains the element
+            const tabPanel = element.closest('sl-tab-panel');
+            if (tabPanel) {
+                tabGroup.show(tabPanel.name);
+            }
+        });
+
+        intro.start();
+    }</script>
 
 <?= actions()
     ->back("/evenements")
@@ -41,10 +55,11 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->enableHelp();
 <?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
 
 <sl-tab-group>
-    <sl-tab slot="nav" panel="information" <?= $tab ? "" : "active" ?>>
+    <sl-tab slot="nav" panel="information" id="information-tab" <?= $tab ? "" : "active" ?>
+        data-intro="Cet onglet contient les informations générales de l'événement">
         Informations
     </sl-tab>
-    <sl-tab slot="nav" panel="entry-list" hx-trigger="load"
+    <sl-tab slot="nav" panel="entry-list" id="entry-list-tab" hx-trigger="load"
         hx-post="/evenements/<?= $event->id ?>/participants<?= $is_simple ? "?is_simple=true" : "" ?>"
         hx-target="#entry-list" <?= ($tab == "participants") ? "active" : "" ?>
         data-intro="Cliquez ici pour accéder aux licenciés déjà inscrits à l'événement">
@@ -52,7 +67,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->enableHelp();
     </sl-tab>
     <?php if (Feature::Carpooling->on()): ?>
         <sl-tab slot="nav" panel="vehicles" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/vehicules"
-            hx-target="#vehicles" <?= ($tab == "vehicules") ? "active" : "" ?>>
+            hx-target="#vehicles" <?= ($tab == "vehicules") ? "active" : "" ?> id="vehicles-tab"
+            data-intro="L'onglet véhicule permet de gérer le covoiturage">
             Véhicules
         </sl-tab>
     <?php endif ?>
