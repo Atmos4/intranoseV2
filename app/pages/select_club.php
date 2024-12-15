@@ -1,7 +1,7 @@
 <?php
 $clubs = ClubManagementService::listClubs();
 restrict(!env("PRODUCTION"));
-page("Select club")->disableNav();
+page("Select club")->css("login.css")->disableNav();
 $v = new Validator(action: "select-club");
 if ($v->valid()) {
     ClubManagementService::selectClub($v->value("club"));
