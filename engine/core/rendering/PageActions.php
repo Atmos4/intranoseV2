@@ -33,7 +33,7 @@ class PageActionBuilder extends OutputBuilder
 
 class PageActionDropdownBuilder extends OutputBuilder
 {
-    function __construct(public string $label, public PageActionBuilder|null $parent = null, public bool $rtl = false, public array $attributes = [])
+    function __construct(public string $label, public PageActionBuilder|null $parent = null, public bool $rtl = false, public array $attributes = [], public bool $standalone = false)
     {
     }
 
@@ -44,13 +44,19 @@ class PageActionDropdownBuilder extends OutputBuilder
         }
         $output = array_reduce($this->output, fn($c, $i) => ("$c<li>$i</li>"), "");
         $rtl = $this->rtl ? 'dir="rtl"' : '';
-        return <<<HTML
-        <li>
+        $dropdown = <<<HTML
             <details class="dropdown" {$this->attrs($this->attributes)}>
                 <summary>$this->label</summary>
                 <ul $rtl>$output</ul>
             </details>
-        </li>
+        HTML;
+        if ($this->standalone) {
+            return $dropdown;
+        }
+        return <<<HTML
+            <li>
+                $dropdown
+            </li>
         HTML;
     }
 
