@@ -138,10 +138,13 @@ label.error:hover {
   background-color: var(--background-color);
   margin: 0.5rem -1rem;
 }
-#page-actions button {
+#page-actions > button {
   margin: 0;
   padding: 0.5em 1em;
   width: fit-content;
+}
+#page-actions li > button {
+  padding: 0;
 }
 #page-actions > :where(a, li) {
   margin: 0;

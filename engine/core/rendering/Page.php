@@ -59,7 +59,7 @@ class Page extends SingletonDependency
     }
     public function script($script)
     {
-        $this->scripts[] = "/assets/js/$script.js";
+        $this->scripts[] = "/assets/js/$script";
         return $this;
     }
     public function enableHelp()

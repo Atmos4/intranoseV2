@@ -32,7 +32,6 @@
     ],
     "dev": [
       "Composer\\Config::disableProcessTimeout",
-      "# Server listening at http://localhost:8000",
       "@php -S 0.0.0.0:8000 server.php"
     ],
     "seed": "php bin/seed",
