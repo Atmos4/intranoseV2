@@ -52,6 +52,11 @@ $page = Page::getInstance(); ?>
     <!-- Intro.js -->
     <script src="/assets/js/intro.min.js"></script>
     <script>function start_intro() { introJs().start() }</script>
+
+    <!-- Custom JS -->
+    <?php foreach ($page->scripts as $script): ?>
+        <script src="<?= $script ?>" defer></script>
+    <?php endforeach ?>
 </head>
 
 <body hx-ext="head-support,loading-states" <?= has_session("user_id") || $page->_boost ? 'hx-boost="true"' : "" ?>
