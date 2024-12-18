@@ -8,19 +8,19 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class SeedingService
 {
-    static function createTestUser($fn, $ln, $em)
+    static function createTestUser($first_name, $last_name, $em, $login = null, $password = null)
     {
-        $login = strtolower($ln . "_" . substr($fn, 0, 1));
+        $login ??= self::getFakeLogin($first_name, $last_name);
         if (UserService::getByLogin($em, $login)) {
             return false;
         }
-        $fakePassword = strtolower($fn);
+        $password ??= self::getFakePassword($first_name);
+
         $newUser = new User();
-        $newUser->last_name = $ln;
-        $newUser->first_name = $fn;
+        $newUser->last_name = $last_name;
+        $newUser->first_name = $first_name;
         $newUser->login = $login;
-        $newUser->password = password_hash($fakePassword, PASSWORD_DEFAULT);
-        $newUser->nose_email = UserHelper::generateUserEmail($fn, $ln);
+        $newUser->password = password_hash($password, PASSWORD_DEFAULT);
         $newUser->real_email = "test@example.com";
         $newUser->phone = "0612345678";
         $newUser->permission = Permission::ROOT;
@@ -30,7 +30,18 @@ class SeedingService
         $em->persist($newUser);
         $em->flush();
 
-        return [$newUser, $fakePassword];
+        return [$newUser, $password];
+    }
+
+    static function getFakeLogin($first_name, $last_name)
+    {
+        return strtolower($last_name . "_" . substr($first_name, 0, 1));
+
+    }
+    static function getFakePassword($first_name)
+    {
+        return strtolower($first_name);
+
     }
 
     static function createTestEvent($em)

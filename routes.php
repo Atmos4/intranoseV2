@@ -2,12 +2,26 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
-require_once __DIR__ . "/engine/setup.php";
+$club = require_once __DIR__ . "/engine/setup.php";
+
+// MGMT
+Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
+Router::add('/mgmt/login', __DIR__ . "/app/management/mg_login.php");
+Router::add('/mgmt/new-club', __DIR__ . "/app/management/club_new.php");
+Router::add('/mgmt/view/$slug', __DIR__ . "/app/management/club_view.php");
+Router::add('/mgmt/logout', function () {
+    ClubManagementService::logout();
+    redirect("/mgmt/login");
+});
+
+// Club middleware (TODO - IMPLEMENT PROPER MIDDLEWARE :D)
+if (!$club) {
+    Router::getInstance()->render(__DIR__ . "/app/pages/select_club.php");
+}
 
 // ---routes---
 Router::add('/', __DIR__ . '/app/pages/index.php');
 Router::add('/login', __DIR__ . '/app/pages/login.php');
-
 Router::add('/about', __DIR__ . '/app/pages/about.php');
 
 // Developement
@@ -26,6 +40,22 @@ if (is_dev() || env("STAGING")) {
     Router::add('/sqlite', __DIR__ . '/app/pages/dev/sqlite_db.php');
 }
 
+// hooks
+Router::add('/webhooks/migrate-db', function () {
+    if ($_GET["token"] != env("WEBHOOK_MIGRATION_TOKEN")) {
+        echo "Invalid request";
+        return;
+    }
+    foreach (ClubManagementService::listClubs() as $c) {
+        $db = new DB(SqliteFactory::clubPath($c));
+        if (!SeedingService::applyMigrations($db)) {
+            echo "Could not apply migrations to $c<br>";
+        } else
+            echo "Migrated $c<br>";
+    }
+    echo "Success<br>";
+});
+
 //Notifications
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');
 
@@ -35,8 +65,6 @@ Router::add('/admin/backups', __DIR__ . '/app/pages/admin/backup_view.php');
 Router::add('/admin/backups/download', __DIR__ . '/app/pages/admin/download_backup.php');
 Router::add('/admin/logs', __DIR__ . '/app/pages/admin/list_logs.php');
 Router::add('/admin/logs/$log_file', __DIR__ . '/app/pages/admin/view_logs.php');
-
-// END OF DANGER ZONE
 
 // Events
 Router::add('/evenements', __DIR__ . '/app/pages/events/event_list/event_list.php');

@@ -1,7 +1,7 @@
 <?php
 class UserManagementService
 {
-    static function changeEmails($user, ?string $newNoseEmail, string $newRealEmail)
+    static function changeEmails($user, ?string $newNoseEmail, string $newRealEmail, bool $gmailWarning = false)
     {
         $oldRealEmail = $user->real_email;
         $user->real_email = $newRealEmail;
@@ -29,7 +29,7 @@ class UserManagementService
         }
         em()->flush();
         Toast::success("Emails mis à jour");
-        Toast::warning("Pensez à mettre à jour sur Gmail !");
+        $gmailWarning && Toast::warning("Pensez à mettre à jour sur Gmail !");
     }
 
     static function deactivateUser($user)
