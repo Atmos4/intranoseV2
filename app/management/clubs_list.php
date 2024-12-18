@@ -7,7 +7,7 @@ $clubs = ClubManagementService::listClubs();
 ?>
 <?= actions()->link("/mgmt/new-club", "Add", "fa-plus")->link("/mgmt/logout", "Logout", attributes: ["class" => "destructive"]) ?>
 
-<?= import(__DIR__ . "/components/wip_club_notice.php")(env("SELECTED_CLUB")) ?>
+<?= import(__DIR__ . "/components/selected_club_notice.php")(env("SELECTED_CLUB")) ?>
 
 <?php if (!$clubs): ?>
     <p>No club yet</p>

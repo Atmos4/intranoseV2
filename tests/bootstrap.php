@@ -12,7 +12,7 @@ file_exists($existingDb) && unlink($existingDb);
 $db = new DB($existingDb);
 
 if (!SeedingService::applyMigrations($db)) {
-    Cli::abort("There was a problem applying migrations");
+    (new Cli)->error("There was a problem applying migrations")->exit();
 }
 
 $db->em()->getConnection()->close();

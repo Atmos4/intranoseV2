@@ -1,7 +1,7 @@
 <?php
 
-return function ($displayLogo = false) { ?>
-    <?php if (!$displayLogo)
+return function ($displayLogo = true) { ?>
+    <?php if ($displayLogo)
         include "assets/svg/linklub_icon.svg"; ?>
     <span>
         <?= config("name", "linklub") ?>

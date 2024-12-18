@@ -17,3 +17,6 @@ env.php
 
 #sqlite
 /.sqlite
+
+# clubs
+/.club-data

@@ -3,11 +3,12 @@
 class BackupService
 {
     public string $backupDir;
-    public $cr;
+    public Outputable $out;
 
-    function __construct(public bool $forCli = false, public string|null $dbPath = null)
+    function __construct(bool $forCli = false, public string|null $dbPath = null)
     {
-        $this->cr = $forCli ? PHP_EOL : "<br>";
+        $this->forCli = $forCli;
+        $this->out = $forCli ? new CliOuput : new ToastOutput;
         $this->dbPath ??= DB::getInstance()->sqlitePath;
         $this->backupDir = dirname($this->dbPath) . "/backup";
     }
@@ -19,18 +20,18 @@ class BackupService
 
         if (!is_dir($this->backupDir)) {
             if (mkdir($this->backupDir, 0755, true)) {
-                echo "Backup directory created" . $this->cr;
+                $this->out->success("Backup directory created");
             } else {
-                echo "Failed to create backup directory.";
+                $this->out->error("Failed to create backup directory.");
                 return;
             }
         }
 
         // backup db
         if (copy($this->dbPath, $backupFile)) {
-            echo "Created $backupFileName" . $this->cr;
+            $this->out->success("Created $backupFileName");
         } else {
-            echo "Failed to create backup.";
+            $this->out->error("Failed to create backup.");
             return;
         }
 
@@ -45,7 +46,7 @@ class BackupService
             foreach (array_slice($backups, 0, count($backups) - $maxBackups) as $oldBackup) {
                 unlink($oldBackup);
                 $name = basename($oldBackup);
-                echo "Deleted $name" . $this->cr;
+                $this->out->warning("Deleted $name");
             }
         }
     }
@@ -58,5 +59,63 @@ class BackupService
     function getBackupFile($filename)
     {
         return "$this->backupDir/$filename";
+    }
+}
+
+// TODO - this is an experiment. move this code into their own file some day
+
+interface Outputable
+{
+    function info($m);
+    function error($m);
+    function success($m);
+    function warning($m);
+
+}
+
+class CliOuput implements Outputable
+{
+
+    private Cli $cli;
+
+    function __construct()
+    {
+        $this->cli = new Cli;
+    }
+    function info($m)
+    {
+        $this->cli->out($m);
+    }
+    function error($m)
+    {
+        $this->cli->error($m);
+    }
+    function success($m)
+    {
+        $this->cli->ok($m);
+    }
+    function warning($m)
+    {
+        $this->cli->warning($m);
+    }
+}
+
+class ToastOutput implements Outputable
+{
+    function info($m)
+    {
+        Toast::info($m);
+    }
+    function error($m)
+    {
+        Toast::error($m);
+    }
+    function success($m)
+    {
+        Toast::success($m);
+    }
+    function warning($m)
+    {
+        Toast::warning($m);
     }
 }

@@ -50,9 +50,10 @@ class ClubManagementService
 
     function deleteClub()
     {
-        self::mkDir(base_path() . "/.sqlite/.deleted_clubs", true);
+        $deletedClubsDir = base_path() . "/.sqlite/.deleted_clubs"; // maybe change this later?
+        mk_dir($deletedClubsDir, true);
         // soft delete
-        return rename(club_data_path($this->slug), base_path() . "/.sqlite/.deleted_clubs/$this->slug" . date("YmdHis"));
+        return rename(club_data_path($this->slug), $deletedClubsDir . "/$this->slug" . date("YmdHis"));
     }
 
     function updateClub(Club $c, $newName = null, /* $newSlug = null */): Result
@@ -76,7 +77,7 @@ class ClubManagementService
     {
         $path = club_data_path();
         if (!is_dir($path)) {
-            self::mkDir($path);
+            mk_dir($path);
             return [];
         }
         $dirs = array_filter(scandir($path), fn($item)
@@ -92,27 +93,24 @@ class ClubManagementService
 
     static function getSelectedClub()
     {
-        return env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
+        $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
+        if ($club && !isset($_SESSION["selected_club_name"])) {
+            self::selectClub($club);
+        }
+        return $club;
     }
 
     static function selectClub($slug)
     {
-        logger()->debug("ClubManagement: $slug selected");
         $_SESSION["selected_club_name"] = ClubManagementService::fromSlug($slug)->getClub()->name;
         $_SESSION["selected_club"] = $slug;
-    }
-
-    static function changeClubSelection()
-    {
-        unset($_SESSION["selected_club"]);
-        unset($_SESSION["selected_club_name"]);
     }
 
     static function createNewClub($name, $slug): Result
     {
         $path = club_data_path($slug);
         if (file_exists($path)) {
-            return Result::error("Club already exists");
+            return Result::error("Club slug already exists");
         }
 
         $dbPath = "$path/db.sqlite";
@@ -121,33 +119,15 @@ class ClubManagementService
             $db = new DB($dbPath);
             $em = $db->em();
             if (!SeedingService::applyMigrations($db))
-                throw new Error("failed to apply migrations");
+                throw new ResultException("failed to apply migrations");
 
             $clubData = new Club($name, $slug);
             $em->persist($clubData);
             $em->flush();
-        } catch (\Throwable $th) {
+        } catch (ResultException $e) {
             rm_rf($path);
-            return Result::error("Error: " . $th->getMessage());
+            return Result::error("Error: " . $e->getMessage());
         }
         return Result::wrap($db, "Club created");
-    }
-
-    // -- helpers --
-
-    private static function mkDir($path, $r = true)
-    {
-        if (!file_exists($path))
-            mkdir($path, recursive: $r);
-    }
-
-    private static function renameDir($slug, $newSlug): Result
-    {
-        $newPath = club_data_path($newSlug);
-        if (file_exists($newPath)) {
-            return Result::error("Slug is already in use");
-        }
-        $path = club_data_path($slug);
-        return rename($path, $newPath) ? Result::ok() : Result::error("Failed to rename slug directory from $slug to $newSlug");
     }
 }

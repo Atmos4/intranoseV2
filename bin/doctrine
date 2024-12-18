@@ -10,6 +10,7 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
+$cli = new Cli;
 $club = ClubManagementService::getSelectedClub();
 
 if (!$club) {
@@ -21,11 +22,11 @@ if (!$club) {
 
     $selected = readline("Select club: ");
     if (!isset($clubs[$selected])) {
-        Cli::abort("Club does not exit");
+        $cli->abort("Club does not exit");
     }
     $club = $clubs[$selected];
 }
-echo Cli::ok("Selected club: $club");
+$cli->ok("Selected club: $club");
 DB::setupForClub($club);
 
 $deps = DependencyFactory::fromEntityManager(DBFactory::getConfig(DB::getInstance()), new ExistingEntityManager(em()));

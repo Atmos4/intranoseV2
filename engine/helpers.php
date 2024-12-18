@@ -16,7 +16,7 @@ function app_path(): string
 
 function club_data_path($slug = null)
 {
-    return base_path() . "/.sqlite/.clubs" . ($slug ? "/$slug" : "");
+    return base_path() . "/.club-data" . ($slug ? "/$slug" : "");
 }
 
 /** readline polyfill because Linux sucks balls */
@@ -280,6 +280,13 @@ function logger()
 
 // --- nitty gritty
 
+/** Same as mkdir */
+function mk_dir($path, $r = false)
+{
+    if (!file_exists($path))
+        mkdir($path, recursive: $r);
+}
+
 /** Same as `rm -rf` */
 function rm_rf($path)
 {
@@ -306,42 +313,42 @@ function rm_rf($path)
  */
 class Result
 {
-    function __construct(public $success, public $data, public $message)
+    function __construct(public bool $success, public $data, public string $message)
     {
     }
 
-    static function wrap($data = null, $msg = "")
+    static function wrap($data = null, string $msg = "")
     {
         return new static(true, $data, $msg);
     }
 
-    static function ok($msg = "")
+    static function ok(string $msg = "")
     {
         return new static(true, null, $msg);
     }
 
     /**
-     * Wraps a closure with try catch
-     * @param Closure(void):Result $f
+     * Wraps a closure with try catch. If possible, use try/catch directly
+     * @param callable(void):Result $f
      * @return Result
      */
     static function try(callable $f): Result
     {
         try {
             return $f() ?? Result::ok();
-        } catch (Throwable $t) {
+        } catch (ResultException $t) {
             return Result::error($t->getMessage());
         }
     }
 
-    static function error($msg = "")
+    static function error(string $msg = "")
     {
         return new static(false, null, $msg);
     }
 
     function print()
     {
-        return (string) $this->message;
+        return $this->message;
     }
 
     function __tostring()
@@ -353,4 +360,8 @@ class Result
     {
         return $this->data;
     }
+}
+
+class ResultException extends Exception
+{
 }

@@ -15,7 +15,7 @@ page("Login")->css("login.css")->disableNav()->heading(false);
     <?php endif ?>
     <form method="post" hx-boost="false">
         <a href="/about" class="center login-logo contrast">
-            <?= import(__DIR__ . "/../components/linklub_logo.php")(env("DISPLAY_LOGO")) ?>
+            <?= import(__DIR__ . "/../components/linklub_logo.php")(!env("INTRANOSE")) ?>
         </a>
         <?= $login->render() ?>
         <?= $password->render() ?>

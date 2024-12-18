@@ -84,14 +84,6 @@ class DB extends SingletonDependency
         return self::getInstance()->em();
     }
 
-    /**
-     * This uses the SQLite DB driver
-     */
-    static function setupForApp(/* $sqlite = true */)
-    {
-        self::factory(fn() => new self(SqliteFactory::mainPath()));
-    }
-
     static function setupForClub($slug)
     {
         assert(!!$slug, "Club namespace should be defined"); // TODO - refactor this in the future
@@ -118,16 +110,9 @@ class DBFactory
 
     static function sqlite($fileName)
     {
-        self::mkDir(dirname($fileName));
+        mk_dir(dirname($fileName));
         return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
     }
-
-    static function mkDir($path)
-    {
-        if (!file_exists($path))
-            mkdir($path);
-    }
-
     // Configuration factory
     static function getConfig(DB $db)
     {
@@ -143,14 +128,9 @@ class SqliteFactory
     {
         return club_data_path($slug) . "/db.sqlite";
     }
-    static function mainPath($file = null)
+    static function mainPath($file)
     {
-        $file ??= self::mainName();
         return base_path() . "/.sqlite/$file";
-    }
-    static function mainName()
-    {
-        return env("SQLITE_DB_NAME") ?? 'db.sqlite';
     }
 }
 

@@ -7,10 +7,12 @@ abstract class BaseTestCase extends TestCase
     private TestHandler $handler;
     private $tempDbFile;
     protected DB $db;
+    protected Cli $cli;
 
     /** @inheritDoc */
     protected function setUp(): void
     {
+        $cli = new Cli;
         $_SESSION = [];
         InstanceDependency::reset();
         SingletonDependency::reset();
@@ -28,7 +30,7 @@ abstract class BaseTestCase extends TestCase
             // warning: remove this as singletons are not usable in phpunit
             DB::factory(fn() => $this->db);
         } else
-            echo Cli::error("error creating test db");
+            $cli->error("error creating test db");
     }
 
     /** @inheritDoc */
