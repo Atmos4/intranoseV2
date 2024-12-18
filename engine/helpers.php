@@ -16,7 +16,7 @@ function app_path(): string
 
 function club_data_path($slug = null)
 {
-    return base_path() . "/.club-data" . ($slug ? "/$slug" : "");
+    return base_path() . "/.club_data" . ($slug ? "/$slug" : "");
 }
 
 /** readline polyfill because Linux sucks balls */
