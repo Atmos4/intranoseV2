@@ -83,7 +83,7 @@ class ClubManagementService
         $dirs = array_filter(scandir($path), fn($item)
             => is_dir($path . "/$item") && !in_array($item, ['.', '..']));
 
-        return $dirs;
+        return array_values($dirs);
     }
 
     static function isClubSelectionAvailable()

@@ -15,16 +15,15 @@ $club = ClubManagementService::getSelectedClub();
 
 if (!$club) {
     $clubs = ClubManagementService::listClubs();
+    if (!$clubs) {
+        $cli->out("No clubs found");
+    }
     echo "Clubs:" . PHP_EOL;
     foreach ($clubs as $i => $c) {
         echo "$i - $c" . PHP_EOL;
     }
-
-    $selected = readline("Select club: ");
-    if (!isset($clubs[$selected])) {
-        $cli->abort("Club does not exit");
-    }
-    $club = $clubs[$selected];
+    $selected = readline("Select club: (0 by default)");
+    $club = $clubs[$selected] ?? $clubs[0];
 }
 $cli->ok("Selected club: $club");
 DB::setupForClub($club);
