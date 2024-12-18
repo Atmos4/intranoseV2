@@ -1,7 +1,6 @@
 <?php
 class MainMenu extends FactoryDependency
 {
-
     /** @var MainMenuItem[] */
     public array $items;
 

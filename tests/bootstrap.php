@@ -5,16 +5,14 @@ require_once __DIR__ . '/BaseTestCase.php';
 
 session_start();
 
-$testDb = BaseTestCase::getTestDBName();
-
 // remove existing test DB
-$existingDb = DBFactory::getSqliteLocation($testDb);
+$existingDb = SqliteFactory::mainPath(BaseTestCase::getTestDBName());
 file_exists($existingDb) && unlink($existingDb);
 
-$db = new DB(DBFactory::sqlite($testDb));
+$db = new DB($existingDb);
 
 if (!SeedingService::applyMigrations($db)) {
-    Cli::abort("There was a problem applying migrations");
+    (new Cli)->error("There was a problem applying migrations")->exit();
 }
 
 $db->em()->getConnection()->close();

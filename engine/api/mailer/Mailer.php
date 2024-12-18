@@ -104,7 +104,7 @@ class MailerFactory
     static function createActivationEmail(string $address, string $token)
     {
         $base_url = env("BASE_URL");
-        $subject = "Activation du compte NOSE";
+        $subject = "Activation du compte " . config("name", "Linklub");
         $content = "Voici le lien pour activer ton compte: $base_url/activation?token=$token";
         return Mailer::create()->createEmail($address, $subject, $content);
     }

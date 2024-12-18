@@ -6,12 +6,16 @@ $rememberMe = $v->switch("remember_me")->label("Rester connecté");
 if ($v->valid()) {
     AuthService::create()->tryLogin($login->value, $password->value, $rememberMe->value, $v) && redirect("/");
 }
+
 page("Login")->css("login.css")->disableNav()->heading(false);
 ?>
 <article>
+    <?php if (ClubManagementService::isClubSelectionAvailable()): ?>
+        <a href="/logout-club">Change club</a>
+    <?php endif ?>
     <form method="post" hx-boost="false">
         <a href="/about" class="center login-logo contrast">
-            <?= import(__DIR__ . "/../components/linklub_logo.php")(env("INTRANOSE")) ?>
+            <?= import(__DIR__ . "/../components/linklub_logo.php")(!env("INTRANOSE")) ?>
         </a>
         <?= $login->render() ?>
         <?= $password->render() ?>

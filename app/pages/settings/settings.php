@@ -69,6 +69,7 @@ if ($v_infos->valid()) {
 }
 
 // Emails
+$use_nose_email = !!env("INTRANOSE");
 $can_change_nose_email = check_auth([Permission::ROOT]);
 $can_change_emails = check_auth(Access::$EDIT_USERS);
 
@@ -78,13 +79,15 @@ $user_emails = [
 ];
 $v_emails = new Validator($user_emails, action: "emails_form");
 $real_email = $v_emails->email("real_email")->label("Adresse mail perso")->placeholder();
-$nose_email = $v_emails->email("nose_email")->label("Adresse mail nose")->placeholder();
-
-$can_change_nose_email ? $nose_email->required() : $nose_email->readonly();
 $can_change_emails ? $real_email->required() : $real_email->readonly();
 
+if ($use_nose_email) {
+    $nose_email = $v_emails->email("nose_email")->label("Adresse mail nose")->placeholder();
+    $can_change_nose_email ? $nose_email->required() : $nose_email->readonly();
+}
+
 if ($v_emails->valid() && $can_change_emails) {
-    UserManagementService::changeEmails($user, $can_change_nose_email ? $nose_email->value : null, $real_email->value);
+    UserManagementService::changeEmails($user, $can_change_nose_email ? $nose_email->value : null, $real_email->value, $use_nose_email);
 }
 
 // Picture
@@ -166,19 +169,25 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 </form>
 <hr>
 
-<h2 id="emails">Emails</h2>
+<h2 id="emails">Email</h2>
 
 <form method="post" hx-swap="innerHTML show:#emails:top" class="row">
     <?= $v_emails->render_validation() ?>
-    <div class="col-sm-12 col-md-6">
-        <?= $real_email->render() ?>
-    </div>
-    <div class="col-sm-12 col-md-6">
-        <?= $nose_email->render() ?>
-    </div>
+    <?php if (!$use_nose_email): ?>
+        <div class="col-12">
+            <?= $real_email->render() ?>
+        </div>
+    <?php else: ?>
+        <div class="col-sm-12 col-md-6">
+            <?= $real_email->render() ?>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <?= $nose_email->render() ?>
+        </div>
+    <?php endif ?>
     <?php if ($can_change_emails): ?>
         <div>
-            <input type="submit" class="outline" name="submitEmails" value="Mettre à jour les emails">
+            <input type="submit" class="outline" name="submitEmails" value="Mettre à jour">
         </div>
     <?php endif ?>
 </form>
