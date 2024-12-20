@@ -9,12 +9,11 @@ $logger = new \Monolog\Logger('main');
 if (is_dev()) {
     $logger->pushHandler(new \Monolog\Handler\BrowserConsoleHandler(\Monolog\Level::Debug));
 }
-$logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(base_path() . '/logs/app.log', 30));
+$logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(Path::LOGS . '/app.log', 30));
 $logger->pushProcessor(new \Monolog\Processor\PsrLogMessageProcessor());
 $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
 
 $selected_club = ClubManagementService::getSelectedClub();
-
 $selected_club && DB::setupForClub($selected_club);
 // TODO - one logger per club would be nice
 MainLogger::instance(new MainLogger($logger));

@@ -14,9 +14,17 @@ function app_path(): string
     return BASE_PATH . "/app";
 }
 
-function club_data_path($slug = null)
+/**
+ * Path builder
+ */
+function path(...$parts)
 {
-    return base_path() . "/.club_data" . ($slug ? "/$slug" : "");
+    return implode("/", array_filter($parts));
+}
+
+function club_data_path(...$parts)
+{
+    return path(base_path(), ".club_data", ...$parts);
 }
 
 /** readline polyfill because Linux sucks balls */
@@ -156,7 +164,7 @@ function page(string $title)
 
 function managementPage(string $title, $restrict = true)
 {
-    $restrict && restrict(ClubManagementService::isLoggedIn(), "You are unauthorized");
+    $restrict && restrict_management();
     return page($title)->disableNav()->boost();
 }
 
@@ -205,6 +213,11 @@ function restrict_access($permissions = [], $redirect = true)
         }
         Router::abort("Access for {$permission} is restricted for this page. ");
     }
+}
+
+function restrict_management()
+{
+    restrict(ClubManagementService::isLoggedIn(), "You are unauthorized");
 }
 
 function force_404($message = "")

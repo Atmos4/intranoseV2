@@ -456,7 +456,7 @@ class UploadField extends Field
         $this->type = FieldType::File;
     }
 
-    public string $target_dir = "/uploads/";
+    public string $target_dir;
     public string $target_file = '';
     public string $file_type;
     public string $file_name = '';
@@ -467,8 +467,8 @@ class UploadField extends Field
     {
         parent::__construct($key, $value, $context);
         $this->file_name = $_FILES[$this->key]["name"] ?? "";
-        $this->target_dir = app_path() . $this->target_dir;
-        $this->target_file = isset($_FILES[$this->key]) ? $this->target_dir . basename($_FILES[$this->key]["name"]) : "";
+        $this->target_dir = Path::uploads();
+        $this->target_file = isset($_FILES[$this->key]) ? path($this->target_dir, basename($_FILES[$this->key]["name"])) : "";
         $this->file_type = isset($_FILES[$this->key]) ? strtolower(pathinfo($this->target_file, PATHINFO_EXTENSION)) : "";
     }
 
@@ -550,6 +550,11 @@ class UploadField extends Field
 
     function save_file(): bool
     {
+        logger()->debug("Target file", ["file" => $this->target_file]);
+
+        if (!is_dir(dirname($this->target_file))) {
+            mkdir(dirname($this->target_file), recursive: true);
+        }
         $file_exists = file_exists($this->target_file);
         if ($file_exists)
             unlink($this->target_file);
@@ -564,15 +569,12 @@ class UploadField extends Field
     function set_file_name(string $name): static
     {
         $this->file_name = $name;
-        $this->target_file = $this->target_dir . $name;
+        $this->target_file = path($this->target_dir, $name);
         return $this;
     }
 
     function set_target_dir(string $directory): static
     {
-        if (!is_dir($directory)) {
-            mkdir($directory);
-        }
         $this->target_dir = $directory;
         return $this;
     }

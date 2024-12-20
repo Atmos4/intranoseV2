@@ -9,9 +9,14 @@ Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
 Router::add('/mgmt/login', __DIR__ . "/app/management/mg_login.php");
 Router::add('/mgmt/new-club', __DIR__ . "/app/management/club_new.php");
 Router::add('/mgmt/view/$slug', __DIR__ . "/app/management/club_view.php");
+Router::add('/mgmt/view/$slug/backups', __DIR__ . "/app/management/club_view_backups.php");
 Router::add('/mgmt/logout', function () {
-    ClubManagementService::logout();
+    AuthService::destroySession();
     redirect("/mgmt/login");
+});
+Router::add('/logout-club', function () {
+    AuthService::destroySession();
+    redirect("/");
 });
 
 // Club middleware (TODO - IMPLEMENT PROPER MIDDLEWARE :D)
@@ -41,19 +46,28 @@ if (is_dev() || env("STAGING")) {
 }
 
 // hooks
-Router::add('/webhooks/migrate-db', function () {
+Router::add('/hooks/migrate', function () {
+    // This will be ran by pipelines, so no need to have anything complex
     if ($_GET["token"] != env("WEBHOOK_MIGRATION_TOKEN")) {
         echo "Invalid request";
         return;
     }
+    $saved_em = null;
     foreach (ClubManagementService::listClubs() as $c) {
-        $db = new DB(SqliteFactory::clubPath($c));
+        $db = DB::forClub($c);
+        $saved_em ??= $db->em();
         if (!SeedingService::applyMigrations($db)) {
             echo "Could not apply migrations to $c<br>";
         } else
             echo "Migrated $c<br>";
     }
-    echo "Success<br>";
+
+    // Generate proxies
+    if (!SeedingService::generateProxies($saved_em))
+        echo "Could not generate proxies<br>";
+    else
+        echo "Proxies generated<br>";
+    echo "Success :D<br>";
 });
 
 //Notifications

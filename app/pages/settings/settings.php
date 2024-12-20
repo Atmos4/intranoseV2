@@ -87,7 +87,7 @@ if ($use_nose_email) {
 }
 
 if ($v_emails->valid() && $can_change_emails) {
-    UserManagementService::changeEmails($user, $can_change_nose_email ? $nose_email->value : null, $real_email->value, $use_nose_email);
+    UserManagementService::changeEmails($user, $can_change_nose_email && $use_nose_email ? $nose_email->value : null, $real_email->value, $use_nose_email);
 }
 
 // Picture
@@ -102,7 +102,7 @@ $v_picture = new Validator(action: "picture_form");
 $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);
 
 if ($v_picture->valid()) {
-    $picture->set_target_dir("assets/images/profile/");
+    $picture->set_target_dir(Path::profilePicture());
     $picture->set_file_name($user->id . "." . bin2hex(random_bytes(4)) . "." . strtolower(pathinfo($picture->file_name, PATHINFO_EXTENSION)));
     if ($picture->save_file()) {
         $user->replacePicture($picture->target_file);

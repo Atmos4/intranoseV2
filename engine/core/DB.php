@@ -31,7 +31,10 @@ class DB extends SingletonDependency
         return $this->entityManager;
     }
 
-    function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null)
+    /**
+     * The DB constructor should be private. If there are more use cases you need to cover, create a factory function
+     */
+    private function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null)
     {
         if (!$sqlitePath && !$connection) {
             throw new Error("Unable to create DB connection");
@@ -79,15 +82,29 @@ class DB extends SingletonDependency
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 
+    function path()
+    {
+        return dirname($this->sqlitePath);
+    }
+
     static function get()
     {
         return self::getInstance()->em();
     }
 
+    static function forClub($slug)
+    {
+        return new DB(SqliteFactory::clubPath($slug));
+    }
+    static function forTest($path)
+    {
+        return new DB($path);
+    }
+
     static function setupForClub($slug)
     {
         assert(!!$slug, "Club namespace should be defined"); // TODO - refactor this in the future
-        self::factory(fn() => new self(SqliteFactory::clubPath($slug)));
+        self::factory(fn() => self::forClub($slug));
     }
 }
 

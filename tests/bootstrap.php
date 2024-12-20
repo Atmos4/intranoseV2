@@ -9,7 +9,7 @@ session_start();
 $existingDb = SqliteFactory::mainPath(BaseTestCase::getTestDBName());
 file_exists($existingDb) && unlink($existingDb);
 
-$db = new DB($existingDb);
+$db = DB::forTest($existingDb);
 
 if (!SeedingService::applyMigrations($db)) {
     (new Cli)->error("There was a problem applying migrations")->exit();

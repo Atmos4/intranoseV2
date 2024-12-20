@@ -10,6 +10,7 @@ env.php
 
 # Logs
 /logs
+/.logs
 /tests/runtime
 
 # Doctrine Proxies
