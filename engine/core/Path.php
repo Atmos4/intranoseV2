@@ -8,8 +8,8 @@ class Path
         return club_data_path(ClubManagementService::getSelectedClub(), "uploads", ...$parts);
     }
 
-    static function profilePicture()
+    static function profilePicture($slug = null)
     {
-        return path(".club_data", ClubManagementService::getSelectedClub(), "profile");
+        return path(".club_data", $slug ?? ClubManagementService::getSelectedClub(), "profile");
     }
 }

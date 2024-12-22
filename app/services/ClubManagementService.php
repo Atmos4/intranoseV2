@@ -25,10 +25,12 @@ class ClubManagementService
 
     static function fromSlug($slug): self|null
     {
-        if (!file_exists(club_data_path($slug))) {
-            return null;
-        }
         return new self(DB::forClub($slug), $slug);
+    }
+
+    static function clubExists($slug)
+    {
+        return file_exists(club_data_path($slug));
     }
 
     function getClub(): Club
@@ -83,22 +85,27 @@ class ClubManagementService
 
     static function isClubSelectionAvailable()
     {
-        return !env("PRODUCTION");
+        return !env("SELECTED_CLUB");
     }
 
     static function getSelectedClub()
     {
         $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
         if ($club && !isset($_SESSION["selected_club_name"])) {
-            self::selectClub($club);
+            if (!self::selectClub($club))
+                return null;
         }
         return $club;
     }
 
     static function selectClub($slug)
     {
+        if (!self::clubExists($slug)) {
+            return false;
+        }
         $_SESSION["selected_club_name"] = ClubManagementService::fromSlug($slug)->getClub()->name;
         $_SESSION["selected_club"] = $slug;
+        return true;
     }
 
     static function createNewClub($name, $slug): Result

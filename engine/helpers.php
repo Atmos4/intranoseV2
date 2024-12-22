@@ -321,6 +321,12 @@ function rm_rf($path)
     return rmdir($path);
 }
 
+function scan_dir($path, $filter = null)
+{
+    return array_filter(scandir($path), fn($item)
+        => !in_array($item, ['.', '..']) && (!$filter || $filter("$path/$item")));
+}
+
 /**
  * Wrapper for success or failure of a procedure
  */

@@ -145,7 +145,7 @@ class SqliteFactory
     {
         return club_data_path($slug) . "/db.sqlite";
     }
-    static function mainPath($file)
+    static function mainPath($file = 'db.sqlite')
     {
         return base_path() . "/.sqlite/$file";
     }

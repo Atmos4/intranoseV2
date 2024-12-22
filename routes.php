@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
-$club = require_once __DIR__ . "/engine/setup.php";
+require_once __DIR__ . "/engine/setup.php";
 
 // MGMT
 Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
@@ -19,10 +19,14 @@ Router::add('/logout-club', function () {
     redirect("/");
 });
 
-// Club middleware (TODO - IMPLEMENT PROPER MIDDLEWARE :D)
+Router::add("/select-club", __DIR__ . "/app/pages/select_club.php");
+
+// Club selection middleware
+$club = ClubManagementService::getSelectedClub();
 if (!$club) {
-    Router::getInstance()->render(__DIR__ . "/app/pages/select_club.php");
+    redirect("/select-club");
 }
+DB::setupForClub($club);
 
 // ---routes---
 Router::add('/', __DIR__ . '/app/pages/index.php');
@@ -46,29 +50,7 @@ if (is_dev() || env("STAGING")) {
 }
 
 // hooks
-Router::add('/hooks/migrate', function () {
-    // This will be ran by pipelines, so no need to have anything complex
-    if ($_GET["token"] != env("WEBHOOK_MIGRATION_TOKEN")) {
-        echo "Invalid request";
-        return;
-    }
-    $saved_em = null;
-    foreach (ClubManagementService::listClubs() as $c) {
-        $db = DB::forClub($c);
-        $saved_em ??= $db->em();
-        if (!SeedingService::applyMigrations($db)) {
-            echo "Could not apply migrations to $c<br>";
-        } else
-            echo "Migrated $c<br>";
-    }
-
-    // Generate proxies
-    if (!SeedingService::generateProxies($saved_em))
-        echo "Could not generate proxies<br>";
-    else
-        echo "Proxies generated<br>";
-    echo "Success :D<br>";
-});
+Router::add('/hooks/migrate', __DIR__ . "/app/hooks/migrate_hook.php");
 
 //Notifications
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');
