@@ -9,12 +9,12 @@ $name = $v->text("name")->label("Nom du fichier (optionel)");
 if ($v->valid()) {
     $shared_file = em()->getRepository(SharedFile::class)->findOneBy(['path' => $file_upload->file_name]);
     $shared_file ??= new SharedFile();
-    $shared_file->name = $name->value ? $name->value . "." . strtolower(pathinfo($file_upload->file_name, PATHINFO_EXTENSION)) : $file_upload->file_name;
+    $shared_file->name = $name->value ? $name->value . "." . $file_upload->get_ext() : $file_upload->file_name;
     $shared_file->mime = $file_upload->file_type;
-    $file_upload->set_file_name(bin2hex(random_bytes(4)) . "." . strtolower(pathinfo($file_upload->file_name, PATHINFO_EXTENSION)));
+    $file_upload->set_file_name(date("YmdHis"));
     $shared_file->path = $file_upload->file_name;
     $shared_file->permission_level = Permission::from($permission->value);
-    if ($file_upload->save_file()) {
+    if ($file_upload->save_file(Path::uploads())) {
         em()->persist($shared_file);
         em()->flush();
     }
