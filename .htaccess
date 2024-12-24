@@ -1,6 +1,7 @@
 RewriteEngine On
-#https RewriteCond %{HTTPS} off
-#https RewriteCond %{HTTP:X-Forwarded-Proto} !https
-#https RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{REQUEST_URI} !(\.png|\.jpg|\.webp|\.gif|\.jpeg|\.zip|\.css|\.svg|\.js|\.ttf|\.woff2|\.webmanifest|\.pdf|\.doc|\.docx|\.xls|\.xlsx)$
 RewriteRule (.*) routes.php [QSA,L]

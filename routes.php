@@ -2,22 +2,31 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 session_start();
-$club = require_once __DIR__ . "/engine/setup.php";
+require_once __DIR__ . "/engine/setup.php";
 
 // MGMT
 Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
 Router::add('/mgmt/login', __DIR__ . "/app/management/mg_login.php");
 Router::add('/mgmt/new-club', __DIR__ . "/app/management/club_new.php");
 Router::add('/mgmt/view/$slug', __DIR__ . "/app/management/club_view.php");
+Router::add('/mgmt/view/$slug/backups', __DIR__ . "/app/management/club_view_backups.php");
 Router::add('/mgmt/logout', function () {
-    ClubManagementService::logout();
+    AuthService::destroySession();
     redirect("/mgmt/login");
 });
+Router::add('/logout-club', function () {
+    AuthService::destroySession();
+    redirect("/");
+});
 
-// Club middleware (TODO - IMPLEMENT PROPER MIDDLEWARE :D)
+Router::add("/select-club", __DIR__ . "/app/pages/select_club.php");
+
+// Club selection middleware
+$club = ClubManagementService::getSelectedClub();
 if (!$club) {
-    Router::getInstance()->render(__DIR__ . "/app/pages/select_club.php");
+    redirect("/select-club");
 }
+DB::setupForClub($club);
 
 // ---routes---
 Router::add('/', __DIR__ . '/app/pages/index.php');
@@ -41,20 +50,7 @@ if (is_dev() || env("STAGING")) {
 }
 
 // hooks
-Router::add('/webhooks/migrate-db', function () {
-    if ($_GET["token"] != env("WEBHOOK_MIGRATION_TOKEN")) {
-        echo "Invalid request";
-        return;
-    }
-    foreach (ClubManagementService::listClubs() as $c) {
-        $db = new DB(SqliteFactory::clubPath($c));
-        if (!SeedingService::applyMigrations($db)) {
-            echo "Could not apply migrations to $c<br>";
-        } else
-            echo "Migrated $c<br>";
-    }
-    echo "Success<br>";
-});
+Router::add('/hooks/migrate', __DIR__ . "/app/hooks/migrate_hook.php");
 
 //Notifications
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');

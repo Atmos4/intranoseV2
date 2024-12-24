@@ -73,6 +73,11 @@ class AuthService extends FactoryDependency
     {
         // Remove session data.
         $this->deleteUserTokens($_SESSION['user_id']);
+        self::destroySession();
+    }
+
+    static function destroySession()
+    {
         $_SESSION = [];
         setcookie(self::REMEMBERME_COOKIE, '', -1);
         session_destroy();
@@ -109,7 +114,7 @@ class AuthService extends FactoryDependency
      * If you want more custom behavior, write another function. But maybe you shouldn't. */
     function deleteUserTokens(string $userId)
     {
-        $this->em->createQueryBuilder()
+        $this->em?->createQueryBuilder()
             ->delete(AccessToken::class, 'a')
             ->where('a.user = :user_id')
             ->setParameter("user_id", $userId)

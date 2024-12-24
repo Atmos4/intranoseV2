@@ -3,6 +3,10 @@
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Console\Command\GenerateProxiesCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -10,11 +14,11 @@ class SeedingService
 {
     static function createTestUser($first_name, $last_name, $em, $login = null, $password = null)
     {
-        $login ??= self::getFakeLogin($first_name, $last_name);
+        $login = $login ?: self::getFakeLogin($first_name, $last_name);
         if (UserService::getByLogin($em, $login)) {
             return false;
         }
-        $password ??= self::getFakePassword($first_name);
+        $password = $password ?: self::getFakePassword($first_name);
 
         $newUser = new User();
         $newUser->last_name = $last_name;
@@ -80,9 +84,20 @@ class SeedingService
                 new ExistingEntityManager($db->em()),
             )
         );
+        return self::runCommand($migrateCommand);
+    }
+
+    static function generateProxies(EntityManager $em)
+    {
+        $command = new GenerateProxiesCommand(new SingleManagerProvider($em));
+        return self::runCommand($command);
+    }
+
+    private static function runCommand(Command $c)
+    {
         $input = new ArrayInput([]);
         $input->setInteractive(false);
-        $exitcode = $migrateCommand->run($input, new BufferedOutput);
+        $exitcode = $c->run($input, new BufferedOutput);
         return $exitcode === 0;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 restrict_access(Access::$ROOT);
 
-$log_file = "logs/" . Router::getParameter("log_file", numeric: false);
+$log_file = Path::LOGS . "/" . Router::getParameter("log_file", numeric: false);
 
 if (!file_exists($log_file)) {
     Router::abort("File not found");
