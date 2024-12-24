@@ -4,6 +4,13 @@ $slug = Router::getParameter("slug", pattern: '/[\w-]+/');
 $s = ClubManagementService::fromSlug($slug) ?? force_404("club not found");
 $club = $s->getClub();
 
+$backupService = new BackupService(dbPath: $s->db->sqlitePath);
+
+$v_backup = new Validator(action: "create_backup");
+if ($v_backup->valid()) {
+    $backupService->createBackup();
+}
+
 // Delete club - be careful with this
 $v_delete = new Validator(action: "delete");
 if ($v_delete->valid()) {
@@ -25,7 +32,7 @@ if ($v->valid()) {
 <?= actions()->back("/mgmt") ?>
 <sl-tab-group>
     <sl-tab slot="nav" panel="general">General</sl-tab>
-    <sl-tab slot="nav" panel="logs">Logs</sl-tab>
+    <sl-tab slot="nav" panel="backups">Backups</sl-tab>
 
     <sl-tab-panel name="general">
         <form method="post">
@@ -41,5 +48,8 @@ if ($v->valid()) {
                 <?= $v_delete->hx_action() ?>>Delete</button>
         </form>
     </sl-tab-panel>
-    <sl-tab-panel name="logs">Logs</sl-tab-panel>
+    <sl-tab-panel name="backups">
+        <form hx-post="/mgmt/view/<?= $slug ?>/backups" hx-trigger="load,submit" hx-target="this">
+        </form>
+    </sl-tab-panel>
 </sl-tab-group>

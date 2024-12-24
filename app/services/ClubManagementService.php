@@ -23,17 +23,14 @@ class ClubManagementService
 
     }
 
-    static function logout()
-    {
-        unset($_SESSION["mgmt_authorized"]);
-    }
-
     static function fromSlug($slug): self|null
     {
-        if (!file_exists(club_data_path($slug))) {
-            return null;
-        }
-        return new self(new DB(SqliteFactory::clubPath($slug)), $slug);
+        return new self(DB::forClub($slug), $slug);
+    }
+
+    static function clubExists($slug)
+    {
+        return file_exists(club_data_path($slug));
     }
 
     function getClub(): Club
@@ -81,29 +78,34 @@ class ClubManagementService
             return [];
         }
         $dirs = array_filter(scandir($path), fn($item)
-            => is_dir($path . "/$item") && !in_array($item, ['.', '..']));
+            => is_dir($path . "/$item") && !in_array($item, ['.', '..', '.shared']));
 
         return array_values($dirs);
     }
 
     static function isClubSelectionAvailable()
     {
-        return !env("PRODUCTION");
+        return !env("SELECTED_CLUB");
     }
 
     static function getSelectedClub()
     {
         $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
         if ($club && !isset($_SESSION["selected_club_name"])) {
-            self::selectClub($club);
+            if (!self::selectClub($club))
+                return null;
         }
         return $club;
     }
 
     static function selectClub($slug)
     {
+        if (!self::clubExists($slug)) {
+            return false;
+        }
         $_SESSION["selected_club_name"] = ClubManagementService::fromSlug($slug)->getClub()->name;
         $_SESSION["selected_club"] = $slug;
+        return true;
     }
 
     static function createNewClub($name, $slug): Result
@@ -112,11 +114,8 @@ class ClubManagementService
         if (file_exists($path)) {
             return Result::error("Club slug already exists");
         }
-
-        $dbPath = "$path/db.sqlite";
-        mkdir($path);
         try {
-            $db = new DB($dbPath);
+            $db = DB::forClub($slug);
             $em = $db->em();
             if (!SeedingService::applyMigrations($db))
                 throw new ResultException("failed to apply migrations");

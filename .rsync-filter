@@ -1,7 +1,5 @@
 # Exclude files in the root folder that start with a dot (except .htaccess)
 - /.*
-# Include .htaccess in the root folder
-+ /.htaccess
 # Exclude all files in assets/images/profile folder
 - /assets/images/profile/*
 # Exclude the root folder /logs

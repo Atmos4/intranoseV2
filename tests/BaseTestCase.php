@@ -26,7 +26,7 @@ abstract class BaseTestCase extends TestCase
         $this->tempDbFile = "$testDir/" . $this::class . "." . $this->name() . ".sqlite";
         if (copy(SqliteFactory::mainPath(self::getTestDBName()), $this->tempDbFile)) // this will also delete the previous test data
         {
-            $this->db = new DB($this->tempDbFile);
+            $this->db = DB::forTest($this->tempDbFile);
             // warning: remove this as singletons are not usable in phpunit
             DB::factory(fn() => $this->db);
         } else

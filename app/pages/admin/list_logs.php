@@ -1,6 +1,6 @@
 <?php
 restrict_access(Access::$ROOT);
-$log_files = glob("logs/*.log");
+$log_files = glob(Path::LOGS . "/*.log");
 page("Log list") ?>
 <?= actions()->back("/admin") ?>
 <ul>

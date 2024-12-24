@@ -6,7 +6,7 @@
       "name": "Launch built-in server and debug",
       "type": "php",
       "request": "launch",
-      "runtimeArgs": ["-S", "localhost:8000", "-t", "."],
+      "runtimeArgs": ["-S", "localhost:8000", "-t", ".", "server.php"],
       "port": 9003,
       "serverReadyAction": {
         "action": "openExternally"

@@ -2,6 +2,7 @@
 
 class BackupService
 {
+    const MAX_BACKUPS = 6;
     public string $backupDir;
     public Outputable $out;
 
@@ -13,7 +14,7 @@ class BackupService
         $this->backupDir = dirname($this->dbPath) . "/backup";
     }
 
-    function createBackup($maxBackups = 6)
+    function createBackup($maxBackups = self::MAX_BACKUPS)
     {
         $backupFileName = basename(dirname($this->dbPath)) . "_" . date('Ymd_His') . ".sqlite";
         $backupFile = $this->getBackupFile($backupFileName);
