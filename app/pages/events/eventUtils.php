@@ -126,7 +126,11 @@ function RenderTimeline(Event $event, bool $isPresent)
                 <?php include app_path() . "/components/start_icon.php" ?>
             </div>
             <div class="timeline-end timeline-box">
-                <?= format_date($event->start_date) ?>
+                <?php if ($event->google_calendar_url): ?>
+                    <a href="<?= $event->google_calendar_url ?>" target="_blank">
+                    <?php endif ?>
+                    <?= IconText("fa-calendar", format_date($event->start_date)) ?>
+                    <?= $event->google_calendar_url ? "</a>" : "" ?>
             </div>
             <hr>
         </li>

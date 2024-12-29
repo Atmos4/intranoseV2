@@ -47,6 +47,9 @@ if (is_dev() || env("STAGING")) {
 
     // SQLITE
     Router::add('/sqlite', __DIR__ . '/app/pages/dev/sqlite_db.php');
+
+    // Google Calendar
+    Router::add('/dev/google_calendar', __DIR__ . '/app/pages/dev/google_calendar.php');
 }
 
 // hooks
