@@ -1,9 +1,9 @@
 <?php
 
 use Google\Client;
-use Google\Service\Calendar as GoogleCalendarService;
+use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\Event as GoogleCalendarEvent;
-class GoogleCalendar
+class GoogleCalendarService
 {
     private $client;
     private $service;
@@ -26,7 +26,7 @@ class GoogleCalendar
 
         $this->calendarId = env("GOOGLE_CALENDAR_ID");
 
-        $this->service = new GoogleCalendarService($this->client);
+        $this->service = new GoogleCalendar($this->client);
 
         $calendar = $this->service->calendars->get($this->calendarId);
         if (!$calendar) {
@@ -59,7 +59,7 @@ class GoogleCalendar
                 'timeZone' => 'Europe/Paris',
             ],
             'transparency' => 'transparent',
-            'description' => ($event->description ? $event->description . '<br><br>' : '') . "<b>Deadline d'inscription</b> : " . $event->end_date->format('d/m/Y') . "<br><br> <a href='" . env('BASE_URL') . '/evenements/' . $event->id . "'>Lien vers l'événement </a>",
+            'description' => ($event->description ? $event->description . '<br><br>' : '') . "<b>Deadline d'inscription</b> : " . $event->deadline->format('d/m/Y') . "<br><br> <a href='" . env('BASE_URL') . '/evenements/' . $event->id . "'>Lien vers l'événement </a>",
         ]);
 
         $result = $this->insertEvent($calendar_event);
@@ -95,7 +95,7 @@ class GoogleCalendar
     static function updateEvent($event)
     {
         if ($event->google_calendar_id) {
-            $google_calendar = new GoogleCalendar();
+            $google_calendar = new GoogleCalendarService();
             $google_calendar->deleteEvent($event->google_calendar_id);
             $calendar_event = $google_calendar->createEvent($event);
             $event->google_calendar_id = $calendar_event->getId();

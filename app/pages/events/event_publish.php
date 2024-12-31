@@ -10,13 +10,13 @@ if (!$event) {
 if (!empty($_POST) and isset($_POST['publish'])) {
     $event->open = !$event->open;
     if ($event->open && isset($_POST['send_google_calendar'])) {
-        $google_calendar = new GoogleCalendar();
+        $google_calendar = new GoogleCalendarService();
         $calendar_event = $google_calendar->createEvent($event);
         $event->google_calendar_id = $calendar_event->getId();
         $event->google_calendar_url = $calendar_event->getHtmlLink();
     }
     if (!$event->open && $event->google_calendar_id) {
-        $google_calendar = new GoogleCalendar();
+        $google_calendar = new GoogleCalendarService();
         $google_calendar->deleteEvent($event->google_calendar_id);
         $event->google_calendar_id = null;
         $event->google_calendar_url = null;

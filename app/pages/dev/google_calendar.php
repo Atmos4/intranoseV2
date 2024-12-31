@@ -2,7 +2,7 @@
 check_auth();
 restrict(dev_or_staging());
 
-$google_calendar = new GoogleCalendar();
+$google_calendar = new GoogleCalendarService();
 
 $timeMin = date('c', strtotime('-1 month'));
 $timeMax = date('c');
@@ -15,7 +15,12 @@ $start_date = $v->date("start")->label("Start Date")->required();
 $end_date = $v->date("end")->label("End Date")->required();
 
 if ($v->valid()) {
-    $event = $google_calendar->createEvent($summary->value, $start_date->value, $end_date->value);
+    $new_event = new Event();
+    $new_event->name = $summary->value;
+    $new_event->start_date = date_create($start_date->value);
+    $new_event->end_date = date_create($end_date->value);
+    $new_event->deadline = date_create($start_date->value);
+    $event = $google_calendar->createEvent($new_event);
 
     $v->set_success('Event created: ' . $event->htmlLink);
 }
