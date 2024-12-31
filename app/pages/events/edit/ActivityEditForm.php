@@ -94,6 +94,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
             $event ??= new Event();
             $event->set($name->value, $date->value, $date->value, $deadline->value, "");
             $event->type = EventType::Simple;
+            GoogleCalendarService::updateEvent($event);
             em()->persist($event);
         }
         $activity->event = $event;

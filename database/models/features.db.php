@@ -48,6 +48,7 @@ enum Feature: string
 {
     case Messages = "Messages";
     case Carpooling = "Carpooling";
+    case GoogleCalendar = "GoogleCalendar";
 
     function on()
     {
