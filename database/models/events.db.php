@@ -94,6 +94,11 @@ class Event
     #[Column]
     public string $bulletin_url = "";
 
+    #[Column]
+    public string|null $google_calendar_id;
+    #[Column]
+    public string|null $google_calendar_url;
+
     #[Column(options: ["default" => "COMPLEX"])]
     public EventType $type = EventType::Complex;
 

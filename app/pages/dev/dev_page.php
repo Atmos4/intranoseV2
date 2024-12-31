@@ -39,3 +39,9 @@ page("Dev") ?>
         <?= DevButton("/dev/notifications", "SW et Notifications") ?>
     </ul>
 </nav>
+<b>Google Calendar</b>
+<nav>
+    <ul>
+        <?= DevButton("/dev/google_calendar", "Google Calendar") ?>
+    </ul>
+</nav>
