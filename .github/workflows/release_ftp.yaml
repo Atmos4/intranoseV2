@@ -1,4 +1,4 @@
-name: Release to production
+name: Prod release - ftp
 
 on:
   push:
