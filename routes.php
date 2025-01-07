@@ -4,6 +4,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 session_start();
 require_once __DIR__ . "/engine/setup.php";
 
+// hooks
+Router::add('/hooks/migrate', __DIR__ . "/app/hooks/migrate_hook.php");
+
 // MGMT
 Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
 Router::add('/mgmt/login', __DIR__ . "/app/management/mg_login.php");
@@ -51,9 +54,6 @@ if (is_dev() || env("STAGING")) {
     // Google Calendar
     Router::add('/dev/google_calendar', __DIR__ . '/app/pages/dev/google_calendar.php');
 }
-
-// hooks
-Router::add('/hooks/migrate', __DIR__ . "/app/hooks/migrate_hook.php");
 
 //Notifications
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');

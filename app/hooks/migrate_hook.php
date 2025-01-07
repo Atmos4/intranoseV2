@@ -1,9 +1,21 @@
 <?php
-if (($_GET["token"] ?? null) != env("WEBHOOK_MIGRATION_TOKEN")) {
+// To try this out, you can prefix the URL with basic auth
+// https://login:pw@example.com
+
+$validToken = env("WEBHOOK_MIGRATION_TOKEN");
+$tryToken = $_GET["token"] ?? null;
+$br = "<br>" . PHP_EOL;
+
+// Check if the client sent credentials
+if (!$validToken) {
+    echo "<b>WARNING: no token defined. Make sure this isn't production</b>$br{$br}";
+}
+
+if ($tryToken != $validToken) {
     echo "Invalid request";
     return;
 }
-echo "<b>Listing clubs</b><br>";
+echo "<b>Listing clubs</b>{$br}";
 $clubs = ClubManagementService::listClubs();
 
 $selectedSlug = env("SELECTED_CLUB");
@@ -28,7 +40,7 @@ if (!$clubs) {
         echo "Copying db failed";
         return;
     }
-    echo "DB migrated successfully<br>";
+    echo "DB migrated successfully{$br}";
     $clubs = ClubManagementService::listClubs();
     assert(count($clubs) == 1, "One club");
     assert($clubs[1] == $selectedSlug, "Only club should be the selected slug from env");
@@ -39,43 +51,50 @@ foreach ($clubs as $c) {
     $db = DB::forClub($c);
     $saved_em ??= $db->em();
     if (!SeedingService::applyMigrations($db)) {
-        echo "Could not apply migrations to $c<br>";
+        echo "Could not apply migrations to $c{$br}";
     } else
-        echo "Migrated $c<br>";
+        echo "Migrated $c{$br}";
 }
 
 // Generate proxies
 if (!SeedingService::generateProxies($saved_em))
-    echo "Could not generate proxies<br>";
+    echo "Could not generate proxies{$br}";
 else
-    echo "Proxies generated<br>";
+    echo "Proxies generated{$br}";
 
 // --- one off migrations
 if (env("SELECTED_CLUB")) {
+    echo "{$br}<b>Migrating directories...</b>{$br}";
     $slug = env("SELECTED_CLUB");
     if (!file_exists(club_data_path($slug))) {
         echo "Club directory not found";
         return;
     }
 
-    function move_files($from, $to): string
-    {
+    $paths = [
+        [BASE_PATH . "/assets/images/profile", club_data_path(env("SELECTED_CLUB"), "uploads")],
+        [BASE_PATH . "/app/uploads", club_data_path(env("SELECTED_CLUB"), "profile")]
+    ];
+
+
+    foreach ($paths as $p) {
+        [$from, $to] = $p;
         if (!file_exists($from)) {
-            return "$from not found<br>";
+            echo "$from not found{$br}";
+            continue;
         }
         $files = scan_dir($from);
         if (!$files) {
-            return "No files need to be moved<br>";
+            echo "No files need to be moved{$br}";
+            continue;
         }
         if (file_exists($to)) {
-            return "Target dir already exists<br>";
+            echo "Target dir already exists{$br}";
+            continue;
         }
         rename($from, $to);
-        return "Moved $from to $to<br>";
+        echo "Moved $from to $to{$br}";
     }
-
-    echo move_files(BASE_PATH . "/assets/images/profile", club_data_path(env("SELECTED_CLUB"), "uploads"));
-    echo move_files(BASE_PATH . "/app/uploads", club_data_path(env("SELECTED_CLUB"), "profile"));
 }
 
-echo "Success :D<br>";
+echo "{$br}{$br}Success :D{$br}";
