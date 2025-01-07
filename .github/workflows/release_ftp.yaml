@@ -1,0 +1,45 @@
+name: Release to production
+
+on:
+  push:
+    branches:
+      - prod
+  workflow_dispatch:
+
+jobs:
+  deploy-ftp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+
+      - name: Composer install
+        run: composer install --prefer-dist --no-progress --no-suggest --no-dev --optimize-autoloader
+
+      - name: Enable https
+        run: sed -i 's/#https //g' .htaccess
+
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # WARNING - keep in sync with .rsync_filter
+          exclude: |
+            **/.*
+            **/.*/**
+            **/tests/**
+
+      - name: Migration hook
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.HOOK_MIGRATION_URL }}
+          method: "GET"
