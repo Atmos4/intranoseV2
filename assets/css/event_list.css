@@ -68,6 +68,8 @@
 }
 
 .event-article {
+  padding: var(--pico-spacing);
+  margin: 0 0 var(--pico-spacing);
   cursor: pointer;
 }
 
