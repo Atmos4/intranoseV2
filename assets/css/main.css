@@ -419,8 +419,8 @@ article.notice > header,
 .timeline {
   position: relative;
   display: flex;
-  --pico-fill-color: var(--pico-color);
-  --pico-hr-stroke: 0.2rem;
+  --fill-color: var(--color);
+  --hr-stroke: 0.2rem;
   padding: 0;
 }
 .timeline > li {
@@ -431,12 +431,12 @@ article.notice > header,
   display: grid;
   flex-shrink: 0;
   align-items: center;
-  grid-template-rows: var(--pico-timeline-row-start, minmax(0, 1fr)) 40px var(
-      --pico-timeline-row-end,
+  grid-template-rows: var(--timeline-row-start, minmax(0, 1fr)) 40px var(
+      --timeline-row-end,
       minmax(0, 1fr)
     );
-  grid-template-columns: var(--pico-timeline-col-start, minmax(0, 1fr)) 40px var(
-      --pico-timeline-col-end,
+  grid-template-columns: var(--timeline-col-start, minmax(0, 1fr)) 40px var(
+      --timeline-col-end,
       minmax(0, 1fr)
     );
 }
@@ -466,7 +466,7 @@ article.notice > header,
 .timeline-middle {
   grid-column-start: 2;
   grid-row-start: 2;
-  color: var(--pico-fill-color);
+  color: var(--fill-color);
 }
 .timeline-end {
   grid-column-start: 1;
@@ -478,28 +478,28 @@ article.notice > header,
   justify-self: center;
 }
 .timeline hr {
-  height: var(--pico-hr-stroke);
+  height: var(--hr-stroke);
   margin: 0;
   padding: 0;
 }
 :where(.timeline hr) {
-  --pico-tw-bg-opacity: 1;
-  background-color: var(--pico-fill-color);
+  --tw-bg-opacity: 1;
+  background-color: var(--fill-color);
 }
 .timeline-box {
-  border-radius: var(--pico-rounded-box, 1rem);
+  border-radius: var(--rounded-box, 1rem);
   border-width: 1px;
-  --pico-tw-border-opacity: 1;
-  border-color: var(--pico-primary-border);
-  --pico-tw-bg-opacity: 1;
-  background-color: var(--pico-background-color);
+  --tw-border-opacity: 1;
+  border-color: var(--primary-border);
+  --tw-bg-opacity: 1;
+  background-color: var(--background-color);
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  --pico-tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --pico-tw-shadow-colored: 0 1px 2px 0 var(--pico-tw-shadow-color);
-  box-shadow: var(--pico-card-box-shadow);
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--card-box-shadow);
 }
 .timeline-vertical {
   flex-direction: column;
@@ -520,7 +520,7 @@ article.notice > header,
   grid-row-start: auto;
 }
 .timeline-vertical.timeline-compact > li {
-  --pico-timeline-col-start: 0;
+  --timeline-col-start: 0;
 }
 .timeline-vertical.timeline-compact .timeline-start {
   grid-column-start: 3;
@@ -535,8 +535,8 @@ article.notice > header,
   grid-row-start: none;
 }
 :where(.timeline-vertical > li) {
-  --pico-timeline-row-start: minmax(0, 1fr);
-  --pico-timeline-row-end: minmax(0, 1fr);
+  --timeline-row-start: minmax(0, 1fr);
+  --timeline-row-end: minmax(0, 1fr);
   justify-items: center;
 }
 .timeline-vertical > li > hr {
@@ -569,8 +569,8 @@ article.notice > header,
   justify-self: start;
 }
 .timeline-vertical:where(.timeline-snap-icon) > li {
-  --pico-timeline-col-start: minmax(0, 1fr);
-  --pico-timeline-row-start: 0.5rem;
+  --timeline-col-start: minmax(0, 1fr);
+  --timeline-row-start: 0.5rem;
 }
 .timeline-horizontal .timeline-start {
   grid-column-start: 1;
@@ -589,22 +589,22 @@ article.notice > header,
   justify-self: center;
 }
 .timeline-vertical > li > hr {
-  width: var(--pico-hr-stroke);
+  width: var(--hr-stroke);
 }
 .timeline .timeline-start {
-  color: var(--pico-fill-start-color);
+  color: var(--fill-start-color);
 }
 .timeline .completed {
-  --pico-fill-color: var(--pico-ins-color);
-  --pico-fill-start-color: var(--pico-ins-color);
+  --fill-color: var(--ins-color);
+  --fill-start-color: var(--ins-color);
 }
 .timeline .missed {
-  --pico-fill-color: var(--pico-del-color);
-  --pico-fill-start-color: var(--pico-del-color);
+  --fill-color: var(--del-color);
+  --fill-start-color: var(--del-color);
 }
 @media (min-width: 992px) {
   .lg\:timeline-horizontal.timeline-compact {
-    --pico-timeline-row-start: 0;
+    --timeline-row-start: 0;
   }
   .lg\:timeline-horizontal.timeline-compact .timeline-start {
     grid-column-start: 1;
@@ -631,8 +631,8 @@ article.notice > header,
   :where(.lg\:timeline-horizontal > li) {
     align-items: center;
 
-    --pico-timeline-row-start: minmax(0, 1fr);
-    --pico-timeline-row-end: minmax(0, 1fr);
+    --timeline-row-start: minmax(0, 1fr);
+    --timeline-row-end: minmax(0, 1fr);
   }
   :where(.lg\:timeline-horizontal > li > hr):first-child {
     grid-column-start: 1;
@@ -661,10 +661,10 @@ article.notice > header,
     justify-self: center;
   }
   .lg\:timeline-horizontal:where(.timeline-snap-icon) > li {
-    --pico-timeline-col-start: 0.5rem;
+    --timeline-col-start: 0.5rem;
   }
   .lg\:timeline-horizontal > li > hr {
-    height: var(--pico-hr-stroke);
+    height: var(--hr-stroke);
   }
   .lg\:timeline-horizontal > li > div.lg\:rotate {
     rotate: -90deg;
