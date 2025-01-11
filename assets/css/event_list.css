@@ -3,8 +3,8 @@
 }
 .birthday {
   border-left: solid 5px;
-  border-color: var(--primary-focus);
-  background-color: var(--card-background-color);
+  border-color: var(--pico-primary-focus);
+  background-color: var(--pico-card-background-color);
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -64,16 +64,14 @@
 .event-limit.passed {
   opacity: 0.7;
   text-decoration: line-through;
-  color: var(--secondary);
+  color: var(--pico-secondary);
 }
 
 .event-article {
-  padding: var(--spacing);
-  margin: 0 0 var(--spacing);
   cursor: pointer;
 }
 
 .event-article:where(:hover, :focus, :focus-within) {
-  background-color: var(--secondary-focus) !important;
+  background-color: var(--pico-secondary-focus) !important;
   outline: none;
 }

@@ -14,7 +14,7 @@ header > .row > .col-sm-6 {
     grid:
       "icon name name"
       "icon date place" / auto auto 1fr;
-    border-bottom: var(--border-width) solid var(--table-border-color);
+    border-bottom: var(--pico-border-width) solid var(--pico-table-border-color);
   }
 
   table td {
@@ -57,7 +57,7 @@ textarea {
 }
 
 details summary:focus:not([role="button"]) {
-  color: var(--accordion-close-summary-color);
+  color: var(--pico-accordion-close-summary-color);
 }
 
 ul {
