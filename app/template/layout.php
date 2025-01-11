@@ -22,7 +22,12 @@ $page = Page::getInstance(); ?>
     <link rel="stylesheet" href="/assets/css/theme-toggle.css">
 
     <!-- Pico.css -->
-    <link rel="stylesheet" href="/assets/css/picov2.min.css">
+    <?php $clubColor = ClubManagementService::getClubColor($_SESSION["selected_club"] ?? null); ?>
+    <?php if ($clubColor != null): ?>
+        <link rel="stylesheet" href="/assets/css/pico.<?= $clubColor ?>.min.css">
+    <?php else: ?>
+        <link rel="stylesheet" href="/assets/css/picov2.min.css">
+    <?php endif; ?>
     <link rel="stylesheet" href="/assets/css/bsg.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 

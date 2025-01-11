@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  background-color: var(--background-color);
+  background-color: var(--pico-background-color);
 }
 
 #nav-button > button {
@@ -33,7 +33,7 @@
   overflow-x: hidden;
   transition: width 0.2s;
   padding: 3.5rem 0 1rem;
-  background: var(--card-background-color);
+  background: var(--pico-card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
 .sidenav.notvisible {
@@ -66,7 +66,7 @@ body:has(.sidenav) > header {
   height: 4rem;
   display: flex;
   align-items: center;
-  background: var(--card-background-color);
+  background: var(--pico-card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -101,7 +101,7 @@ body:has(.sidenav) > main > .spacing-div {
 }
 /* theme toggle */
 .sidenav .icon-buttons > :first-child {
-  --size: 1.4rem;
+  --pico-size: 1.4rem;
   line-height: 1rem;
   margin: 0;
 }
@@ -126,14 +126,14 @@ body:has(.sidenav) > main > .spacing-div {
 }
 .sidenav :is(a, #family-dropdown summary) {
   text-decoration: none;
-  transition: color var(--transition);
+  transition: color var(--pico-transition);
 }
 .sidenav :is(a, #family-dropdown summary):is(:hover, :focus) {
-  color: var(--primary);
+  color: var(--pico-primary);
 }
 
 .sidenav .active > a {
-  color: var(--primary);
+  color: var(--pico-primary);
 }
 
 @media screen and (min-width: 576px) {

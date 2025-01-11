@@ -20,7 +20,7 @@
 }
 
 .help {
-  margin-left: var(--grid-spacing-horizontal);
+  margin-left: var(--pico-grid-spacing-horizontal);
   margin-bottom: 2.625rem;
 }
 

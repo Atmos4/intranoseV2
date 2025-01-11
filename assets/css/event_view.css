@@ -5,7 +5,7 @@ header > .row > .col-sm-6 {
   width: fit-content;
 }
 details summary:focus:not([role="button"]) {
-  color: var(--accordion-close-summary-color);
+  color: var(--pico-accordion-close-summary-color);
 }
 /* this is placeholder. We probably want markdown instead */
 .description {
@@ -22,7 +22,7 @@ details summary:focus:not([role="button"]) {
 }
 
 .vehicle-article:where(:hover, :focus, :focus-within) {
-  background-color: var(--secondary-focus) !important;
+  background-color: var(--pico-secondary-focus) !important;
   outline: none;
 }
 

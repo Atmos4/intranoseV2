@@ -53,10 +53,11 @@ class ClubManagementService
         return rename(club_data_path($this->slug), $deletedClubsDir . "/$this->slug" . date("YmdHis"));
     }
 
-    function updateClub(Club $c, $newName = null, /* $newSlug = null */): Result
+    function updateClub(Club $c, $newName = null, $color = null, /* $newSlug = null */): Result
     {
         if ($newName) {
             $c->name = $newName;
+            $c->themeColor = ThemeColor::from($color);
         }
         // note - unused for now as it can create bugs
         // if ($newSlug) {
@@ -128,5 +129,14 @@ class ClubManagementService
             return Result::error("Error: " . $e->getMessage());
         }
         return Result::wrap($db, "Club created");
+    }
+
+    static function getClubColor($slug)
+    {
+        if (!$slug) {
+            return null;
+        }
+        $c = self::fromSlug($slug)->getClub();
+        return $c->themeColor->value;
     }
 }

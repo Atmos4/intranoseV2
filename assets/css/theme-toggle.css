@@ -2,17 +2,17 @@
   transform-origin: center center;
 }
 .sun-and-moon > :is(.moon, .sun) {
-  fill: var(--icon-fill);
+  fill: var(--pico-icon-fill);
 }
 .theme-toggle:is(:hover, :focus-visible) > .sun-and-moon > :is(.moon, .sun) {
-  fill: var(--icon-fill-hover);
+  fill: var(--pico-icon-fill-hover);
 }
 .sun-and-moon > .sun-beams {
-  stroke: var(--icon-fill);
+  stroke: var(--pico-icon-fill);
   stroke-width: 2px;
 }
 .theme-toggle:is(:hover, :focus-visible) .sun-and-moon > .sun-beams {
-  stroke: var(--icon-fill-hover);
+  stroke: var(--pico-icon-fill-hover);
 }
 [data-theme="dark"] .sun-and-moon > .sun {
   transform: scale(1.75);
@@ -59,14 +59,14 @@
   }
 }
 .theme-toggle {
-  --size: 2rem;
-  --icon-fill: hsl(210 10% 30%);
-  --icon-fill-hover: hsl(210 10% 15%);
+  --pico-size: 2rem;
+  --pico-icon-fill: hsl(210 10% 30%);
+  --pico-icon-fill-hover: hsl(210 10% 15%);
   background: none;
   border: none;
   padding: 0;
-  inline-size: var(--size);
-  block-size: var(--size);
+  inline-size: var(--pico-size);
+  block-size: var(--pico-size);
   aspect-ratio: 1;
   border-radius: 50%;
   cursor: pointer;
@@ -80,11 +80,11 @@
   stroke-linecap: round;
 }
 [data-theme="dark"] .theme-toggle {
-  --icon-fill: hsl(210 10% 70%);
-  --icon-fill-hover: hsl(210 15% 90%);
+  --pico-icon-fill: hsl(210 10% 70%);
+  --pico-icon-fill-hover: hsl(210 15% 90%);
 }
 @media (hover: none) {
   .theme-toggle {
-    --size: 48px;
+    --pico-size: 48px;
   }
 }

@@ -3,7 +3,7 @@
   padding: 10px;
   margin: auto;
   overflow: auto;
-  background-color: var(--background-color);
+  background-color: var(--pico-background-color);
 }
 table {
   width: 100%;

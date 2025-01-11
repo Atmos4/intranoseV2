@@ -1,46 +1,46 @@
 /* Green Light scheme (Default) */
 /* Can be forced with data-theme="light" */
-[data-theme="light"],
+/* [data-theme="light"],
 :root:not([data-theme="dark"]) {
-  --primary: hsl(123, 78%, 38%);
-  --primary-hover: hsl(121, 78%, 33%);
-  --primary-focus: hsla(123, 78%, 38%, 0.125);
-  --primary-inverse: #fff;
-  --del-color: #ad332d;
-  --ins-color: var(--primary);
-}
+  --pico-primary: hsl(123, 78%, 38%);
+  --pico-primary-hover: hsl(121, 78%, 33%);
+  --pico-primary-focus: hsla(123, 78%, 38%, 0.125);
+  --pico-primary-inverse: #fff;
+  --pico-del-color: #ad332d;
+  --pico-ins-color: var(--pico-primary);
+} */
 
 /* Green Dark scheme (Auto) */
 /* Automatically enabled if user has Dark mode enabled */
-@media only screen and (prefers-color-scheme: dark) {
+/* @media only screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --primary: hsl(123, 68%, 36%);
-    --primary-hover: hsl(125, 82%, 52%);
-    --primary-focus: hsla(123, 78%, 48%, 0.25);
-    --primary-inverse: #fff;
-    --del-color: #df625e;
-    --ins-color: var(--primary);
+    --pico-primary: hsl(123, 68%, 36%);
+    --pico-primary-hover: hsl(125, 82%, 52%);
+    --pico-primary-focus: hsla(123, 78%, 48%, 0.25);
+    --pico-primary-inverse: #fff;
+    --pico-del-color: #df625e;
+    --pico-ins-color: var(--pico-primary);
   }
-}
+} */
 
 /* Green Dark scheme (Forced) */
 /* Enabled if forced with data-theme="dark" */
-[data-theme="dark"] {
-  --primary: hsl(123, 68%, 36%);
-  --primary-hover: hsl(125, 82%, 52%);
-  --primary-focus: hsla(123, 78%, 48%, 0.25);
-  --primary-inverse: #fff;
-  --del-color: #df625e;
-  --ins-color: var(--primary);
-}
+/* [data-theme="dark"] {
+  --pico-primary: hsl(123, 68%, 36%);
+  --pico-primary-hover: hsl(125, 82%, 52%);
+  --pico-primary-focus: hsla(123, 78%, 48%, 0.25);
+  --pico-primary-inverse: #fff;
+  --pico-del-color: #df625e;
+  --pico-ins-color: var(--pico-primary);
+} */
 
 /* Green (Common styles) */
 :root {
-  --form-element-active-border-color: var(--primary);
-  --form-element-focus-color: var(--primary-focus);
-  --switch-color: var(--primary-inverse);
-  --switch-checked-background-color: var(--primary);
-  --card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
+  --pico-form-element-active-border-color: var(--pico-primary);
+  --pico-form-element-focus-color: var(--pico-primary-focus);
+  --pico-switch-color: var(--pico-primary-inverse);
+  --pico-switch-checked-background-color: var(--pico-primary);
+  --pico-card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
 }
 
 #hx-indicator {
@@ -96,25 +96,25 @@ nav[al-center] {
   align-items: center;
 }
 .success {
-  color: var(--ins-color);
+  color: var(--pico-ins-color);
 }
 label.error {
-  color: var(--del-color);
+  color: var(--pico-del-color);
 }
 .error,
 .destructive {
   /* based on https://picocss.com/docs/version-picker/red */
-  --text-selection-color: rgba(241, 121, 97, 0.1875);
-  --primary: #f17961;
-  --primary-background: #c52f21;
-  --primary-underline: rgba(241, 121, 97, 0.5);
-  --primary-hover: #f5a390;
-  --primary-hover-background: #d93526;
-  --primary-focus: rgba(241, 121, 97, 0.375);
-  --primary-inverse: #fff;
-  --primary-border: var(--primary-background);
-  --primary-hover-border: var(--primary-hover-background);
-  --dropdown-color: var(--primary);
+  --pico-text-selection-color: rgba(241, 121, 97, 0.1875);
+  --pico-primary: #f17961;
+  --pico-primary-background: #c52f21;
+  --pico-primary-underline: rgba(241, 121, 97, 0.5);
+  --pico-primary-hover: #f5a390;
+  --pico-primary-hover-background: #d93526;
+  --pico-primary-focus: rgba(241, 121, 97, 0.375);
+  --pico-primary-inverse: #fff;
+  --pico-primary-border: var(--pico-primary-background);
+  --pico-primary-hover-border: var(--pico-primary-hover-background);
+  --pico-dropdown-color: var(--pico-primary);
 }
 label.error:hover {
   cursor: pointer;
@@ -135,7 +135,7 @@ label.error:hover {
   left: 0;
   right: 0;
   z-index: 2;
-  background-color: var(--background-color);
+  background-color: var(--pico-background-color);
   margin: 0.5rem -1rem;
 }
 #page-actions > button {
@@ -150,10 +150,10 @@ label.error:hover {
   margin: 0;
   padding: 0.65em;
   text-decoration: none;
-  border-radius: var(--border-radius);
+  border-radius: var(--pico-border-radius);
 }
 #page-actions > :where(a, li):hover {
-  --background-color: var(--secondary-focus);
+  --pico-background-color: var(--pico-secondary-focus);
 }
 
 @media screen and (min-width: 992px) {
@@ -172,7 +172,7 @@ tbody > tr.clickable {
   position: relative;
 }
 tbody > tr.clickable:where(:hover, :focus) {
-  background-color: var(--secondary-focus) !important;
+  background-color: var(--pico-secondary-focus) !important;
   outline: none;
 }
 
@@ -327,6 +327,7 @@ dialog.closing > article {
   background-color: rgb(215, 215, 215);
   color: black;
   height: 3rem;
+  border-radius: var(--pico-border-radius);
 
   /* Animation */
   animation-name: toastSlide;
@@ -334,11 +335,11 @@ dialog.closing > article {
   animation-fill-mode: forwards;
 }
 .toast.success {
-  background-color: green;
+  background-color: var(--pico-ins-color);
   color: white;
 }
 .toast.error {
-  background-color: red;
+  background-color: var(--pico-del-color);
   color: white;
 }
 .toast.warning {
@@ -352,17 +353,19 @@ dialog.closing > article {
 }
 
 article.notice {
-  border: 1px solid var(--secondary-border);
+  border: 1px solid var(--pico-secondary-border);
 }
 article.notice.invalid,
 article.notice.error {
-  border-color: var(--del-color);
-  --primary: var(--del-color);
-  --primary-underline: var(--form-element-invalid-active-border-color);
+  border-color: var(--pico-del-color);
+  --pico-primary: var(--pico-del-color);
+  --pico-primary-underline: var(
+    --pico-form-element-invalid-active-border-color
+  );
 }
 article.notice.valid,
 article.notice.success {
-  border-color: var(--ins-color);
+  border-color: var(--pico-ins-color);
 }
 article.notice.horizontal,
 article.notice > header,
@@ -693,6 +696,31 @@ article.notice > header,
 
 /* Shoelace */
 sl-tab-group {
-  --indicator-color: var(--primary);
-  --sl-color-primary-600: var(--primary);
+  --indicator-color: var(--pico-primary);
+  --sl-color-primary-600: var(--pico-primary);
+}
+
+.color-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+.color-picker {
+  grid-gap: var(--pico-block-spacing-horizontal);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  overflow: hidden;
+  border-top-right-radius: var(--pico-border-radius);
+  border-top-left-radius: var(--pico-border-radius);
+  margin-bottom: var(--pico-block-spacing-vertical);
+}
+
+@media (min-width: 768px) {
+  .color-picker {
+    grid-gap: calc(var(--pico-block-spacing-horizontal) * 0.5);
+    grid-template-columns: repeat(10, 1fr);
+    margin-bottom: var(--pico-block-spacing-vertical);
+  }
 }

@@ -22,7 +22,7 @@ body > main {
 }
 
 .help {
-  margin-bottom: var(--spacing);
+  margin-bottom: var(--pico-spacing);
 }
 
 .help::before {

@@ -20,11 +20,14 @@ if ($v_delete->valid()) {
         Toast::error("Could not delete club");
 }
 
+$colorList = ThemeColor::colorsList();
+
 $v = new Validator($club->toForm());
+$color = $v->select("color")->options(array_column(ThemeColor::cases(), 'value', 'name'))->label("Couleur de thème");
 $name = $v->text("name")->label("Name");
 
 if ($v->valid()) {
-    $r = $s->updateClub($club, $name->value);
+    $r = $s->updateClub($club, $name->value, $color->value);
     Toast::fromResult($r);
     $r->success && redirect("/mgmt/view/$club->slug");
 }
@@ -41,6 +44,16 @@ if ($v->valid()) {
                 <article class="notice error">Please fill in the club name</article>
             <?php endif ?>
             <?= $name ?>
+            <label for="color">Couleurs disponibles</label>
+            <div class="color-picker">
+                <?php foreach ($colorList as $key => $colorItem): ?>
+                    <sl-tooltip content="<?= $key ?>">
+                        <div class="color-dot" style="background-color:<?= $colorItem ?>">
+                        </div>
+                    </sl-tooltip>
+                <?php endforeach ?>
+            </div>
+            <?= $color ?>
             <button>Update</button>
             <br><br>
             <h3><i>Danger zone</i></h3>
