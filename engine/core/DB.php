@@ -40,6 +40,7 @@ class DB extends SingletonDependency
             throw new Error("Unable to create DB connection");
         }
         $connection ??= DBFactory::sqlite($sqlitePath);
+        $proxyPath = path(base_path(), self::PATH_PROXIES);
         if ($this->sqlitePath) {
             $connection->executeQuery("PRAGMA journal_mode = WAL;"); // speeds up sqlite
         }
@@ -72,11 +73,11 @@ class DB extends SingletonDependency
         }
 
 
-        if ($devMode) {
+        if ($devMode && !env("FORCE_USE_PROXIES")) {
             $config->setAutoGenerateProxyClasses(true);
         } else {
             $config->setAutoGenerateProxyClasses(false);
-            Autoloader::register(self::PATH_PROXIES, "");
+            Autoloader::register($proxyPath, "");
         }
 
         $this->entityManager = new EntityManager($connection, $config, $evm);
