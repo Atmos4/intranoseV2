@@ -1,13 +1,12 @@
-name: Prod release - ftp
+name: Prod release - Intranose
 
 on:
   push:
     branches:
       - prod
-  workflow_dispatch:
 
 jobs:
-  deploy-ftp:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,21 +25,19 @@ jobs:
       - name: Enable https
         run: sed -i 's/#https //g' .htaccess
 
-      - name: Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy with rsync
+        uses: burnett01/rsync-deployments@5.2.2
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./app/
-          # WARNING - keep in sync with .rsync_filter
-          exclude: |
-            **/.*
-            **/.*/**
-            **/tests/**
+          switches: -avz --filter=". .rsync-filter" --delete-after
+          path: ./
+          remote_path: ./
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+          remote_key_pass: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
 
       - name: Migration hook
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ secrets.HOOK_MIGRATION_URL }}
+          url: ${{ secrets.HOOK_MIGRATION_URL_INTRA_PROD }}
           method: "GET"
