@@ -94,9 +94,9 @@ class Event
     #[Column]
     public string $bulletin_url = "";
 
-    #[Column]
+    #[Column(nullable: true)]
     public string|null $google_calendar_id = "";
-    #[Column]
+    #[Column(nullable: true)]
     public string|null $google_calendar_url = "";
 
     #[Column(options: ["default" => "COMPLEX"])]
