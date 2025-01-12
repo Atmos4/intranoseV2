@@ -1,7 +1,4 @@
 <?php
-// To try this out, you can prefix the URL with basic auth
-// https://login:pw@example.com
-
 $validToken = env("WEBHOOK_MIGRATION_TOKEN");
 $tryToken = $_GET["token"] ?? null;
 $br = "<br>" . PHP_EOL;
@@ -92,6 +89,7 @@ if (env("SELECTED_CLUB")) {
             echo "Target dir already exists{$br}";
             continue;
         }
+        mk_dir($to, true);
         rename($from, $to);
         echo "Moved $from to $to{$br}";
     }

@@ -42,6 +42,10 @@ page("$user->first_name $user->last_name - Debug") ?>
     <table class="striped">
         <ul>
             <li>
+                Permission -
+                <?= $user->permission->value ?>
+            </li>
+            <li>
                 Status -
                 <?= $user->status->value ?>
             </li>

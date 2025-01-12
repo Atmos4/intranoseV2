@@ -1,9 +1,9 @@
-name: Prod release - rsync
+name: Staging release - Intranose
 
 on:
   push:
     branches:
-      - prod
+      - master
 
 jobs:
   deploy:
@@ -31,18 +31,13 @@ jobs:
           switches: -avz --filter=". .rsync-filter" --delete-after
           path: ./
           remote_path: ./
-          remote_host: ${{ secrets.DEPLOY_HOST }}
-          remote_user: ${{ secrets.DEPLOY_USER }}
-          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          remote_key_pass: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
+          remote_host: ${{ secrets.STAGING_DEPLOY_HOST }}
+          remote_user: ${{ secrets.STAGING_DEPLOY_USER }}
+          remote_key: ${{ secrets.STAGING_DEPLOY_SSH_KEY }}
+          remote_key_pass: ${{ secrets.STAGING_DEPLOY_SSH_KEY_PASS }}
 
-      - name: Apply migrations and generate proxies
-        uses: appleboy/ssh-action@master
+      - name: Migration hook
+        uses: fjogeleit/http-request-action@v1
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          passphrase: ${{ secrets.DEPLOY_SSH_KEY_PASS }}
-          script: |
-            php bin/migrate_all.php
-            php bin/doctrine orm:generate-proxies
+          url: ${{ secrets.HOOK_MIGRATION_URL_INTRA_STAGING }}
+          method: "GET"
