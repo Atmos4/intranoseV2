@@ -6,6 +6,7 @@ require_once __DIR__ . "/engine/setup.php";
 
 // hooks
 Router::add('/hooks/migrate', __DIR__ . "/app/hooks/migrate_hook.php");
+Router::add('/hooks/temp/migrate-pictures', __DIR__ . "/app/hooks/migrate_images.php");
 
 // MGMT
 Router::add('/mgmt', __DIR__ . "/app/management/clubs_list.php");
