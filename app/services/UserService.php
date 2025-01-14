@@ -11,6 +11,14 @@ class UserService
     }
 
     /** @return User[] */
+    static function getAll(DB $db)
+    {
+        return $db->em()
+            ->createQuery("SELECT u FROM User u")
+            ->getResult();
+    }
+
+    /** @return User[] */
     static function getActiveUserList()
     {
         return em()->createQuery("SELECT u FROM User u WHERE u.status != :status ORDER BY u.last_name ASC, u.first_name ASC")
