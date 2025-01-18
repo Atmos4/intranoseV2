@@ -419,7 +419,7 @@ article.notice > header,
 .timeline {
   position: relative;
   display: flex;
-  --fill-color: var(--color);
+  --fill-color: var(--pico-color);
   --hr-stroke: 0.2rem;
   padding: 0;
 }
@@ -487,19 +487,19 @@ article.notice > header,
   background-color: var(--fill-color);
 }
 .timeline-box {
-  border-radius: var(--rounded-box, 1rem);
+  border-radius: var(--pico-rounded-box, 1rem);
   border-width: 1px;
   --tw-border-opacity: 1;
-  border-color: var(--primary-border);
+  border-color: var(--pico-primary-border);
   --tw-bg-opacity: 1;
-  background-color: var(--background-color);
+  background-color: var(--pico-background-color);
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--card-box-shadow);
+  box-shadow: var(--pico-card-box-shadow);
 }
 .timeline-vertical {
   flex-direction: column;
