@@ -12,11 +12,12 @@ class GoogleCalendarService
     public function __construct()
     {
         $this->client = new Client();
-        if (!env('GOOGLE_CREDENTIAL_PATH') || !env('GOOGLE_CALENDAR_ID')) {
-            throw new Exception('Google Calendar credentials are not set in the environment variables.');
+        $club = ClubManagementService::getSelectedClub();
+        if (!$club->google_credential_path || !$club->google_calendar_id) {
+            throw new Exception('Google Calendar credentials are not set for this club.');
         }
 
-        $this->client->setAuthConfig(env('GOOGLE_CREDENTIAL_PATH'));
+        $this->client->setAuthConfig($club->google_credential_path);
         if (!$this->checkCredentials()) {
             throw new Exception('Google Calendar credentials are invalid.');
         }
@@ -24,7 +25,7 @@ class GoogleCalendarService
         $this->client->setScopes('https://www.googleapis.com/auth/calendar');
         $this->client->setApplicationName("My Calendar");
 
-        $this->calendarId = env("GOOGLE_CALENDAR_ID");
+        $this->calendarId = $club->google_calendar_id;
 
         $this->service = new GoogleCalendar($this->client);
 
@@ -100,6 +101,21 @@ class GoogleCalendarService
             $calendar_event = $google_calendar->createEvent($event);
             $event->google_calendar_id = $calendar_event->getId();
             $event->google_calendar_url = $calendar_event->getHtmlLink();
+        }
+    }
+
+    static function clearCredentialFolder()
+    {
+        try {
+            $files = glob(Path::credentials() . '/*'); // get all file names
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file); // delete file
+                }
+            }
+            return true;
+        } catch (Exception $e) {
+            return false;
         }
     }
 }

@@ -89,7 +89,7 @@ class ClubManagementService
         return !env("SELECTED_CLUB");
     }
 
-    static function getSelectedClub()
+    static function getSelectedClubSlug()
     {
         $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
         if ($club && !isset($_SESSION["selected_club_name"])) {
@@ -97,6 +97,15 @@ class ClubManagementService
                 return null;
         }
         return $club;
+    }
+
+    static function getSelectedClub(): Club
+    {
+        $club_slug = ClubManagementService::getSelectedClubSlug();
+        return em()
+            ->createQuery("SELECT c from Club c WHERE c.slug = :slug")
+            ->setParameters(["slug" => $club_slug])
+            ->getResult()[0];
     }
 
     static function selectClub($slug)

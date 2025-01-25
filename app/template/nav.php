@@ -15,6 +15,10 @@ if (Feature::Messages->on()) {
 
 $main_user = User::getMain();
 
+if (check_auth(Access::$ADD_EVENTS)) {
+    $menu->addItem("Paramètres club", "/club_settings", "fa-screwdriver-wrench");
+}
+
 if (check_auth([Permission::ROOT])) {
     $menu
         ->addItem("Feedbacks", "/feedback-list", "fa-bug")

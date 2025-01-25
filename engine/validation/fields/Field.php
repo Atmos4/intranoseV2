@@ -12,7 +12,7 @@ class Field
     public bool $disabled = false;
     public bool $readonly = false;
     public bool $required = false;
-
+    private ?string $help;
     private array $attributes = [];
 
     function __construct(string $key, mixed $value = null, Validator $context = null)
@@ -22,6 +22,7 @@ class Field
         $this->context = $context;
         $this->error = null;
         $this->label = "";
+        $this->help = null;
         $this->set_type();
     }
 
@@ -43,6 +44,12 @@ class Field
     function attributes(array $attrs): static
     {
         $this->attributes = array_merge($this->attributes, $attrs);
+        return $this;
+    }
+
+    function help(string $help): static
+    {
+        $this->help = $help;
         return $this;
     }
 
@@ -96,7 +103,8 @@ class Field
     {
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
-            $input_render = "<label {$this->render_attrs()} for=\"$this->key\">{$label_content}</label>";
+            $data_intro = $this->help ? ("data-intro=\"" . $this->help . "\"") : "";
+            $input_render = "<label {$this->render_attrs()} $data_intro for=\"$this->key\">{$label_content}</label>";
         }
         return $input_render;
     }
