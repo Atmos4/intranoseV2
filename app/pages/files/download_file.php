@@ -1,5 +1,5 @@
 <?php
-restrict_access(Access::$ADD_EVENTS);
+restrict_access();
 $file_id = $_GET['id'];
 
 $db = DB::getInstance();
