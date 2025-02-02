@@ -33,9 +33,9 @@ class ClubManagementService
         return file_exists(club_data_path($slug));
     }
 
-    function getClub(): Club
+    function getClub()
     {
-        $results = $this->db->em()->createQuery("SELECT c FROM Club c")->getResult();
+        $results = em()->createQuery("SELECT c FROM Club c")->getResult();
         if (!$results) {
             $club = new Club("", $this->slug);
             $this->db->em()->persist($club);
@@ -145,7 +145,7 @@ class ClubManagementService
         if (!$slug) {
             return null;
         }
-        $c = self::fromSlug($slug)->getClub();
+        $c = self::getSelectedClub();
         return $c->themeColor->value;
     }
 }

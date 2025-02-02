@@ -4,6 +4,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\JoinColumn;
 
 #[Entity, Table(name: 'user_features')]
 class UserFeature
@@ -22,25 +23,25 @@ class UserFeature
         $this->featureName = $feature->value;
         $this->user = $user;
     }
+}
 
-    /**
-     * Get all feature from a user
-     * @return bool
-     */
-    static function hasFeature($uid, $feature)
-    {
-        return !!em()->createQuery("SELECT count(f) FROM UserFeature f WHERE f.user = :u AND f.featureName = :feature AND f.enabled = :enabled")
-            ->setParameters(["u" => $uid, "feature" => $feature, "enabled" => true])
-            ->getSingleScalarResult();
-    }
+/* Bit different logic here, feature is authorized if there is a line in ClubFeature table, and then can be enabled at club level. */
+#[Entity, Table(name: 'club_features')]
+class ClubFeature
+{
+    #[Id, Column]
+    public string|null $featureName = null;
 
-    /**
-     * list all feature for one user
-     * @return UserFeature[]
-     */
-    static function list($uid)
+    #[Id, ManyToOne, JoinColumn(name: "club_slug", referencedColumnName: "slug")]
+    public Club $club;
+
+    #[Column]
+    public bool $enabled = false;
+
+    function __construct(Club $club, Feature $feature)
     {
-        return em()->createQuery("SELECT f from UserFeature f INDEX BY f.featureName WHERE f.user = :u")->setParameters(["u" => $uid])->getResult();
+        $this->featureName = $feature->value;
+        $this->club = $club;
     }
 }
 

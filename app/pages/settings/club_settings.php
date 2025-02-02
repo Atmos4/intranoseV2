@@ -1,9 +1,6 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
-$club = em()
-    ->createQuery("SELECT c from Club c WHERE c.slug = :slug")
-    ->setParameters(["slug" => ClubManagementService::getSelectedClubSlug()])
-    ->getResult()[0];
+$club = ClubManagementService::getSelectedClub();
 
 $google_form_values = [
     'google_id' => $club->google_calendar_id,
@@ -25,8 +22,10 @@ $v_google_calendar = new Validator($google_form_values, action: 'google_calendar
 $google_id = $v_google_calendar->text("google_id")->label("ID du calendrier")->placeholder()->help("Remplissez l'id du calendrier lié au service account créé.");
 $google_credentials = $v_google_calendar->upload("credentials")->max_size(2 * 1024 * 1024)->label("Fichier de credentials du service account")->help($credentials_help);
 
+/* THEME */
+
 $v_theme = new Validator($theme_form_values, action: 'theme_form');
-$theme_color = $v_theme->select('theme_color')->options(array_column(ThemeColor::cases(), 'value', 'name'))->label('Couleur du theme');
+$theme_color = $v_theme->select('theme_color')->options(array_column(ThemeColor::cases(), 'value', 'name'))->label('Couleur du theme')->help("Changez la couleur de thème de votre club ici !");
 
 
 if ($v_google_calendar->valid()) {
@@ -53,6 +52,35 @@ if ($v_theme->valid()) {
     Toast::create("Thème mis à jour");
 }
 
+/* FEATURES */
+
+$club_features = FeatureService::list_club();
+$v_features = new Validator(action: "features");
+$feature_options = [];
+foreach ($club_features as $f) {
+    $feature_options[$f->featureName] = $f->featureName;
+}
+$features = $v_features->select("add_new")->options($feature_options)->label("Nouvelle fonctionnalité")->required();
+
+if ($v_features->valid()) {
+    $newFeature = $club_features[$features->value];
+    $newFeature->enabled = true;
+    em()->persist($newFeature);
+    em()->flush();
+    Toast::success("Fonctionnalité ajoutée");
+    reload();
+}
+
+$v_removeFeature = new Validator(action: "remove_feature");
+if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_features[$_POST['remove_name']])) {
+    $newFeature = $club_features[$_POST['remove_name']];
+    $newFeature->enabled = false;
+    em()->persist($newFeature);
+    em()->flush();
+    Toast::error("Fonctionnalité retirée");
+    reload();
+}
+
 page("Paramètres du club")->enableHelp();
 ?>
 <h2>Thème</h2>
@@ -70,3 +98,28 @@ page("Paramètres du club")->enableHelp();
         <input type="submit" class="outline" name="submitGoogle" value="Mettre à jour le calendrier">
     </form>
 <?php endif ?>
+<section>
+    <h3>Fonctionnalités du club</h3>
+    <ul>
+        <?php if (!$club_features): ?>
+            Pas de fonctionnalités disponibles pour ce club, contactez les développeurs pour accéder au nouvelles
+            fonctionnalités 🚀
+        <?php else: ?>
+            <?php foreach (array_filter($club_features, fn($f) => $f->enabled) as $club_feature): ?>
+                <li style="display:flex;align-items:center;gap:1rem;padding: 0.5rem">
+                    <?= $club_feature->featureName ?>
+                    <form method="post">
+                        <?= $v_removeFeature ?>
+                        <input type="hidden" name="remove_name" value="<?= $club_feature->featureName ?>">
+                        <button class="destructive">Retirer</button>
+                    </form>
+                </li>
+            <?php endforeach ?>
+        </ul>
+        <form method="post">
+            <?= $v_features ?>
+            <?= $features ?>
+            <button>Ajouter</button>
+        </form>
+    <?php endif ?>
+</section>
