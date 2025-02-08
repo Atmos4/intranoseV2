@@ -33,7 +33,7 @@ if ($v->valid()) {
     $r->success && redirect("/mgmt/view/$club->slug");
 }
 
-$club_features = FeatureService::listClub($slug);
+$club_features = FeatureService::listClub($slug, $s);
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach (Feature::cases() as $f) {
