@@ -147,6 +147,11 @@ Router::add('/feedback-list/supprimer/$user_id', __DIR__ . '/app/pages/user_feed
 //Notifications
 Router::add('/save-subscription', __DIR__ . '/app/notifications/save_subscription.php');
 
+// Links
+Router::add('/liens-utiles', __DIR__ . '/app/pages/links/links.php');
+Router::add('/liens-utiles/nouveau', __DIR__ . '/app/pages/links/link_new.php');
+Router::add('/liens-utiles/supprimer/$link_id', __DIR__ . "/app/pages/links/link_delete.php");
+
 // Logout
 Router::add('/logout', function () {
     AuthService::create()->logout();
