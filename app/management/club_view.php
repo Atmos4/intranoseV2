@@ -2,8 +2,8 @@
 managementPage("View club");
 $slug = Router::getParameter("slug", pattern: '/[\w-]+/');
 DB::setupForClub($slug);
-$s = ClubManagementService::fromSlug($slug) ?? force_404("club not found");
-$club = ClubManagementService::getSelectedClub();
+$s = ClubManagementService::create($slug) ?? force_404("club not found");
+$club = $s->getClub();
 
 $backupService = new BackupService(dbPath: DB::getInstance()->sqlitePath);
 
@@ -43,16 +43,16 @@ $features = $v_features->select("add_new")->options($feature_options)->label("Ne
 
 if ($v_features->valid()) {
     $newFeature = $club_features[$features->value] ?? new ClubFeature($club, Feature::from($features->value));
-    em()->persist($newFeature);
-    em()->flush();
+    $s->db->em()->persist($newFeature);
+    $s->db->em()->flush();
     Toast::success("Feature added");
     reload();
 }
 
 $v_removeFeature = new Validator(action: "remove_feature");
 if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_features[$_POST['remove_name']])) {
-    em()->remove($club_features[$_POST['remove_name']]);
-    em()->flush();
+    $s->db->em()->remove($club_features[$_POST['remove_name']]);
+    $s->db->em()->flush();
     Toast::error("Feature removed");
     reload();
 }

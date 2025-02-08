@@ -12,7 +12,7 @@ class GoogleCalendarService
     public function __construct()
     {
         $this->client = new Client();
-        $club = ClubManagementService::getSelectedClub();
+        $club = ClubManagementService::create()->getSelectedClub();
         if (!$club->google_credential_path || !$club->google_calendar_id) {
             throw new Exception('Google Calendar credentials are not set for this club.');
         }
