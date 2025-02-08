@@ -1,7 +1,8 @@
 <?php
 managementPage("View club");
 $slug = Router::getParameter("slug", pattern: '/[\w-]+/');
-$s = ClubManagementService::fromSlug($slug) ?? force_404("club not found");
+DB::setupForClub($slug);
+$s = ClubManagementService::create($slug) ?? force_404("club not found");
 $club = $s->getClub();
 
 $backupService = new BackupService(dbPath: $s->db->sqlitePath);
@@ -31,6 +32,31 @@ if ($v->valid()) {
     Toast::fromResult($r);
     $r->success && redirect("/mgmt/view/$club->slug");
 }
+
+$club_features = FeatureService::listClub($slug, $s);
+$v_features = new Validator(action: "features");
+$feature_options = [];
+foreach (Feature::cases() as $f) {
+    $feature_options[$f->value] = $f->value;
+}
+$features = $v_features->select("add_new")->options($feature_options)->label("New feature")->required();
+
+if ($v_features->valid()) {
+    $newFeature = $club_features[$features->value] ?? new ClubFeature($club, Feature::from($features->value));
+    $s->db->em()->persist($newFeature);
+    $s->db->em()->flush();
+    Toast::success("Feature added");
+    reload();
+}
+
+$v_removeFeature = new Validator(action: "remove_feature");
+if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_features[$_POST['remove_name']])) {
+    $s->db->em()->remove($club_features[$_POST['remove_name']]);
+    $s->db->em()->flush();
+    Toast::error("Feature removed");
+    reload();
+}
+
 ?>
 <?= actions()->back("/mgmt") ?>
 <sl-tab-group>
@@ -56,9 +82,31 @@ if ($v->valid()) {
             <?= $color ?>
             <button>Update</button>
             <br><br>
-            <h3><i>Danger zone</i></h3>
+        </form>
+        <section>
+            <h3>Features</h3>
+            <ul>
+                <?php foreach ($club_features as $club_feature): ?>
+                    <li style="display:flex;align-items:center;gap:1rem;padding: 0.5rem">
+                        <?= $club_feature->featureName ?>
+                        <form method="post">
+                            <?= $v_removeFeature ?>
+                            <input type="hidden" name="remove_name" value="<?= $club_feature->featureName ?>">
+                            <button class="destructive">Remove</button>
+                        </form>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+            <form method="post">
+                <?= $v_features ?>
+                <?= $features ?>
+                <button>Add</button>
+            </form>
+        </section>
+        <h3><i>Danger zone</i></h3>
+        <form method="post">
             <button class="destructive" hx-post hx-confirm="Are you sure you want to delete the club?"
-                <?= $v_delete->hx_action() ?>>Delete</button>
+                <?= $v_delete->hx_action() ?>>Delete club</button>
         </form>
     </sl-tab-panel>
     <sl-tab-panel name="backups">

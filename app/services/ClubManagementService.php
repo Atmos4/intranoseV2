@@ -23,8 +23,11 @@ class ClubManagementService
 
     }
 
-    static function fromSlug($slug): self|null
+    static function create($slug = null): self|null
     {
+        if ($slug == null) {
+            $slug = self::getSelectedClubSlug();
+        }
         return new self(DB::forClub($slug), $slug);
     }
 
@@ -33,7 +36,7 @@ class ClubManagementService
         return file_exists(club_data_path($slug));
     }
 
-    function getClub(): Club
+    public function getClub()
     {
         $results = $this->db->em()->createQuery("SELECT c FROM Club c")->getResult();
         if (!$results) {
@@ -45,7 +48,7 @@ class ClubManagementService
         return $results[0];
     }
 
-    function deleteClub()
+    public function deleteClub()
     {
         $deletedClubsDir = base_path() . "/.sqlite/.deleted_clubs"; // maybe change this later?
         mk_dir($deletedClubsDir, true);
@@ -53,7 +56,7 @@ class ClubManagementService
         return rename(club_data_path($this->slug), $deletedClubsDir . "/$this->slug" . date("YmdHis"));
     }
 
-    function updateClub(Club $c, $newName = null, $color = null, /* $newSlug = null */): Result
+    public function updateClub(Club $c, $newName = null, $color = null, /* $newSlug = null */): Result
     {
         if ($newName) {
             $c->name = $newName;
@@ -89,7 +92,7 @@ class ClubManagementService
         return !env("SELECTED_CLUB");
     }
 
-    static function getSelectedClub()
+    static function getSelectedClubSlug()
     {
         $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
         if ($club && !isset($_SESSION["selected_club_name"])) {
@@ -99,12 +102,21 @@ class ClubManagementService
         return $club;
     }
 
+    public function getSelectedClub()
+    {
+        $club_slug = ClubManagementService::getSelectedClubSlug();
+        return $this->db->em()
+            ->createQuery("SELECT c from Club c WHERE c.slug = :slug")
+            ->setParameters(["slug" => $club_slug])
+            ->getResult()[0];
+    }
+
     static function selectClub($slug)
     {
         if (!self::clubExists($slug)) {
             return false;
         }
-        $_SESSION["selected_club_name"] = ClubManagementService::fromSlug($slug)->getClub()->name;
+        $_SESSION["selected_club_name"] = ClubManagementService::create($slug)->getClub()->name;
         $_SESSION["selected_club"] = $slug;
         return true;
     }
@@ -131,12 +143,12 @@ class ClubManagementService
         return Result::wrap($db, "Club created");
     }
 
-    static function getClubColor($slug)
+    public function getClubColor($slug)
     {
         if (!$slug) {
             return null;
         }
-        $c = self::fromSlug($slug)->getClub();
+        $c = $this->getClub();
         return $c->themeColor->value;
     }
 }

@@ -26,7 +26,7 @@ Router::add('/logout-club', function () {
 Router::add("/select-club", __DIR__ . "/app/pages/select_club.php");
 
 // Club selection middleware
-$club = ClubManagementService::getSelectedClub();
+$club = ClubManagementService::getSelectedClubSlug();
 if (!$club) {
     redirect("/select-club");
 }
@@ -100,6 +100,9 @@ Router::add('/evenements/$event_id/activite/$activity_id/supprimer', __DIR__ . '
 Router::add('/mon-profil', __DIR__ . '/app/pages/settings/settings.php');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', __DIR__ . '/app/pages/settings/settings.php');
+
+// Club settings
+Router::add('/club_settings', __DIR__ . '/app/pages/settings/club_settings.php');
 
 // Users
 Router::add('/licencies', __DIR__ . '/app/pages/users/user_list.php');

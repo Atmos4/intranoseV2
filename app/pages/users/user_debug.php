@@ -10,11 +10,12 @@ if ($v_activation->valid()) {
     Toast::success("Lien créé");
 }
 
-$user_features = UserFeature::list($user_id);
+$user_features = FeatureService::listUser($user_id);
+$club_features = FeatureService::listClub();
 $v_features = new Validator(action: "features");
 $feature_options = [];
-foreach (Feature::cases() as $f) {
-    $feature_options[$f->value] = $f->value;
+foreach ($club_features as $f) {
+    $feature_options[$f->featureName] = $f->featureName;
 }
 $features = $v_features->select("add_new")->options($feature_options)->label("New feature")->required();
 
@@ -23,7 +24,7 @@ if ($v_features->valid()) {
     $newFeature->enabled = true;
     em()->persist($newFeature);
     em()->flush();
-    Toast::success("Feature added");
+    Toast::success("Fonctionnalité ajoutée");
     reload();
 }
 
@@ -31,7 +32,7 @@ $v_removeFeature = new Validator(action: "remove_feature");
 if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($user_features[$_POST['remove_name']])) {
     em()->remove($user_features[$_POST['remove_name']]);
     em()->flush();
-    Toast::error("Feature removed");
+    Toast::error("Fonctionnalité retirée");
     reload();
 }
 
@@ -74,24 +75,29 @@ page("$user->first_name $user->last_name - Debug") ?>
 </section>
 <hr>
 <section>
-    <h3>Features</h3>
+    <h3>Fonctionnalités</h3>
     <ul>
-        <?php foreach ($user_features as $user_feature): ?>
-            <li style="display:flex;align-items:center;gap:1rem;padding: 0.5rem">
-                <?= $user_feature->featureName ?>
-                <form method="post">
-                    <?= $v_removeFeature ?>
-                    <input type="hidden" name="remove_name" value="<?= $user_feature->featureName ?>">
-                    <button class="destructive">Remove</button>
-                </form>
-            </li>
-        <?php endforeach ?>
-    </ul>
-    <form method="post">
-        <?= $v_features ?>
-        <?= $features ?>
-        <button>Add</button>
-    </form>
+        <?php if (!$club_features): ?>
+            Pas de fonctionnalités disponibles pour ce club, contactez les développeurs pour accéder au nouvelles
+            fonctionnalités 🚀
+        <?php else: ?>
+            <?php foreach ($user_features as $user_feature): ?>
+                <li style="display:flex;align-items:center;gap:1rem;padding: 0.5rem">
+                    <?= $user_feature->featureName ?>
+                    <form method="post">
+                        <?= $v_removeFeature ?>
+                        <input type="hidden" name="remove_name" value="<?= $user_feature->featureName ?>">
+                        <button class="destructive">Retirer</button>
+                    </form>
+                </li>
+            <?php endforeach ?>
+        </ul>
+        <form method="post">
+            <?= $v_features ?>
+            <?= $features ?>
+            <button>Ajouter</button>
+        </form>
+    <?php endif ?>
 </section>
 
 <style>
