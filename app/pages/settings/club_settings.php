@@ -56,7 +56,7 @@ if ($v_theme->valid()) {
 
 /* FEATURES */
 
-$club_features = FeatureService::list_club();
+$club_features = FeatureService::list_club(service: $s);
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach ($club_features as $f) {

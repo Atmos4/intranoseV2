@@ -52,11 +52,11 @@
      * list all feature for one user
      * @return ClubFeature[]
      */
-    static function list_club($slug = null)
+    static function list_club($slug = null, $service = null)
     {
         if (!$slug) {
             $slug = ClubManagementService::getSelectedClubSlug();
         }
-        return em()->createQuery("SELECT f from ClubFeature f INDEX BY f.featureName WHERE f.club = :c")->setParameters(["c" => $slug])->getResult();
+        return em($service->db ?? null)->createQuery("SELECT f from ClubFeature f INDEX BY f.featureName WHERE f.club = :c")->setParameters(["c" => $slug])->getResult();
     }
 }
