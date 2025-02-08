@@ -67,9 +67,9 @@ function config(string $key, $fallback = null)
 }
 
 /** Get global entity manager */
-function em($db = null): EntityManager
+function em(): EntityManager
 {
-    return $db ? $db->em() : DB::get();
+    return DB::get();
 }
 
 function restrict_feature(Feature $feature, $uid = null)

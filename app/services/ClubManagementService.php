@@ -148,7 +148,7 @@ class ClubManagementService
         if (!$slug) {
             return null;
         }
-        $c = $this->getSelectedClub();
+        $c = $this->getClub();
         return $c->themeColor->value;
     }
 }

@@ -10,8 +10,8 @@ if ($v_activation->valid()) {
     Toast::success("Lien créé");
 }
 
-$user_features = FeatureService::list_user($user_id);
-$club_features = FeatureService::list_club();
+$user_features = FeatureService::listUser($user_id);
+$club_features = FeatureService::listClub();
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach ($club_features as $f) {

@@ -2,7 +2,7 @@
 restrict_access(Access::$ADD_EVENTS);
 $s = ClubManagementService::create();
 $db = $s->db;
-$club = $s->getSelectedClub();
+$club = $s->getClub();
 
 $google_form_values = [
     'google_id' => $club->google_calendar_id,
@@ -35,28 +35,28 @@ if ($v_google_calendar->valid()) {
     if (GoogleCalendarService::clearCredentialFolder()) {
         if ($path = $google_credentials->save_file(Path::credentials())) {
             $club->google_credential_path = $path;
-            em($db)->flush();
+            $db->em()->flush();
         } else {
             $v_google_calendar->set_error("Erreur lors de l'enregistrement des credentials");
         }
     } else {
         $v_google_calendar->set_error("Erreur lors du nettoyage du dossier des credentials");
     }
-    em($db)->persist($club);
-    em($db)->flush();
+    $db->em()->persist($club);
+    $db->em()->flush();
     Toast::create("Calendrier mis à jour");
 }
 
 if ($v_theme->valid()) {
     $club->themeColor = ThemeColor::from($theme_color->value);
-    em($db)->persist($club);
-    em($db)->flush();
+    $db->em()->persist($club);
+    $db->em()->flush();
     Toast::create("Thème mis à jour");
 }
 
 /* FEATURES */
 
-$club_features = FeatureService::list_club(service: $s);
+$club_features = FeatureService::listClub(service: $s);
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach ($club_features as $f) {
@@ -67,8 +67,8 @@ $features = $v_features->select("add_new")->options($feature_options)->label("No
 if ($v_features->valid()) {
     $newFeature = $club_features[$features->value];
     $newFeature->enabled = true;
-    em($db)->persist($newFeature);
-    em($db)->flush();
+    $db->em()->persist($newFeature);
+    $db->em()->flush();
     Toast::success("Fonctionnalité ajoutée");
     reload();
 }
@@ -77,8 +77,8 @@ $v_removeFeature = new Validator(action: "remove_feature");
 if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_features[$_POST['remove_name']])) {
     $newFeature = $club_features[$_POST['remove_name']];
     $newFeature->enabled = false;
-    em($db)->persist($newFeature);
-    em($db)->flush();
+    $db->em()->persist($newFeature);
+    $db->em()->flush();
     Toast::error("Fonctionnalité retirée");
     reload();
 }

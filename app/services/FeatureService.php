@@ -43,7 +43,7 @@
      * list all feature for one user
      * @return UserFeature[]
      */
-    static function list_user($uid)
+    static function listUser($uid)
     {
         return em()->createQuery("SELECT f FROM UserFeature f INDEX BY f.featureName LEFT JOIN ClubFeature c WITH f.featureName = c.featureName WHERE f.user = :u")->setParameters(["u" => $uid])->getResult();
     }
@@ -52,11 +52,12 @@
      * list all feature for one user
      * @return ClubFeature[]
      */
-    static function list_club($slug = null, $service = null)
+    static function listClub($slug = null, $service = null)
     {
         if (!$slug) {
             $slug = ClubManagementService::getSelectedClubSlug();
         }
-        return em($service->db ?? null)->createQuery("SELECT f from ClubFeature f INDEX BY f.featureName WHERE f.club = :c")->setParameters(["c" => $slug])->getResult();
+        $em = $service->db->em() ?? em();
+        return $em->createQuery("SELECT f from ClubFeature f INDEX BY f.featureName WHERE f.club = :c")->setParameters(["c" => $slug])->getResult();
     }
 }

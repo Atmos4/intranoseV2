@@ -5,7 +5,7 @@ DB::setupForClub($slug);
 $s = ClubManagementService::create($slug) ?? force_404("club not found");
 $club = $s->getClub();
 
-$backupService = new BackupService(dbPath: DB::getInstance()->sqlitePath);
+$backupService = new BackupService(dbPath: $s->db->sqlitePath);
 
 $v_backup = new Validator(action: "create_backup");
 if ($v_backup->valid()) {
@@ -33,7 +33,7 @@ if ($v->valid()) {
     $r->success && redirect("/mgmt/view/$club->slug");
 }
 
-$club_features = FeatureService::list_club($slug);
+$club_features = FeatureService::listClub($slug);
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach (Feature::cases() as $f) {
