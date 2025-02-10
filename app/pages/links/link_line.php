@@ -5,7 +5,7 @@ $disable_delete = Component::prop("disable_delete");
 
 ?>
 <hr>
-<div class="grid">
+<div class="link-grid">
     <div>
         <a href=<?= $link->url ?> target="#blank" role="button"><?= $link->button_text ?></a>
     </div>

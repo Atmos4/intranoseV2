@@ -15,15 +15,15 @@ class Link
     public int|null $id = null;
 
     #[Column]
-    public string $url;
+    public string $url = "";
 
     #[Column]
-    public string $button_text;
+    public string $button_text = "";
 
     #[Column]
-    public string $description;
+    public string $description = "";
 
-    public function __construct($url = null, $button_text = null, $description = null)
+    public function __construct($url, $button_text, $description)
     {
         $this->url = $url;
         $this->button_text = $button_text;

@@ -14,7 +14,6 @@ if (Feature::Messages->on()) {
     $menu->addItem("Messages", "/messages", "fa-message");
 }
 
-
 $main_user = User::getMain();
 
 if (check_auth(Access::$ADD_EVENTS)) {

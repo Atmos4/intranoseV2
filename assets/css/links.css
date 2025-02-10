@@ -1,4 +1,4 @@
-.grid {
+.link-grid {
   display: grid;
   grid-template-columns: 1fr 3fr auto;
   gap: 1rem;
@@ -6,7 +6,7 @@
   margin-bottom: 20px;
 }
 
-.grid > div:nth-child(2) {
+.link-grid > div:nth-child(2) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
