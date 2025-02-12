@@ -1,5 +1,6 @@
 <?php
 restrict_access();
+require __DIR__ . "/../../components/user_card.php";
 $can_add_user = check_auth(Access::$EDIT_USERS);
 $users = UserService::getActiveUserList();
 page("Les licenciés")->enableHelp() ?>
@@ -15,6 +16,11 @@ page("Les licenciés")->enableHelp() ?>
                 "/licencies/desactive",
                 "Licenciés désactivés",
                 "fa-bed",
+            )
+            ->link(
+                "/groupes",
+                "Groupes",
+                "fa-user-group"
             ),
         "Plus",
         ["data-intro" => "Visualisez les familles et les licenciés désactivés ici"]
@@ -27,13 +33,15 @@ page("Les licenciés")->enableHelp() ?>
 
 <section class="row" id="users-list">
     <?php foreach ($users as $user): ?>
+        <?php $groups = GroupService::getUserGroups($user->id) ?>
         <div class="toggleWrapper col-sm-12 col-md-6">
-            <article class="user-card">
-                <img src="<?= $user->getPicture() ?>">
-                <a href="/licencies?user=<?= $user->id ?>" <?= UserModal::props($user->id) ?>>
-                    <?= "$user->first_name $user->last_name" ?>
-                </a>
-            </article>
+            <?php UserCard(
+                $user,
+                subtitle: function ($user) use ($groups) {
+                            GroupService::renderTags($groups);
+
+                        }
+            ) ?>
         </div>
     <?php endforeach ?>
 </section>

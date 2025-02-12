@@ -265,4 +265,22 @@ if ($v_password->valid()) {
         </form>
     </div>
 <?php endif ?>
+
+<h2 id="groups">Groupes</h2>
+<form method="post">
+    <?= GroupService::renderTags($user->groups) ?>
+    <?php if (check_auth(Access::$EDIT_USERS)): ?>
+        <?php
+        $v_groups = new Validator(action: "groups_form");
+        if ($v_groups->valid()) {
+            GroupService::processUserGroupChoice($user);
+            em()->flush($user);
+            reload();
+        }
+        ?>
+        <?= $v_groups->render_validation() ?>
+        <?= GroupService::renderUserGroupChoice($user) ?>
+        <input type="submit" class="outline" name="submitGroups" value="Mettre à jour les groupes" ?>
+    <?php endif ?>
+</form>
 <script src="/assets/js/copy-clipboard.js"></script>

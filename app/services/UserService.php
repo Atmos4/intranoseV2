@@ -64,6 +64,17 @@ class UserService
         redirect("/licencies/desactive");
         return true;
     }
+
+    static function getFromList($user_ids)
+    {
+        return em()->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->where('u.id IN (:ids)')
+            ->setParameter('ids', $user_ids)
+            ->getQuery()
+            ->getResult();
+    }
 }
 
 class UserHelper

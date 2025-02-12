@@ -11,7 +11,7 @@ if ($v_activation->valid()) {
 }
 
 $user_features = FeatureService::listUser($user_id);
-$club_features = FeatureService::listClub();
+$club_features = FeatureService::listClub(service: ClubManagementService::create());
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach ($club_features as $f) {

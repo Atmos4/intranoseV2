@@ -1,7 +1,6 @@
 <?php
 function render_events(EventDto $event)
 {
-
     $diff = date_create('now')->diff($event->deadline->add(new DateInterval("PT23H59M59S")));
     $limit_class = $tooltip_content = "";
     if ($diff->invert) {
@@ -14,7 +13,8 @@ function render_events(EventDto $event)
                 $diff->format("Plus que %h heures!") :
                 $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")))
             . "\"";
-    } ?>
+    }
+    $groups = GroupService::getEventGroups($event->id) ?>
 
     <article class="event-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" onkeydown="console.log(event.key)"
         hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true" tabindex=0>
@@ -37,6 +37,7 @@ function render_events(EventDto $event)
                     <?= $event->name ?>
                 </b>
             </div>
+            <?= GroupService::renderTags($groups) ?>
             <div class="dates">
                 <span>
                     <?= format_date($event->start) ?>

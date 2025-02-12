@@ -4,9 +4,11 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity, Table(name: 'event_entries')]
 class EventEntry
@@ -110,8 +112,15 @@ class Event
     #[OneToMany(targetEntity: Activity::class, mappedBy: 'event', cascade: ["remove"])]
     public Collection $activities;
 
+
+    /** @var Collection<int, UserGroup> */
+    #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'events')]
+    public Collection $groups;
+
     function __construct()
     {
+        //this is needed when creating a new Event
+        $this->groups = new ArrayCollection();
         $this->start_date = date_create();
         $this->end_date = date_create();
         $this->deadline = date_create();
@@ -147,6 +156,7 @@ class EventDto
         public DateTime|null $end,
         public DateTime $deadline,
         public bool $open,
+        /** @var UserGroup[] */
         public bool|null $registered,
     ) {
     }
