@@ -1,6 +1,12 @@
 <?php
 return function ($event_id = null, $activity_id = null, bool $is_simple = false, $post_link = "") {
-    $event = $event_id ? em()->find(Event::class, $event_id) : null;
+    if ($event_id) {
+        $event = em()->find(Event::class, $event_id);
+    } else {
+        // the only way this function is called with no event_id is from the creation of a simple event
+        $event = new Event();
+        $event->type = EventType::Simple;
+    }
 
     if ($event_id && !$event) {
         return "this event does not exist";
@@ -15,8 +21,9 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         return;
     }
 
-    if ($activity_id || $event?->type == EventType::Simple) {
-        $activity = em()->find(Activity::class, $activity_id ?? $event?->activities[0]);
+    //handle the case when you EDIT an activity OR a simple event
+    if ($activity_id || ($event->type == EventType::Simple && $event_id)) {
+        $activity = em()->find(Activity::class, $activity_id ?? $event->activities[0]);
         $form_values = [
             "name" => $activity->name,
             "date" => date_format($activity->date, "Y-m-d"),
@@ -33,7 +40,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         $activity = new Activity();
     }
 
-    $item_name = ($event && !($event?->type == EventType::Simple)) ? "activité" : "événement";
+    $item_name = ($event_id && !($event->type == EventType::Simple)) ? "activité" : "événement";
 
     $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
@@ -91,12 +98,12 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         }
         // With a simple event, we need to edit the event as well
         if ($is_simple) {
-            $event ??= new Event();
             $event->set($name->value, $date->value, $date->value, $deadline->value, "");
             $event->type = EventType::Simple;
             GoogleCalendarService::updateEvent($event);
             em()->persist($event);
         }
+        GroupService::processEventGroupChoice($event);
         $activity->event = $event;
         em()->persist($activity);
         em()->flush();
@@ -127,6 +134,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
                 </div>
             <?php endif ?>
             <?= $description->render() ?>
+            <?= GroupService::renderEventGroupChoice($event) ?>
             <div class="col-auto">
                 <h2>Catégories</h2>
             </div>

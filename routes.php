@@ -114,11 +114,17 @@ Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_de
 Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family_create.php');
 Router::add('/licencies/$user_id/debug', __DIR__ . '/app/pages/users/user_debug.php');
 // Familles
-Router::add('/familles', __DIR__ . '/app/pages/users/family_list.php');
-Router::add('/famille/$family_id', __DIR__ . '/app/pages/users/family_view.php');
-Router::add('/famille/$family_id/supprimer', __DIR__ . '/app/pages/users/family_remove.php');
-Router::add('/famille/$family_id/change/$member_id', __DIR__ . '/app/pages/users/family_change.php');
-Router::add('/famille/$family_id/supprimer/$member_id', __DIR__ . '/app/pages/users/family_remove.php');
+Router::add('/familles', __DIR__ . '/app/pages/users/family/family_list.php');
+Router::add('/famille/$family_id', __DIR__ . '/app/pages/users/family/family_view.php');
+Router::add('/famille/$family_id/supprimer', __DIR__ . '/app/pages/users/family/family_remove.php');
+Router::add('/famille/$family_id/change/$member_id', __DIR__ . '/app/pages/users/family/family_change.php');
+Router::add('/famille/$family_id/supprimer/$member_id', __DIR__ . '/app/pages/users/family/family_remove.php');
+//Groupes
+Router::add('/groupes', __DIR__ . '/app/pages/users/groups/group_list.php');
+Router::add('/groupes/nouveau', __DIR__ . '/app/pages/users/groups/group_create.php');
+Router::add('/groupes/$group_id', __DIR__ . '/app/pages/users/groups/group_view.php');
+Router::add('/groupes/$group_id/supprimer', __DIR__ . '/app/pages/users/groups/group_delete.php');
+Router::add('/groupes/$group_id/retirer/$member_id', __DIR__ . '/app/pages/users/groups/group_delete_user.php');
 
 Router::add('/user-control/$user_id', __DIR__ . '/app/pages/users/take_user_control.php');
 

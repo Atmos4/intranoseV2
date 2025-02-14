@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 use Ramsey\Uuid\Uuid;
 
@@ -75,6 +76,10 @@ class User
     /** @var Collection<int,ActivityEntry> entries */
     #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "user", cascade: ["remove"])]
     public Collection $activity_entries;
+
+    /** @var Collection<int,UserGroup> entries */
+    #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'users')]
+    public Collection $groups;
 
     function __construct()
     {
