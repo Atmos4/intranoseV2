@@ -13,8 +13,7 @@ $groups = GroupService::getEventGroups($event->id);
 ?>
 
 <article>
-    <?= GroupService::renderTags($groups) ?>
-    <?= $groups ? "<hr>" : "" ?>
+    <?= GroupService::renderTags($groups, delimiter: $groups) ?>
     <div class="horizontal">
         <div>
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>

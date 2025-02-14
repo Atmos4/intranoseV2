@@ -2,13 +2,14 @@
 
 class GroupService
 {
-    static function renderTags($groups)
+    static function renderTags($groups, $delimiter = false)
     {
         echo $groups ? "<div class='grid-tag'>" : "";
         foreach ($groups as $group): ?>
             <div class="tag tag-<?= $group->color->value ?>"><?= $group->name ?></div>
         <?php endforeach;
         echo $groups ? "</div>" : "";
+        echo $delimiter ? "<hr>" : "";
     }
 
     static function getAllEventGroups($event)
@@ -144,5 +145,15 @@ class GroupService
     {
         $groups = self::getAllUserGroups($user);
         echo self::renderGroupChoice($groups);
+    }
+
+    static function listGroups()
+    {
+        return em()->createQueryBuilder()
+            ->select('g')
+            ->from(UserGroup::class, 'g')
+            ->orderBy('g.name', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

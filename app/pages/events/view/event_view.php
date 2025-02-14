@@ -85,8 +85,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
             ?>
             <article>
                 <header>
-                    <?= GroupService::renderTags($event->groups) ?>
-                    <?= $event->groups ? "<hr>" : "" ?>
+                    <?= GroupService::renderTags($event->groups, delimiter: $event->groups) ?>
                     <div class="row g-2 center align-center">
                         <div class="col-12">
                             <?= RenderTimeline($event, !!$entry?->present) ?>

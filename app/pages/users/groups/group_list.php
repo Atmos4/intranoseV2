@@ -1,6 +1,6 @@
 <?php
 restrict_access(Access::$EDIT_USERS);
-$groups = em()->getRepository(UserGroup::class)->findAll();
+$groups = GroupService::listGroups();
 page("Groupes"); ?>
 <?= actions()->back("/licencies")->link("/groupes/nouveau", "Nouveau groupe", "fas fa-plus") ?>
 <table>
