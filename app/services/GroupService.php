@@ -4,12 +4,13 @@ class GroupService
 {
     static function renderTags($groups, $delimiter = false)
     {
-        echo $groups ? "<div class='grid-tag'>" : "";
+        $is_groups = $groups && (count($groups) > 0);
+        echo $is_groups ? "<div class='grid-tag'>" : "";
         foreach ($groups as $group): ?>
             <div class="tag tag-<?= $group->color->value ?>"><?= $group->name ?></div>
         <?php endforeach;
-        echo $groups ? "</div>" : "";
-        echo $delimiter ? "<hr>" : "";
+        echo $is_groups ? "</div>" : "";
+        echo ($is_groups && $delimiter) ? "<hr>" : "";
     }
 
     static function getAllEventGroups($event)
