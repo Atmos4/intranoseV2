@@ -2,6 +2,7 @@
 if (!ClubManagementService::isLoggedIn()) {
     redirect("/mgmt/login");
 }
+restrict_management();
 managementPage("Clubs");
 /* Workaround to handle the case where a club is selected, so that the color works in layout.php */
 if ($club_slug = ClubManagementService::getSelectedClubSlug()) {
