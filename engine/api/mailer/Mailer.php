@@ -68,7 +68,7 @@ class Mailer extends FactoryDependency
     function createBulkEmails($addresses, $subject, $content): self
     {
         foreach ($addresses as $email => $name) {
-            $this->mail->addAddress($email, $name);
+            $this->mail->addBCC($email, $name);
         }
         $this->mail->Subject = $subject;
         $this->mail->Body = $content;
@@ -124,6 +124,28 @@ class MailerFactory
         Le Nose<br>
         <a href = 'www.nose42.fr' >www.nose42.fr</a>";
         $mailer = Mailer::create();
-        return $mailer->createEmail(Mailer::getGlobalAddress(), $subject, $content);
+        if (!$event->groups->isEmpty()) {
+            $users = [];
+            foreach ($event->groups as $group) {
+                foreach ($group->members as $user) {
+                    if ($user->real_email) {
+                        $users[$user->real_email] = ($user->first_name . " " . $user->last_name) ?? '';
+                    }
+                }
+            }
+            if (!empty($users)) {
+                $mailer->createBulkEmails($users, $subject, $content);
+            }
+            return $mailer;
+        } else {
+            //send email to all the club by default
+            $users = [];
+            foreach (UserService::getAll(DB::getInstance()) as $user) {
+                if (!empty($user->real_email)) {
+                    $users[$user->real_email] = $user->first_name . ' ' . $user->last_name;
+                }
+            }
+            return $mailer->createBulkEmails($users, $subject, $content);
+        }
     }
 }
