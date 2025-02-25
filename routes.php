@@ -111,7 +111,7 @@ Router::add('/licencies/desactive', __DIR__ . '/app/pages/users/user_list_deacti
 Router::add('/licencies/$user_id', __DIR__ . '/app/pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', __DIR__ . '/app/pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_delete_confirm.php');
-Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family_create.php');
+Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family/family_create.php');
 Router::add('/licencies/$user_id/debug', __DIR__ . '/app/pages/users/user_debug.php');
 // Familles
 Router::add('/familles', __DIR__ . '/app/pages/users/family/family_list.php');

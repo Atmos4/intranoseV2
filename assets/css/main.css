@@ -720,31 +720,6 @@ sl-tab-group {
   --sl-color-primary-600: var(--pico-primary);
 }
 
-.color-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-}
-.color-picker {
-  grid-gap: var(--pico-block-spacing-horizontal);
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  overflow: hidden;
-  border-top-right-radius: var(--pico-border-radius);
-  border-top-left-radius: var(--pico-border-radius);
-  margin-bottom: var(--pico-block-spacing-vertical);
-}
-
-@media (min-width: 768px) {
-  .color-picker {
-    grid-gap: calc(var(--pico-block-spacing-horizontal) * 0.5);
-    grid-template-columns: repeat(10, 1fr);
-    margin-bottom: var(--pico-block-spacing-vertical);
-  }
-}
-
 .tag {
   display: inline-flex;
   align-items: center;

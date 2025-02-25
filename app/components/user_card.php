@@ -10,21 +10,19 @@ function UserCard($user, $image = null, $subtitle = null, $actions = null, $user
             <img src="<?= $user->getPicture() ?>">
         <?php endif; ?>
 
-        <?php if ($user_link): ?>
-            <?php $user_link() ?>
-        <?php else: ?>
+        <?php if ($user_link):
+            $user_link();
+        else: ?>
             <a href="/licencies?user=<?= $user->id ?>" <?= UserModal::props($user->id) ?>>
                 <?= "$user->first_name $user->last_name" ?>
             </a>
         <?php endif; ?>
 
         <!-- subtitle block -->
-        <?php if ($subtitle): ?>
-            <?php $subtitle($user); ?>
-        <?php endif; ?>
+        <?php $subtitle && $subtitle($user) ?>
 
         <!-- Actions block -->
-        <?php if (isset($actions)): ?>
+        <?php if ($actions): ?>
             <nav>
                 <ul>
                     <li>

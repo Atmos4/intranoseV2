@@ -1,5 +1,5 @@
 <?php
-managementPage("MGMT - login", false);
+managementPage("MGMT - login");
 
 $v = new Validator;
 $password = $v->password("mgmt_pw")->required();

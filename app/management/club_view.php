@@ -1,9 +1,11 @@
 <?php
-managementPage("View club");
+restrict_management();
 $slug = Router::getParameter("slug", pattern: '/[\w-]+/');
 DB::setupForClub($slug);
 $s = ClubManagementService::create($slug) ?? force_404("club not found");
 $club = $s->getClub();
+
+managementPage("Club - $club->name");
 
 $backupService = new BackupService(dbPath: $s->db->sqlitePath);
 
@@ -25,7 +27,7 @@ $colorList = ThemeColor::colorsList();
 
 $v = new Validator($club->toForm());
 $color = $v->select("color")->options(array_column(ThemeColor::cases(), 'value', 'name'))->label("Couleur de thème");
-$name = $v->text("name")->label("Name");
+$name = $v->text("name")->label("Name")->required();
 
 if ($v->valid()) {
     $r = $s->updateClub($club, $name->value, $color->value);
@@ -66,9 +68,6 @@ if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_fea
     <sl-tab-panel name="general">
         <form method="post">
             <?= $v ?>
-            <?php if (!$club->name): ?>
-                <article class="notice error">Please fill in the club name</article>
-            <?php endif ?>
             <?= $name ?>
             <label for="color">Couleurs disponibles</label>
             <div class="color-picker">
@@ -114,3 +113,21 @@ if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_fea
         </form>
     </sl-tab-panel>
 </sl-tab-group>
+
+<style>
+    .color-dot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1 / 1;
+        width: 40px;
+        border-radius: 50%;
+    }
+
+    .color-picker {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        padding: 0 0 1rem;
+    }
+</style>

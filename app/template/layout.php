@@ -1,5 +1,6 @@
 <?php
-$page = Page::getInstance(); ?>
+$page = Page::getInstance();
+$clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementService::create()->getClubColor($_SESSION["selected_club"] ?? null) : null; ?>
 <!doctype html>
 <html lang="en">
 
@@ -22,7 +23,6 @@ $page = Page::getInstance(); ?>
     <link rel="stylesheet" href="/assets/css/theme-toggle.css">
 
     <!-- Pico.css -->
-    <?php $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementService::create()->getClubColor($_SESSION["selected_club"] ?? null) : null; ?>
     <?php if ($clubColor != null): ?>
         <link rel="stylesheet" href="/assets/css/pico.<?= $clubColor ?>.min.css">
     <?php else: ?>

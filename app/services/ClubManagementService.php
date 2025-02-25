@@ -36,7 +36,7 @@ class ClubManagementService
         return file_exists(club_data_path($slug));
     }
 
-    public function getClub()
+    public function getClub(): Club
     {
         $results = $this->db->em()->createQuery("SELECT c FROM Club c")->getResult();
         if (!$results) {

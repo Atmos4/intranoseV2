@@ -53,32 +53,8 @@ class UploadField extends Field
             'application/vnd.ms-powerpoint.addin.macroEnabled.12',
             'application/vnd.openxmlformats-officedocument.presentationml.slide',
             'application/vnd.oasis.opendocument.presentation',
-        ]
-    ];
-    /** @var array<array> */
-    public static array $IMAGE_MIME = [
-        'image' => [
-            'image/webp',
-            'image/tiff',
-            'image/png',
-            'image/jpeg',
-            'image/gif',
-            'image/x-ms-bmp',
-            'image/x-bmp',
-            'image/x-portable-bitmap',
-            'image/vnd.adobe.photoshop',
-            'image/x-eps',
-            'application/postscript',
-            'application/dicom',
-            'application/pcx',
-            'application/x-pcx',
-            'image/pcx',
-            'image/x-pc-paintbrush',
-            'image/x-pcx',
-            'zz-application/zz-winassoc-pcx',
-            'image/jp2',
-            'image/heif'
-        ]
+        ],
+        'zip' => ['application/zip'],
     ];
     function set_type(): void
     {
@@ -155,6 +131,7 @@ class UploadField extends Field
             $this->allowed_mime = $mimes;
             // Allow certain file formats
             $finfo = new finfo(FILEINFO_MIME_TYPE);
+            logger()->debug("finfo", ["info" => $finfo->file($_FILES[$this->key]['tmp_name'])]);
             // Flatten the array
             $flatArray = array_reduce($this->allowed_mime, 'array_merge', []);
             if (
