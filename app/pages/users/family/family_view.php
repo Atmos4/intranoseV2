@@ -1,5 +1,6 @@
 <?php
 restrict_access();
+require __DIR__ . "/../../../components/user_card.php";
 $user = User::getMain();
 $family = em()->find(Family::class, get_route_param("family_id"));
 if (!$family) {
@@ -35,46 +36,43 @@ page($family->name)->css("family_list.css")->enableHelp() ?>
     ->back("/familles")
     ->dropdown(fn($b) => $b->link("/famille/$family->id/supprimer", "Supprimer la famille", "fa fa-trash", ["class" => "destructive outline"])) ?>
 
+
 <section class="row">
     <?php foreach ($family->members as $key => $f_member): ?>
         <div class="col-sm-12 col-md-6">
-            <article class="user-card">
-                <img src="<?= $f_member->getPicture() ?>">
-                <div>
-                    <a href="/licencies?user=<?= $f_member->id ?>" <?= UserModal::props($f_member->id) ?>>
-                        <?= "$f_member->first_name $f_member->last_name" ?>
-                    </a>
-                    <br>
-                    <div <?= $key == 0 ?
-                        "data-intro=\"Un membre de la famille peut être Parent ou Enfant\"" : "" ?>>
-                        <?= $f_member->family_leader ? "Parent" : "Enfant" ?>
-                    </div>
+            <?php
+            UserCard(
+                $f_member,
+                subtitle: function ($user) use ($key) { ?>
+                <div <?= "data-intro=" . $key == 0 ? "\"Un membre de la famille peut être Parent ou Enfant\"" : "" ?>>
+                    <?= $user->family_leader ? "Parent" : "Enfant" ?>
                 </div>
-                <nav>
-                    <ul>
-                        <li>
-                            <?php if ($f_member != $user || check_auth(Access::$EDIT_USERS)): ?>
-                                <details class="dropdown" dir="rtl">
-                                    <summary aria-haspopup="listbox" class="contrast actions" <?= $key == 0 ?
-                                        "data-intro=\"Vous pouvez modifier ce rôle\"" : "" ?>>
-                                        <i class="fa fa-ellipsis-vertical"></i>
-                                    </summary>
-                                    <ul dir="rtl">
-                                        <li><a href="<?= "/famille/$family->id/change/$f_member->id" ?>" class="contrast">
-                                                Changer rôle
-                                                <i class="fa fa-arrow-<?= $f_member->family_leader ? "down" : "up" ?>"></i>
-                                            </a></li>
-                                        <li><a href="<?= "/famille/$family->id/supprimer/$f_member->id" ?>" class="destructive">
-                                                Retirer
-                                                <i class="fa fa-xmark"></i>
-                                            </a></li>
-                                    </ul>
-                                </details>
-                            <?php endif ?>
-                        </li>
-                    </ul>
-                </nav>
-            </article>
+            <?php },
+                actions: function ($user) use ($family, $key) {
+                    if ($user->id != User::getMain()->id || check_auth(Access::$EDIT_USERS)): ?>
+                    <details class="dropdown" dir="rtl">
+                        <summary aria-haspopup="listbox" class="contrast actions" <?= $key == 0 ? "data-intro=\"Vous pouvez modifier ce rôle\"" : "" ?>>
+                            <i class="fa fa-ellipsis-vertical"></i>
+                        </summary>
+                        <ul dir="rtl">
+                            <li>
+                                <a href="/famille/<?= $family->id ?>/change/<?= $user->id ?>" class="contrast">
+                                    Changer rôle
+                                    <i class="fa fa-arrow-<?= $user->family_leader ? "down" : "up" ?>"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/famille/<?= $family->id ?>/supprimer/<?= $user->id ?>" class="destructive">
+                                    Retirer
+                                    <i class="fa fa-xmark"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </details>
+                <?php endif;
+                }
+            );
+            ?>
         </div>
     <?php endforeach ?>
 </section>

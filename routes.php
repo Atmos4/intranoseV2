@@ -26,7 +26,7 @@ Router::add('/logout-club', function () {
 Router::add("/select-club", __DIR__ . "/app/pages/select_club.php");
 
 // Club selection middleware
-$club = ClubManagementService::getSelectedClub();
+$club = ClubManagementService::getSelectedClubSlug();
 if (!$club) {
     redirect("/select-club");
 }
@@ -101,6 +101,9 @@ Router::add('/mon-profil', __DIR__ . '/app/pages/settings/settings.php');
 // Settings/users
 Router::add('/licencies/$user_id/modifier', __DIR__ . '/app/pages/settings/settings.php');
 
+// Club settings
+Router::add('/club_settings', __DIR__ . '/app/pages/settings/club_settings.php');
+
 // Users
 Router::add('/licencies', __DIR__ . '/app/pages/users/user_list.php');
 Router::add('/licencies/ajouter', __DIR__ . '/app/pages/users/user_add.php');
@@ -108,14 +111,20 @@ Router::add('/licencies/desactive', __DIR__ . '/app/pages/users/user_list_deacti
 Router::add('/licencies/$user_id', __DIR__ . '/app/pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', __DIR__ . '/app/pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_delete_confirm.php');
-Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family_create.php');
+Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family/family_create.php');
 Router::add('/licencies/$user_id/debug', __DIR__ . '/app/pages/users/user_debug.php');
 // Familles
-Router::add('/familles', __DIR__ . '/app/pages/users/family_list.php');
-Router::add('/famille/$family_id', __DIR__ . '/app/pages/users/family_view.php');
-Router::add('/famille/$family_id/supprimer', __DIR__ . '/app/pages/users/family_remove.php');
-Router::add('/famille/$family_id/change/$member_id', __DIR__ . '/app/pages/users/family_change.php');
-Router::add('/famille/$family_id/supprimer/$member_id', __DIR__ . '/app/pages/users/family_remove.php');
+Router::add('/familles', __DIR__ . '/app/pages/users/family/family_list.php');
+Router::add('/famille/$family_id', __DIR__ . '/app/pages/users/family/family_view.php');
+Router::add('/famille/$family_id/supprimer', __DIR__ . '/app/pages/users/family/family_remove.php');
+Router::add('/famille/$family_id/change/$member_id', __DIR__ . '/app/pages/users/family/family_change.php');
+Router::add('/famille/$family_id/supprimer/$member_id', __DIR__ . '/app/pages/users/family/family_remove.php');
+//Groupes
+Router::add('/groupes', __DIR__ . '/app/pages/users/groups/group_list.php');
+Router::add('/groupes/nouveau', __DIR__ . '/app/pages/users/groups/group_create.php');
+Router::add('/groupes/$group_id', __DIR__ . '/app/pages/users/groups/group_view.php');
+Router::add('/groupes/$group_id/supprimer', __DIR__ . '/app/pages/users/groups/group_delete.php');
+Router::add('/groupes/$group_id/retirer/$member_id', __DIR__ . '/app/pages/users/groups/group_delete_user.php');
 
 Router::add('/user-control/$user_id', __DIR__ . '/app/pages/users/take_user_control.php');
 
@@ -143,6 +152,11 @@ Router::add('/feedback-list/supprimer/$user_id', __DIR__ . '/app/pages/user_feed
 
 //Notifications
 Router::add('/save-subscription', __DIR__ . '/app/notifications/save_subscription.php');
+
+// Links
+Router::add('/liens-utiles', __DIR__ . '/app/pages/links/links.php');
+Router::add('/liens-utiles/nouveau', __DIR__ . '/app/pages/links/link_new.php');
+Router::add('/liens-utiles/supprimer/$link_id', __DIR__ . "/app/pages/links/link_delete.php");
 
 // Logout
 Router::add('/logout', function () {

@@ -11,7 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
 $cli = new Cli;
-$club = ClubManagementService::getSelectedClub();
+$club = ClubManagementService::getSelectedClubSlug();
 
 if (!$club) {
     $clubs = ClubManagementService::listClubs();

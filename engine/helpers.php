@@ -164,7 +164,6 @@ function page(string $title)
 
 function managementPage(string $title, $restrict = true)
 {
-    $restrict && restrict_management();
     return page($title)->disableNav()->boost();
 }
 

@@ -1,4 +1,5 @@
 <?php
+restrict_management();
 managementPage("New club");
 
 $v = new Validator(["direct_login" => true]);

@@ -1,5 +1,6 @@
 <?php
 restrict_access();
+require __DIR__ . "/../../components/user_card.php";
 $search = strtolower(get_query_param("search", numeric: false) ?? "");
 if (!$search)
     return;
@@ -11,12 +12,13 @@ $users = em()->createQuery("SELECT u.id, u.last_name, u.first_name, u.picture
     ->setParameters(["s" => "$search%", "uid" => User::getMainUserId()])->getArrayResult();
 
 foreach ($users as $u): ?>
-    <article class="user-card">
-        <img src="<?= User::getUserPicture($u['picture']) ?>" alt="">
-        <div>
-            <a href="/messages/direct/<?= $u['id'] ?>">
-                <?= "{$u['first_name']} {$u['last_name']}" ?>
-            </a>
-        </div>
-    </article>
+    <?php UserCard(
+        user: $u,
+        user_link: function () use ($u) { ?>
+        <a href="/messages/direct/<?= $u['id'] ?>">
+            <?= "{$u['first_name']} {$u['last_name']}" ?>
+        </a>
+        <?php
+            }
+    ) ?>
 <?php endforeach ?>

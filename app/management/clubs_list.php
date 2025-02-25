@@ -2,7 +2,12 @@
 if (!ClubManagementService::isLoggedIn()) {
     redirect("/mgmt/login");
 }
+restrict_management();
 managementPage("Clubs");
+/* Workaround to handle the case where a club is selected, so that the color works in layout.php */
+if ($club_slug = ClubManagementService::getSelectedClubSlug()) {
+    DB::setupForClub($club_slug);
+}
 $clubs = ClubManagementService::listClubs();
 ?>
 <?= actions()->link("/mgmt/new-club", "Add", "fa-plus")->link("/mgmt/logout", "Logout", attributes: ["class" => "destructive"]) ?>

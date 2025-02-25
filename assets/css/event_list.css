@@ -11,20 +11,20 @@
 .grid {
   display: grid;
   gap: 10px;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr 1fr;
   grid-template-rows: auto auto;
   grid-template-areas:
-    "icon title title"
+    "icon title tag"
     "dates dates event-limit";
 }
 
 @media screen and (min-width: 768px) {
   .grid {
     display: grid;
-    grid-template-columns: 15% auto auto;
+    grid-template-columns: 15% 1fr 1fr;
     grid-template-rows: auto auto;
     grid-template-areas:
-      "icon title title"
+      "icon title tag"
       "icon dates event-limit";
     align-items: center;
     row-gap: 0.3rem;
@@ -46,6 +46,10 @@
 
 .dates {
   grid-area: dates;
+}
+
+.grid-tag {
+  grid-area: tag;
 }
 
 .event-limit {

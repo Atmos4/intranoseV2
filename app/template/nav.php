@@ -4,7 +4,8 @@ $menu = MainMenu::create()
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Mon profil", "/mon-profil", "fa-gear")
     ->addItem("Suggestions", "/feedback/nouveau", "fa-lightbulb")
-    ->addItem("Documents", "/documents", "fa-file");
+    ->addItem("Documents", "/documents", "fa-file")
+    ->addItem("Liens utiles", "/liens-utiles", "fa-arrow-up-right-from-square");
 
 if (dev_or_staging()) {
     $menu->addItem("Dev", "/dev", "fa-code");
@@ -14,6 +15,10 @@ if (Feature::Messages->on()) {
 }
 
 $main_user = User::getMain();
+
+if (check_auth(Access::$ADD_EVENTS)) {
+    $menu->addItem("Paramètres club", "/club_settings", "fa-screwdriver-wrench");
+}
 
 if (check_auth([Permission::ROOT])) {
     $menu

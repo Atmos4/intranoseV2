@@ -9,9 +9,11 @@ if ($event->type == EventType::Simple) {
     $activity = em()->find(Activity::class, get_route_param("activity_id"));
 }
 
+$groups = GroupService::getEventGroups($event->id);
 ?>
 
 <article>
+    <?= GroupService::renderTags($groups, delimiter: $groups) ?>
     <div class="horizontal">
         <div>
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>

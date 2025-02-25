@@ -1,6 +1,5 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
-
 $event_type = get_query_param("type", false, false);
 $event_id = get_route_param("event_id", strict: false);
 
@@ -43,6 +42,7 @@ if ($v->valid()) {
     $event->type = EventType::Complex;
     $event->description = $description->value;
     GoogleCalendarService::updateEvent($event);
+    GroupService::processEventGroupChoice($event);
     em()->persist($event);
     em()->flush();
     Toast::success("Enregistré");
@@ -69,5 +69,6 @@ if ($v->valid()) {
             data-intro="Vous pouvez formatter le texte de la description en markdown. N'hésitez pas à aller voir <a href='https://www.markdownguide.org/' target='_blank'>cette ressource</a>">
             <?= $description->attributes(["rows" => "8"])->render() ?>
         </div>
+        <?= GroupService::renderEventGroupChoice($event) ?>
     </article>
 </form>
