@@ -124,28 +124,45 @@ class MailerFactory
         Le Nose<br>
         <a href = 'www.nose42.fr' >www.nose42.fr</a>";
         $mailer = Mailer::create();
-        if (!$event->groups->isEmpty()) {
-            $users = [];
-            foreach ($event->groups as $group) {
-                foreach ($group->members as $user) {
-                    if ($user->real_email) {
-                        $users[$user->real_email] = ($user->first_name . " " . $user->last_name) ?? '';
-                    }
-                }
-            }
-            if (!empty($users)) {
-                $mailer->createBulkEmails($users, $subject, $content);
-            }
-            return $mailer;
-        } else {
-            //send email to all the club by default
-            $users = [];
-            foreach (UserService::getAll(DB::getInstance()) as $user) {
-                if (!empty($user->real_email)) {
-                    $users[$user->real_email] = $user->first_name . ' ' . $user->last_name;
-                }
-            }
-            return $mailer->createBulkEmails($users, $subject, $content);
+        $emails = self::getEventEmails($event);
+        $users = [];
+        foreach ($emails as $email) {
+            $users[$email['real_email']] = '';
         }
+        if (!empty($users)) {
+            $mailer->createBulkEmails($users, $subject, $content);
+        }
+        return $mailer;
+    }
+
+    static function getEventEmails($event)
+    {
+        if (!$event->groups->isEmpty()) {
+            return self::getGroupsEmailsEvent($event);
+        } else {
+            return self::getAllEmailsEvent($event);
+        }
+    }
+
+    static function getGroupsEmailsEvent($event)
+    {
+        return em()->createQueryBuilder()
+            ->select('m.real_email')
+            ->from(Event::class, 'e')
+            ->leftJoin('e.groups', 'g')
+            ->leftJoin('g.members', 'm')
+            ->where('e.id = :eid')
+            ->setParameter('eid', $event->id)
+            ->getQuery()
+            ->getScalarResult();
+    }
+
+    static function getAllEmailsEvent($event)
+    {
+        return em()->createQueryBuilder()
+            ->select('e.real_email')
+            ->from(User::class, 'e')
+            ->getQuery()
+            ->getScalarResult();
     }
 }
