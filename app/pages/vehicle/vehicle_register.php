@@ -45,7 +45,8 @@ if ($method == "POST") {
                 </div>
             </div>
             <div>
-                <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i class="fas fa-user"></i>
+                <a href="/licencies?user=<?= $vehicle->manager->id ?>" <?= UserModal::props($vehicle->manager->id) ?>><i
+                        class="fas fa-user"></i>
                     <?= $vehicle->manager->first_name ?>
                     <?= $vehicle->manager->last_name ?>
                 </a>
@@ -90,8 +91,8 @@ if ($method == "POST") {
                 <dl>
                     <dt>Responsable</dt>
                     <dd>
-                        <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i
-                                class="fas fa-user"></i>
+                        <a href="/licencies?user=<?= $vehicle->manager->id ?>"
+                            <?= UserModal::props($vehicle->manager->id) ?>><i class="fas fa-user"></i>
                             <?= $vehicle->manager->first_name ?>
                             <?= $vehicle->manager->last_name ?>
                         </a>
@@ -106,7 +107,7 @@ if ($method == "POST") {
                     <?php endif ?>
                     <dd class="passenger-flex">
                         <?php foreach ($vehicle->passengers as $i => $passenger): ?>
-                            <a href="/licencies?user=<?= $user_id ?>" <?= UserModal::props($user_id) ?>><i
+                            <a href="/licencies?user=<?= $passenger->id ?>" <?= UserModal::props($passenger->id) ?>><i
                                     class="fas fa-user"></i>
                                 <?= $passenger->first_name ?>     <?= $passenger->last_name ?> </a>
                         <?php endforeach ?>
