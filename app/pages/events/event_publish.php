@@ -51,10 +51,15 @@ page(($event->open ? "Retirer" : "Publier") . " - {$event->name}")->heading("Att
         </p>
         <?php if (!$event->open): ?>
             <p>
+                <?= GroupService::renderTags($event->groups) ?>
                 <label>
                     <input name="send_email" type="checkbox" role="switch" checked />
-                    Envoyer un mail à l'adresse
-                    <?= Mailer::getGlobalAddress() ?>
+                    <?php if ($event->groups->isEmpty()): ?>
+                        Envoyer un mail à tout le club (pas de groupe associé à l'événement) ?
+                    <?php else: ?>
+                        Envoyer un mail aux groupes concernés ?
+                    <?php endif ?>
+
                 </label>
             </p>
             <?php if (env("GOOGLE_CREDENTIAL_PATH") && FeatureService::enabled(Feature::GoogleCalendar)): ?>

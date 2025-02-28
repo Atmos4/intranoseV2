@@ -68,7 +68,7 @@ class Mailer extends FactoryDependency
     function createBulkEmails($addresses, $subject, $content): self
     {
         foreach ($addresses as $email => $name) {
-            $this->mail->addAddress($email, $name);
+            $this->mail->addBCC($email, $name);
         }
         $this->mail->Subject = $subject;
         $this->mail->Body = $content;
@@ -124,6 +124,45 @@ class MailerFactory
         Le Nose<br>
         <a href = 'www.nose42.fr' >www.nose42.fr</a>";
         $mailer = Mailer::create();
-        return $mailer->createEmail(Mailer::getGlobalAddress(), $subject, $content);
+        $emails = self::getEventEmails($event);
+        $users = [];
+        foreach ($emails as $email) {
+            $users[$email['real_email']] = '';
+        }
+        if (!empty($users)) {
+            $mailer->createBulkEmails($users, $subject, $content);
+        }
+        return $mailer;
+    }
+
+    static function getEventEmails($event)
+    {
+        if (!$event->groups->isEmpty()) {
+            return self::getGroupsEmailsEvent($event);
+        } else {
+            return self::getAllEmailsEvent($event);
+        }
+    }
+
+    static function getGroupsEmailsEvent($event)
+    {
+        return em()->createQueryBuilder()
+            ->select('m.real_email')
+            ->from(Event::class, 'e')
+            ->leftJoin('e.groups', 'g')
+            ->leftJoin('g.members', 'm')
+            ->where('e.id = :eid')
+            ->setParameter('eid', $event->id)
+            ->getQuery()
+            ->getScalarResult();
+    }
+
+    static function getAllEmailsEvent($event)
+    {
+        return em()->createQueryBuilder()
+            ->select('e.real_email')
+            ->from(User::class, 'e')
+            ->getQuery()
+            ->getScalarResult();
     }
 }
