@@ -15,13 +15,24 @@ class GroupService
 
     static function getAllEventGroups($event)
     {
+        if (!$event || !$event->id) {
+            // For new events, just return all groups without checking associations
+            return em()->createQueryBuilder()
+                ->select('g.id, g.name')
+                ->addSelect("0 as has_group")
+                ->from(UserGroup::class, 'g')
+                ->orderBy('g.name', 'ASC')
+                ->getQuery()
+                ->getArrayResult();
+        }
+        // For existing events, check associations
         return em()->createQueryBuilder()
             ->select('g.id, g.name')
-            ->addSelect('(CASE WHEN COUNT(e.id) > 0 THEN true ELSE false END) as has_group')
+            ->addSelect('(CASE WHEN COUNT(eg.id) > 0 THEN 1 ELSE 0 END) as has_group')
             ->from(UserGroup::class, 'g')
-            ->leftJoin('g.events', 'e', 'WITH', 'e = :event')
-            ->setParameter('event', $event)
-            ->groupBy('g.id, g.name')
+            ->leftJoin('g.events', 'eg', 'WITH', 'e = :event_id')
+            ->setParameter('event_id', $event)
+            ->groupBy('g.name', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
