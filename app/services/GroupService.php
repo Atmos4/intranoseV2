@@ -30,9 +30,10 @@ class GroupService
             ->select('g.id, g.name')
             ->addSelect('(CASE WHEN COUNT(eg.id) > 0 THEN 1 ELSE 0 END) as has_group')
             ->from(UserGroup::class, 'g')
-            ->leftJoin('g.events', 'eg', 'WITH', 'e = :event_id')
+            ->leftJoin('g.events', 'eg', 'WITH', 'eg = :event_id')
             ->setParameter('event_id', $event)
-            ->groupBy('g.name', 'ASC')
+            ->groupBy('g.name')
+            ->orderBy('g.name', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
