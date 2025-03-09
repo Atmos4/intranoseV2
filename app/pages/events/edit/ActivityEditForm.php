@@ -138,7 +138,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
                 <?= GroupService::renderEventGroupChoice($event) ?>
             <?php endif ?>
             <div class="col-auto">
-                Catégories</h2>
+                <h2>Catégories</h2>
             </div>
             <div class="col-auto">
                 <button type="button" class="outline contrast" onclick="addCategory()"
