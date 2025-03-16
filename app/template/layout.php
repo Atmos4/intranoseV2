@@ -49,7 +49,7 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <script src="/assets/js/theme.js"></script>
 
     <!-- Notifications -->
-    <script src="/assets/js/notifications.js"></script>
+    <!-- <script src="/assets/js/notifications.js"></script> -->
 
     <!-- Shoelace -->
     <?php include __DIR__ . "/shoelace.php" ?>

@@ -86,7 +86,7 @@ if ($v_removeFeature->valid() && isset($_POST['remove_name']) && isset($club_fea
 page("Paramètres du club")->enableHelp();
 ?>
 <h2>Thème</h2>
-<form method="post">
+<form method="post" hx-boost="false">
     <?= $v_theme->render_validation() ?>
     <?= $theme_color->render() ?>
     <input type="submit" class="outline" name="submitTheme" value="Mettre à jour le thème">
