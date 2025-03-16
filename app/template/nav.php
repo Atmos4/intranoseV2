@@ -40,12 +40,6 @@ if (check_auth([Permission::ROOT])) {
         </ul>
         <div class="icon-buttons">
             <?php include app_path() . "/components/theme_switcher.php" ?>
-
-            <?php if ($main_user): ?>
-                <a href="/logout" hx-boost="false" role=button class="outline contrast destructive" title="Déconnexion">
-                    <i class="fa fa-power-off"></i>
-                </a>
-            <?php endif ?>
         </div>
     </nav>
 </aside>
