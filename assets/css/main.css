@@ -52,6 +52,10 @@ sl-drawer:not(:defined) {
   --pico-card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
 }
 
+main.container {
+  position: relative;
+}
+
 #hx-indicator {
   position: fixed;
   top: 0.8rem;
@@ -709,7 +713,10 @@ article.notice > header,
   src: url(../webfonts/Farro-Light.ttf);
 }
 
-.help-button {
+#help-button {
+  float: right;
+  margin: -10px -10px 0 0;
+  padding: 10px;
   cursor: pointer;
 }
 

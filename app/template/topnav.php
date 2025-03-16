@@ -1,5 +1,5 @@
 <?php
-return function (bool $help, bool $messages, User $main_user = null) { ?>
+return function (bool $messages, User $main_user = null) { ?>
     <nav class="topnav">
         <ul>
             <li>
@@ -9,25 +9,17 @@ return function (bool $help, bool $messages, User $main_user = null) { ?>
             </li>
         </ul>
         <ul>
-            <?php if ($help): ?>
-                <li>
-                    <button class="outline contrast" onclick="start_intro()" id="help-button">
-                        <i class="fas fa-question"></i> Aide
-                    </button>
-                </li>
-            <?php endif ?>
-
             <?php if ($messages): ?>
                 <li>
-                    <a role="button" class="outline contrast" href="/messages">
-                        <i class="fas fa-message"></i> Messages
+                    <a role="button" class="outline <?= getMenuClass("/messages") ?>" href="/messages">
+                        <sl-tooltip content="Messages"><i class="fas fa-message"></i></sl-tooltip>
                     </a>
                 </li>
             <?php endif ?>
 
             <li>
                 <sl-dropdown class="dropdown-nav" distance="10">
-                    <button slot="trigger" class="outline contrast">
+                    <button slot="trigger" class="outline <?= getMenuClass("/mon-profil") ?>">
                         <?= IconText("fa-user", "Profil") ?>
                     </button>
                     <aside>
@@ -37,9 +29,10 @@ return function (bool $help, bool $messages, User $main_user = null) { ?>
                                         <?= IconText("fa-cog", "Paramètres") ?>
                                     </a></li>
                                 <?php if ($main_user?->family_leader): ?>
-                                    <li><a class="contrast" href="#" onclick="document.getElementById('familyDrawer').show()">
+                                    <li><button class="outline contrast"
+                                            onclick="document.getElementById('familyDrawer').show()">
                                             <?= IconText("fa-users", "Famille") ?>
-                                        </a></li>
+                                        </button></li>
                                 <?php endif ?>
                                 <li><a class="contrast destructive" href="/logout">
                                         <?= IconText("fa-power-off", "Déconnexion") ?>
@@ -66,7 +59,8 @@ return function (bool $help, bool $messages, User $main_user = null) { ?>
                         <ul>
                             <?php foreach ($main_user->family->members as $member):
                                 if ($member !== $main_user): ?>
-                                    <li><a href="/user-control/<?= $member->id ?>" class="contrast">
+                                    <li><a href="/user-control/<?= $member->id ?>" class="contrast"
+                                            onclick="document.getElementById('familyDrawer').hide()">
                                             <?= IconText("fa-user", $member->first_name) ?>
                                         </a>
                                     </li>

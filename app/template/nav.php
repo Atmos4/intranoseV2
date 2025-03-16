@@ -28,9 +28,9 @@ if (check_auth([Permission::ROOT])) {
                 </h2>
             </li>
             <?php foreach ($menu->items as $menu_item): ?>
-                <li class="<?= strpos($_SESSION['current_route'], $menu_item->url) !== false ? "active" : "" ?>">
-                    <a class="<?= strpos($_SESSION['current_route'], $menu_item->url) !== false ? "active" : "contrast" ?>"
-                        href="<?= $menu_item->url ?>" <?= $menu_item->disableBoost ? 'hx-boost="false"' : '' ?>>
+                <li>
+                    <a class="<?= getMenuClass($menu_item->url) ?>" href="<?= $menu_item->url ?>"
+                        <?= $menu_item->disableBoost ? 'hx-boost="false"' : '' ?>>
                         <?php if ($menu_item->icon): ?> <i class="fa fa-fw <?= $menu_item->icon ?>"></i>
                         <?php endif ?>
                         <?= " " . $menu_item->label ?>
