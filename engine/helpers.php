@@ -383,3 +383,9 @@ class Result
 class ResultException extends Exception
 {
 }
+
+function IconText($icon, $text, $wrapper = null)
+{
+    $text = "<i class=\"fas fa-fw $icon\"></i> $text";
+    return $wrapper ? "<$wrapper>$text</$wrapper>" : $text;
+}

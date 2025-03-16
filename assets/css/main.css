@@ -35,6 +35,15 @@
 } */
 
 /* Green (Common styles) */
+
+/* disable menu when wc not defined */
+sl-dropdown:not(:defined) > aside {
+  display: none;
+}
+sl-drawer:not(:defined) {
+  display: none;
+}
+
 :root {
   --pico-form-element-active-border-color: var(--pico-primary);
   --pico-form-element-focus-color: var(--pico-primary-focus);
@@ -701,10 +710,6 @@ article.notice > header,
 }
 
 .help-button {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  z-index: 100;
   cursor: pointer;
 }
 
