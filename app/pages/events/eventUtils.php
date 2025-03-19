@@ -1,12 +1,6 @@
 <?php
 require_once app_path() . "/components/conditional_icon.php";
 
-function IconText($icon, $text, $wrapper = null)
-{
-    $text = "<i class=\"fas fa-fw $icon\"></i> $text";
-    return $wrapper ? "<$wrapper>$text</$wrapper>" : $text;
-}
-
 function RenderActivityEntry(?Activity $activity, bool $can_register = null)
 {
     $activity_entry = $activity->entries[0];

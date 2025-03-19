@@ -49,7 +49,7 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <script src="/assets/js/theme.js"></script>
 
     <!-- Notifications -->
-    <script src="/assets/js/notifications.js"></script>
+    <!-- <script src="/assets/js/notifications.js"></script> -->
 
     <!-- Shoelace -->
     <?php include __DIR__ . "/shoelace.php" ?>
@@ -66,18 +66,23 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
 
 <body hx-ext="head-support,loading-states" <?= has_session("user_id") || $page->_boost ? 'hx-boost="true"' : "" ?>
     hx-indicator="#hx-indicator" hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
-    <?php
-    if ($page->nav && has_session("user_id")) {
-        require_once app_path() . "/template/nav.php";
-    } ?>
+    <?php if ($page->nav && has_session("user_id")): ?>
+        <?= import(__DIR__ . "/topnav.php")(Feature::Messages->on(), User::getMain()) ?>
+        <?= component(__DIR__ . "/nav.php") ?>
+
+    <?php endif ?>
     <div id="hx-indicator" aria-busy="true"></div>
     <main class="container" <?= $page->no_padding ? "style=\"padding:0\"" : "" ?>>
-        <?php if ($page->help): ?>
-            <div class="help-button" onclick="start_intro()" id="help-button"><i class="fas fa-question"></i></div>
-        <?php endif ?>
+
+
         <?php if ($page->controlled) {
             echo ControlNotice();
         } ?>
+        <?php if ($page->help): ?>
+            <button class="outline secondary" onclick="start_intro()" id="help-button">
+                <i class="fas fa-question"></i>
+            </button>
+        <?php endif ?>
         <?php if ($page->heading !== false): ?>
             <h2 class="center main-heading">
                 <?= $page->heading ?: $page->title ?>

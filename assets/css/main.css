@@ -35,12 +35,25 @@
 } */
 
 /* Green (Common styles) */
+
+/* disable menu when wc not defined */
+sl-dropdown:not(:defined) > aside {
+  display: none;
+}
+sl-drawer:not(:defined) {
+  display: none;
+}
+
 :root {
   --pico-form-element-active-border-color: var(--pico-primary);
   --pico-form-element-focus-color: var(--pico-primary-focus);
   --pico-switch-color: var(--pico-primary-inverse);
   --pico-switch-checked-background-color: var(--pico-primary);
   --pico-card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+main.container {
+  position: relative;
 }
 
 #hx-indicator {
@@ -131,7 +144,7 @@ label.error:hover {
   height: fit-content;
   padding: 0.5rem 1rem;
   position: sticky;
-  top: 2.5rem;
+  top: 2.8rem;
   left: 0;
   right: 0;
   z-index: 2;
@@ -159,10 +172,6 @@ label.error:hover {
 @media screen and (min-width: 992px) {
   #hx-indicator {
     left: calc(250px + 1rem);
-  }
-  #page-actions {
-    top: 0;
-    margin: 0.5rem -2rem;
   }
 }
 
@@ -700,11 +709,10 @@ article.notice > header,
   src: url(../webfonts/Farro-Light.ttf);
 }
 
-.help-button {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  z-index: 100;
+#help-button {
+  float: right;
+  margin: -10px -10px 0 0;
+  padding: 10px;
   cursor: pointer;
 }
 
