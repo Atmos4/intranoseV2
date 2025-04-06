@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity, Table(name: 'messages')]
 class Message
@@ -15,7 +16,7 @@ class Message
     #[Id, Column, GeneratedValue]
     public int|null $id = null;
 
-    #[Column]
+    #[Column(type: "text")]
     public string $content;
 
     #[Column]
@@ -54,6 +55,9 @@ class Conversation
 
     #[OneToMany(mappedBy: "conversation", targetEntity: Message::class)]
     public Collection $messages;
+
+    #[OneToOne(targetEntity: Event::class, mappedBy: 'conversation', cascade: ["remove"])]
+    public Event $event;
 
 
     public function __construct()
