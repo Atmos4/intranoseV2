@@ -115,19 +115,16 @@ class EventService
     /**
      * @return Event[]
      */
-    static function getEventsForMonth(int $year, int $month)
+    static function getEventsForPeriod(DateTime $start, DateTime $end)
     {
-        $startDate = new DateTime("$year-$month-01");
-        $endDate = (clone $startDate)->modify('last day of this month');
-
         return em()->createQuery(
             "SELECT e FROM Event e 
             WHERE e.start_date BETWEEN :start AND :end 
             AND e.open = 1 
             ORDER BY e.start_date"
         )
-            ->setParameter('start', $startDate)
-            ->setParameter('end', $endDate)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
             ->getResult();
     }
 

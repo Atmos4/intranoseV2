@@ -5,11 +5,11 @@ restrict_feature(Feature::Calendar);
 
 $year = $_GET['year'] ?? date('Y');
 $month = $_GET['month'] ?? date('m');
-$events = EventService::getEventsForMonth($year, $month);
-
-$daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 $firstDayOfMonth = new DateTime("$year-$month-01");
-$startWeekday = $firstDayOfMonth->format('N');
+$startDate = (clone $firstDayOfMonth)->modify("Monday this week");
+$endDate = (clone $firstDayOfMonth)->modify('last day of this month')->modify("Sunday this week");
+$events = EventService::getEventsForPeriod($startDate, $endDate);
+
 
 $eventsByDate = [];
 foreach ($events as $event) {
@@ -28,8 +28,8 @@ foreach ($events as $event) {
 }
 
 // Previous and Next Month Links
-$prevMonth = (new DateTime("$year-$month-01"))->modify('-1 month');
-$nextMonth = (new DateTime("$year-$month-01"))->modify('+1 month');
+$prevMonth = (clone $firstDayOfMonth)->modify('-1 month');
+$nextMonth = (clone $firstDayOfMonth)->modify('+1 month');
 
 page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
 <div class="calendar-wrapper">
@@ -61,7 +61,7 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
         .inner-div,
         .grid-h {
             padding: 5px 0;
-            height: 60px;
+            height: 50px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -78,12 +78,6 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
             cursor: pointer;
         }
 
-        /* @media (min-width: 768px) {
-            .inner-div {
-                flex-direction: row;
-            }
-        } */
-
         .grid-h {
             font-size: 10px;
             height: 20px;
@@ -91,6 +85,14 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
 
         .inner-div>strong {
             font-size: 12px;
+        }
+
+        .inner-div>strong.faint {
+            opacity: 0.6;
+        }
+
+        .inner-div>strong.today {
+            color: var(--pico-primary);
         }
 
         .event-wrapper {
@@ -103,10 +105,11 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
             height: 10px;
             display: block;
             background-color: var(--pico-primary);
-            margin: 5px;
+            margin: 2px;
+            border-radius: 99ch;
         }
     </style>
-    <div class="grid-table">
+    <div class="grid-table" hx-target="#event-list" hx-swap="innerHTML">
         <div class="grid-h">L</div>
         <div class="grid-h">M</div>
         <div class="grid-h">M</div>
@@ -115,13 +118,16 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
         <div class="grid-h">S</div>
         <div class="grid-h">D</div>
         <?php
-        for ($i = 1; $i < $startWeekday; $i++) {
-            echo "<div></div>";
-        }
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            $dateStr = sprintf('%04d-%02d-%02d', $year, $month, $day);
-            echo "<div class=\"inner-div\" hx-get=\"/cal/view?date=$dateStr\" hx-target=\"#event-list\" hx-swap=\"innerHTML\">
-                <strong>$day</strong>
+        $day = clone $startDate;
+        while ($day <= $endDate) {
+            $dateStr = $day->format("Y-m-d");
+            $dayNr = $day->format("d");
+            $className = $day->format("m") == $month ? "" : "class=\"faint\"";
+            if ($dateStr == date("Y-m-d")) {
+                $className = "class=\"today\"";
+            }
+            echo "<div class=\"inner-div\" hx-get=\"/cal/view?date=$dateStr\">
+                <strong $className>$dayNr</strong>
                 <div class=\"event-wrapper\">";
             if (isset($eventsByDate[$dateStr])) {
                 foreach ($eventsByDate[$dateStr] as $event) {
@@ -129,10 +135,7 @@ page("Calendrier")->css("event_list.css")->noPadding()->heading(false) ?>
                 }
             }
             echo "</div></div>";
-        }
-        while (($day + $startWeekday - 1) % 7 != 1) {
-            echo "<div></div>";
-            $day++;
+            $day->modify("+1 day");
         }
         ?>
     </div>
