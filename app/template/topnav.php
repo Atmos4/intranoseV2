@@ -1,5 +1,5 @@
 <?php
-return function (bool $messages, User $main_user = null) { ?>
+return function (bool $messages, bool $help = false, User $main_user = null) { ?>
     <nav class="topnav">
         <ul>
             <li>
@@ -9,6 +9,14 @@ return function (bool $messages, User $main_user = null) { ?>
             </li>
         </ul>
         <ul>
+
+            <?php if ($help): ?>
+                <li>
+                    <button class="outline contrast" onclick="start_intro()">
+                        <sl-tooltip content="Aide"><i class="fas fa-question"></i></sl-tooltip>
+                    </button>
+                </li>
+            <?php endif ?>
             <?php if ($messages): ?>
                 <li>
                     <a role="button" class="outline <?= getMenuClass("/messages") ?>" href="/messages">

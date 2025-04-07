@@ -109,6 +109,49 @@ class EventService
             ->setParameters(['eid' => $event_id])
             ->getQuery()->getResult();
     }
+
+    // calendar
+
+    /**
+     * @return Event[]
+     */
+    static function getEventsForMonth(int $year, int $month)
+    {
+        $startDate = new DateTime("$year-$month-01");
+        $endDate = (clone $startDate)->modify('last day of this month');
+
+        return em()->createQuery(
+            "SELECT e FROM Event e 
+            WHERE e.start_date BETWEEN :start AND :end 
+            AND e.open = 1 
+            ORDER BY e.start_date"
+        )
+            ->setParameter('start', $startDate)
+            ->setParameter('end', $endDate)
+            ->getResult();
+    }
+
+    /**
+     * @return EventDto[]
+     */
+    static function getEventsForDay(string $date, string $uid)
+    {
+        $currentDate_b = (new DateTime($date))->setTime(0, 0, 0);
+        $currentDate_e = (clone $currentDate_b)->setTime(23, 59, 59);
+
+        return EventDto::fromEventList(em()->createQuery(
+            "SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev 
+            LEFT JOIN ev.entries en WITH en.user = :user 
+            WHERE ev.open = 1 
+            AND :current_date_e >= ev.start_date 
+            AND :current_date_b <= ev.end_date
+            ORDER BY ev.start_date DESC"
+        )
+            ->setParameter('current_date_e', $currentDate_e)
+            ->setParameter('current_date_b', $currentDate_b)
+            ->setParameter("user", $uid)
+            ->getArrayResult());
+    }
 }
 
 class EventInfoDto

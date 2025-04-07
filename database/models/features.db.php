@@ -51,6 +51,7 @@ enum Feature: string
     case Carpooling = "Carpooling";
     case GoogleCalendar = "GoogleCalendar";
     case JootForm = "JootForm";
+    case Calendar = "Calendar";
 
     function on()
     {

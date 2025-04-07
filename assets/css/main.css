@@ -709,13 +709,6 @@ article.notice > header,
   src: url(../webfonts/Farro-Light.ttf);
 }
 
-#help-button {
-  float: right;
-  margin: -10px -10px 0 0;
-  padding: 10px;
-  cursor: pointer;
-}
-
 .help-button-modal {
   cursor: pointer;
   display: flex;
