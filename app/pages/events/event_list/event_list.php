@@ -4,6 +4,8 @@ include_once __DIR__ . "/RenderEvents.php";
 restrict_access();
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
+$_SESSION["event_home"] = "/evenements";
+
 formatter("d MMM");
 $user = User::getCurrent();
 $future_events = EventService::listAllFutureOpenEvents($user->id);
@@ -41,10 +43,16 @@ page("Événements")->css("event_list.css")
         <?php endforeach ?>
     </div>
 <?php endif ?>
+<div style="display:flex;padding-bottom:0.5rem;align-items:center">
+    <h2 class="main-heading" style="margin:0">Événements</h2>
+    <?php if (Feature::Calendar->on()): ?>
+        <a style="margin-left:2rem" href="/evenements/calendrier" role="button">
+            <sl-tooltip content="Calendrier"><i class="fa fa-calendar"></i></sl-tooltip>
+        </a>
+    <?php endif ?>
+</div>
 
-<h2 class="center main-heading">Événements</h2>
-
-<?= actions($can_edit)?->link(
+<?= actions($can_edit)->link(
     "/evenements/nouveau",
     "Ajouter un événement",
     "fas fa-plus",
