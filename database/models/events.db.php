@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -117,6 +118,9 @@ class Event
     #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'events')]
     public Collection $groups;
 
+    #[OneToOne(targetEntity: Conversation::class, inversedBy: 'event', cascade: ["remove"])]
+    public Conversation $conversation;
+
     function __construct()
     {
         //this is needed when creating a new Event
@@ -124,6 +128,7 @@ class Event
         $this->start_date = date_create();
         $this->end_date = date_create();
         $this->deadline = date_create();
+        $this->conversation = new Conversation();
     }
 
     function set(
