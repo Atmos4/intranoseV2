@@ -1,0 +1,105 @@
+div.calendar-wrapper {
+  padding: 1rem 0;
+  margin: 0 auto;
+}
+
+.grid-table {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.inner-div,
+.grid-h {
+  padding: 5px 0;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.inner-div {
+  border-top: 1px solid var(--pico-muted-border-color);
+  transition: background-color ease-in 0.1s;
+}
+
+.inner-div:hover {
+  background-color: var(--pico-secondary-focus);
+  cursor: pointer;
+}
+
+.grid-h {
+  font-size: 10px;
+  height: 20px;
+}
+
+.inner-div > strong {
+  font-size: 12px;
+}
+
+.inner-div > strong.faint {
+  opacity: 0.6;
+}
+
+.inner-div > strong.today {
+  color: var(--pico-primary);
+}
+
+.event-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.event {
+  width: 10px;
+  height: 10px;
+  display: block;
+  background-color: var(--pico-primary);
+  margin: 2px;
+  border-radius: 99ch;
+}
+
+.calendar-header {
+  display: flex;
+  padding-bottom: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+.calendar-header > h3 {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+}
+
+.calendar-header > span {
+  flex: 1;
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+  .inner-div > strong {
+    font-size: 15px;
+  }
+
+  .grid-h {
+    font-size: 15px;
+    height: 40px;
+  }
+
+  .inner-div {
+    height: 70px;
+  }
+
+  .inner-div,
+  .grid-h {
+    padding: 5px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
