@@ -624,12 +624,12 @@ article.notice > header,
   color: var(--fill-start-color);
 }
 .timeline .completed {
-  --fill-color: var(--ins-color);
-  --fill-start-color: var(--ins-color);
+  --fill-color: var(--pico-ins-color);
+  --fill-start-color: var(--pico-ins-color);
 }
 .timeline .missed {
-  --fill-color: var(--del-color);
-  --fill-start-color: var(--del-color);
+  --fill-color: var(--pico-del-color);
+  --fill-start-color: var(--pico-del-color);
 }
 @media (min-width: 992px) {
   .lg\:timeline-horizontal.timeline-compact {
