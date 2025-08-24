@@ -21,3 +21,6 @@ env.php
 
 # clubs
 /.club_data
+
+# devdb
+.devdbrc

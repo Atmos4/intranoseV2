@@ -36,6 +36,7 @@ DB::setupForClub($club);
 Router::add('/', __DIR__ . '/app/pages/index.php');
 Router::add('/login', __DIR__ . '/app/pages/login.php');
 Router::add('/about', __DIR__ . '/app/pages/about.php');
+Router::add('/activation', __DIR__ . '/app/pages/first_connection.php');
 
 // Developement
 if (is_dev() || env("STAGING")) {

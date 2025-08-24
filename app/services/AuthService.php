@@ -17,21 +17,8 @@ class AuthService extends FactoryDependency
         if ($user) {
             switch (true) {
                 case $user?->status == UserStatus::INACTIVE:
-                    $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
-                    $this->em->persist($token);
-
-                    $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
-
-                    if ($result->success) {
-                        logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
-                        $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
-                            . ". Utilisez-le pour activer votre compte.";
-                        $this->em->flush();
-                        return false;
-                    } else {
-                        logger()->warning("Activation email failed to send for user {login}", ["login" => $user->login]);
-                        $v->set_error($result->message);
-                    }
+                    logger()->warning("Login failed for user {login} : user inactive.", ["login" => $user->login]);
+                    $v->set_error("Veuillez activer votre compte en cliquant sur \"Première connection\".");
                     return false;
                 case $user?->status == UserStatus::ACTIVE:
                     if (password_verify($password, $user->password)) {
@@ -58,7 +45,42 @@ class AuthService extends FactoryDependency
                     break;
             }
         }
-        logger()->info("Login failed: not found", ["login" => $login]);
+        logger()->info("Login failed: {login} not found", ["login" => $login]);
+        $v->set_error("Utilisateur non trouvé");
+        return false;
+    }
+
+    function tryOnlyLogin(string $login, Validator &$v = null)
+    {
+        $v ??= new Validator;
+        $user = UserService::getByLogin($this->em, $login);
+        if ($user) {
+            switch (true) {
+                case $user?->status == UserStatus::INACTIVE:
+                    $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+                    $this->em->persist($token);
+
+                    $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
+
+                    if ($result->success) {
+                        logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
+                        $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
+                            . ". Utilisez-le pour activer votre compte.";
+                        $this->em->flush();
+                        return true;
+                    }
+                case $user?->status == UserStatus::ACTIVE:
+                    $v->set_error("Votre compte est déjà activé !");
+                    return false;
+                case $user?->status == UserStatus::DEACTIVATED:
+                    logger()->info("Login check failed for user {login}: deactivated account", ["login" => $user->login]);
+                    $v->set_error("Votre compte est bloqué. Contactez un administrateur.");
+                    return false;
+                default:
+                    break;
+            }
+        }
+        logger()->info("Login failed: {login} not found", ["login" => $login]);
         $v->set_error("Utilisateur non trouvé");
         return false;
     }
