@@ -46,7 +46,7 @@ page("Événements")->css("event_list.css")
 <div style="display:flex;padding-bottom:0.5rem;align-items:center">
     <h2 class="main-heading" style="margin:0">Événements</h2>
     <?php if (Feature::Calendar->on()): ?>
-        <a style="margin-left:2rem" href="/evenements/calendrier" role="button">
+        <a style="margin-left:2rem" href="/evenements/calendrier">
             <sl-tooltip content="Calendrier"><i class="fa fa-calendar"></i></sl-tooltip>
         </a>
     <?php endif ?>
