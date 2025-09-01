@@ -72,9 +72,9 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->css("messages.
             Véhicules
         </sl-tab>
     <?php endif ?>
-    <sl-tab slot="nav" panel="conversation" id="conversation-tab" hx-trigger="load"
-        hx-post="/evenements/<?= $event->id ?>/conversation" hx-target="#conversation">
-        Conversation
+    <sl-tab slot="nav" panel="messages" id="messages-tab" hx-trigger="load"
+        hx-post="/evenements/<?= $event->id ?>/messages" hx-target="#messages">
+        Messages
     </sl-tab>
 
 
@@ -185,7 +185,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->css("messages.
     <?php if (Feature::Carpooling->on()): ?>
         <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
     <?php endif ?>
-    <sl-tab-panel name="conversation" id="conversation"></sl-tab-panel>
+    <sl-tab-panel name="messages" id="messages"></sl-tab-panel>
 </sl-tab-group>
 
 <?= UserModal::renderRoot() ?>
