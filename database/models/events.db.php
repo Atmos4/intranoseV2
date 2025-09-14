@@ -118,7 +118,7 @@ class Event
     #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'events')]
     public Collection $groups;
 
-    #[OneToOne(targetEntity: Conversation::class, inversedBy: 'event', cascade: ["remove"])]
+    #[OneToOne(targetEntity: Conversation::class, inversedBy: 'event', cascade: ["persist", "remove"])]
     public Conversation $conversation;
 
     function __construct()

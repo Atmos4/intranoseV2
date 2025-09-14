@@ -33,7 +33,6 @@ class Mailer extends FactoryDependency
         $this->mail->CharSet = "UTF-8";
         $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
         $this->mail->isSMTP();
-        $this->mail->isHTML(true);
         $this->mail->Host = env("MAIL_HOST");
         $this->mail->SMTPAuth = true;
         $this->mail->Username = env("MAIL_USER");
@@ -72,6 +71,7 @@ class Mailer extends FactoryDependency
         }
         $this->mail->Subject = $subject;
         $this->mail->Body = $content;
+        $this->mail->isHTML(true);
         return $this;
     }
 
@@ -96,73 +96,5 @@ class MailHelper
         $len = floor(strlen($name) / 2);
 
         return substr($name, 0, $len) . str_repeat('*', $len) . "@" . end($em);
-    }
-}
-
-class MailerFactory
-{
-    static function createActivationEmail(string $address, string $token)
-    {
-        $base_url = env("BASE_URL");
-        $subject = "Activation du compte " . config("name", "Linklub");
-        $content = "Voici le lien pour activer ton compte: $base_url/activation?token=$token";
-        return Mailer::create()->createEmail($address, $subject, $content);
-    }
-
-    static function createEventPublicationEmail(Event $event)
-    {
-        $base_url = env("BASE_URL");
-        $subject = (env("STAGING") ? "[STAGING] " : "") . "Nouvel événement sur " . config("name", "Linklub");
-        $event_date = $event->deadline->format('d/m/Y');
-        $content = "<h3>Un nouvel événement a été publié sur " . config("name", "Linklub") . " !</h3>
-        Nom de l'événement : <b>$event->name</b><br>
-        La deadline pour s'inscrire est le $event_date.<br>
-        Pour voir les infos : <a href = '$base_url/evenements/$event->id' >Lien de l'événement</a>.<br>
-        Pour s'inscrire : <a href = '$base_url/evenements/$event->id/inscription' >Inscription</a>.<br>
-        <br>
-        A bientôt pour de nouveaux événements !<br>
-        Le Nose<br>
-        <a href = 'www.nose42.fr' >www.nose42.fr</a>";
-        $mailer = Mailer::create();
-        $emails = self::getEventEmails($event);
-        $users = [];
-        foreach ($emails as $email) {
-            $users[$email['real_email']] = '';
-        }
-        if (!empty($users)) {
-            $mailer->createBulkEmails($users, $subject, $content);
-        }
-        return $mailer;
-    }
-
-    static function getEventEmails($event)
-    {
-        if (!$event->groups->isEmpty()) {
-            return self::getGroupsEmailsEvent($event);
-        } else {
-            return self::getAllEmailsEvent($event);
-        }
-    }
-
-    static function getGroupsEmailsEvent($event)
-    {
-        return em()->createQueryBuilder()
-            ->select('m.real_email')
-            ->from(Event::class, 'e')
-            ->leftJoin('e.groups', 'g')
-            ->leftJoin('g.members', 'm')
-            ->where('e.id = :eid')
-            ->setParameter('eid', $event->id)
-            ->getQuery()
-            ->getScalarResult();
-    }
-
-    static function getAllEmailsEvent($event)
-    {
-        return em()->createQueryBuilder()
-            ->select('e.real_email')
-            ->from(User::class, 'e')
-            ->getQuery()
-            ->getScalarResult();
     }
 }

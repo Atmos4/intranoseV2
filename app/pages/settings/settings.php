@@ -143,11 +143,11 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
         <fieldset>
             <legend>Sexe</legend>
             <label for="man">
-                <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?> <?= ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?>>
+                <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?> <?= ($user->gender == Gender::M) ? 'checked="checked"' : ''; ?> required>
                 Homme
             </label>
             <label for="woman">
-                <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?> <?= ($user->gender == Gender::W) ? 'checked="checked"' : ''; ?>>
+                <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?> <?= ($user->gender == Gender::W) ? 'checked="checked"' : ''; ?> required>
                 Dame
             </label>
         </fieldset>

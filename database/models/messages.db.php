@@ -34,7 +34,7 @@ class Message
         $this->sender = $sender;
         $this->conversation = $conversation;
         $this->content = $content;
-        $this->sentAt = new DateTime();
+        $this->sentAt = new DateTime(timezone: new DateTimeZone('Europe/Paris'));
     }
 }
 
@@ -129,6 +129,7 @@ class Conversation
         $this->messages->add($m);
         em()->persist($m);
         em()->flush();
+        return $m;
     }
 }
 #[Entity]

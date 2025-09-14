@@ -24,6 +24,14 @@ $messages = $conversation->getMessages();
 ?>
 
 <div id="conversation">
+    <?php if (check_auth(Access::$ADD_EVENTS)): ?>
+        <p>
+            <a role=button class="secondary" href="/evenements/<?= $event->id ?>/message/nouveau"
+                data-intro="Vous pouvez ajouter un message d'évenement ici ! 💭">
+                <i class="fas fa-plus"></i> Ajouter un message
+            </a>
+        </p>
+    <?php endif ?>
     <?php foreach ($messages as $message):
         $fromMe = $message->sender == $me_user; ?>
         <article>
@@ -39,10 +47,4 @@ $messages = $conversation->getMessages();
         </article>
     <?php endforeach ?>
 
-    <?php if (check_auth(Access::$ADD_EVENTS)): ?>
-        <a role=button class="secondary" href="/evenements/<?= $event->id ?>/message/nouveau"
-            data-intro="Vous pouvez ajouter un message d'évenement ici ! 💭">
-            <i class="fas fa-plus"></i> Ajouter un message
-        </a>
-    <?php endif ?>
 </div>
