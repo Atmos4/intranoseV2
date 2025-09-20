@@ -167,6 +167,7 @@ enum RecipientType: string
     case REGISTERED_USERS = 'registered_users';
     case UNREGISTERED_USERS = 'unregistered_users';
     case ALL_USERS = 'all_users';
+    case NO_USERS = 'no_users';
 }
 
 class RecipientResolver
@@ -178,6 +179,7 @@ class RecipientResolver
             RecipientType::REGISTERED_USERS => UserEmailRepository::getRegisteredUsersForEvent($event),
             RecipientType::UNREGISTERED_USERS => UserEmailRepository::getUnregisteredUsersForEvent($event),
             RecipientType::ALL_USERS => UserEmailRepository::getAllUsers(),
+            RecipientType::NO_USERS => []
         };
     }
 

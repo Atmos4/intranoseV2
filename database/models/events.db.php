@@ -118,8 +118,8 @@ class Event
     #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'events')]
     public Collection $groups;
 
-    #[OneToOne(targetEntity: Conversation::class, inversedBy: 'event', cascade: ["persist", "remove"])]
-    public Conversation $conversation;
+    #[OneToOne(targetEntity: Conversation::class, cascade: ["persist", "remove"])]
+    public Conversation|null $conversation = null;
 
     function __construct()
     {

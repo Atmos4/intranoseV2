@@ -53,6 +53,10 @@ page("Nouveau message d'évenement")->enableHelp();
             <input type="radio" name="recipients" value="<?= RecipientType::ALL_USERS->value ?>" required />
             Tout le club
         </label>
+        <label>
+            <input type="radio" name="recipients" value="<?= RecipientType::NO_USERS->value ?>" required />
+            Pas de notification
+        </label>
     </fieldset>
     <button type="submit"><i class="fa fa-paper-plane"></i></button>
 </form>
