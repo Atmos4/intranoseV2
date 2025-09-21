@@ -33,7 +33,7 @@ class Message
         $this->sender = $sender;
         $this->conversation = $conversation;
         $this->content = $content;
-        $this->sentAt = new DateTime(timezone: new DateTimeZone('Europe/Paris'));
+        $this->sentAt = new DateTime();
     }
 }
 

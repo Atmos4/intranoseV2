@@ -14,7 +14,7 @@ final class Version20250920204203 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Event messages';
     }
 
     public function up(Schema $schema): void
