@@ -58,11 +58,11 @@ if ($v->valid()) {
             <fieldset>
                 <legend>Sexe</legend>
                 <label for="man">
-                    <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?>>
+                    <input type="radio" id="man" name="gender" value=<?= Gender::M->value ?> required>
                     Homme
                 </label>
                 <label for="woman">
-                    <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?>>
+                    <input type="radio" id="woman" name="gender" value=<?= Gender::W->value ?> required>
                     Dame
                 </label>
             </fieldset>

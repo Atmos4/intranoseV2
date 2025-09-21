@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity, Table(name: 'messages')]
 class Message
@@ -33,7 +34,7 @@ class Message
         $this->sender = $sender;
         $this->conversation = $conversation;
         $this->content = $content;
-        $this->sentAt = new DateTime();
+        $this->sentAt = new DateTime(timezone: new DateTimeZone('Europe/Paris'));
     }
 }
 
@@ -54,7 +55,6 @@ class Conversation
 
     #[OneToMany(mappedBy: "conversation", targetEntity: Message::class)]
     public Collection $messages;
-
 
     public function __construct()
     {
@@ -125,6 +125,7 @@ class Conversation
         $this->messages->add($m);
         em()->persist($m);
         em()->flush();
+        return $m;
     }
 }
 #[Entity]

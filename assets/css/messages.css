@@ -43,6 +43,11 @@
   flex-direction: row-reverse;
 }
 
+.message > .button-delete {
+  display: flex;
+  align-items: flex-end;
+}
+
 .message > .content {
   padding: 0.8em 1em;
   background-color: rgb(0, 102, 102);

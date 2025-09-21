@@ -17,7 +17,7 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
 
-page($event->name)->css("event_view.css")->css("entry_list.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
+page($event->name)->css("event_view.css")->css("entry_list.css")->css("messages.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
 ?>
 <script>function start_intro() {
         const tabGroup = document.querySelector('sl-tab-group');
@@ -72,6 +72,11 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
             Véhicules
         </sl-tab>
     <?php endif ?>
+    <sl-tab slot="nav" panel="messages" id="messages-tab" hx-trigger="load"
+        hx-post="/evenements/<?= $event->id ?>/messages" hx-target="#messages">
+        Messages
+    </sl-tab>
+
 
     <sl-tab-panel name="information">
         <?php if ($is_simple) {
@@ -180,6 +185,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     <?php if (Feature::Carpooling->on()): ?>
         <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
     <?php endif ?>
+    <sl-tab-panel name="messages" id="messages"></sl-tab-panel>
 </sl-tab-group>
 
 <?= UserModal::renderRoot() ?>
