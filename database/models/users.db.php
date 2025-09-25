@@ -199,6 +199,13 @@ class User
     {
         return has_feature($f, $this->id);
     }
+
+    static function findByEmail($email): array
+    {
+        return em()
+            ->createQuery('SELECT u FROM User u WHERE u.real_email = :email')
+            ->setParameter('email', $email)->getResult();
+    }
 }
 
 enum UserStatus: string

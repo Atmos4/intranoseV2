@@ -1,6 +1,6 @@
 <?php
 $v = new Validator(["remember_me" => true]);
-$login = $v->text("login")->placeholder("Login")->required();
+$login = $v->text("login")->placeholder("Login ou email")->required();
 $password = $v->password("password")->placeholder("Password")->autocomplete("current-password")->required();
 $rememberMe = $v->switch("remember_me")->label("Rester connecté");
 if ($v->valid()) {
