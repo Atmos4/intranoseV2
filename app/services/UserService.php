@@ -10,6 +10,11 @@ class UserService
         return count($result) ? $result[0] : null;
     }
 
+    static function getByEmail(EntityManager $em, $login){
+      $result = User::findByEmail($login);
+      return count($result) ? $result[0] : null;
+    }
+
     /** @return User[] */
     static function getAll(DB $db)
     {

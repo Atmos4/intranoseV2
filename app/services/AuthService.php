@@ -10,56 +10,67 @@ class AuthService extends FactoryDependency
     {
     }
 
-    function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null)
+    function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null): bool
     {
         $v ??= new Validator;
-        $user = UserService::getByLogin($this->em, $login);
-        if ($user) {
-            switch (true) {
-                case $user?->status == UserStatus::INACTIVE:
-                    $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
-                    $this->em->persist($token);
-
-                    $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
-
-                    if ($result->success) {
-                        logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
-                        $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
-                            . ". Utilisez-le pour activer votre compte.";
-                        $this->em->flush();
-                        return false;
-                    } else {
-                        logger()->warning("Activation email failed to send for user {login}", ["login" => $user->login]);
-                        $v->set_error($result->message);
-                    }
-                    return false;
-                case $user?->status == UserStatus::ACTIVE:
-                    if (password_verify($password, $user->password)) {
-                        logger()->info("Login successful for user {login}", ["login" => $user->login]);
-                        $this->loginUserSession($user);
-                        if ($rememberMe) {
-                            $this->createRememberMeToken($user);
-                        }
-                        if (isset($_SESSION["deep_url"])) {
-                            redirect($_SESSION["deep_url"]);
-                            unset($_SESSION["deep_url"]);
-                            return false;
-                        }
-                        return true;
-                    }
-                    logger()->info("Login failed for user {login}: wrong password", ["login" => $user->login]);
-                    $v->set_error("Mauvais mot de passe");
-                    return false;
-                case $user?->status == UserStatus::DEACTIVATED:
-                    logger()->info("Login failed for user {login}: deactivated account", ["login" => $user->login]);
-                    $v->set_error("Votre compte est bloqué. Contactez un administrateur.");
-                    return false;
-                default:
-                    break;
-            }
+        if (AuthService::tryMatchUserPassword(UserService::getByLogin($this->em, $login), $password, $rememberMe, $v)) {
+            return true;
+        }
+        if (AuthService::tryMatchUserPassword(UserService::getByEmail($this->em, $login), $password, $rememberMe, $v)) {
+          return true;
         }
         logger()->info("Login failed: not found", ["login" => $login]);
         $v->set_error("Utilisateur non trouvé");
+        return false;
+    }
+
+    private function tryMatchUserPassword(User|null $user, string $password, bool $rememberMe = false, Validator &$v = null): bool{
+
+        if (!$user) {
+            return false;
+        }
+        switch ($user->status) {
+            case UserStatus::INACTIVE:
+                $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+                $this->em->persist($token);
+
+                $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
+
+                if ($result->success) {
+                    logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
+                    $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
+                        . ". Utilisez-le pour activer votre compte.";
+                    $this->em->flush();
+                    return false;
+                } else {
+                    logger()->warning("Activation email failed to send for user {login}", ["login" => $user->login]);
+                    $v->set_error($result->message);
+                }
+                return false;
+            case UserStatus::ACTIVE:
+                if (password_verify($password, $user->password)) {
+                    logger()->info("Login successful for user {login}", ["login" => $user->login]);
+                    $this->loginUserSession($user);
+                    if ($rememberMe) {
+                        $this->createRememberMeToken($user);
+                    }
+                    if (isset($_SESSION["deep_url"])) {
+                        redirect($_SESSION["deep_url"]);
+                        unset($_SESSION["deep_url"]);
+                        return false;
+                    }
+                    return true;
+                }
+                logger()->info("Login failed for user {login}: wrong password", ["login" => $user->login]);
+                $v->set_error("Mauvais mot de passe");
+                return false;
+            case UserStatus::DEACTIVATED:
+                logger()->info("Login failed for user {login}: deactivated account", ["login" => $user->login]);
+                $v->set_error("Votre compte est bloqué. Contactez un administrateur.");
+                return false;
+            default:
+                break;
+        }
         return false;
     }
 
