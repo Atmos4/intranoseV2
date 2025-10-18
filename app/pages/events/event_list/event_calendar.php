@@ -36,7 +36,7 @@ page("Calendrier")->css("event_list.css")->css("event_calendar.css")->noPadding(
     <div class="calendar-header">
         <h3 class="main-heading">
             <a
-                href="/evenements/calendrier?year=<?= $prevMonth->format('Y') ?>&month=<?= $nextMonth->format('m') ?>">&laquo;</a>
+                href="/evenements/calendrier?year=<?= $prevMonth->format('Y') ?>&month=<?= $prevMonth->format('m') ?>">&laquo;</a>
             <span><?= $firstDayOfMonth->format('F Y') ?></span>
             <a
                 href="/evenements/calendrier?year=<?= $nextMonth->format('Y') ?>&month=<?= $nextMonth->format('m') ?>">&raquo;</a>
