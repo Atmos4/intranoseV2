@@ -7,7 +7,8 @@ $v = new Validator(action: "new_message");
 $input = $v->textarea("new_message")->placeholder("Message...")->attributes(["rows" => 10])->autocomplete("off");
 
 if ($v->valid()) {
-    $event->conversation->sendMessage($me_user, $input->value);
+    $message = $event->conversation->sendMessage($me_user, $input->value);
+    MailerFactory::createEventMessageEmail($event, $message, $me_user, RecipientType::REGISTERED_USERS);
     redirect("/evenements/$event->id");
     Toast::success("Message envoyé 🚀");
 }

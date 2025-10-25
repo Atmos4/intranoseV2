@@ -80,6 +80,60 @@ class UserService
             ->getQuery()
             ->getResult();
     }
+
+    public static function getUnregisteredUsersForEvent(Event $event): array
+    {
+        if ($event->groups->isEmpty()) {
+            return em()->createQueryBuilder()
+                ->select('u')
+                ->from(User::class, 'u')
+                ->leftJoin('u.event_entries', 'ee', 'WITH', 'ee.event = :event')
+                ->where('ee IS NULL')
+                ->andWhere('u.status != :deactivated_status')
+                ->setParameter('event', $event)
+                ->setParameter('deactivated_status', UserStatus::DEACTIVATED)
+                ->getQuery()
+                ->getResult();
+        }
+
+        return em()->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.groups', 'g')
+            ->innerJoin('g.events', 'e')
+            ->leftJoin('u.event_entries', 'ee', 'WITH', 'ee.event = :event')
+            ->where('e = :event')
+            ->andWhere('ee IS NULL')
+            ->andWhere('u.status != :deactivated_status')
+            ->setParameter('event', $event)
+            ->setParameter('deactivated_status', UserStatus::DEACTIVATED)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public static function getGroupMembersForEvent(Event $event): array
+    {
+        $members = [];
+        foreach ($event->groups as $group) {
+            foreach ($group->members as $member) {
+                $members[$member->id] = $member;
+            }
+        }
+        return array_values($members);
+    }
+
+    public static function getRegisteredUsersForEvent(Event $event): array
+    {
+        return em()->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->innerJoin('u.event_entries', 'ee')
+            ->where('ee.present = true')
+            ->andWhere('ee.event = :event')
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->getResult();
+    }
 }
 
 class UserHelper
