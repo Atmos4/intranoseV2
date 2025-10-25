@@ -14,6 +14,10 @@ $is_root = check_auth([Permission::ROOT]);
 
 $profile_picture = $user->getPicture();
 
+$use_nose_email = !!env("INTRANOSE");
+
+$email = $use_nose_email ? $user->nose_email : $user->real_email;
+
 // HTMX - replace url
 $hxUrl = explode("?", get_header("HX-Current-URL") ?? "")[0] ?: $_SESSION['request_url'];
 header("HX-Replace-Url: $hxUrl?user=$user->id");
@@ -78,8 +82,8 @@ if (!Component::mounted()) {
                 </figure>
             </section>
             <section>
-                <a class="contrast" href="mailto:<?= $user->nose_email ?>">
-                    <?= $user->nose_email ?>
+                <a class="contrast" href="mailto:<?= $email ?>">
+                    <?= $email ?>
                 </a>
             </section>
             <?php if ($user->phone): ?>
