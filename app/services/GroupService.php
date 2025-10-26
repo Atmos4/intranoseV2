@@ -5,12 +5,25 @@ class GroupService
     static function renderTags($groups, $delimiter = false)
     {
         $is_groups = $groups && (count($groups) > 0);
-        echo $is_groups ? "<div class='grid-tag'>" : "";
+        echo $is_groups ? "<div id='groups'>" : "";
         foreach ($groups as $group): ?>
             <div class="tag tag-<?= $group->color->value ?>"><?= $group->name ?></div>
         <?php endforeach;
         echo $is_groups ? "</div>" : "";
         echo ($is_groups && $delimiter) ? "<hr>" : "";
+    }
+
+    static function renderDots($groups)
+    {
+        $is_groups = $groups && (count($groups) > 0);
+        echo $is_groups ? "<div class='dot-block'>" : "";
+        $colorList = ThemeColor::colorsList();
+        foreach ($groups as $group): ?>
+            <sl-tooltip content="<?= $group->name ?>">
+                <div class="color-dot" style="background-color:<?= $colorList[$group->color->value] ?>"></div>
+            </sl-tooltip>
+        <?php endforeach;
+        echo $is_groups ? "</div>" : "";
     }
 
     static function getAllEventGroups($event)

@@ -737,10 +737,6 @@ sl-tab-group {
   padding: 0 var(--sl-spacing-small);
 }
 
-.grid-tag {
-  margin-bottom: 10px;
-}
-
 .tag-fuchsia {
   background-color: var(--sl-color-fuchsia-50);
   border-color: var(--sl-color-fuchsia-200);
@@ -835,4 +831,18 @@ sl-tab-group {
   background-color: var(--sl-color-gray-50);
   border-color: var(--sl-color-gray-200);
   color: var(--sl-color-gray-800);
+}
+
+.dot-block {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.color-dot {
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  width: 18px;
+  border-radius: 50%;
 }

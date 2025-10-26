@@ -38,7 +38,7 @@ page("Les licenciés")->enableHelp() ?>
             <?php UserCard(
                 $user,
                 subtitle: function ($user) use ($groups) {
-                            GroupService::renderTags($groups);
+                            GroupService::renderDots($groups);
 
                         }
             ) ?>

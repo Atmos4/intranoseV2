@@ -32,6 +32,10 @@ if (!Component::mounted()) {
                     intro: "Bienvenue sur la vue d'un utilisateur ! Ici, vous pouvez voir ses informations et effectuer des actions sur son profil."
                 },
                 {
+                    element: document.getElementById('groups'),
+                    intro: "Ici vous pouvez voir les groupes auquels l'utilisateur appartient"
+                },
+                {
                     element: document.getElementById('user-control'),
                     intro: "En contrôlant un utilisateur, vous pouvez par exemple l'inscrire à des événements à sa place."
                 },
@@ -77,6 +81,7 @@ if (!Component::mounted()) {
                     <img class="profile-picture" src="<?= $profile_picture ?>">
                 </figure>
             </section>
+            <?= GroupService::renderTags($user->groups) ?>
             <section>
                 <a class="contrast" href="mailto:<?= $user->nose_email ?>">
                     <?= $user->nose_email ?>
