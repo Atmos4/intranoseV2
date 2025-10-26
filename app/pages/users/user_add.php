@@ -17,7 +17,7 @@ $permission = $v->select("permissions")->options($permissions_array)->label("Rô
 if ($v->valid()) {
     // DB
     $login = UserHelper::generateUserLogin($first_name->value, $last_name->value);
-    $nose_email = UserHelper::generateUserEmail($first_name->value, $last_name->value);
+    $nose_email = !!env("INTRANOSE") ? UserHelper::generateUserEmail($first_name->value, $last_name->value) : "";
 
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
