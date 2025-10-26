@@ -50,6 +50,7 @@
 
 .grid-tag {
   grid-area: tag;
+  justify-self: end;
 }
 
 .event-limit {
