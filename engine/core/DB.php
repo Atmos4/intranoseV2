@@ -18,8 +18,6 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 class DB extends SingletonDependency
 {
-    private const PATH_PROXIES = "database/proxies";
-
     private EntityManager $entityManager;
 
     function isSqlite()
@@ -34,13 +32,13 @@ class DB extends SingletonDependency
     /**
      * The DB constructor should be private. If there are more use cases you need to cover, create a factory function
      */
-    private function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null)
+    function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null, public string $basePath = "database")
     {
         if (!$sqlitePath && !$connection) {
             throw new Error("Unable to create DB connection");
         }
         $connection ??= DBFactory::sqlite($sqlitePath);
-        $proxyPath = path(base_path(), self::PATH_PROXIES);
+        $proxyPath = path(base_path(), "$basePath/proxies");
         if ($this->sqlitePath) {
             $connection->executeQuery("PRAGMA journal_mode = WAL;"); // speeds up sqlite
         }
@@ -60,7 +58,7 @@ class DB extends SingletonDependency
             $metadataCache = new PhpFilesAdapter('doctrine_metadata');
         }
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
+        $config = ORMSetup::createAttributeMetadataConfiguration(paths: ["$basePath/models"], isDevMode: $devMode, proxyDir: "$basePath/proxies");
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
@@ -101,6 +99,9 @@ class DB extends SingletonDependency
     {
         return new DB($path);
     }
+    static function auth(){
+        return new DB(path(base_path(), ".sqlite", "auth.sqlite"), basePath: "auth");
+    }
 
     static function setupForClub($slug)
     {
@@ -137,6 +138,16 @@ class DBFactory
         return !!$db->isSqlite() ?
             new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
             new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+    }
+}
+
+class AuthDB extends SingletonDependency
+{
+    private static DB $db;
+
+    public static function get(): DB
+    {
+        return self::$db;
     }
 }
 

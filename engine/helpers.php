@@ -27,6 +27,11 @@ function club_data_path(...$parts)
     return path(base_path(), ".club_data", ...$parts);
 }
 
+function auth_db_path()
+{
+    return path(base_path(), ".sqlite", "auth_db.sqlite");
+}
+
 /** readline polyfill because Linux sucks balls */
 if (!function_exists("readline")) {
     function readline($prompt = null)
