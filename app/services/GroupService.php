@@ -91,10 +91,9 @@ class GroupService
     public static function getAvailableMembers(UserGroup $group): array
     {
         return em()->createQueryBuilder()
-            ->select('PARTIAL u.{id, first_name, last_name}')
+            ->select('u.id, u.first_name, u.last_name')
             ->from(User::class, 'u')
-            ->leftJoin('u.groups', 'g')
-            ->where('g.id != :group_id OR g.id IS NULL')
+            ->where('NOT EXISTS (SELECT 1 FROM UserGroup g JOIN g.members m WHERE g.id = :group_id AND m.id = u.id)')
             ->orderBy('u.first_name, u.last_name')
             ->setParameter('group_id', $group->id)
             ->getQuery()
