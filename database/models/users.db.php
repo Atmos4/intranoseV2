@@ -83,6 +83,7 @@ class User
 
     function __construct()
     {
+        $this->groups = new ArrayCollection();
         $this->birthdate = date_create();
     }
 

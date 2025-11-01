@@ -846,3 +846,8 @@ sl-tab-group {
   width: 18px;
   border-radius: 50%;
 }
+
+details.dropdown {
+  margin-top: calc(var(--pico-spacing) * 0.25);
+  margin-bottom: var(--pico-spacing);
+}
