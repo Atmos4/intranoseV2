@@ -37,7 +37,9 @@ function render_events(EventDto $event)
                     <?= $event->name ?>
                 </b>
             </div>
-            <?= GroupService::renderTags($groups) ?>
+            <div class="grid-tag">
+                <?= GroupService::renderDots($groups) ?>
+            </div>
             <div class="dates">
                 <span>
                     <?= format_date($event->start) ?>

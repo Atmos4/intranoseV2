@@ -4,7 +4,8 @@
     static function globalEnabled(Feature $f)
     {
         return match ($f) {
-            Feature::Messages => false,
+            Feature::Messages => dev_or_staging(),
+            Feature::Calendar => dev_or_staging(),
             default => false
         };
     }

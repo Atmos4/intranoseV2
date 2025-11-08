@@ -5,12 +5,25 @@ class GroupService
     static function renderTags($groups, $delimiter = false)
     {
         $is_groups = $groups && (count($groups) > 0);
-        echo $is_groups ? "<div class='grid-tag'>" : "";
+        echo $is_groups ? "<div id='groups'>" : "";
         foreach ($groups as $group): ?>
             <div class="tag tag-<?= $group->color->value ?>"><?= $group->name ?></div>
         <?php endforeach;
         echo $is_groups ? "</div>" : "";
         echo ($is_groups && $delimiter) ? "<hr>" : "";
+    }
+
+    static function renderDots($groups)
+    {
+        $is_groups = $groups && (count($groups) > 0);
+        echo $is_groups ? "<div class='dot-block'>" : "";
+        $colorList = ThemeColor::colorsList();
+        foreach ($groups as $group): ?>
+            <sl-tooltip content="<?= $group->name ?>">
+                <div class="color-dot" style="background-color:<?= $colorList[$group->color->value] ?>"></div>
+            </sl-tooltip>
+        <?php endforeach;
+        echo $is_groups ? "</div>" : "";
     }
 
     static function getAllEventGroups($event)
@@ -78,10 +91,9 @@ class GroupService
     public static function getAvailableMembers(UserGroup $group): array
     {
         return em()->createQueryBuilder()
-            ->select('PARTIAL u.{id, first_name, last_name}')
+            ->select('u.id, u.first_name, u.last_name')
             ->from(User::class, 'u')
-            ->leftJoin('u.groups', 'g')
-            ->where('g.id != :group_id OR g.id IS NULL')
+            ->where('NOT EXISTS (SELECT 1 FROM UserGroup g JOIN g.members m WHERE g.id = :group_id AND m.id = u.id)')
             ->orderBy('u.first_name, u.last_name')
             ->setParameter('group_id', $group->id)
             ->getQuery()
@@ -90,20 +102,24 @@ class GroupService
 
     static function renderGroupChoice($groups)
     { ?>
-        <details class="dropdown">
-            <summary aria-haspopup="listbox" data-intro="Lier à un groupe">Ajouter le groupe...
-            </summary>
-            <ul data-placement=top>
-                <?php foreach ($groups as $group): ?>
-                    <li>
-                        <label>
-                            <input type="checkbox" name="add_groups[]" value="<?= $group['id'] ?>" <?= $group['has_group'] ? "checked" : "" ?>>
-                            <?= "{$group['name']}" ?>
-                        </label>
-                    </li>
-                <?php endforeach ?>
-            </ul>
-        </details>
+        <fieldset>
+            <legend style="margin-bottom: 0;">Groupes</legend>
+            <details class="dropdown">
+                <summary aria-haspopup="listbox" data-intro="Lier à un groupe">Ajouter le groupe...
+                </summary>
+                <ul data-placement=top>
+                    <?php foreach ($groups as $group): ?>
+                        <li>
+                            <label id="check-group-<?= $group["id"] ?>">
+                                <input type="checkbox" name="add_groups[]" id="check-group-<?= $group["id"] ?>"
+                                    value="<?= $group["id"] ?>" <?= ($group['has_group'] ?? 0) ? "checked" : "" ?>>
+                                <?= "{$group['name']}" ?>
+                            </label>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+            </details>
+        </fieldset>
         <?php
     }
 
@@ -120,6 +136,15 @@ class GroupService
             ->from(UserGroup::class, 'g')
             ->where('g.id IN (:ids)')
             ->setParameter('ids', $list)
+            ->getQuery()
+            ->getResult();
+    }
+
+    static function getAllGroups()
+    {
+        return em()->createQueryBuilder()
+            ->select('g.id, g.name')
+            ->from(UserGroup::class, 'g')
             ->getQuery()
             ->getResult();
     }
@@ -154,9 +179,9 @@ class GroupService
         em()->persist($user);
     }
 
-    static function renderUserGroupChoice($user)
+    static function renderUserGroupChoice($user = null)
     {
-        $groups = self::getAllUserGroups($user);
+        $groups = $user ? self::getAllUserGroups($user) : self::getAllGroups();
         echo self::renderGroupChoice($groups);
     }
 

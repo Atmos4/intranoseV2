@@ -83,6 +83,7 @@ class User
 
     function __construct()
     {
+        $this->groups = new ArrayCollection();
         $this->birthdate = date_create();
     }
 
@@ -198,6 +199,13 @@ class User
     function hasFeature(Feature $f)
     {
         return has_feature($f, $this->id);
+    }
+
+    static function findByEmail($email): array
+    {
+        return em()
+            ->createQuery('SELECT u FROM User u WHERE u.real_email = :email')
+            ->setParameter('email', $email)->getResult();
     }
 }
 

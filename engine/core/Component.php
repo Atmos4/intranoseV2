@@ -15,7 +15,7 @@ class Component
 
     function __toString()
     {
-        return "";
+        return $this->render();
     }
 
     function render(array $props = []): string

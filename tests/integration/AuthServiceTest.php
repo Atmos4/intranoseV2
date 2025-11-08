@@ -3,12 +3,20 @@
 final class AuthServiceTest extends BaseTestCase
 {
 
-
     function testExistingUserCanLogin()
     {
         [$service, $user, $password] = $this->setupTest();
         $v = new Validator();
         $redirect = $service->tryLogin($user->login, $password, false, $v);
+        $this->assertTrue($redirect);
+        $this->assertEquals($_SESSION["user_id"], $user->id);
+    }
+
+    function testLoginWithEmail()
+    {
+        [$service, $user, $password] = $this->setupTest();
+        $v = new Validator();
+        $redirect = $service->tryLogin($user->real_email, $password, false, $v);
         $this->assertTrue($redirect);
         $this->assertEquals($_SESSION["user_id"], $user->id);
     }
@@ -32,6 +40,7 @@ final class AuthServiceTest extends BaseTestCase
         $this->assertFalse(isset($_SESSION["user_id"]));
     }
 
+    /** @return array{AuthService, User, string} */
     function setupTest()
     {
         [$u, $pw] = SeedingService::createTestUser("Jon", "Doe", $this->db->em());

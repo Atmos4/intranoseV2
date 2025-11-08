@@ -125,6 +125,7 @@ class Conversation
         $this->messages->add($m);
         em()->persist($m);
         em()->flush();
+        return $m;
     }
 }
 #[Entity]

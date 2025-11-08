@@ -3,21 +3,26 @@
   width: fit-content;
 }
 
-#nav-button {
+nav.topnav {
   font-size: 1.5rem;
   line-height: 1em;
   height: 3rem;
-  position: fixed;
+  position: sticky;
   inset: 0 0 auto;
   z-index: 5;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 1rem;
-  background-color: var(--pico-background-color);
+  background-color: var(--pico-card-background-color);
 }
 
-#nav-button > button {
-  padding: 0.5rem;
+nav.topnav li {
+  padding: 1rem 0;
+}
+
+nav.topnav :is(button, a) {
+  padding: 0 0.5rem;
   margin: 0;
   border: none;
 }
@@ -32,7 +37,7 @@
   white-space: nowrap;
   overflow-x: hidden;
   transition: width 0.2s;
-  padding: 3.5rem 0 1rem;
+  padding: 0.5rem 0 1rem;
   background: var(--pico-card-background-color);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 }
@@ -76,7 +81,7 @@ body:has(.sidenav) > header > * {
 }
 
 body:has(.sidenav) > main.container {
-  padding: 4rem 1rem 1rem;
+  padding: 1.5rem 1.5rem 1rem;
 }
 
 body:has(.sidenav) > main > .spacing-div {
@@ -118,21 +123,27 @@ body:has(.sidenav) > main > .spacing-div {
   margin-top: auto;
 }
 
-.sidenav :is(a, #family-dropdown summary):has(i) {
+.dropdown-nav aside {
+  background-color: var(--pico-card-background-color);
+  padding: 0 0.5rem;
+}
+
+:is(.sidenav, .dropdown-nav) :is(a, #family-dropdown summary):has(i) {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 2rem 1fr;
   align-items: center;
 }
-.sidenav :is(a, #family-dropdown summary) {
+:is(.sidenav, .dropdown-nav) :is(a, #family-dropdown summary) {
   text-decoration: none;
   transition: color var(--pico-transition);
 }
-.sidenav :is(a, #family-dropdown summary):is(:hover, :focus) {
+:is(.sidenav, .dropdown-nav)
+  :is(a, #family-dropdown summary):is(:hover, :focus) {
   color: var(--pico-primary);
 }
 
-.sidenav .active > a {
+:is(.sidenav, .dropdown-nav) li > a.active {
   color: var(--pico-primary);
 }
 
@@ -146,6 +157,7 @@ body:has(.sidenav) > main > .spacing-div {
   .sidenav {
     width: 250px;
     padding-top: 1rem;
+    z-index: 6;
   }
   .sidenav.notvisible {
     visibility: visible;
@@ -156,7 +168,7 @@ body:has(.sidenav) > main > .spacing-div {
   }
 
   body:has(.sidenav) > main.container {
-    padding: 4rem 2rem 1rem;
+    padding: 2rem 2rem 1rem;
   }
 
   body:has(.sidenav) > header {
@@ -165,8 +177,7 @@ body:has(.sidenav) > main > .spacing-div {
     padding-left: 2rem;
   }
 
-  #nav-button,
-  .sidenav .closebtn {
+  nav.topnav .menu-button {
     display: none;
   }
 }

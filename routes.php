@@ -68,6 +68,8 @@ Router::add('/admin/logs/$log_file', __DIR__ . '/app/pages/admin/view_logs.php')
 
 // Events
 Router::add('/evenements', __DIR__ . '/app/pages/events/event_list/event_list.php');
+Router::add('/evenements/calendrier', __DIR__ . '/app/pages/events/event_list/event_calendar.php');
+Router::add('/cal/view', __DIR__ . '/app/pages/events/event_list/event_cal_day.php');
 Router::add('/evenements/passes', __DIR__ . '/app/pages/events/event_list/past_events.php');
 Router::add('/evenements/nouveau', __DIR__ . '/app/pages/events/edit/event_edit.php');
 Router::add('/evenements/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
@@ -78,6 +80,8 @@ Router::add('/evenements/$event_id/inscription_simple', __DIR__ . '/app/pages/ev
 Router::add('/evenements/$event_id/publier', __DIR__ . '/app/pages/events/event_publish.php');
 Router::add('/evenements/$event_id/supprimer', __DIR__ . '/app/pages/events/delete/event_delete.php');
 Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
+Router::add('/evenements/$event_id/messages', __DIR__ . '/app/pages/events/messages/event_message_view.php');
+Router::add('/evenements/$event_id/message/nouveau', __DIR__ . '/app/pages/events/messages/event_message_edit.php');
 
 //Vehicles
 Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');

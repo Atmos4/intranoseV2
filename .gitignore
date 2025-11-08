@@ -2,6 +2,7 @@ assets/images/profile/*
 app/uploads/*
 /vendor
 /node_modules
+/composer.phar
 
 # Env
 env.php

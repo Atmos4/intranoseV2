@@ -35,12 +35,25 @@
 } */
 
 /* Green (Common styles) */
+
+/* disable menu when wc not defined */
+sl-dropdown:not(:defined) > aside {
+  display: none;
+}
+sl-drawer:not(:defined) {
+  display: none;
+}
+
 :root {
   --pico-form-element-active-border-color: var(--pico-primary);
   --pico-form-element-focus-color: var(--pico-primary-focus);
   --pico-switch-color: var(--pico-primary-inverse);
   --pico-switch-checked-background-color: var(--pico-primary);
   --pico-card-box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1) !important;
+}
+
+main.container {
+  position: relative;
 }
 
 #hx-indicator {
@@ -131,7 +144,7 @@ label.error:hover {
   height: fit-content;
   padding: 0.5rem 1rem;
   position: sticky;
-  top: 2.5rem;
+  top: 2.8rem;
   left: 0;
   right: 0;
   z-index: 2;
@@ -159,10 +172,6 @@ label.error:hover {
 @media screen and (min-width: 992px) {
   #hx-indicator {
     left: calc(250px + 1rem);
-  }
-  #page-actions {
-    top: 0;
-    margin: 0.5rem -2rem;
   }
 }
 
@@ -615,12 +624,12 @@ article.notice > header,
   color: var(--fill-start-color);
 }
 .timeline .completed {
-  --fill-color: var(--ins-color);
-  --fill-start-color: var(--ins-color);
+  --fill-color: var(--pico-ins-color);
+  --fill-start-color: var(--pico-ins-color);
 }
 .timeline .missed {
-  --fill-color: var(--del-color);
-  --fill-start-color: var(--del-color);
+  --fill-color: var(--pico-del-color);
+  --fill-start-color: var(--pico-del-color);
 }
 @media (min-width: 992px) {
   .lg\:timeline-horizontal.timeline-compact {
@@ -700,14 +709,6 @@ article.notice > header,
   src: url(../webfonts/Farro-Light.ttf);
 }
 
-.help-button {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  z-index: 100;
-  cursor: pointer;
-}
-
 .help-button-modal {
   cursor: pointer;
   display: flex;
@@ -734,10 +735,6 @@ sl-tab-group {
   );
   border-radius: var(--sl-input-border-radius-medium);
   padding: 0 var(--sl-spacing-small);
-}
-
-.grid-tag {
-  margin-bottom: 10px;
 }
 
 .tag-fuchsia {
@@ -834,4 +831,23 @@ sl-tab-group {
   background-color: var(--sl-color-gray-50);
   border-color: var(--sl-color-gray-200);
   color: var(--sl-color-gray-800);
+}
+
+.dot-block {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.color-dot {
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  width: 18px;
+  border-radius: 50%;
+}
+
+details.dropdown {
+  margin-top: calc(var(--pico-spacing) * 0.25);
+  margin-bottom: var(--pico-spacing);
 }

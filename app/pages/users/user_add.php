@@ -17,7 +17,7 @@ $permission = $v->select("permissions")->options($permissions_array)->label("Rô
 if ($v->valid()) {
     // DB
     $login = UserHelper::generateUserLogin($first_name->value, $last_name->value);
-    $nose_email = UserHelper::generateUserEmail($first_name->value, $last_name->value);
+    $nose_email = !!env("INTRANOSE") ? UserHelper::generateUserEmail($first_name->value, $last_name->value) : "";
 
     $new_user = new User();
     $new_user->set_identity(strtoupper($last_name->value), $first_name->value, Gender::M);
@@ -26,6 +26,7 @@ if ($v->valid()) {
     $new_user->permission = Permission::from($permission->value);
     $new_user->set_login($login);
     $new_user->status = UserStatus::INACTIVE;
+    GroupService::processUserGroupChoice($new_user);
 
     // validate user adding with redirections
     $token = new AccessToken($new_user, AccessTokenType::ACTIVATE, new DateInterval('P2D'));
@@ -66,6 +67,9 @@ page("Nouveau licencié")->css("settings.css")->enableHelp();
         <div
             data-intro="Les différents rôles : <ul><li>Utilisateur : rôle de base</li><li>Coach et Administration : peuvent créer des événements et des licenciés</li></ul>">
             <?= $permission->render() ?>
+        </div>
+        <div>
+            <?= GroupService::renderUserGroupChoice() ?>
         </div>
     </div>
 

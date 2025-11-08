@@ -383,3 +383,19 @@ class Result
 class ResultException extends Exception
 {
 }
+
+function IconText($icon, $text, $wrapper = null)
+{
+    $text = "<i class=\"fas fa-fw $icon\"></i> $text";
+    return $wrapper ? "<$wrapper>$text</$wrapper>" : $text;
+}
+
+function getMenuClass(...$routes)
+{
+    foreach ($routes as $r) {
+        if (strpos($_SESSION['current_route'], $r) !== false) {
+            return "active";
+        }
+    }
+    return "contrast";
+}
