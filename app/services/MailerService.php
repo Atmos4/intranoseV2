@@ -21,9 +21,9 @@ class MailerFactory
         return $mailer;
     }
 
-    public static function createEventMessageEmail(Event $event, Message $message, User $sender, RecipientType $recipients = RecipientType::REGISTERED_USERS): Mailer
+    public static function createEventMessageEmail(Event $event, Message $message, RecipientType $recipients = RecipientType::REGISTERED_USERS, $subject = "Nouveau message sur l'évenement"): Mailer
     {
-        $template = EmailTemplates::eventMessageEmail($event, $message);
+        $template = EmailTemplates::eventMessageEmail($event, $message, $subject);
         $mailer = Mailer::create();
         $emails = RecipientResolver::getEventEmails($event, $recipients);
 
@@ -59,32 +59,39 @@ class EmailTemplates
         ];
     }
 
+    private static function createPrefix($app_name): string
+    {
+        $name = env("STAGING") ? "[STAGING $app_name] " : "[$app_name]";
+        $prefix = $name . " - ";
+        return $prefix;
+    }
+
     public static function eventPublicationEmail(Event $event): array
     {
         $app_name = config("name", "Intranose");
-        $staging_prefix = env("STAGING") ? "[STAGING] " : "";
+        $prefix = self::createPrefix($app_name);
         $footer = self::eventEmailFooter($event);
 
         return [
-            'subject' => $staging_prefix . "Nouvel événement sur " . $app_name,
+            'subject' => $prefix . "$event->name",
             'content' => "<h3>Un nouvel événement a été publié sur $app_name !</h3><br>" . $footer
         ];
     }
 
-    public static function eventMessageEmail(Event $event, Message $message): array
+    public static function eventMessageEmail(Event $event, Message $message, string $subject): array
     {
-        $appName = config("name", "Intranose");
-        $staging_prefix = env("STAGING") ? "[STAGING] " : "";
+        $app_name = config("name", "Intranose");
+        $prefix = self::createPrefix($app_name);
 
-        $content = self::buildMessageEmailHtml($event, $message);
+        $content = self::buildMessageEmailHtml($event, $message, $subject);
 
         return [
-            'subject' => $staging_prefix . "$appName - Nouvel message sur l'évenement $event->name",
+            'subject' => $prefix . "$event->name : $subject",
             'content' => $content
         ];
     }
 
-    private static function buildMessageEmailHtml(Event $event, Message $message): string
+    private static function buildMessageEmailHtml(Event $event, Message $message, string $subject): string
     {
         $footer = self::eventEmailFooter($event);
         $message_html = (new Parsedown)->text($message->content);
@@ -109,7 +116,7 @@ class EmailTemplates
                         <tr>
                             <td style="padding:20px;text-align:center;background-color:#ffffff;">
                                 <h1 style="margin:0;font-size:22px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.2;">
-                                    Nouveau message sur l'évenement "$event_name"
+                                    $event_name : $subject
                                 </h1>
                             </td>
                         </tr>
