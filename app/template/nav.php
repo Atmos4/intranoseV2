@@ -2,6 +2,7 @@
 $menu = MainMenu::create()
     ->addItem("Événements", "/evenements", "fa-calendar")
     ->addItem("Les licenciés", "/licencies", "fa-users")
+    ->addItem("Groupes", "/groupes", "fa-user-group")
     ->addItem("Documents", "/documents", "fa-file")
     ->addItem("Liens utiles", "/liens-utiles", "fa-arrow-up-right-from-square");
 
