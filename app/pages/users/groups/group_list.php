@@ -1,19 +1,20 @@
 <?php
-restrict_access(Access::$EDIT_USERS);
 $groups = GroupService::listGroups();
 page("Groupes"); ?>
 <?= actions()->back("/licencies")->link("/groupes/nouveau", "Nouveau groupe", "fas fa-plus") ?>
 <table>
     <?php foreach ($groups as $group): ?>
-        <tr class="clickable" tabindex="0" hx-trigger="click,keyup[key=='Enter']" hx-get="/groupes/<?= $group->id ?>"
-            hx-target="body" hx-push-url="true">
-            <td>
+        <details>
+            <summary>
                 <?= $group->name ?>
-            </td>
-            <td class="list-chevron">
-                <i class=" fa fa-chevron-right"></i>
-            </td>
-        </tr>
+            </summary>
+            <div class="buttons-grid">
+                <a role="button" class="outline secondary" href='/groupes/<?= $group->id ?>'>
+                    <i class="fa fa-circle-info"></i>
+                    Détails</a>
+            </div>
+        </details>
+        <hr>
     <?php endforeach;
     if (!$groups): ?>
         <p class="center">Pas encore de groupes 😲</p>

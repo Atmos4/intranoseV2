@@ -1,12 +1,12 @@
 <?php
-restrict_access(Access::$EDIT_USERS);
 require __DIR__ . "/../../../components/user_card.php";
 $user = User::getMain();
+$can_edit_user = check_auth(Access::$EDIT_USERS);
 $group = em()->find(UserGroup::class, get_route_param("group_id"));
 if (!$group) {
     force_404("this group does not exist");
 }
-if (isset($_POST['add_members']) && count($_POST['add_members'])) {
+if ($can_edit_user && isset($_POST['add_members']) && count($_POST['add_members'])) {
     // Fetch all users to be added
     $users = UserService::getFromList($_POST['add_members']);
     // Add each user to the group
@@ -20,12 +20,24 @@ if (isset($_POST['add_members']) && count($_POST['add_members'])) {
 }
 $add_member_list = GroupService::getAvailableMembers($group);
 
-page($group->name)->css("family_list.css") ?>
+$actions = actions()->back("/groupes");
+if ($can_edit_user) {
+    $actions->dropdown(
+        fn($b) => $b
+            ->link(
+                "/groupes/$group->id/supprimer",
+                "Supprimer le groupe",
+                "fa fa-trash",
+                ["class" => "destructive outline"]
+            )
+    );
+}
 
-<?= actions(check_auth(Access::$EDIT_USERS))
-    ->back("/groupes")
-    ->dropdown(fn($b) => $b
-        ->link("/groupes/$group->id/supprimer", "Supprimer le groupe", "fa fa-trash", ["class" => "destructive outline"])) ?>
+page("Groupe : " . $group->name)->css("family_list.css");
+
+?>
+
+<?= $actions ?>
 
 <section class="row">
     <?php foreach ($group->members as $key => $g_member): ?>
@@ -53,13 +65,13 @@ page($group->name)->css("family_list.css") ?>
                     </ul>
                 </nav>
                 <?php
-                    },
+                            },
             ) ?>
         </div>
     <?php endforeach ?>
 </section>
 
-<?php if (check_auth(Access::$EDIT_USERS)): ?>
+<?php if ($can_edit_user): ?>
     <form method="post">
         <input type="hidden" name="action" value="add_members">
         <h4>Ajouter un membre</h4>
@@ -79,6 +91,6 @@ page($group->name)->css("family_list.css") ?>
         </details>
         <button type="submit">Ajouter</button>
     </form>
+    <?php import(__DIR__ . '/group_edit.php') ?>
 <?php endif ?>
-<?php import(__DIR__ . '/group_edit.php') ?>
 <?= UserModal::renderRoot() ?>
