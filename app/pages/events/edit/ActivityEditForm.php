@@ -27,6 +27,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         $form_values = [
             "name" => $activity->name,
             "date" => date_format($activity->date, "Y-m-d"),
+            "type" => $activity->type->value,
             "location_label" => $activity->location_label,
             "location_url" => $activity->location_url,
             "description" => $activity->description,
