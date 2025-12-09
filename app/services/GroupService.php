@@ -194,4 +194,22 @@ class GroupService
             ->getQuery()
             ->getResult();
     }
+
+    static function RenderGroupsWarning(User $user, Event $event)
+    {
+        $groups = self::getUserGroups($user->id);
+        $groups_event = $event->groups;
+        $is_in_groups = false;
+        foreach ($groups as $group) {
+            if ($groups_event->contains($group)) {
+                $is_in_groups = true;
+            }
+        }
+        ?>
+        <?php if (!$is_in_groups): ?>
+            <article class="notice invalid" ?>
+                Attention, l'événement concerne des groupes dont vous ne faites pas partie
+            </article>
+        <?php endif;
+    }
 }
