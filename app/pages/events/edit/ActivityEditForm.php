@@ -26,12 +26,12 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         $activity = em()->find(Activity::class, $activity_id ?? $event->activities[0]);
         $form_values = [
             "name" => $activity->name,
-            "date" => date_format($activity->date, "Y-m-d"),
             "type" => $activity->type->value,
+            "date" => date_format($activity->date, "Y-m-d H:i:s"),
             "location_label" => $activity->location_label,
             "location_url" => $activity->location_url,
             "description" => $activity->description,
-            "deadline" => date_format($activity->deadline, "Y-m-d"),
+            "deadline" => date_format($activity->deadline, "Y-m-d H:i:s"),
         ];
         foreach ($activity->categories as $index => $category) {
             $form_values["category_{$index}_name"] = $category->name;
@@ -48,19 +48,19 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
     $v = new Validator($form_values ?? ($event_id ? ["date" => $event->start_date->format("Y-m-d")] : []));
     $name = $v->text("name")->label("Nom de l'" . $item_name)->placeholder()->required();
     $type = $v->select("type")->options($type_array)->label("Type d'$item_name");
-    $date = $v->date("date")
+    $date = $v->date_time("date")
         ->label("Date")
-        ->min(date("Y-m-d"), "Dans le futur c'est mieux");
+        ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux");
     if (!$is_simple) {
-        $date->min($event->start_date->format("Y-m-d"), "Doit être après la date de début de l'$item_name", true)
-            ->max($event->end_date->format("Y-m-d"), "Doit être avant la date de fin de l'$item_name", true);
+        $date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
+            ->max($event->end_date->format("Y-m-d H:i:s"), "Doit être avant la date de fin de l'$item_name", true);
     }
     $date->required();
     $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
     $location_url = $v->url("location_url")->label("URL du lieu");
     $description = $v->textarea("description")->label("Description de l'" . $item_name);
-    $deadline = $v->date("deadline")
-        ->max($date->value ? date_create($date->value)->format("Y-m-d") : "", "Doit être avant le jour de l'" . $item_name)
+    $deadline = $v->date_time("deadline")
+        ->max($date->value ? date_create($date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
         ->label("Date limite d'inscription");
     $category_rows = [];
     foreach ($activity->categories as $index => $category) {
