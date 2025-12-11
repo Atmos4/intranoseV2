@@ -2,14 +2,14 @@
 
 class GroupService
 {
-    static function renderTags($groups, $delimiter = false)
+    static function renderTags($groups, $delimiter = false, $is_div = true)
     {
         $is_groups = $groups && (count($groups) > 0);
-        echo $is_groups ? "<div id='groups'>" : "";
+        echo $is_groups && $is_div ? "<div id='groups'>" : "";
         foreach ($groups as $group): ?>
             <div class="tag tag-<?= $group->color->value ?>"><?= $group->name ?></div>
         <?php endforeach;
-        echo $is_groups ? "</div>" : "";
+        echo $is_groups && $is_div ? "</div>" : "";
         echo ($is_groups && $delimiter) ? "<hr>" : "";
     }
 
@@ -197,19 +197,29 @@ class GroupService
 
     static function RenderGroupsWarning(User $user, Event $event)
     {
-        $groups = self::getUserGroups($user->id);
-        $groups_event = $event->groups;
-        $is_in_groups = false;
-        foreach ($groups as $group) {
-            if ($groups_event->contains($group)) {
-                $is_in_groups = true;
+        $users_from_event_groups = em()->createQueryBuilder()
+            ->select('egm.id')
+            ->from(Event::class, 'e')
+            ->innerJoin('e.groups', 'eg')
+            ->leftJoin('eg.members', 'egm')
+            ->where('e.id = :eid')
+            ->setParameters(['eid' => $event->id])
+            ->getQuery()
+            ->getResult();
+        # first check if there are groups in the event, then if the user is in the groups
+        if (!$users_from_event_groups) {
+            return;
+        }
+        foreach ($users_from_event_groups as $result) {
+            if ($result['id'] === $user->id) {
+                return;
             }
         }
         ?>
-        <?php if (!$is_in_groups): ?>
-            <article class="notice invalid" ?>
-                Attention, l'événement concerne des groupes dont vous ne faites pas partie
-            </article>
-        <?php endif;
+        <article class="notice invalid" ?>
+            Attention, l'événement concerne des groupes dont vous ne faites pas partie :
+            <?= GroupService::renderTags($event->groups, is_div: false) ?>
+        </article>
+        <?php
     }
 }
