@@ -182,8 +182,28 @@ enum RecipientType: string
     case EVENT_GROUPS = 'event_groups';
     case REGISTERED_USERS = 'registered_users';
     case UNREGISTERED_USERS = 'unregistered_users';
+    case UNREGISTERED_AND_DECLINED_USERS = 'unregistered_and_declined_users';
     case ALL_USERS = 'all_users';
-    case NO_USERS = 'no_users';
+
+    public static function options($is_groups): array
+    {
+        if ($is_groups) {
+            return [
+                self::REGISTERED_USERS->value => 'Utilisateurs inscrits',
+                self::UNREGISTERED_USERS->value => 'Utilisateurs non inscrits',
+                self::UNREGISTERED_AND_DECLINED_USERS->value => 'Utilisateurs non inscrits et réponse négative',
+                self::ALL_USERS->value => 'Tous les utilisateurs',
+            ];
+        }
+
+        return [
+            self::EVENT_GROUPS->value => 'Tous les membres des groupes de l\'événement',
+            self::REGISTERED_USERS->value => 'Utilisateurs inscrits',
+            self::UNREGISTERED_USERS->value => 'Membres des groupes non inscrits',
+            self::UNREGISTERED_AND_DECLINED_USERS->value => 'Membres des groupes non inscrits et réponse négative',
+            self::ALL_USERS->value => 'Tous les utilisateurs',
+        ];
+    }
 }
 
 class RecipientResolver
@@ -197,8 +217,8 @@ class RecipientResolver
 
             RecipientType::REGISTERED_USERS => UserService::getRegisteredUsersForEvent($event),
             RecipientType::UNREGISTERED_USERS => UserService::getUnregisteredUsersForEvent($event),
+            RecipientType::UNREGISTERED_AND_DECLINED_USERS => UserService::getUnregisteredUsersForEvent($event, true),
             RecipientType::ALL_USERS => UserService::getActiveUserList(),
-            RecipientType::NO_USERS => []
         };
 
         // Convert users to email format and filter out null/empty emails
