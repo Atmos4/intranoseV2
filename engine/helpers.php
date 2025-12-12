@@ -27,6 +27,11 @@ function club_data_path(...$parts)
     return path(base_path(), ".club_data", ...$parts);
 }
 
+function relative_club_data_path(...$parts)
+{
+    return path(".club_data", ...$parts);
+}
+
 /** readline polyfill because Linux sucks balls */
 if (!function_exists("readline")) {
     function readline($prompt = null)
