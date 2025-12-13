@@ -101,7 +101,6 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         if ($is_simple) {
             $event->set($name->value, $date->value, $date->value, $deadline->value, "");
             $event->type = EventType::Simple;
-            GoogleCalendarService::updateEvent($event);
             em()->persist($event);
         }
         GroupService::processEventGroupChoice($event);

@@ -49,7 +49,6 @@ enum Feature: string
 {
     case Messages = "Messages";
     case Carpooling = "Carpooling";
-    case GoogleCalendar = "GoogleCalendar";
     case JootForm = "JootForm";
     case Calendar = "Calendar";
 

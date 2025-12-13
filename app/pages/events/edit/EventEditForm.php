@@ -41,7 +41,6 @@ if ($v->valid()) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
     $event->type = EventType::Complex;
     $event->description = $description->value;
-    GoogleCalendarService::updateEvent($event);
     GroupService::processEventGroupChoice($event);
     em()->persist($event);
     em()->flush();
