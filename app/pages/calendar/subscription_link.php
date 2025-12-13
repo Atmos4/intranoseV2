@@ -6,8 +6,7 @@ $baseUrl = env("BASE_URL");
 
 // Generate webcal URL (replaces http:// or https:// with webcal://)
 $icsUrl = "$baseUrl/cal/club.ics";
-#$webcalUrl = preg_replace('/^https?:\/\//', 'webcal://', $icsUrl);
-$webcalUrl = 'webcal://' . $icsUrl;
+$webcalUrl = preg_replace('/^https?:\/\//', 'webcal://', $icsUrl);
 
 page("Abonnement au calendrier")->css("about.css");
 ?>
