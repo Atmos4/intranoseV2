@@ -2,6 +2,7 @@
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -59,6 +60,14 @@ class DB extends SingletonDependency
             $queryCache = new PhpFilesAdapter('doctrine_queries');
             $metadataCache = new PhpFilesAdapter('doctrine_metadata');
         }
+
+        // Register custom DateTime type BEFORE creating the configuration
+        // This ensures all DateTime fields use our UTC conversion logic
+        if (!Type::hasType('utc_datetime')) {
+            Type::addType('utc_datetime', UtcDateTimeType::class);
+        }
+        Type::overrideType('datetime', UTCDateTimeType::class);
+        Type::overrideType('datetimetz', UTCDateTimeType::class);
 
         $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
         $config->setMetadataCache($metadataCache);

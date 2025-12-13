@@ -15,9 +15,9 @@ if ($event_id) {
     }
     $event_mapping = [
         "event_name" => $event->name,
-        "start_date" => date_format($event->start_date, "Y-m-d"),
-        "end_date" => date_format($event->end_date, "Y-m-d"),
-        "limit_date" => date_format($event->deadline, "Y-m-d"),
+        "start_date" => date_format($event->start_date, "Y-m-d H:i:s"),
+        "end_date" => date_format($event->end_date, "Y-m-d H:i:s"),
+        "limit_date" => date_format($event->deadline, "Y-m-d H:i:s"),
         "bulletin_url" => $event->bulletin_url,
         "description" => $event->description
     ];
@@ -27,13 +27,13 @@ if ($event_id) {
 
 $v = new Validator($event_mapping ?? []);
 $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
-$start_date = $v->date("start_date")->label("Date de départ")->required();
-$end_date = $v->date("end_date")
+$start_date = $v->date_time("start_date")->label("Date de départ")->required();
+$end_date = $v->date_time("end_date")
     ->label("Date de retour")->required()
     ->min($start_date->value, "Doit être après le départ");
-$limit_date = $v->date("limit_date")
+$limit_date = $v->date_time("limit_date")
     ->label("Deadline")->required()
-    ->max($start_date->value ? date_create($start_date->value)->sub(new DateInterval("PT23H59M59S"))->format("Y-m-d") : "", "Doit être avant le jour de départ");
+    ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
 $description = $v->textarea("description")->label("Description");
 

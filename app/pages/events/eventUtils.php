@@ -107,7 +107,7 @@ function RenderTimeline(Event $event, bool $isPresent)
                 <i class="fas fa-clock"></i>
             </div>
             <div class="timeline-end timeline-box">
-                <?= format_date($event->deadline) ?>
+                <?= format_date($event->deadline, "dd MMM yyyy HH:mm") ?>
             </div>
             <hr>
         </li>
@@ -124,7 +124,7 @@ function RenderTimeline(Event $event, bool $isPresent)
                     <a href="<?= $event->google_calendar_url ?>" target="_blank">
                         <?= IconText("fa-calendar", format_date($event->start_date)) . "</a>" ?>
                     <?php else: ?>
-                        <?= format_date($event->start_date) ?>
+                        <?= format_date($event->start_date, "dd MMM yyyy HH:mm") ?>
                     <?php endif ?>
             </div>
             <hr>
@@ -138,7 +138,7 @@ function RenderTimeline(Event $event, bool $isPresent)
                 <?php include app_path() . "/components/finish_icon.php" ?>
             </div>
             <div class="timeline-end timeline-box">
-                <?= format_date($event->end_date) ?>
+                <?= format_date($event->end_date, "dd MMM yyyy HH:mm") ?>
             </div>
         </li>
     </ul>

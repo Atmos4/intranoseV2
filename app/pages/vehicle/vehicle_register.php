@@ -64,7 +64,7 @@ if ($method == "POST") {
                         <i class="fas fa-location-dot"></i>
                         <?= $vehicle->start_location ?> -
                         <i class="fas fa-calendar"></i>
-                        <?= $vehicle->start_date->format("d M") ?>
+                        <?= $vehicle->start_date->format("d M - h:m") ?>
                     </dd>
                 </dl>
             </div>
@@ -75,7 +75,7 @@ if ($method == "POST") {
                         <i class="fas fa-location-dot"></i>
                         <?= $vehicle->return_location ?> -
                         <i class="fas fa-calendar"></i>
-                        <?= $vehicle->return_date->format("d M") ?>
+                        <?= $vehicle->return_date->format("d M - h:m") ?>
                     </dd>
                 </dl>
             </div>

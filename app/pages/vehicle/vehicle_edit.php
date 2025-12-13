@@ -19,8 +19,8 @@ if ($vehicle_id) {
         "start_location" => $vehicle->start_location,
         "return_location" => $vehicle->return_location,
         "capacity" => $vehicle->capacity,
-        "start_date" => date_format($vehicle->start_date, 'Y-m-d'),
-        "return_date" => date_format($vehicle->return_date, 'Y-m-d'),
+        "start_date" => date_format($vehicle->start_date, 'Y-m-d H:i:s'),
+        "return_date" => date_format($vehicle->return_date, 'Y-m-d H:i:s'),
     ];
 } else {
     $vehicle = new Vehicle();
@@ -32,8 +32,8 @@ $name = $v->text("name")->label("Nom du véhicule")->placeholder()->required();
 $start_location = $v->text("start_location")->label("Lieu de départ")->placeholder()->required();
 $return_location = $v->text("return_location")->label("Lieu de retour")->placeholder()->required();
 $capacity = $v->number("capacity")->label("Capacité du véhicule")->min($vehicle_id ? count(($vehicle->passengers)) : 1)->placeholder()->required();
-$start_date = $v->date("start_date")->label("Date de départ")->required();
-$return_date = $v->date("return_date")->label("Date de retour")->required();
+$start_date = $v->date_time("start_date")->label("Date de départ")->required();
+$return_date = $v->date_time("return_date")->label("Date de retour")->required();
 
 
 if ($v->valid()) {
@@ -45,6 +45,7 @@ if ($v->valid()) {
     $vehicle->capacity = $capacity->value;
     $vehicle->start_date = date_create($start_date->value);
     $vehicle->return_date = date_create($return_date->value);
+    $vehicle->passengers->add($user);
     em()->persist($vehicle);
     em()->flush();
     redirect("/evenements/$event->id");

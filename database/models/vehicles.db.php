@@ -1,4 +1,5 @@
 <?php
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -42,4 +43,8 @@ class Vehicle
     #[ManyToMany(targetEntity: User::class)]
     public Collection $passengers;
 
+    public function __construct()
+    {
+        $this->passengers = new ArrayCollection();
+    }
 }
