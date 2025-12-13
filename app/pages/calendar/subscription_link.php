@@ -5,7 +5,7 @@ $club = ClubManagementService::create()->getClub();
 $baseUrl = env("BASE_URL");
 
 // Generate webcal URL (replaces http:// or https:// with webcal://)
-$icsUrl = "$baseUrl/cal/club.ics";
+$icsUrl = "$baseUrl/calendrier/club.ics";
 $webcalUrl = preg_replace('/^https?:\/\//', 'webcal://', $icsUrl);
 
 page("Abonnement au calendrier")->css("about.css");
