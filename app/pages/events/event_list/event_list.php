@@ -50,6 +50,9 @@ page("Événements")->css("event_list.css")
             <sl-tooltip content="Calendrier"><i class="fa fa-calendar"></i></sl-tooltip>
         </a>
     <?php endif ?>
+    <a style="margin-left:1rem" href="/calendrier/abonnement">
+        <sl-tooltip content="S'abonner au calendrier"><i class="fa fa-calendar-plus"></i></sl-tooltip>
+    </a>
 </div>
 
 <?= actions($can_edit)->link(

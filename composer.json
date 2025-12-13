@@ -12,7 +12,8 @@
     "monolog/monolog": "^3.4",
     "erusev/parsedown": "^1.7",
     "minishlink/web-push": "^9.0",
-    "google/apiclient": "^2.15.0"
+    "google/apiclient": "^2.15.0",
+    "eluceo/ical": "^2.14"
   },
   "autoload": {
     "classmap": [
