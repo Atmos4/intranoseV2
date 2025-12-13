@@ -10,7 +10,7 @@ class Path
 
     static function profilePicture($slug = null)
     {
-        return club_data_path($slug ?? ClubManagementService::getSelectedClubSlug(), "profile");
+        return relative_club_data_path($slug ?? ClubManagementService::getSelectedClubSlug(), "profile");
     }
 
     static function credentials()
