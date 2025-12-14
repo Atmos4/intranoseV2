@@ -2,7 +2,6 @@
 $menu = MainMenu::create()
     ->addItem("Événements", "/evenements", "fa-calendar")
     ->addItem("Les licenciés", "/licencies", "fa-users")
-    ->addItem("Suggestions", "/feedback/nouveau", "fa-lightbulb")
     ->addItem("Documents", "/documents", "fa-file")
     ->addItem("Liens utiles", "/liens-utiles", "fa-arrow-up-right-from-square");
 
@@ -40,6 +39,9 @@ if (check_auth([Permission::ROOT])) {
         </ul>
         <div class="icon-buttons">
             <?php include app_path() . "/components/theme_switcher.php" ?>
+            <a href="/feedback/nouveau" class="icon-button <?= getMenuClass("/feedback") ?>" title="Suggestions">
+                <i class="fa fa-lightbulb"></i>
+            </a>
         </div>
     </nav>
 </aside>
