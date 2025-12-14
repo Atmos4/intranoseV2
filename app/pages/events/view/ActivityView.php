@@ -19,11 +19,7 @@ $groups = GroupService::getEventGroups($event->id);
             <?= IconText($activity->type->toIcon(), $activity->type->toName()) ?>
         </div>
         <div>
-            <?php if ($event->google_calendar_url): ?>
-                <a href="<?= $event->google_calendar_url ?>" target="_blank">
-                <?php endif ?>
-                <?= IconText("fa-calendar", format_date($activity->date, "dd MMM yyyy - HH:mm")) ?>
-                <?= $event->google_calendar_url ? "</a>" : "" ?>
+            <?= IconText("fa-calendar", format_date($activity->date, "dd MMM yyyy - HH:mm")) ?>
         </div>
         <div>
             <span>
