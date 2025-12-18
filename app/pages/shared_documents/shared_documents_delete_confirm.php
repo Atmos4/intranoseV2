@@ -1,5 +1,5 @@
 <?php
-restrict_access([Permission::ROOT]);
+restrict_access(Access::$ADD_EVENTS);
 
 $form = new Validator(action: "confirm-delete");
 
