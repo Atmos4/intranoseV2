@@ -139,6 +139,11 @@ class Validator
         return $this->create($key, DateField::class, $msg);
     }
 
+    function date_time(string $key, string $msg = null): DateTimeField
+    {
+        return $this->create($key, DateTimeField::class, $msg);
+    }
+
     function switch(string $key, string $msg = null): SwitchField
     {
         return $this->create($key, SwitchField::class, $msg);

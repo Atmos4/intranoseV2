@@ -1,4 +1,8 @@
 <?php
+// Set default timezone for all date/time operations
+// This ensures date_create() and other PHP date functions use the same timezone as the ORM
+date_default_timezone_set(UtcDateTimeType::DISPLAY_TIMEZONE);
+
 // User control
 require_once app_path() . "/components/user_control.php";
 // Load env

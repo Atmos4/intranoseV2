@@ -44,6 +44,9 @@ page("Calendrier")->css("event_list.css")->css("event_calendar.css")->noPadding(
         <a style="margin-left:2rem" href="/evenements">
             <sl-tooltip content="Liste"><i class="fa fa-list"></i></sl-tooltip>
         </a>
+        <a style="margin-left:1rem" href="/calendrier/abonnement">
+            <sl-tooltip content="S'abonner au calendrier"><i class="fa fa-calendar-plus"></i></sl-tooltip>
+        </a>
     </div>
 
     <div class="grid-table" hx-target="#event-list" hx-swap="innerHTML">

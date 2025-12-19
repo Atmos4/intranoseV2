@@ -190,6 +190,7 @@ enum FieldType: string
 {
     case Text = "text";
     case Date = "date";
+    case DateTime = "datetime-local";
     case Number = "number";
     case Email = "email";
     case Phone = "phone";

@@ -74,6 +74,7 @@ page("Inscription - " . $event->name)->css("event_register.css");
 ?>
 <form id="mainForm" method="post">
     <?= actions()->back("/evenements/$event->id")->submit("Enregistrer") ?>
+    <?= GroupService::RenderGroupsWarning($user, $event); ?>
     <article>
         <header class="center">
             <?= $v->render_validation() ?>

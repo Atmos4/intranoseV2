@@ -38,6 +38,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     ->back("/evenements")
     ->if($can_edit, fn($b) => $b->dropdown(function ($dropdown) use ($event) {
         $dropdown->link("/evenements/$event->id/modifier", "Éditer", "fa-pen", ["class" => "secondary"]);
+        $dropdown->link("/evenements/$event->id/rappel", "Rappel", "fa-bell", ["class" => "secondary"]);
         $event->open ?
             $dropdown->link("/evenements/$event->id/publier", "Retirer", "fa-calendar-minus", ["class" => "destructive"]) :
             $dropdown->link("/evenements/$event->id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);

@@ -51,9 +51,6 @@ if (is_dev() || env("STAGING")) {
 
     // SQLITE
     Router::add('/sqlite', __DIR__ . '/app/pages/dev/sqlite_db.php');
-
-    // Google Calendar
-    Router::add('/dev/google_calendar', __DIR__ . '/app/pages/dev/google_calendar.php');
 }
 
 //Notifications
@@ -70,6 +67,8 @@ Router::add('/admin/logs/$log_file', __DIR__ . '/app/pages/admin/view_logs.php')
 Router::add('/evenements', __DIR__ . '/app/pages/events/event_list/event_list.php');
 Router::add('/evenements/calendrier', __DIR__ . '/app/pages/events/event_list/event_calendar.php');
 Router::add('/cal/view', __DIR__ . '/app/pages/events/event_list/event_cal_day.php');
+Router::add('/calendrier/club.ics', __DIR__ . '/app/pages/calendar/public_feed.php');
+Router::add('/calendrier/abonnement', __DIR__ . '/app/pages/calendar/subscription_link.php');
 Router::add('/evenements/passes', __DIR__ . '/app/pages/events/event_list/past_events.php');
 Router::add('/evenements/nouveau', __DIR__ . '/app/pages/events/edit/event_edit.php');
 Router::add('/evenements/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
@@ -82,6 +81,7 @@ Router::add('/evenements/$event_id/supprimer', __DIR__ . '/app/pages/events/dele
 Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
 Router::add('/evenements/$event_id/messages', __DIR__ . '/app/pages/events/messages/event_message_view.php');
 Router::add('/evenements/$event_id/message/nouveau', __DIR__ . '/app/pages/events/messages/event_message_edit.php');
+Router::add('/evenements/$event_id/rappel', __DIR__ . '/app/pages/events/messages/event_reminder_edit.php');
 
 //Vehicles
 Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');

@@ -10,9 +10,10 @@ class UserService
         return count($result) ? $result[0] : null;
     }
 
-    static function getByEmail(EntityManager $em, $login){
-      $result = User::findByEmail($login);
-      return count($result) ? $result[0] : null;
+    static function getByEmail(EntityManager $em, $login)
+    {
+        $result = User::findByEmail($login);
+        return count($result) ? $result[0] : null;
     }
 
     /** @return User[] */
@@ -81,34 +82,32 @@ class UserService
             ->getResult();
     }
 
-    public static function getUnregisteredUsersForEvent(Event $event): array
+    public static function getUnregisteredUsersForEvent(Event $event, bool $include_declined_users = false): array
     {
-        if ($event->groups->isEmpty()) {
-            return em()->createQueryBuilder()
-                ->select('u')
-                ->from(User::class, 'u')
-                ->leftJoin('u.event_entries', 'ee', 'WITH', 'ee.event = :event')
-                ->where('ee IS NULL')
-                ->andWhere('u.status != :deactivated_status')
-                ->setParameter('event', $event)
-                ->setParameter('deactivated_status', UserStatus::DEACTIVATED)
-                ->getQuery()
-                ->getResult();
-        }
-
-        return em()->createQueryBuilder()
+        $qb = em()->createQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
-            ->innerJoin('u.groups', 'g')
-            ->innerJoin('g.events', 'e')
             ->leftJoin('u.event_entries', 'ee', 'WITH', 'ee.event = :event')
-            ->where('e = :event')
-            ->andWhere('ee IS NULL')
             ->andWhere('u.status != :deactivated_status')
             ->setParameter('event', $event)
-            ->setParameter('deactivated_status', UserStatus::DEACTIVATED)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('deactivated_status', UserStatus::DEACTIVATED);
+
+        if (!$event->groups->isEmpty()) {
+            $qb->innerJoin('u.groups', 'g')
+                ->innerJoin('g.events', 'e')
+                ->andWhere('e = :event');
+        }
+
+        if ($include_declined_users) {
+            $qb->andWhere($qb->expr()->orX(
+                'ee IS NULL',
+                'ee.present = false'
+            ));
+        } else {
+            $qb->andWhere('ee IS NULL');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public static function getGroupMembersForEvent(Event $event): array

@@ -8,7 +8,7 @@ $input = $v->textarea("new_message")->placeholder("Message...")->attributes(["ro
 
 if ($v->valid()) {
     $message = $event->conversation->sendMessage($me_user, $input->value);
-    MailerFactory::createEventMessageEmail($event, $message, $me_user, RecipientType::REGISTERED_USERS);
+    MailerFactory::createEventMessageEmail($event, $message, RecipientType::REGISTERED_USERS);
     redirect("/evenements/$event->id");
     Toast::success("Message envoyé 🚀");
 }
@@ -17,6 +17,7 @@ page("Nouveau message d'évenement")->enableHelp();
 ?>
 
 <?= actions()->back("/evenements/$event->id") ?>
+<p><i class="fa fa-info-circle"></i> Ce message sera envoyé à tous les utilisateurs inscrits à l'événement.</p>
 <small>
     Le message doit être écrit en <a href='https://www.markdownguide.org/basic-syntax/' target="#">style
         markdown</a>
