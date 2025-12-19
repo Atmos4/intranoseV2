@@ -3,7 +3,7 @@ restrict_access(Access::$ADD_EVENTS);
 
 $v = new Validator();
 $file_upload = $v->upload("file_upload")->required()->mime(UploadField::$FILE_MIME);
-$permission = $v->select("permission")->options(["USER" => 'Public', "COACH" => "Admin"])->label("Niveau de permission");
+$permission = $v->select("permission")->options(["USER" => 'Public', "COACH" => "Coachs et Administration"])->label("Niveau de permission");
 $name = $v->text("name")->label("Nom du fichier (optionel)");
 
 if ($v->valid()) {
