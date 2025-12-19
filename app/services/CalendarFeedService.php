@@ -58,7 +58,7 @@ class CalendarFeedService
     private static function createICalEvent(Event $event, string $clubName): ICalEvent
     {
         $baseUrl = env("BASE_URL");
-        $eventUrl = "https://$baseUrl/evenements/$event->id";
+        $eventUrl = "$baseUrl/evenements/$event->id";
 
         // Create unique identifier
         $uid = new UniqueIdentifier("event-{$event->id}@" . parse_url($baseUrl, PHP_URL_HOST));
