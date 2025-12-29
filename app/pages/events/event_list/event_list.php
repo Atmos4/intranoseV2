@@ -51,7 +51,7 @@ page("Événements")->css("event_list.css")
         </a>
     <?php endif ?>
     <a style="margin-left:1rem" href="/calendrier/abonnement">
-        <sl-tooltip content="S'abonner au calendrier"><i class="fa fa-calendar-plus"></i></sl-tooltip>
+        <sl-tooltip content="S'abonner au calendrier"><i class="fa fa-share"></i></sl-tooltip>
     </a>
 </div>
 
