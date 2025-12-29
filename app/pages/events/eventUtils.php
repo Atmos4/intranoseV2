@@ -91,49 +91,52 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
     </article>
 <?php }
 
-function RenderTimeline(Event $event, bool $isPresent)
+function RenderTimeline(Event|Activity $event_or_activity, bool $isPresent, bool $display_deadline = true, bool $is_activity = false)
 {
     $today_date = date_create("today");
-    $deadline_class = $event->deadline >= $today_date ? "" : ($isPresent ? "completed" : "missed");
-    $start_class = $event->start_date < $today_date ? $deadline_class : "";
-    $end_class = $event->end_date < $today_date ? $deadline_class : ""; ?>
+    $current_year = date('Y');
+    $deadline_class = $event_or_activity->deadline >= $today_date ? "" : ($isPresent ? "completed" : "missed");
+    $start_class = $event_or_activity->start_date < $today_date ? $deadline_class : "";
+    $end_class = $event_or_activity->end_date < $today_date ? $deadline_class : ""; ?>
 
     <ul class="timeline timeline-vertical lg:timeline-horizontal">
-        <li class="<?= $deadline_class ?>">
+        <?php if ($display_deadline): ?>
+            <li class="<?= $deadline_class ?>">
+                <div class="timeline-start">
+                    Deadline
+                </div>
+                <div class="timeline-middle">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="timeline-end timeline-box">
+                    <?= format_date($event_or_activity->deadline, $event_or_activity->deadline->format('Y') == $current_year ? "dd MMM HH:mm" : "dd MMM yyyy HH:mm") ?>
+                </div>
+                <hr>
+            </li>
+        <?php endif ?>
+        <li class="<?= $start_class ?>">
+            <?= $display_deadline ? "<hr>" : "" ?>
             <div class="timeline-start">
-                Deadline
+                <?= $is_activity ? "Début" : "Départ" ?>
             </div>
             <div class="timeline-middle">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="timeline-end timeline-box">
-                <?= format_date($event->deadline, "dd MMM yyyy HH:mm") ?>
-            </div>
-            <hr>
-        </li>
-        <li class="<?= $start_class ?>">
-            <hr>
-            <div class="timeline-start">
-                Début
-            </div>
-            <div class="timeline-middle lg:rotate">
                 <?php include app_path() . "/components/start_icon.php" ?>
             </div>
             <div class="timeline-end timeline-box">
-                <?= format_date($event->start_date, "dd MMM yyyy HH:mm") ?>
+                <?= format_date($event_or_activity->start_date, $event_or_activity->start_date->format('Y') == $current_year ? "dd MMM HH:mm" : "dd MMM yyyy HH:mm") ?>
             </div>
             <hr>
         </li>
         <li class="<?= $end_class ?>">
             <hr>
             <div class="timeline-start">
-                Fin
+                <?= $is_activity ? "Fin" : "Retour" ?>
             </div>
             <div class="timeline-middle">
                 <?php include app_path() . "/components/finish_icon.php" ?>
             </div>
             <div class="timeline-end timeline-box">
-                <?= format_date($event->end_date, "dd MMM yyyy HH:mm") ?>
+                <?= format_date($event_or_activity->end_date, $event_or_activity->end_date->format('Y') == $current_year ? "dd MMM HH:mm" : "dd MMM yyyy HH:mm") ?>
             </div>
         </li>
     </ul>

@@ -125,7 +125,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
                                 <?= RenderActivityEntry($activity) ?>
                                 <p class="grid">
                                     <span><i class="fa fa-calendar fa-fw"></i>
-                                        <?= format_date($activity->date) ?>
+                                        <?= EventService::formatActivitiesDate($activity) ?>
                                     </span>
                                     <?php if ($activity->location_label): ?>
                                         <span>

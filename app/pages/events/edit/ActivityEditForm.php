@@ -27,7 +27,8 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         $form_values = [
             "name" => $activity->name,
             "type" => $activity->type->value,
-            "date" => date_format($activity->date, "Y-m-d H:i:s"),
+            "start_date" => date_format($activity->start_date, "Y-m-d H:i:s"),
+            "end_date" => date_format($activity->end_date, "Y-m-d H:i:s"),
             "location_label" => $activity->location_label,
             "location_url" => $activity->location_url,
             "description" => $activity->description,
@@ -45,22 +46,28 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
 
     $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
-    $v = new Validator($form_values ?? ($event_id ? ["date" => $event->start_date->format("Y-m-d")] : []));
+    $v = new Validator($form_values ?? ($event_id ? ["start_date" => $event->start_date->format("Y-m-d"), "end_date" => $event->end_date->format("Y-m-d")] : []));
     $name = $v->text("name")->label("Nom de l'" . $item_name)->placeholder()->required();
     $type = $v->select("type")->options($type_array)->label("Type d'$item_name");
-    $date = $v->date_time("date")
-        ->label("Date")
-        ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux");
+    $start_date = $v->date_time("start_date")
+        ->label("Date de début")
+        ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux")
+        ->required();
+    $end_date = $v->date_time("end_date")
+        ->label("Date de fin")
+        ->min($start_date->value, "Doit être après le départ")
+        ->required();
     if (!$is_simple) {
-        $date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
+        $start_date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
+            ->max($event->end_date->format("Y-m-d H:i:s"), "Doit être avant la date de fin de l'$item_name", true);
+        $end_date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
             ->max($event->end_date->format("Y-m-d H:i:s"), "Doit être avant la date de fin de l'$item_name", true);
     }
-    $date->required();
     $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
     $location_url = $v->url("location_url")->label("URL du lieu");
     $description = $v->textarea("description")->label("Description de l'" . $item_name);
     $deadline = $v->date_time("deadline")
-        ->max($date->value ? date_create($date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
+        ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
         ->label("Date limite d'inscription");
     $category_rows = [];
     foreach ($activity->categories as $index => $category) {
@@ -76,7 +83,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
 
     if ($v->valid()) {
         //right now the deadline is the same as the event - always. Can be changed in the future.
-        $activity->set($name->value, $date->value, $location_label->value, $location_url->value, $description->value);
+        $activity->set($name->value, $start_date->value, $end_date->value, $location_label->value, $location_url->value, $description->value);
         $activity->type = ActivityType::from($type->value);
         $activity->deadline = $deadline->value ? date_create($deadline->value) : $event->deadline;
         foreach ($activity->categories as $index => $category) {
@@ -99,7 +106,7 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         }
         // With a simple event, we need to edit the event as well
         if ($is_simple) {
-            $event->set($name->value, $date->value, $date->value, $deadline->value, "");
+            $event->set($name->value, $start_date->value, $end_date->value, $deadline->value, "");
             $event->type = EventType::Simple;
             em()->persist($event);
         }
@@ -130,7 +137,10 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
                 <?= $type->render() ?>
             </div>
             <div class="col-md-6">
-                <?= $date->render() ?>
+                <?= $start_date->render() ?>
+            </div>
+            <div class="col-md-6">
+                <?= $end_date->render() ?>
             </div>
             <div class="col-md-6">
                 <?= $location_label->render() ?>
