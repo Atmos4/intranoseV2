@@ -149,6 +149,23 @@ class EventService
             ->setParameter("user", $uid)
             ->getArrayResult());
     }
+
+    static function formatActivitiesDate(Activity $activity)
+    {
+        $current_year = date('Y');
+        $formatted_end_date = format_date($activity->end_date, 'd MMMM Y HH:mm');
+        $is_same_day = format_date($activity->start_date, 'Y-m-d') == format_date($activity->end_date, 'Y-m-d');
+        if ($activity->end_date->format('Y') == $current_year) {
+            $formatted_end_date = format_date($activity->end_date, 'd MMMM HH:mm');
+        }
+        if ($is_same_day) {
+            $formatted_end_date = format_date($activity->end_date, 'H:mm');
+        }
+        ?>
+        <?= format_date($activity->start_date, $activity->end_date->format('Y') == $current_year ? 'd MMMM HH:mm' : 'd MMMM Y HH:mm') ?>
+        -
+        <?= $formatted_end_date;
+    }
 }
 
 class EventInfoDto

@@ -13,7 +13,8 @@ header > .row > .col-sm-6 {
     display: grid;
     grid:
       "icon name name"
-      "icon date place" / auto auto 1fr;
+      "icon date date"
+      "icon place place" / auto auto 1fr;
     border-bottom: var(--pico-border-width) solid var(--pico-table-border-color);
   }
 
