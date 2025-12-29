@@ -118,18 +118,6 @@ page("Inscription - " . $event->name)->css("event_register.css");
 
         <div class="<?= getToggleClass("eventForm", $event_present->value) ?>">
 
-            <fieldset class="row">
-                <div class="col-sm-6">
-                    <?= $transport->render() ?>
-                </div>
-                <div class="col-sm-6">
-                    <?= $accomodation->render() ?>
-                </div>
-            </fieldset>
-            <fieldset>
-                <?= $event_comment->render() ?>
-            </fieldset>
-
             <?php if (count($event->activities)): ?>
                 <h4>Activités : </h4>
                 <table role="grid">
@@ -172,7 +160,22 @@ page("Inscription - " . $event->name)->css("event_register.css");
                         </tr>
                     <?php endforeach ?>
                 </table>
+                <hr>
+
             <?php endif ?>
+
+            <fieldset class="row">
+                <div class="col-sm-6">
+                    <?= $transport->render() ?>
+                </div>
+                <div class="col-sm-6">
+                    <?= $accomodation->render() ?>
+                </div>
+            </fieldset>
+            <fieldset>
+                <?= $event_comment->render() ?>
+            </fieldset>
+
         </div>
         <div id="conditionalText">
             <p>Inscris-toi pour une vraie partie de plaisir !</p>
