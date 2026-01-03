@@ -71,7 +71,10 @@ class Activity
     public ActivityType $type = ActivityType::RACE;
 
     #[Column]
-    public DateTime $date;
+    public DateTime $start_date;
+
+    #[Column]
+    public DateTime $end_date;
 
     #[Column]
     public DateTime|null $deadline = null;
@@ -107,10 +110,11 @@ class Activity
         $this->categories = new ArrayCollection();
     }
 
-    function set(string $name, string $date, string $location_label = "", string $location_url = "", string $description = "")
+    function set(string $name, string $start_date, string $end_date, string $location_label = "", string $location_url = "", string $description = "")
     {
         $this->name = $name;
-        $this->date = date_create($date);
+        $this->start_date = date_create($start_date);
+        $this->end_date = date_create($end_date);
         $this->location_label = $location_label;
         $this->location_url = $location_url;
         $this->description = $description;
