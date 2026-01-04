@@ -110,9 +110,19 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
         Toast::success("Enregistré");
         redirect($return_link);
     }
+
+    $action = actions();
+
+    if ($event_id) {
+        $action->back("/evenements/$event_id", "Annuler", "fas fa-xmark");
+    } else {
+        $action->back("/evenements/nouveau/choix", "Retour");
+    }
+
+    $action->submit(($activity_id || $event_id) ? "Modifier" : "Créer");
     ?>
     <form method="post" hx-post=<?= $post_link ?>>
-        <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", " fas fa-xmark")->submit(($activity_id || $event?->type == EventType::Simple) ? "Modifier" : "Créer") ?>
+        <?= $action ?>
         <article class="row">
             <?= $v->render_validation() ?>
             <?= $name->render() ?>

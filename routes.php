@@ -70,6 +70,7 @@ Router::add('/cal/view', __DIR__ . '/app/pages/events/event_list/event_cal_day.p
 Router::add('/calendrier/club.ics', __DIR__ . '/app/pages/calendar/public_feed.php');
 Router::add('/calendrier/abonnement', __DIR__ . '/app/pages/calendar/subscription_link.php');
 Router::add('/evenements/passes', __DIR__ . '/app/pages/events/event_list/past_events.php');
+Router::add('/evenements/nouveau/choix', __DIR__ . '/app/pages/events/edit/event_edit_choice.php');
 Router::add('/evenements/nouveau', __DIR__ . '/app/pages/events/edit/event_edit.php');
 Router::add('/evenements/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
 Router::add('/evenements/$event_id/modifier', __DIR__ . '/app/pages/events/edit/event_edit.php');

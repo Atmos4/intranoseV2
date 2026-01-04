@@ -48,9 +48,19 @@ if ($v->valid()) {
     redirect("/evenements/$event->id");
 }
 
+$action = actions();
+
+if ($event_id) {
+    $action->back("/evenements/$event_id", "Annuler", "fas fa-xmark");
+} else {
+    $action->back("/evenements/nouveau/choix", "Retour");
+}
+
+$action->submit($event_id ? "Modifier" : "Créer");
+
 ?>
 <form method="post" hx-post="/evenements/<?= $event_id ?>/event_form">
-    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", "fas fa-xmark")->submit($event_id ? "Modifier" : "Créer") ?>
+    <?= $action ?>
     <article class="row">
         <?= $v->render_validation() ?>
         <?= $event_name->render() ?>
