@@ -129,7 +129,7 @@ page("Inscription - " . $event->name)->css("event_register.css");
                                     <?= $activity->name ?>
                                 </b></td>
                             <td class="activity-date">
-                                <?= format_date($activity->date) ?>
+                                <?= EventService::formatActivitiesDate($activity) ?>
                             </td>
                             <td class="activity-place">
                                 <?php if ($activity->location_url): ?>

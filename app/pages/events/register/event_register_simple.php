@@ -82,7 +82,13 @@ page("Inscription - " . $event->name)->css("event_register.css");
                 <div class="col-sm-6">
                     <?php include app_path() . "/components/start_icon.php" ?>
                     <span>
-                        <?= "Départ - " . format_date($event->start_date) ?>
+                        <?= "Début - " . format_date($event->start_date) ?>
+                    </span>
+                </div>
+                <div class="col-sm-6">
+                    <?php include app_path() . "/components/finish_icon.php" ?>
+                    <span>
+                        <?= "Fin - " . format_date($event->end_date) ?>
                     </span>
                 </div>
                 <div>
