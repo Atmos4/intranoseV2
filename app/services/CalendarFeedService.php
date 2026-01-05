@@ -11,6 +11,7 @@ use Eluceo\iCal\Domain\ValueObject\Alarm;
 use Eluceo\iCal\Domain\ValueObject\Alarm\DisplayAction;
 use Eluceo\iCal\Domain\ValueObject\Alarm\AbsoluteDateTimeTrigger;
 use Eluceo\iCal\Presentation\Factory\CalendarFactory;
+use \Eluceo\iCal\Domain\ValueObject\Location;
 
 class CalendarFeedService
 {
@@ -73,11 +74,11 @@ class CalendarFeedService
         $description = self::formatDescription($event, $eventUrl);
         $iCalEvent->setDescription($description);
 
-        // Set time span (all-day events)
+        // Set time span (event with hours)
         $occurrence = new TimeSpan(
-            new ICalDateTime($event->start_date, true), // true = all-day
+            new ICalDateTime($event->start_date, true),
             new ICalDateTime(
-                (clone $event->end_date)->modify('+1 day'), // End date is exclusive in iCal
+                $event->end_date,
                 true
             )
         );
@@ -91,7 +92,7 @@ class CalendarFeedService
             $firstActivity = $event->activities[0];
             if ($firstActivity->location_label) {
                 $iCalEvent->setLocation(
-                    new \Eluceo\iCal\Domain\ValueObject\Location($firstActivity->location_label)
+                    new Location($firstActivity->location_label)
                 );
             }
         }
