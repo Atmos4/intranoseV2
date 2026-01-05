@@ -27,10 +27,10 @@ if ($event_id) {
 
 $v = new Validator($event_mapping ?? []);
 $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
-$start_date = $v->date_time("start_date")->label("Date de départ")->required();
+$start_date = $v->date_time("start_date")->label("Date de début")->required();
 $end_date = $v->date_time("end_date")
-    ->label("Date de retour")->required()
-    ->min($start_date->value, "Doit être après le départ");
+    ->label("Date de fin")->required()
+    ->min($start_date->value, "Doit être après le début");
 $limit_date = $v->date_time("limit_date")
     ->label("Deadline")->required()
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
@@ -48,9 +48,19 @@ if ($v->valid()) {
     redirect("/evenements/$event->id");
 }
 
+$action = actions();
+
+if ($event_id) {
+    $action->back("/evenements/$event_id", "Annuler", "fas fa-xmark");
+} else {
+    $action->back("/evenements/nouveau/choix", "Retour");
+}
+
+$action->submit($event_id ? "Modifier" : "Créer");
+
 ?>
 <form method="post" hx-post="/evenements/<?= $event_id ?>/event_form">
-    <?= actions()?->back("/evenements" . ($event_id ? "/$event_id" : ""), "Annuler", "fas fa-xmark")->submit($event_id ? "Modifier" : "Créer") ?>
+    <?= $action ?>
     <article class="row">
         <?= $v->render_validation() ?>
         <?= $event_name->render() ?>

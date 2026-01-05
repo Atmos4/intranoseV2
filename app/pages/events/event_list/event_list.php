@@ -56,7 +56,7 @@ page("Événements")->css("event_list.css")
 </div>
 
 <?= actions($can_edit)->link(
-    "/evenements/nouveau",
+    "/evenements/nouveau/choix",
     "Ajouter un événement",
     "fas fa-plus",
     ["data-intro" => 'Créez un événement']
