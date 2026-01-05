@@ -6,7 +6,7 @@ $is_simple = get_query_param("type", false, false) == "simple";
 
 $event = $event_id ? em()->find(Event::class, $event_id) : null;
 
-$is_simple ??= $event?->type == EventType::Simple;
+$is_simple = $is_simple ?: $event?->type == EventType::Simple;
 
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement " . ($is_simple ? "mono-activité" : "multi-activité"))->enableHelp();
 ?>

@@ -83,6 +83,7 @@ Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edi
 Router::add('/evenements/$event_id/messages', __DIR__ . '/app/pages/events/messages/event_message_view.php');
 Router::add('/evenements/$event_id/message/nouveau', __DIR__ . '/app/pages/events/messages/event_message_edit.php');
 Router::add('/evenements/$event_id/rappel', __DIR__ . '/app/pages/events/messages/event_reminder_edit.php');
+Router::add('/evenements/$event_id/type', __DIR__ . '/app/pages/events/edit/event_simple_change_confirm.php');
 
 //Vehicles
 Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');

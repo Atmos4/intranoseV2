@@ -114,7 +114,7 @@ function RenderTimeline(Event $event, bool $isPresent)
         <li class="<?= $start_class ?>">
             <hr>
             <div class="timeline-start">
-                Départ
+                Début
             </div>
             <div class="timeline-middle lg:rotate">
                 <?php include app_path() . "/components/start_icon.php" ?>
@@ -127,7 +127,7 @@ function RenderTimeline(Event $event, bool $isPresent)
         <li class="<?= $end_class ?>">
             <hr>
             <div class="timeline-start">
-                Retour
+                Fin
             </div>
             <div class="timeline-middle">
                 <?php include app_path() . "/components/finish_icon.php" ?>

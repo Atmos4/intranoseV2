@@ -170,6 +170,11 @@ return function ($event_id = null, $activity_id = null, bool $is_simple = false,
             </div>
         </article>
     </form>
+    <?php if ($event_id): ?>
+        <a href="/evenements/<?= $event_id ?>/type" type="button" class="secondary">Changer de type d'événement
+            <sl-tooltip content="Vous pouvez passer à un événement de complexe pour avoir plusieurs activités"><i
+                    class="fas fa-circle-info"></i></sl-tooltip></a>
+    <?php endif ?>
     <script>
         function addCategory() {
             const categoriesDiv = document.getElementById("categories");

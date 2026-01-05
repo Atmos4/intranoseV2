@@ -27,10 +27,10 @@ if ($event_id) {
 
 $v = new Validator($event_mapping ?? []);
 $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
-$start_date = $v->date_time("start_date")->label("Date de départ")->required();
+$start_date = $v->date_time("start_date")->label("Date de début")->required();
 $end_date = $v->date_time("end_date")
-    ->label("Date de retour")->required()
-    ->min($start_date->value, "Doit être après le départ");
+    ->label("Date de fin")->required()
+    ->min($start_date->value, "Doit être après le début");
 $limit_date = $v->date_time("limit_date")
     ->label("Deadline")->required()
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
