@@ -61,14 +61,16 @@ class SeedingService
         $activity_relay->event = $event;
         $activity_relay->deadline = $event->deadline;
         $activity_relay->name = "Relais";
-        $activity_relay->date = date_create()->add(new DateInterval("P10D"));
+        $activity_relay->start_date = date_create()->add(new DateInterval("P10D"));
+        $activity_relay->end_date = date_create()->add(new DateInterval("P10D"));
 
         // LD
         $activity_ld = new Activity();
         $activity_ld->event = $event;
         $activity_ld->deadline = $event->deadline;
         $activity_ld->name = "LD";
-        $activity_ld->date = date_create()->add(new DateInterval("P11D"));
+        $activity_ld->start_date = date_create()->add(new DateInterval("P10D"));
+        $activity_ld->end_date = date_create()->add(new DateInterval("P10D"));
 
         $em->persist($event);
         $em->persist($activity_relay);
