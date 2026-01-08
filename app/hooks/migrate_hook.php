@@ -54,10 +54,13 @@ foreach ($clubs as $c) {
 }
 
 // Generate proxies
-if (!SeedingService::generateProxies($saved_em))
+if (env("DOCTRINE_DISABLE_PROXIES")) {
+    echo "Proxy generation is disabled, skipping...";
+} elseif (!SeedingService::generateProxies($saved_em)) {
     echo "Could not generate proxies{$br}";
-else
+} else {
     echo "Proxies generated{$br}";
+}
 
 // --- one off migrations
 if (env("SELECTED_CLUB")) {

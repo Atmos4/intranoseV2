@@ -82,7 +82,7 @@ class DB extends SingletonDependency
         }
 
 
-        if ($devMode && !env("FORCE_USE_PROXIES")) {
+        if (($devMode && !env("DOCTRINE_FORCE_USE_PROXIES")) || !!env("DOCTRINE_DISABLE_PROXIES")) {
             $config->setAutoGenerateProxyClasses(true);
         } else {
             $config->setAutoGenerateProxyClasses(false);
