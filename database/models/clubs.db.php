@@ -86,4 +86,26 @@ enum ThemeColor: string
             return $carry;
         }, []);
     }
+
+    function translate(): string
+    {
+        return match ($this) {
+            self::fuchsia => "Fuchsia",
+            self::green => "Vert",
+            self::grey => "Gris",
+            self::indigo => "Indigo",
+            self::jade => "Jade",
+            self::lime => "Citron vert",
+            self::orange => "Orange",
+            self::pink => "Rose",
+            self::pumpkin => "Citrouille",
+            self::purple => "Violet",
+            self::red => "Rouge",
+            self::sand => "Sable",
+            self::slate => "Ardoise",
+            self::violet => "Violet",
+            self::yellow => "Jaune",
+            self::zinc => "Zinc",
+        };
+    }
 }
