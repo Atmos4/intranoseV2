@@ -2,8 +2,8 @@ name: Prod release - Intranose
 
 on:
   push:
-    branches:
-      - prod
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
