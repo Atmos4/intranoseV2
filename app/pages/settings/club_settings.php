@@ -10,8 +10,12 @@ $theme_form_values = [
 
 /* THEME */
 
+$color_options = [];
+foreach (ThemeColor::cases() as $color) {
+    $color_options[$color->value] = $color->translate();
+}
 $v_theme = new Validator($theme_form_values, action: 'theme_form');
-$theme_color = $v_theme->select('theme_color')->options(array_column(ThemeColor::cases(), 'value', 'name'))->label('Couleur du theme')->help("Changez la couleur de thème de votre club ici !");
+$theme_color = $v_theme->select('theme_color')->options($color_options)->label('Couleur du theme')->help("Changez la couleur de thème de votre club ici !");
 
 
 if ($v_theme->valid()) {
@@ -27,7 +31,7 @@ $club_features = FeatureService::listClub(service: $s);
 $v_features = new Validator(action: "features");
 $feature_options = [];
 foreach ($club_features as $f) {
-    $feature_options[$f->featureName] = $f->featureName;
+    $feature_options[$f->featureName] = Feature::from($f->featureName)->translate();
 }
 $features = $v_features->select("add_new")->options($feature_options)->label("Nouvelle fonctionnalité")->required();
 
@@ -67,7 +71,7 @@ page("Paramètres du club")->enableHelp();
         <?php else: ?>
             <?php foreach (array_filter($club_features, fn($f) => $f->enabled) as $club_feature): ?>
                 <li style="display:flex;align-items:center;gap:1rem;padding: 0.5rem">
-                    <?= $club_feature->featureName ?>
+                    <?= Feature::from($club_feature->featureName)->translate() ?>
                     <form method="post">
                         <?= $v_removeFeature ?>
                         <input type="hidden" name="remove_name" value="<?= $club_feature->featureName ?>">

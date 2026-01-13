@@ -56,4 +56,14 @@ enum Feature: string
     {
         return has_feature($this);
     }
+
+    function translate()
+    {
+        return match ($this) {
+            Feature::Messages => "Messagerie",
+            Feature::Carpooling => "Covoiturage",
+            Feature::JootForm => "JotForm",
+            Feature::Calendar => "Calendrier",
+        };
+    }
 }
