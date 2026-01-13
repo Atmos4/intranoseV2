@@ -2,9 +2,8 @@ name: Prod release - Linklub
 
 on:
   push:
-    branches:
-      - prod
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 jobs:
   deploy-ftp:
