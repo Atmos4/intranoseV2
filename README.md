@@ -17,3 +17,8 @@ The entire website is built with PicoCSS's philosophy:
 5. `composer dev` - starts the local dev server
 
 That's it. Optionally you can tweak some things in a `.env` file. Check out `/engine/load_env.php` to know what you can use.
+
+# Release process
+
+- create a tag. Respect semantic versioning (major.minor.patch), e.g. v5.4.3
+- push tag, release is automatic.
