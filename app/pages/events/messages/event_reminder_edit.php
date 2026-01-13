@@ -14,7 +14,7 @@ L'équipe d'organisation.
 EOL;
 
 $input = $v->textarea("new_message")->placeholder("Message...")->attributes(["rows" => 10])->autocomplete("off");
-$input->value = $message_text;
+$input->value = $input->value ?: $message_text;
 $recipient_type = $v->select("recipient_type")->options(RecipientType::options($event->groups->isEmpty()))->label("Destinataires");
 
 if ($v->valid()) {
