@@ -28,13 +28,13 @@ return function (bool $messages, bool $help = false, User $main_user = null) { ?
             <li>
                 <sl-dropdown class="dropdown-nav" distance="10">
                     <button slot="trigger" class="outline <?= getMenuClass("/mon-profil") ?>">
-                        <?= IconText("fa-user", "Profil") ?>
+                        <?= IconText("fa-cog", "Paramètres") ?>
                     </button>
                     <aside>
                         <nav>
                             <ul>
                                 <li><a class="contrast" href="/mon-profil">
-                                        <?= IconText("fa-cog", "Paramètres") ?>
+                                        <?= IconText("fa-user", "Mon profil") ?>
                                     </a></li>
                                 <?php if ($main_user?->family_leader): ?>
                                     <li><button class="outline contrast"
