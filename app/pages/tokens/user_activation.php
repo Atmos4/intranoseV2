@@ -24,6 +24,7 @@ if ($v->valid()) {
     $user->gender = Gender::from($gender->value);
     $user->phone = $phone->value;
     $user->status = UserStatus::ACTIVE;
+    $user->last_connection = date_create();
     em()->persist($user);
     em()->remove($token);
     em()->flush();
@@ -33,7 +34,7 @@ if ($v->valid()) {
     $_SESSION['user_id'] = $user->id;
     $_SESSION['user_permission'] = $user->permission;
 
-    redirect("/");
+    redirect("/evenements");
 }
 
 ?>

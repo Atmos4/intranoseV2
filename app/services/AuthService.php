@@ -51,9 +51,13 @@ class AuthService extends FactoryDependency
                 if (password_verify($password, $user->password)) {
                     logger()->info("Login successful for user {login}", ["login" => $user->login]);
                     $this->loginUserSession($user);
+                    $user->last_connection = date_create();
                     if ($rememberMe) {
                         $this->createRememberMeToken($user);
                     }
+
+                    $this->em->flush();
+
                     if (isset($_SESSION["deep_url"])) {
                         redirect($_SESSION["deep_url"]);
                         unset($_SESSION["deep_url"]);
@@ -111,7 +115,6 @@ class AuthService extends FactoryDependency
         $token = new AccessToken($user, AccessTokenType::REMEMBER_ME, new DateInterval('P1M')); // 1month
         $validator = $token->createHashedValidator();
         $this->em->persist($token);
-        $this->em->flush();
 
         setcookie(
             self::REMEMBERME_COOKIE,
@@ -154,6 +157,10 @@ class AuthService extends FactoryDependency
         // At this point, the user has been verified and can be logged in!
         logger()->info("User {userId} logged in with long-lived session token", ["userId" => $token->user->id]);
         $this->loginUserSession($token->user);
+
+        $token->user->last_connection = date_create();
+        $this->em->flush();
+
         return true;
     }
 
