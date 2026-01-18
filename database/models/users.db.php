@@ -38,6 +38,9 @@ class User
     #[Column]
     public string $password = "";
 
+    #[Column(nullable: true)]
+    public ?DateTime $last_connection;
+
     #[Column]
     public Permission $permission = Permission::USER;
 

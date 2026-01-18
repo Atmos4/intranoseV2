@@ -50,6 +50,12 @@ page("$user->first_name $user->last_name - Debug") ?>
                 Status -
                 <?= $user->status->value ?>
             </li>
+            <li>
+                Last connection -
+                <?= $user->last_connection 
+                  ? date_format($user->last_connection, "Y-m-d H:i:s")
+                  : "not set" ?>
+            </li>
         </ul>
     </table>
 </section>
