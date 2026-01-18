@@ -34,7 +34,7 @@ class GroupService
                 ->select('g.id, g.name')
                 ->addSelect("0 as has_group")
                 ->from(UserGroup::class, 'g')
-                ->orderBy('g.name', 'ASC')
+                ->orderBy('LOWER(g.name)', 'ASC')
                 ->getQuery()
                 ->getArrayResult();
         }
@@ -46,7 +46,7 @@ class GroupService
             ->leftJoin('g.events', 'eg', 'WITH', 'eg = :event_id')
             ->setParameter('event_id', $event)
             ->groupBy('g.name')
-            ->orderBy('g.name', 'ASC')
+            ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -84,6 +84,7 @@ class GroupService
             ->leftJoin('g.members', 'm', 'WITH', 'm = :user')
             ->setParameter('user', $user)
             ->groupBy('g.id, g.name')
+            ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }
@@ -136,6 +137,7 @@ class GroupService
             ->from(UserGroup::class, 'g')
             ->where('g.id IN (:ids)')
             ->setParameter('ids', $list)
+            ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -145,6 +147,7 @@ class GroupService
         return em()->createQueryBuilder()
             ->select('g.id, g.name')
             ->from(UserGroup::class, 'g')
+            ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -190,7 +193,7 @@ class GroupService
         return em()->createQueryBuilder()
             ->select('g')
             ->from(UserGroup::class, 'g')
-            ->orderBy('g.name', 'ASC')
+            ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
             ->getResult();
     }
