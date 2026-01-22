@@ -14,9 +14,14 @@ if ($group_id) {
     $g = new UserGroup();
 }
 
+$color_options = [];
+foreach (ThemeColor::cases() as $color) {
+    $color_options[$color->value] = $color->translate();
+}
+
 $v = new Validator($group_form_values ?? [], action: "create_group");
 $name = $v->text("name")->label("Nom")->placeholder()->required();
-$theme_color = $v->select('color')->options(array_column(ThemeColor::cases(), 'value', 'name'))->label('Couleur du groupe');
+$theme_color = $v->select('color')->options($color_options, )->label('Couleur du groupe');
 if ($v->valid()) {
     $g->name = $name->value;
     $g->color = ThemeColor::from($theme_color->value);

@@ -1,0 +1,8 @@
+sl-tab-group::part(body) {
+  overflow: hidden;
+}
+
+ul[role="listbox"] {
+  max-height: 300px;
+  overflow-y: auto;
+}

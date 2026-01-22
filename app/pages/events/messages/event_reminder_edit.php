@@ -15,11 +15,11 @@ EOL;
 
 $input = $v->textarea("new_message")->placeholder("Message...")->attributes(["rows" => 10])->autocomplete("off");
 $input->value = $input->value ?: $message_text;
-$recipient_type = $v->select("recipient_type")->options(RecipientType::options($event->groups->isEmpty()))->label("Destinataires");
+$recipient_type = $v->select("recipient_type")->options(EventRecipientType::options($event->groups->isEmpty()))->label("Destinataires");
 
 if ($v->valid()) {
     $message = $event->conversation->sendMessage($me_user, $input->value);
-    MailerFactory::createEventMessageEmail($event, $message, RecipientType::from($recipient_type->value), "RAPPEL d'inscription");
+    MailerFactory::createEventMessageEmail($event, $message, EventRecipientType::from($recipient_type->value), "RAPPEL d'inscription");
     Toast::success("Rappel envoyé 💭");
     redirect("/evenements/$event->id");
 }

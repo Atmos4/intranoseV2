@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 
@@ -28,4 +29,8 @@ class UserGroup
 
     #[Column]
     public ThemeColor $color;
+
+    #[OneToOne(targetEntity: Conversation::class, cascade: ["persist", "remove"])]
+    public Conversation|null $conversation = null;
+
 }
