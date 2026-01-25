@@ -11,6 +11,7 @@ if (!check_auth(Access::$ADD_EVENTS) && (!$event->open || $event->deadline < dat
 }
 
 $event_entry = $event->entries[0] ?? null;
+$has_response = $event_entry !== null;
 $form_values = [];
 
 if ($event_entry) {
@@ -34,7 +35,7 @@ foreach ($event->activities as $index => $activity) {
 
 
 $v = new Validator($form_values ?? []);
-$event_present = $v->switch("event_present")->set_labels("Je participe", "Pas inscrit");
+$event_present = $v->switch("event_present")->set_labels("Je participe", "Je ne participe pas");
 $transport = $v->switch("event_transport")->label("Transport");
 $accomodation = $v->switch("event_accomodation")->label("Hébergement");
 $event_comment = $v->textarea("event_comment")->label("Remarques");
@@ -109,11 +110,23 @@ page("Inscription - " . $event->name)->css("event_register.css");
                 </div>
             </div>
 
-            <fieldset>
-                <b>
-                    <?= $event_present->attributes(["onchange" => "toggleDisplay(this,'.eventForm')"])->render() ?>
-                </b>
-            </fieldset>
+            <input type="hidden" name="event_present" value="<?= $event_present->value ? '1' : '0' ?>"
+                id="event_present_hidden">
+            <div class="button-group-row">
+                <button type="button" onclick="setParticipation(true)"
+                    aria-pressed="<?= $has_response && $event_present->value ? 'true' : 'false' ?>" id="btn_participe"
+                    class="<?= ($has_response && !$event_present->value) || !$has_response ? 'outline' : '' ?>">
+                    <i class="fas fa-check"></i>
+                    Je participe
+                </button>
+                <button type="button" onclick="setParticipation(false)"
+                    aria-pressed="<?= $has_response && !$event_present->value ? 'true' : 'false' ?>"
+                    id="btn_no_participe"
+                    class="<?= ($has_response && $event_present->value) || !$has_response ? 'outline' : '' ?>">
+                    <i class="fas fa-xmark"></i>
+                    Je ne participe pas
+                </button>
+            </div>
         </header>
 
         <div class="<?= getToggleClass("eventForm", $event_present->value) ?>">
@@ -189,13 +202,28 @@ page("Inscription - " . $event->name)->css("event_register.css");
 <script>
     function toggleDisplay(toggle, target) {
         const elements = document.querySelectorAll(target);
+        const show = toggle.value === '1';
         for (element of elements) {
-            if (toggle.checked) {
+            if (show) {
                 element.classList.remove("hidden");
             } else {
                 element.classList.add("hidden");
             }
         }
+    }
 
+    function setParticipation(participate) {
+        document.getElementById('event_present_hidden').value = participate ? '1' : '0';
+        toggleDisplay({ value: participate ? '1' : '0' }, '.eventForm');
+        updateAriaPressed(participate);
+    }
+
+    function updateAriaPressed(participate) {
+        const btnYes = document.getElementById('btn_participe');
+        const btnNo = document.getElementById('btn_no_participe');
+        btnYes.setAttribute('aria-pressed', participate ? 'true' : 'false');
+        btnNo.setAttribute('aria-pressed', !participate ? 'true' : 'false');
+        btnYes.classList.toggle('outline', !participate);
+        btnNo.classList.toggle('outline', participate);
     }
 </script>

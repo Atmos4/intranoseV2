@@ -35,6 +35,19 @@ header > .row > .col-sm-6 {
     grid-area: icon;
     align-self: center;
   }
+
+  .button-group-row {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--pico-spacing);
+  }
+
+  .button-group-row button {
+    width: 100%;
+    max-width: 300px;
+    min-width: unset;
+    margin-bottom: 0;
+  }
 }
 
 .file-button {
@@ -63,4 +76,17 @@ details summary:focus:not([role="button"]) {
 
 ul {
   margin-bottom: 0.5rem;
+}
+
+.button-group-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.button-group-row button {
+  font-size: 0.9rem;
+  padding: calc(var(--pico-form-element-spacing-vertical) * 0.8)
+    calc(var(--pico-form-element-spacing-horizontal) * 0.8);
+  min-width: 150px;
 }
