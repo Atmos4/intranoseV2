@@ -8,7 +8,7 @@ class MailerFactory
         return Mailer::create()->createEmail($address, $template['subject'], $template['content']);
     }
 
-    public static function createEventPublicationEmail(Event $event, RecipientType $recipients_type = RecipientType::EVENT_GROUPS): Mailer
+    public static function createEventPublicationEmail(Event $event, EventRecipientType $recipients_type = EventRecipientType::EVENT_GROUPS): Mailer
     {
         $template = EmailTemplates::eventPublicationEmail($event);
         $mailer = Mailer::create();
@@ -21,11 +21,26 @@ class MailerFactory
         return $mailer;
     }
 
-    public static function createEventMessageEmail(Event $event, Message $message, RecipientType $recipients = RecipientType::REGISTERED_USERS, $subject = "Nouveau message sur l'évenement"): Mailer
+    public static function createEventMessageEmail(Event $event, Message $message, EventRecipientType $recipients = EventRecipientType::REGISTERED_USERS, $subject = "Nouveau message sur l'évenement"): Mailer
     {
         $template = EmailTemplates::eventMessageEmail($event, $message, $subject);
         $mailer = Mailer::create();
         $emails = RecipientResolver::getEventEmails($event, $recipients);
+
+        logger()->debug("Emails : " . print_r($emails, true));
+
+        $users = self::formatEmailsForBulk($emails);
+        if (!empty($users)) {
+            $mailer->createBulkEmails($users, $template['subject'], $template['content'])->send();
+        }
+        return $mailer;
+    }
+
+    public static function createGroupMessageEmail(UserGroup $group, Message $message, EventRecipientType $recipients = EventRecipientType::REGISTERED_USERS, $subject = "Nouveau message sur l'évenement"): Mailer
+    {
+        $template = EmailTemplates::groupMessageEmail($group, $message, $subject);
+        $mailer = Mailer::create();
+        $emails = RecipientResolver::getGroupEmails($group);
 
         logger()->debug("Emails : " . print_r($emails, true));
 
@@ -44,6 +59,7 @@ class MailerFactory
         }
         return $users;
     }
+
 }
 
 class EmailTemplates
@@ -51,39 +67,41 @@ class EmailTemplates
     public static function activationEmail(string $token): array
     {
         $base_url = env("BASE_URL");
-        $app_name = config("name", "Intranose");
 
         return [
-            'subject' => "Activation du compte " . $app_name,
+            'subject' => "Activation du compte " . self::getAppName(),
             'content' => "Voici le lien pour activer ton compte: $base_url/activation?token=$token"
         ];
     }
 
-    private static function createPrefix($app_name): string
+    private static function getAppName(): string
     {
-        $name = env("STAGING") ? "[STAGING $app_name] " : "[$app_name]";
+        return config("name", "Intranose");
+    }
+
+    private static function createPrefix(): string
+    {
+        $name = env("STAGING") ? "[STAGING " . self::getAppName() . "] " : "[" . self::getAppName() . "]";
         $prefix = $name . " - ";
         return $prefix;
     }
 
     public static function eventPublicationEmail(Event $event): array
     {
-        $app_name = config("name", "Intranose");
-        $prefix = self::createPrefix($app_name);
+        $prefix = self::createPrefix();
         $footer = self::eventEmailFooter($event);
 
         return [
             'subject' => $prefix . "$event->name",
-            'content' => "<h3>Un nouvel événement a été publié sur $app_name !</h3><br>" . $footer
+            'content' => "<h3>Un nouvel événement a été publié sur " . self::$app_name . "!</h3><br>" . $footer
         ];
     }
 
     public static function eventMessageEmail(Event $event, Message $message, string $subject): array
     {
-        $app_name = config("name", "Intranose");
-        $prefix = self::createPrefix($app_name);
+        $prefix = self::createPrefix();
 
-        $content = self::buildMessageEmailHtml($event, $message, $subject);
+        $content = self::buildEventMessageEmailHtml($event, $message, $subject);
 
         return [
             'subject' => $prefix . "$event->name : $subject",
@@ -91,11 +109,36 @@ class EmailTemplates
         ];
     }
 
-    private static function buildMessageEmailHtml(Event $event, Message $message, string $subject): string
+    public static function groupMessageEmail(UserGroup $group, Message $message, string $subject): array
+    {
+        $prefix = self::createPrefix();
+        $content = self::buildGroupMessageEmailHtml($group, $message, $subject);
+
+        return [
+            'subject' => $prefix . "$group->name : $subject",
+            'content' => $content
+        ];
+    }
+
+    private static function buildGroupMessageEmailHtml(UserGroup $group, Message $message, string $subject): string
+    {
+        $footer = self::groupEmailFooter($group);
+        $group_name = htmlspecialchars($group->name);
+        $title = "Groupe \"" . $group_name . "\" : " . $subject;
+        return self::buildMessageEmailHtml($title, $message, $footer);
+    }
+
+    private static function buildEventMessageEmailHtml(Event $event, Message $message, string $subject)
     {
         $footer = self::eventEmailFooter($event);
-        $message_html = (new Parsedown)->text($message->content);
         $event_name = htmlspecialchars($event->name);
+        $title = $event_name . " : " . $subject;
+        return self::buildMessageEmailHtml($title, $message, $footer);
+    }
+
+    private static function buildMessageEmailHtml(string $title, Message $message, string $footer): string
+    {
+        $message_html = (new Parsedown)->text($message->content);
         $sender_name = htmlspecialchars($message->sender->first_name . ' ' . $message->sender->last_name);
         $sent_at = $message->sentAt->format("d/m H:i");
 
@@ -116,7 +159,7 @@ class EmailTemplates
                         <tr>
                             <td style="padding:20px;text-align:center;background-color:#ffffff;">
                                 <h1 style="margin:0;font-size:22px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.2;">
-                                    $event_name : $subject
+                                    $title
                                 </h1>
                             </td>
                         </tr>
@@ -168,7 +211,34 @@ class EmailTemplates
                     </p>
                     <p style="margin:0;font-size:12px;color:#777777;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
                         A bientôt pour de nouveaux événements !<br>
-                        Linklub<br>
+                        $compagny_name<br>
+                    </p>
+                </td>
+            </tr>
+        </table>
+        EOD;
+    }
+
+    private static function groupEmailFooter(UserGroup $group): string
+    {
+        $base_url = env("BASE_URL");
+        $group_name = htmlspecialchars($group->name);
+        $compagny_name = env("INTRANOSE") ? "Le Nose" : "Linklub";
+
+        return <<<EOD
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#e8e8e8;margin-top:20px;">
+            <tr>
+                <td style="padding:10px;">
+                    <h3 style="margin:0 0 15px 0;font-size:16px;color:#111111;font-family:Arial,Helvetica,sans-serif;line-height:1.3;">Détails du groupe</h3>
+                    <p style="margin:0 0 10px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        <strong>Nom :</strong> $group_name
+                    </p>
+                    <p style="margin:0 0 15px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        <a href="$base_url/groupes/$group->id" style="color:#0066cc;text-decoration:underline;">Voir les informations</a>
+                    </p>
+                    <p style="margin:0;font-size:12px;color:#777777;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        Restez connectés avec votre groupe !<br>
+                        $compagny_name<br>
                     </p>
                 </td>
             </tr>
@@ -177,7 +247,7 @@ class EmailTemplates
     }
 }
 
-enum RecipientType: string
+enum EventRecipientType: string
 {
     case EVENT_GROUPS = 'event_groups';
     case REGISTERED_USERS = 'registered_users';
@@ -206,19 +276,20 @@ enum RecipientType: string
     }
 }
 
+
 class RecipientResolver
 {
-    public static function getEventEmails(Event $event, RecipientType $recipients_type): array
+    public static function getEventEmails(Event $event, EventRecipientType $recipients_type): array
     {
         $users = match ($recipients_type) {
-            RecipientType::EVENT_GROUPS => $event->groups->isEmpty()
+            EventRecipientType::EVENT_GROUPS => $event->groups->isEmpty()
             ? UserService::getActiveUserList()
             : UserService::getGroupMembersForEvent($event),
 
-            RecipientType::REGISTERED_USERS => UserService::getRegisteredUsersForEvent($event),
-            RecipientType::UNREGISTERED_USERS => UserService::getUnregisteredUsersForEvent($event),
-            RecipientType::UNREGISTERED_AND_DECLINED_USERS => UserService::getUnregisteredUsersForEvent($event, true),
-            RecipientType::ALL_USERS => UserService::getActiveUserList(),
+            EventRecipientType::REGISTERED_USERS => UserService::getRegisteredUsersForEvent($event),
+            EventRecipientType::UNREGISTERED_USERS => UserService::getUnregisteredUsersForEvent($event),
+            EventRecipientType::UNREGISTERED_AND_DECLINED_USERS => UserService::getUnregisteredUsersForEvent($event, true),
+            EventRecipientType::ALL_USERS => UserService::getActiveUserList(),
         };
 
         // Convert users to email format and filter out null/empty emails
@@ -229,5 +300,22 @@ class RecipientResolver
             ),
             fn($email) => !empty($email['real_email'])
         ));
+    }
+
+    public static function getGroupEmails(UserGroup $group): array
+    {
+        $members = [];
+        foreach ($group->members as $member) {
+            $members[$member->id] = $member;
+        }
+        $users = array_values($members);
+        return array_values(array_filter(
+            array_map(
+                fn($user) => ["real_email" => $user->real_email],
+                $users
+            ),
+            fn($email) => !empty($email['real_email'])
+        ));
+
     }
 }

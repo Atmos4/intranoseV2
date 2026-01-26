@@ -131,6 +131,8 @@ Router::add('/groupes/nouveau', __DIR__ . '/app/pages/users/groups/group_create.
 Router::add('/groupes/$group_id', __DIR__ . '/app/pages/users/groups/group_view.php');
 Router::add('/groupes/$group_id/supprimer', __DIR__ . '/app/pages/users/groups/group_delete.php');
 Router::add('/groupes/$group_id/retirer/$member_id', __DIR__ . '/app/pages/users/groups/group_delete_user.php');
+Router::add('/groupes/$group_id/messages', __DIR__ . '/app/pages/users/groups/group_message_view.php');
+Router::add('/groupes/$group_id/message/nouveau', __DIR__ . '/app/pages/users/groups/group_message_edit.php');
 
 Router::add('/user-control/$user_id', __DIR__ . '/app/pages/users/take_user_control.php');
 

@@ -1,20 +1,21 @@
 <?php
 $groups = GroupService::listGroups();
-page("Groupes"); ?>
+$colorList = ThemeColor::colorsList();
+page("Groupes")->css("group_list.css"); ?>
 <?= actions()->back("/licencies")->link("/groupes/nouveau", "Nouveau groupe", "fas fa-plus") ?>
 <table>
     <?php foreach ($groups as $group): ?>
-        <details>
-            <summary>
-                <?= $group->name ?>
-            </summary>
-            <div class="buttons-grid">
-                <a role="button" class="outline secondary" href='/groupes/<?= $group->id ?>'>
-                    <i class="fa fa-circle-info"></i>
-                    Détails</a>
+        <article class="group-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" hx-get="/groupes/<?= $group->id ?>"
+            hx-target="body" hx-push-url="true" tabindex=0>
+            <div class="grid">
+                <div class="group-dot" style="background-color:<?= $colorList[$group->color->value] ?>"></div>
+                <div class="title">
+                    <b>
+                        <?= $group->name ?>
+                    </b>
+                </div>
             </div>
-        </details>
-        <hr>
+        </article>
     <?php endforeach;
     if (!$groups): ?>
         <p class="center">Pas encore de groupes 😲</p>
