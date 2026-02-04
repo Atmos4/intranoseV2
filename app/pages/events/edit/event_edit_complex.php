@@ -1,11 +1,11 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
-$event_type = get_query_param("type", false, false);
-$event_id = get_route_param("event_id", strict: false);
 
-if ($event_type && $event_type == "simple") {
-    import(__DIR__ . "/ActivityEditForm.php")($event_id, is_simple: true, post_link: "/evenements" . ($event_id ? "/$event_id" : "") . "/event_form?type=simple");
-    return;
+$event_id = get_route_param("event_id", strict: false);
+$event = $event_id ? em()->find(Event::class, $event_id) : null;
+
+if ($event?->type == EventType::Simple) {
+    force_404("This event is a simple event.");
 }
 
 if ($event_id) {
@@ -58,26 +58,29 @@ if ($event_id) {
 
 $action->submit($event_id ? "Modifier" : "Créer");
 
+page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-activité")->enableHelp();
 ?>
-<form method="post" hx-post="/evenements/<?= $event_id ?>/event_form">
-    <?= $action ?>
-    <article class="row">
-        <?= $v->render_validation() ?>
-        <?= $event_name->render() ?>
-        <div class="col-sm-6 col-lg-4">
-            <?= $start_date->render() ?>
-        </div>
-        <div class="col-sm-6 col-lg-4">
-            <?= $end_date->render() ?>
-        </div>
-        <div class="col-lg-4" data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s'inscrire">
-            <?= $limit_date->render() ?>
-        </div>
-        <div data-intro="Vous pouvez ajouer un lien vers un bulletin en ligne"><?= $bulletin_url->render() ?></div>
-        <div
-            data-intro="Vous pouvez formatter le texte de la description en markdown. N'hésitez pas à aller voir <a href='https://www.markdownguide.org/' target='_blank'>cette ressource</a>">
-            <?= $description->attributes(["rows" => "8"])->render() ?>
-        </div>
-        <?= GroupService::renderEventGroupChoice($event) ?>
-    </article>
-</form>
+<div id="form-div">
+    <form method="post">
+        <?= $action ?>
+        <article class="row">
+            <?= $v->render_validation() ?>
+            <?= $event_name->render() ?>
+            <div class="col-sm-6 col-lg-4">
+                <?= $start_date->render() ?>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <?= $end_date->render() ?>
+            </div>
+            <div class="col-lg-4" data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s'inscrire">
+                <?= $limit_date->render() ?>
+            </div>
+            <div data-intro="Vous pouvez ajouer un lien vers un bulletin en ligne"><?= $bulletin_url->render() ?></div>
+            <div
+                data-intro="Vous pouvez formatter le texte de la description en markdown. N'hésitez pas à aller voir <a href='https://www.markdownguide.org/' target='_blank'>cette ressource</a>">
+                <?= $description->attributes(["rows" => "8"])->render() ?>
+            </div>
+            <?= GroupService::renderEventGroupChoice($event) ?>
+        </article>
+    </form>
+</div>

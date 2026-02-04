@@ -71,9 +71,13 @@ Router::add('/calendrier/club.ics', __DIR__ . '/app/pages/calendar/public_feed.p
 Router::add('/calendrier/abonnement', __DIR__ . '/app/pages/calendar/subscription_link.php');
 Router::add('/evenements/passes', __DIR__ . '/app/pages/events/event_list/past_events.php');
 Router::add('/evenements/nouveau/choix', __DIR__ . '/app/pages/events/edit/event_edit_choice.php');
-Router::add('/evenements/nouveau', __DIR__ . '/app/pages/events/edit/event_edit.php');
+Router::add('/evenements/nouveau/complexe', __DIR__ . '/app/pages/events/edit/event_edit_complex.php');
+Router::add('/evenements/nouveau/simple', __DIR__ . '/app/pages/events/edit/event_edit_simple.php');
 Router::add('/evenements/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
-Router::add('/evenements/$event_id/modifier', __DIR__ . '/app/pages/events/edit/event_edit.php');
+Router::add('/evenements/activity_form/new', __DIR__ . '/app/pages/events/edit/activity_edit_form.php');
+Router::add('/evenements/activity_form/$event_id', __DIR__ . '/app/pages/events/edit/activity_edit_form.php');
+Router::add('/evenements/$event_id/modifier/complexe', __DIR__ . '/app/pages/events/edit/event_edit_complex.php');
+Router::add('/evenements/$event_id/modifier/simple', __DIR__ . '/app/pages/events/edit/event_edit_simple.php');
 Router::add('/evenements/$event_id', __DIR__ . '/app/pages/events/view/event_view.php');
 Router::add('/evenements/$event_id/inscription', __DIR__ . '/app/pages/events/register/event_register_complex.php');
 Router::add('/evenements/$event_id/inscription_simple', __DIR__ . '/app/pages/events/register/event_register_simple.php');
@@ -100,6 +104,7 @@ Router::add('/evenements/$event_id/participants/tabs', __DIR__ . '/app/pages/eve
 Router::add('/evenements/$event_id/activite/$activity_id/modifier', __DIR__ . '/app/pages/events/edit/activity_edit.php');
 Router::add('/evenements/$event_id/activite/nouveau', __DIR__ . '/app/pages/events/edit/activity_edit.php');
 Router::add('/evenements/$event_id/activite/$activity_id', __DIR__ . '/app/pages/events/view/activity_view.php');
+Router::add('/evenements/$event_id/activite/$activity_id/supprimer', __DIR__ . '/app/pages/events/delete/activity_delete.php');
 Router::add('/evenements/$event_id/activite/$activity_id/supprimer', __DIR__ . '/app/pages/events/delete/activity_delete.php');
 
 // Settings
