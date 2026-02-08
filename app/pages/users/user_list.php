@@ -13,6 +13,11 @@ page("Les licenciés")->enableHelp() ?>
                 "fa-users",
             )
             ->link(
+                "/licencies/inactif",
+                "Licenciés inactifs",
+                "fa-user-lock"
+            )
+            ->link(
                 "/licencies/desactive",
                 "Licenciés désactivés",
                 "fa-bed",
@@ -21,7 +26,8 @@ page("Les licenciés")->enableHelp() ?>
                 "/groupes",
                 "Groupes",
                 "fa-user-group"
-            ),
+            )
+        ,
         "Plus",
         ["data-intro" => "Visualisez les familles et les licenciés désactivés ici"]
     ) ?>

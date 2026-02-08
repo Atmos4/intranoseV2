@@ -39,6 +39,13 @@ class UserService
             ->setParameters(['status' => UserStatus::DEACTIVATED])->getResult();
     }
 
+    /** @return User[] */
+    static function getInactiveUserList()
+    {
+        return em()->createQuery("SELECT u FROM User u WHERE u.status = :status ORDER BY u.last_name ASC, u.first_name ASC")
+            ->setParameters(['status' => UserStatus::INACTIVE])->getResult();
+    }
+
     static function countUsersWithSameEmail($email)
     {
         return em()->createQuery("SELECT COUNT(u) FROM User u WHERE u.real_email = :email")
