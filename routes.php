@@ -119,6 +119,7 @@ Router::add('/club_settings', __DIR__ . '/app/pages/settings/club_settings.php')
 Router::add('/licencies', __DIR__ . '/app/pages/users/user_list.php');
 Router::add('/licencies/ajouter', __DIR__ . '/app/pages/users/user_add.php');
 Router::add('/licencies/desactive', __DIR__ . '/app/pages/users/user_list_deactivated.php');
+Router::add('/licencies/inactif', __DIR__ . '/app/pages/users/user_list_inactive.php');
 Router::add('/licencies/$user_id', __DIR__ . '/app/pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', __DIR__ . '/app/pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_delete_confirm.php');
