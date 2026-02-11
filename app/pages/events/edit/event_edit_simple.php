@@ -1,27 +1,15 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
-
 $event_id = get_route_param("event_id", strict: false);
-$activity_id = get_route_param("activity_id", false);
-$event = em()->find(Event::class, $event_id);
+$event = $event_id ? em()->find(Event::class, $event_id) : null;
 
-if ($activity_id) {
-    $activity = em()->find(Activity::class, $activity_id);
-    if (!$activity) {
-        redirect("/evenements/$event_id/activite/nouveau");
-    }
-    if ($activity->event && $activity->event->id != $event_id) {
-        redirect("/evenements/{$activity->event->id}/activite/$activity_id/modifier");
-    }
-}
-
-if ($event->type == EventType::Simple) {
-    return "Pas d'ajout d'activité possible pour un événement simple";
+if ($event && $event->type == EventType::Complex) {
+    force_404("This event is a complex event.");
 }
 
 $form_values = [];
-if ($activity_id) {
-    $activity = em()->find(Activity::class, $activity_id ?? $event->activities[0]);
+if ($event_id) {
+    $activity = $event->activities[0];
     $form_values = [
         "activity_name" => $activity->name,
         "activity_type" => $activity->type->value,
@@ -41,6 +29,7 @@ if ($activity_id) {
         ];
     }
 } else {
+    $event = new Event();
     $activity = new Activity();
 }
 
@@ -60,15 +49,13 @@ foreach ($activity->categories as $index => $category) {
 }
 
 if ($v->valid()) {
-    //right now the deadline is the same as the event - always. Can be changed in the future.
     $activity->set($name->value, $start_date->value, $end_date->value, $location_label->value, $location_url->value, $description->value);
     $activity->type = ActivityType::from($type->value);
-    $activity->deadline = $deadline->value ? date_create($deadline->value) : $event->deadline;
+    $activity->deadline = $deadline->value ? date_create($deadline->value) : date_create($deadline->value);
     foreach ($activity->categories as $index => $category) {
         $category->name = $category_rows[$index]['name']->value;
         $category->removed = !$category_rows[$index]['toggle']->value ?? 0;
-        // TODO change this later if we want to deal with soft delete
-        if ($category->removed /* && !count($category->entries)*/) {
+        if ($category->removed) {
             em()->remove($category);
             $activity->categories->removeElement($category);
         }
@@ -82,22 +69,38 @@ if ($v->valid()) {
             $activity->categories[] = $category;
         }
     }
+    $event->set($name->value, $start_date->value, $end_date->value, $deadline->value, "");
+    $event->type = EventType::Simple;
+    GroupService::processEventGroupChoice($event);
+    $activity->event = $event;
+    em()->persist($event);
     em()->persist($activity);
     em()->flush();
     Toast::success("Enregistré");
-    redirect("/evenements/$event_id");
+    redirect($event_id ? "/evenements/$event_id" : "/evenements");
 }
 
-$action = actions()
-    ->back("/evenements/$event_id", "Annuler", "fas fa-xmark")
-    ->submit(($activity_id || $event_id) ? "Modifier" : "Créer");
+$action = actions();
 
-page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->css("activity_edit.css");
+if ($event_id) {
+    $action->back("/evenements/$event_id", "Annuler", "fas fa-xmark");
+} else {
+    $action->back("/evenements/nouveau/choix", "Retour");
+}
+
+$action->submit($event_id ? "Modifier" : "Créer");
+
+page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activité")->enableHelp();
 ?>
 <form method="post">
     <?= $action ?>
     <?= $v->render_validation() ?>
-    <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ?>" hx-trigger="load"
-        hx-vals='{"form_values" : <?= json_encode($form_values) ?>, "action" : "pass_form_values"}'>
+    <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ? $event_id : "new" ?>" hx-trigger="load"
+        hx-vals='<?= json_encode(["form_values" => $form_values, "is_simple" => true, "action" => "pass_form_values"]) ?>'>
     </div>
 </form>
+<?php if ($event_id): ?>
+    <a href="/evenements/<?= $event_id ?>/type" type="button" class="secondary">Changer de type d'événement
+        <sl-tooltip content="Vous pouvez passer à un événement complexe pour avoir plusieurs activités"><i
+                class="fas fa-circle-info"></i></sl-tooltip></a>
+<?php endif ?>

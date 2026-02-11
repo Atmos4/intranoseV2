@@ -28,7 +28,7 @@ class DateTimeField extends Field
     /** Set lower date limit */
     function min(string|null $date, string $msg = null, bool $as_attr = false): static
     {
-        if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
+        if ($this->should_test() && $date && $this->value && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");
         }
         if ($as_attr && $date) {
