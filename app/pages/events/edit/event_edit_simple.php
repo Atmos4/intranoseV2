@@ -104,3 +104,5 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activ
         <sl-tooltip content="Vous pouvez passer à un événement complexe pour avoir plusieurs activités"><i
                 class="fas fa-circle-info"></i></sl-tooltip></a>
 <?php endif ?>
+
+<script src="/assets/js/shoelace-forms.js"></script>
