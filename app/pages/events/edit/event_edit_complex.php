@@ -231,7 +231,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                             </sl-tab-panel>
                         <?php endforeach;
                     else: ?>
-                        <div style="padding: 2rem; text-align: center; color: var(--sl-color-neutral-500);">
+                        <div id="no-activity-message" style="padding: 2rem; text-align: center;">
                             <p>Aucune activité. Cliquez sur "Ajouter une activité" pour commencer.</p>
                         </div>
                     <?php endif ?>
@@ -248,6 +248,12 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
     var tabsGroup = document.getElementById('activities-tabs');
 
     function addActivity() {
+        // Hide the "no activity" message if it exists
+        const noActivityMessage = document.getElementById('no-activity-message');
+        if (noActivityMessage) {
+            noActivityMessage.style.display = 'none';
+        }
+
         // Create new tab
         const newTab = document.createElement('sl-tab');
         newTab.slot = 'nav';
@@ -324,6 +330,15 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 
             tab.remove();
             panel.remove();
+
+            // Show "no activity" message if no tabs remaining
+            const remainingTabs = tabsGroup.querySelectorAll('sl-tab');
+            if (remainingTabs.length === 0) {
+                const noActivityMessage = document.getElementById('no-activity-message');
+                if (noActivityMessage) {
+                    noActivityMessage.style.display = 'block';
+                }
+            }
         }
     }
 
