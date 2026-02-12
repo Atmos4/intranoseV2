@@ -19,7 +19,9 @@ if ($event_id) {
         "end_date" => date_format($event->end_date, "Y-m-d H:i:s"),
         "limit_date" => date_format($event->deadline, "Y-m-d H:i:s"),
         "bulletin_url" => $event->bulletin_url,
-        "description" => $event->description
+        "description" => $event->description,
+        "is_accomodation" => $event->is_accomodation,
+        "is_transport" => $event->is_transport,
     ];
 } else {
     $event = new Event();
@@ -36,6 +38,8 @@ $limit_date = $v->date_time("limit_date")
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
 $description = $v->textarea("description")->label("Description");
+$is_accomodation = $v->switch("is_accomodation")->label("Hébergement");
+$is_transport = $v->switch("is_transport")->label("Transport");
 
 // Process activities
 $activity_validators = [];
@@ -63,6 +67,8 @@ if ($v->valid() && (!$_POST || all_valid($activity_validators))) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
     $event->type = EventType::Complex;
     $event->description = $description->value;
+    $event->is_accomodation = $is_accomodation->value ?? false;
+    $event->is_transport = $is_transport->value ?? false;
     GroupService::processEventGroupChoice($event);
     em()->persist($event);
 
@@ -148,6 +154,7 @@ $action->submit($event_id ? "Modifier" : "Créer");
 
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-activité")->enableHelp();
 ?>
+<script src="/assets/js/start-intro.js"></script>
 <div id="form-div">
     <form method="post">
         <?= $action ?>
@@ -169,6 +176,12 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                 <?= $description->attributes(["rows" => "8"])->render() ?>
             </div>
             <?= GroupService::renderEventGroupChoice($event) ?>
+            <div data-intro="Activez ou désactivez l'hébergement commun à tout le club sur cet événement...">
+                <?= $is_accomodation->render() ?>
+            </div>
+            <div data-intro="...ainsi que le transport commun.">
+                <?= $is_transport->render() ?>
+            </div>
         </article>
 
         <article class="row">

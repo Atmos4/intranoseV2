@@ -13,12 +13,6 @@ class Club
     #[Column]
     public string $name; // Intranose
 
-    #[Column(nullable: true)]
-    public string|null $google_calendar_id = "";
-
-    #[Column(nullable: true)]
-    public string|null $google_credential_path = "";
-
     #[Column(options: ["default" => "green"])]
     public ThemeColor $themeColor;
     function __construct($name, $slug)
