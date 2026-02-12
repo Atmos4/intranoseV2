@@ -284,3 +284,4 @@ if ($v_password->valid()) {
     <?php endif ?>
 </form>
 <script src="/assets/js/copy-clipboard.js"></script>
+<script src="/assets/js/shoelace-forms.js"></script>
