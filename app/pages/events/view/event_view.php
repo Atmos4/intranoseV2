@@ -55,7 +55,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
 
 <?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
 
-<sl-tab-group>
+<sl-tab-group id="event-tabs">
     <sl-tab slot="nav" panel="information" id="information-tab" <?= $tab ? "" : "active" ?>
         data-intro="Cet onglet contient les informations générales de l'événement">
         Informations
@@ -188,5 +188,59 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     <?php endif ?>
     <sl-tab-panel name="messages" id="messages"></sl-tab-panel>
 </sl-tab-group>
+
+<script>
+    function initTabHistory() {
+        const tabGroup = document.getElementById('event-tabs');
+        if (!tabGroup) return;
+
+        // Map panel names to URL query parameter values
+        const tabMap = {
+            'information': null, // Default tab, no parameter needed
+            'entry-list': 'participants',
+            'vehicles': 'vehicules',
+            'messages': 'messages'
+        };
+
+        tabGroup.addEventListener('sl-tab-show', (event) => {
+            const panelName = event.detail.name;
+            const tabParam = tabMap[panelName];
+
+            // Build new URL
+            const url = new URL(window.location);
+            if (tabParam) {
+                url.searchParams.set('tab', tabParam);
+            } else {
+                url.searchParams.delete('tab');
+            }
+
+            // Update browser history
+            window.history.pushState({}, '', url);
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+
+            // Reverse map to find panel name
+            const reverseMap = {
+                'participants': 'entry-list',
+                'vehicules': 'vehicles',
+                'messages': 'messages'
+            };
+
+            const panelName = tab ? reverseMap[tab] : 'information';
+            tabGroup.show(panelName);
+        });
+    }
+
+    // Execute immediately if document is already loaded, otherwise wait for DOMContentLoaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTabHistory);
+    } else {
+        initTabHistory();
+    }
+</script>
 
 <?= UserModal::renderRoot() ?>
