@@ -35,11 +35,11 @@ page("Calendrier")->css("event_list.css")->css("event_calendar.css")->noPadding(
 <div class="calendar-wrapper">
     <div class="calendar-header">
         <h3 class="main-heading">
-            <a
-                href="/evenements/calendrier?year=<?= $prevMonth->format('Y') ?>&month=<?= $prevMonth->format('m') ?>">&laquo;</a>
+            <a href="/evenements/calendrier?year=<?= $prevMonth->format('Y') ?>&month=<?= $prevMonth->format('m') ?>"><i
+                    class="fas fa-caret-left"></i></a>
             <span><?= $firstDayOfMonth->format('F Y') ?></span>
-            <a
-                href="/evenements/calendrier?year=<?= $nextMonth->format('Y') ?>&month=<?= $nextMonth->format('m') ?>">&raquo;</a>
+            <a href="/evenements/calendrier?year=<?= $nextMonth->format('Y') ?>&month=<?= $nextMonth->format('m') ?>"><i
+                    class="fas fa-caret-right"></i></a>
         </h3>
         <a style="margin-left:2rem" href="/evenements">
             <sl-tooltip content="Liste"><i class="fa fa-list"></i></sl-tooltip>
