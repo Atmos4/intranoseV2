@@ -96,7 +96,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activ
     <?= $action ?>
     <?= $v->render_validation() ?>
     <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ? $event_id : "new" ?>" hx-trigger="load"
-        hx-vals='<?= json_encode(["form_values" => $form_values, "is_simple" => true, "action" => "pass_form_values"]) ?>'>
+        hx-vals='<?= json_encode(["form_values" => $form_values, "is_simple" => true, "action" => "simple"]) ?>'>
     </div>
 </form>
 <?php if ($event_id): ?>

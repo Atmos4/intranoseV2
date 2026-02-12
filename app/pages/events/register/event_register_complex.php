@@ -17,11 +17,15 @@ $form_values = [];
 if ($event_entry) {
     $form_values = [
         "event_present" => $event_entry->present,
-        "event_transport" => $event_entry->transport,
-        "event_accomodation" => $event_entry->accomodation,
         "event_comment" => $event_entry->comment,
         "event_comment_noentry" => $event_entry->comment,
     ];
+    if ($event->is_transport) {
+        $form_values["event_transport"] = $event_entry->transport;
+    }
+    if ($event->is_accomodation) {
+        $form_values["event_accomodation"] = $event_entry->accomodation;
+    }
 }
 
 foreach ($event->activities as $index => $activity) {
@@ -36,8 +40,12 @@ foreach ($event->activities as $index => $activity) {
 
 $v = new Validator($form_values ?? []);
 $event_present = $v->switch("event_present")->set_labels("Je participe", "Je ne participe pas");
-$transport = $v->switch("event_transport")->label("Transport");
-$accomodation = $v->switch("event_accomodation")->label("Hébergement");
+if ($event->is_transport) {
+    $transport = $v->switch("event_transport")->label("Transport");
+}
+if ($event->is_accomodation) {
+    $accomodation = $v->switch("event_accomodation")->label("Hébergement");
+}
 $event_comment = $v->textarea("event_comment")->label("Remarques");
 $event_comment_noentry = $v->textarea("event_comment_noentry")->label("Remarque");
 $activity_rows = [];
@@ -56,8 +64,8 @@ if ($v->valid()) {
         $user,
         $event,
         $event_present->value,
-        $event_present->value && $transport->value,
-        $event_present->value && $accomodation->value,
+        $event_present->value && $event->is_transport && $transport->value,
+        $event_present->value && $event->is_accomodation && $accomodation->value,
         date_create(),
         $event_present->value ? $event_comment->value : $event_comment_noentry->value,
     );
@@ -177,14 +185,20 @@ page("Inscription - " . $event->name)->css("event_register.css");
 
             <?php endif ?>
 
-            <fieldset class="row">
-                <div class="col-sm-6">
-                    <?= $transport->render() ?>
-                </div>
-                <div class="col-sm-6">
-                    <?= $accomodation->render() ?>
-                </div>
-            </fieldset>
+            <?php if ($event->is_transport || $event->is_accomodation): ?>
+                <fieldset class="row">
+                    <?php if ($event->is_transport): ?>
+                        <div class="col-sm-6">
+                            <?= $transport->render() ?>
+                        </div>
+                    <?php endif ?>
+                    <?php if ($event->is_accomodation): ?>
+                        <div class="col-sm-6">
+                            <?= $accomodation->render() ?>
+                        </div>
+                    <?php endif ?>
+                </fieldset>
+            <?php endif ?>
             <fieldset>
                 <?= $event_comment->render() ?>
             </fieldset>

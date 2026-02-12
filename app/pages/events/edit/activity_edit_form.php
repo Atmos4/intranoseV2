@@ -11,7 +11,9 @@ if ($event_id) {
 $post_form_values = isset($_POST["form_values"]) ? json_decode($_POST["form_values"], true) : null;
 $is_simple = $_POST["is_simple"] ?? ($event ? $event->type == EventType::Simple : false);
 $activity_index = $_POST["action"] ?? null;
-$is_complex = $activity_index !== null;
+
+// is_complex true only when editing a from complex event form (not a single activity of a complex event)
+$is_complex = !$is_simple && $activity_index !== "single_activity";
 
 // Field name prefix for complex events with multiple activities
 $prefix = $is_complex ? "activity_{$activity_index}_" : "";
@@ -39,7 +41,7 @@ if ($post_form_values) {
     $categories = [];
 }
 
-$item_name = ($event_id && !$is_simple) ? "activité" : "événement";
+$item_name = !$is_simple ? "activité" : "événement";
 
 $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
@@ -84,7 +86,7 @@ foreach ($categories as $index => $category) {
         <?php endif; ?>
         <?= $name->render() ?>
         <div class="row">
-            <div class="col-md-6" data-intro="N'hésitez pas à changer le type d'événement !">
+            <div class="col-md-6" <?= ($is_complex === false || $activity_index === '0') ? ' data-intro="N\'hésitez pas à changer le type d\'' . $item_name . ' !"' : '' ?>>
                 <?= $type->render() ?>
             </div>
             <div class="col-md-6">
@@ -100,7 +102,7 @@ foreach ($categories as $index => $category) {
                 <?= $location_url->render() ?>
             </div>
             <?php if ($is_simple): ?>
-                <div class="col-md-6" data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s'inscrire">
+                <div class="col-md-6" <?= ($is_complex === false || $activity_index === '0') ? ' data-intro="Au delà de la deadline, les utilisateurs ne peuvent plus s\'inscrire"' : '' ?>>
                     <?= $deadline->render() ?>
                 </div>
             <?php endif ?>
@@ -115,8 +117,7 @@ foreach ($categories as $index => $category) {
         <div class="col-auto">
             <button type="button" class="outline contrast"
                 onclick="<?= $is_complex ? "addCategoryToActivity($activity_index)" : "addCategory()" ?>"
-                data-intro="Ajoutez des catégories selon vos besoin. H21 ou bien végétarien 😋"><i
-                    class="fa fa-plus"></i>
+                <?= ($is_complex === false || $activity_index === '0') ? ' data-intro="Ajoutez des catégories selon vos besoin. H21 ou bien végétarien 😋"' : '' ?>><i class="fa fa-plus"></i>
                 Ajouter</button>
         </div>
         <div id="<?= $is_complex ? "activity_{$activity_index}_categories" : "categories" ?>" class="col-12">

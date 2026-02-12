@@ -19,20 +19,7 @@ $is_simple = $event->type == EventType::Simple;
 
 page($event->name)->css("event_view.css")->css("entry_list.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
 ?>
-<script>function start_intro() {
-        const tabGroup = document.querySelector('sl-tab-group');
-        const intro = introJs();
-
-        intro.onbeforechange((element) => {
-            // Find the closest tab-panel that contains the element
-            const tabPanel = element.closest('sl-tab-panel');
-            if (tabPanel) {
-                tabGroup.show(tabPanel.name);
-            }
-        });
-
-        intro.start();
-    }</script>
+<script src="/assets/js/start-intro.js"></script>
 
 <?= actions()
     ->back("/evenements")
