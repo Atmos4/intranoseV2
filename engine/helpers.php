@@ -92,7 +92,7 @@ function has_feature(Feature $feature, $uid = null)
  * @param string|null $format When provided, sets custom global formatting, scoped to the entire script (the current page)
  * @return IntlDateFormatter The global formatter object
  */
-function formatter(string $format = null): IntlDateFormatter
+function formatter(?string $format = null): IntlDateFormatter
 {
     return Formatter::get($format);
 }
@@ -261,7 +261,7 @@ function restrict_dev()
  * @param string|int|DateTime $date The date either as a string, a timestamp or a DateTime.
  * @return string The date formatted
  */
-function format_date($date, string $format = null)
+function format_date($date, ?string $format = null)
 {
     if (gettype($date) === "string") {
         $date = date_create($date);
@@ -352,7 +352,7 @@ class Result
 
     /**
      * Wraps a closure with try catch. If possible, use try/catch directly
-     * @param callable(void):Result $f
+     * @param callable():Result $f
      * @return Result
      */
     static function try(callable $f): Result
