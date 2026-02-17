@@ -98,6 +98,6 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
     <?= $action ?>
     <?= $v->render_validation() ?>
     <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ?>" hx-trigger="load"
-        hx-vals='{"form_values" : <?= json_encode($form_values) ?>, "action" : "single_activity"}'>
+        hx-vals="<?= htmlspecialchars(json_encode(['form_values' => $form_values, 'action' => 'single_activity']), ENT_QUOTES, 'UTF-8') ?>">
     </div>
 </form>
