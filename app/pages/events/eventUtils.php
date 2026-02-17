@@ -1,7 +1,7 @@
 <?php
 require_once app_path() . "/components/conditional_icon.php";
 
-function RenderActivityEntry(?Activity $activity, bool $can_register = null)
+function RenderActivityEntry(?Activity $activity, ?bool $can_register = null)
 {
     $activity_entry = $activity->entries[0];
     $extra_info = $activity_entry?->category || $activity_entry?->comment;
@@ -48,7 +48,7 @@ function RenderActivityEntry(?Activity $activity, bool $can_register = null)
 
 function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
 {
-    $extra_info = $entry?->present || $entry?->comment;
+    $extra_info = (($event->is_accomodation || $event->is_transport) && $entry?->present) || $entry?->comment;
     [$open_tag, $close_tag] = $extra_info ? ["<header>", "</header>"] : ["<div class='horizontal'>", "</div>"] ?>
     <article class="notice <?= $entry?->present ? "valid" : "invalid" ?>"
         data-intro="L'état de votre inscription est disponible ici">
@@ -71,12 +71,16 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
         <?php if ($extra_info): ?>
             <div class="row g-2">
                 <?php if ($entry?->present): ?>
-                    <div class="col-12 col-md-6">
-                        <?= ConditionalIcon($entry->transport, "Transport avec le club") ?>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <?= ConditionalIcon($entry->accomodation, "Hébergement avec le club") ?>
-                    </div>
+                    <?php if ($event->is_transport): ?>
+                        <div class="col-12 col-md-6">
+                            <?= ConditionalIcon($entry->transport, "Transport avec le club") ?>
+                        </div>
+                    <?php endif ?>
+                    <?php if ($event->is_accomodation): ?>
+                        <div class="col-12 col-md-6">
+                            <?= ConditionalIcon($entry->accomodation, "Hébergement avec le club") ?>
+                        </div>
+                    <?php endif ?>
                 <?php endif ?>
                 <?php if ($entry?->comment): ?>
                     <div class="col-12">

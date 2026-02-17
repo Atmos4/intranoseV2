@@ -97,10 +97,11 @@ class Event
     #[Column]
     public string $bulletin_url = "";
 
-    #[Column(nullable: true)]
-    public string|null $google_calendar_id = "";
-    #[Column(nullable: true)]
-    public string|null $google_calendar_url = "";
+    #[Column]
+    public bool $is_transport = True;
+
+    #[Column]
+    public bool $is_accomodation = True;
 
     #[Column(options: ["default" => "COMPLEX"])]
     public EventType $type = EventType::Complex;
@@ -128,6 +129,8 @@ class Event
         $this->start_date = date_create();
         $this->end_date = date_create();
         $this->deadline = date_create();
+        $this->is_accomodation = True;
+        $this->is_transport = True;
         $this->conversation = new Conversation();
     }
 
