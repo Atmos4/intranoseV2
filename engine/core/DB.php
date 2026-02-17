@@ -57,8 +57,9 @@ class DB extends SingletonDependency
             $queryCache = new ArrayAdapter();
             $metadataCache = new ArrayAdapter();
         } else {
-            $queryCache = new PhpFilesAdapter('doctrine_queries');
-            $metadataCache = new PhpFilesAdapter('doctrine_metadata');
+            $cacheDir = base_path() . '/database/cache';
+            $queryCache = new PhpFilesAdapter('doctrine_queries', 0, $cacheDir);
+            $metadataCache = new PhpFilesAdapter('doctrine_metadata', 0, $cacheDir);
         }
 
         // Register custom DateTime type BEFORE creating the configuration
