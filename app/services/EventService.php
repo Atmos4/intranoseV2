@@ -153,8 +153,8 @@ class EventService
     static function formatActivitiesDate(Activity $activity)
     {
         $current_year = date('Y');
-        $formatted_end_date = format_date($activity->end_date, 'd MMMM Y HH:mm');
-        $is_same_day = format_date($activity->start_date, 'Y-m-d') == format_date($activity->end_date, 'Y-m-d');
+        $formatted_end_date = format_date($activity->end_date, 'd MMMM y HH:mm');
+        $is_same_day = format_date($activity->start_date, 'y-M-d') == format_date($activity->end_date, 'y-M-d');
         if ($activity->end_date->format('Y') == $current_year) {
             $formatted_end_date = format_date($activity->end_date, 'd MMMM HH:mm');
         }
@@ -162,7 +162,7 @@ class EventService
             $formatted_end_date = format_date($activity->end_date, 'H:mm');
         }
         ?>
-        <?= format_date($activity->start_date, $activity->end_date->format('Y') == $current_year ? 'd MMMM HH:mm' : 'd MMMM Y HH:mm') ?>
+        <?= format_date($activity->start_date, $activity->start_date->format('Y') == $current_year ? 'd MMMM HH:mm' : 'd MMMM y HH:mm') ?>
         -
         <?= $formatted_end_date;
     }
