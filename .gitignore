@@ -16,6 +16,7 @@ env.php
 
 # Doctrine Proxies
 /database/proxies
+/database/cache
 
 #sqlite
 /.sqlite
