@@ -205,7 +205,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                         foreach ($event->activities as $index => $activity): ?>
                             <sl-tab-panel name="activity-<?= $index ?>" id="panel-<?= $index ?>">
                                 <div id="activity-wrapper-<?= $index ?>" hx-post="/evenements/activity_form/<?= $event_id ?>"
-                                    hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= json_encode([
+                                    hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
                                         "form_values" => [
                                             "activity_id" => $activity->id,
                                             "activity_name" => $activity->name,
@@ -226,7 +226,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                                                         }, $activity->categories->toArray())
                                         ],
                                         "action" => $index
-                                    ]) ?>'>
+                                    ]), ENT_QUOTES, 'UTF-8') ?>'>
                                 </div>
                             </sl-tab-panel>
                         <?php endforeach;
