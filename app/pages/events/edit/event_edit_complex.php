@@ -376,4 +376,6 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
             }
         }
     });
+
 </script>
+<script src="/assets/js/shoelace-forms.js"></script>

@@ -44,7 +44,7 @@ class GroupService
             ->addSelect('(CASE WHEN COUNT(eg.id) > 0 THEN 1 ELSE 0 END) as has_group')
             ->from(UserGroup::class, 'g')
             ->leftJoin('g.events', 'eg', 'WITH', 'eg = :event_id')
-            ->setParameter('event_id', $event)
+            ->setParameter('event_id', $event->id)
             ->groupBy('g.name')
             ->orderBy('LOWER(g.name)', 'ASC')
             ->getQuery()
@@ -102,24 +102,19 @@ class GroupService
     }
 
     static function renderGroupChoice($groups)
-    { ?>
+    {
+        $checked_groups = array_filter($groups, fn($group) => $group['has_group'] ?? false);
+        ?>
         <fieldset>
             <legend style="margin-bottom: 0;">Groupes</legend>
-            <details class="dropdown">
-                <summary aria-haspopup="listbox" data-intro="Lier à un groupe">Ajouter le groupe...
-                </summary>
-                <ul data-placement=top>
-                    <?php foreach ($groups as $group): ?>
-                        <li>
-                            <label id="check-group-<?= $group["id"] ?>">
-                                <input type="checkbox" name="add_groups[]" id="check-group-<?= $group["id"] ?>"
-                                    value="<?= $group["id"] ?>" <?= ($group['has_group'] ?? 0) ? "checked" : "" ?>>
-                                <?= "{$group['name']}" ?>
-                            </label>
-                        </li>
-                    <?php endforeach ?>
-                </ul>
-            </details>
+            <sl-select multiple clearable name="add_groups[]"
+                value="<?= implode(' ', array_map(fn($g) => $g["id"], $checked_groups)) ?>">
+                <?php foreach ($groups as $group): ?>
+                    <sl-option value="<?= $group["id"] ?>">
+                        <?= "{$group['name']}" ?>
+                    </sl-option>
+                <?php endforeach ?>
+            </sl-select>
         </fieldset>
         <?php
     }
