@@ -93,7 +93,7 @@ class EmailTemplates
 
         return [
             'subject' => $prefix . "$event->name",
-            'content' => "<h3>Un nouvel événement a été publié sur " . self::$app_name . "!</h3><br>" . $footer
+            'content' => "<h3>Un nouvel événement a été publié sur " . self::getAppName() . " !</h3><br>" . $footer
         ];
     }
 
@@ -203,7 +203,9 @@ class EmailTemplates
                     <h3 style="margin:0 0 15px 0;font-size:16px;color:#111111;font-family:Arial,Helvetica,sans-serif;line-height:1.3;">Détails de l'événement</h3>
                     <p style="margin:0 0 10px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
                         <strong>Nom :</strong> $event_name<br>
-                        <strong>Deadline d'inscription :</strong> $event_date
+                        <strong>Date de début :</strong> {$event->start_date->format('d/m/Y H:i')}<br>
+                        <strong>Date de fin :</strong> {$event->end_date->format('d/m/Y H:i')}<br>
+                        <strong>Deadline d'inscription :</strong> {$event->deadline->format('d/m/Y H:i')}<br>
                     </p>
                     <p style="margin:0 0 15px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
                         <a href="$base_url/evenements/$event->id" style="color:#0066cc;text-decoration:underline;">Voir les informations</a><br>
