@@ -6,6 +6,10 @@ include __DIR__ . "/../eventUtils.php";
 $user = User::getCurrent();
 $event = EventService::getEventWithAllData(get_route_param('event_id'), $user->id);
 
+if ($event->type == EventType::Simple) {
+    redirect("/evenements/{$event->id}/inscription_simple");
+}
+
 if (!check_auth(Access::$ADD_EVENTS) && (!$event->open || $event->deadline < date_create("today"))) {
     force_404("this event is closed for entry");
 }

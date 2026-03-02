@@ -3,6 +3,10 @@
 $user = User::getCurrent();
 $event = EventService::getEventWithAllData(get_route_param('event_id'), $user->id);
 
+if ($event->type == EventType::Complex) {
+    redirect("/evenements/{$event->id}/inscription");
+}
+
 if (!check_auth(Access::$ADD_EVENTS) && (!$event->open || $event->deadline < date_create("today"))) {
     force_404("this event is closed for entry");
 }
@@ -100,18 +104,34 @@ page("Inscription - " . $event->name)->css("event_register.css");
             </div>
         </header>
 
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <?= $activity_present?->attributes(["onchange" => "toggleDisplay(this,'.activityToggle')"])->render() ?>
-                <?php $toggle_class = getToggleClass("activityToggle", $activity_present->value); ?>
-            </div>
-            <div class="col-sm-12 col-md-6 <?= $toggle_class ?>">
-                <?php if (count($activity->categories)): ?>
-                    <?= $activity_category->render() ?>
-                <?php endif ?>
-            </div>
-            <div class="col-12 <?= $toggle_class ?>">
-                <?= $activity_comment->render() ?>
+        <input type="hidden" name="activity_entry" value="<?= $activity_present->value ? '1' : '0' ?>"
+            id="activity_entry_hidden">
+        <div class="button-group-row">
+            <button type="button" onclick="setParticipation(true)"
+                aria-pressed="<?= $activity_entry && $activity_present->value ? 'true' : 'false' ?>" id="btn_participe"
+                class="<?= ($activity_entry && !$activity_present->value) || !$activity_entry ? 'outline' : '' ?>">
+                <i class="fas fa-check"></i>
+                Je participe
+            </button>
+            <button type="button" onclick="setParticipation(false)"
+                aria-pressed="<?= $activity_entry && !$activity_present->value ? 'true' : 'false' ?>"
+                id="btn_no_participe"
+                class="<?= ($activity_entry && $activity_present->value) || !$activity_entry ? 'outline' : '' ?>">
+                <i class="fas fa-xmark"></i>
+                Je ne participe pas
+            </button>
+        </div>
+
+        <div class="<?= getToggleClass("activityForm", $activity_present->value) ?>">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <?php if (count($activity->categories)): ?>
+                        <?= $activity_category->render() ?>
+                    <?php endif ?>
+                </div>
+                <div class="col-12">
+                    <?= $activity_comment->render() ?>
+                </div>
             </div>
         </div>
     </article>
@@ -120,13 +140,28 @@ page("Inscription - " . $event->name)->css("event_register.css");
 <script>
     function toggleDisplay(toggle, target) {
         const elements = document.querySelectorAll(target);
+        const show = toggle.value === '1';
         for (element of elements) {
-            if (toggle.checked) {
+            if (show) {
                 element.classList.remove("hidden");
             } else {
                 element.classList.add("hidden");
             }
         }
+    }
 
+    function setParticipation(participate) {
+        document.getElementById('activity_entry_hidden').value = participate ? '1' : '0';
+        toggleDisplay({ value: participate ? '1' : '0' }, '.activityForm');
+        updateAriaPressed(participate);
+    }
+
+    function updateAriaPressed(participate) {
+        const btnYes = document.getElementById('btn_participe');
+        const btnNo = document.getElementById('btn_no_participe');
+        btnYes.setAttribute('aria-pressed', participate ? 'true' : 'false');
+        btnNo.setAttribute('aria-pressed', !participate ? 'true' : 'false');
+        btnYes.classList.toggle('outline', !participate);
+        btnNo.classList.toggle('outline', participate);
     }
 </script>
