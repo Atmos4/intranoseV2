@@ -160,7 +160,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
                         <br>
                         <section>
                             <h3>Description</h3>
-                            <?= (new Parsedown)->text($event->description) ?>
+                            <?= richtext($event->description) ?>
                         </section>
                     <?php else: ?>
                         Pas encore de description pour cet événement 🪶

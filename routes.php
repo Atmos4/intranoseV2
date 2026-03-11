@@ -48,6 +48,7 @@ if (is_dev() || env("STAGING")) {
     // ---experiments
     Router::add('/dev/toast', __DIR__ . '/app/pages/dev/test_toast.php');
     Router::add('/dev/random', __DIR__ . '/app/pages/dev/test_random.php');
+    Router::add('/dev/richtext', __DIR__ . '/app/pages/dev/richtext_demo.php');
 
     // SQLITE
     Router::add('/sqlite', __DIR__ . '/app/pages/dev/sqlite_db.php');
@@ -55,6 +56,10 @@ if (is_dev() || env("STAGING")) {
 
 //Notifications
 Router::add('/dev/notifications', __DIR__ . '/app/pages/dev/test_push_notifications.php');
+
+// API endpoints
+Router::add('/api/upload-editor-image', __DIR__ . '/engine/api/upload_editor_image.php');
+Router::add('/api/cleanup-editor-images', __DIR__ . '/engine/api/cleanup_editor_images.php');
 
 //Admin
 Router::add('/admin', __DIR__ . '/app/pages/admin/dashboard.php');

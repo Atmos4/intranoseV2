@@ -31,6 +31,10 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <link rel="stylesheet" href="/assets/css/bsg.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/richtext-quill.css">
+
     <!-- Custom CSS -->
     <?php foreach ($page->css_files as $css): ?>
         <link rel="stylesheet" href="<?= $css ?>">
@@ -57,6 +61,10 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <!-- Intro.js -->
     <script src="/assets/js/intro.min.js"></script>
     <script>function start_intro() { introJs().start() }</script>
+
+    <!-- Quill Rich Text Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="/assets/js/richtext-quill.js"></script>
 
     <!-- Custom JS -->
     <?php foreach ($page->scripts as $script): ?>
