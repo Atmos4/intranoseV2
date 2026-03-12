@@ -64,7 +64,7 @@ class EventService
                 " LEFT JOIN ev.entries en WITH en.user = ?1" .
                 " WHERE ev.open = 1" .
                 " AND ev.end_date > CURRENT_DATE()" .
-                " ORDER BY ev.start_date DESC")
+                " ORDER BY ev.start_date ASC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
 
@@ -76,7 +76,7 @@ class EventService
         $events = em()
             ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
                 " WHERE ev.open = 0" .
-                " ORDER BY ev.start_date DESC")
+                " ORDER BY ev.start_date ASC")
             ->getArrayResult();
         return EventDto::fromEventList($events);
     }
@@ -91,6 +91,23 @@ class EventService
                 " AND ev.end_date <= CURRENT_DATE()" .
                 " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
+            ->getArrayResult();
+
+        return EventDto::fromEventList($events);
+    }
+
+    /** @return EventDto[] */
+    static function listPastOpenPaginated($user_id, $limit, $offset)
+    {
+        $events = em()
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
+                " LEFT JOIN ev.entries en WITH en.user = ?1" .
+                " WHERE ev.open = 1" .
+                " AND ev.end_date <= CURRENT_DATE()" .
+                " ORDER BY ev.start_date DESC")
+            ->setParameter(1, $user_id)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getArrayResult();
 
         return EventDto::fromEventList($events);
