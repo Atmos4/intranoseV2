@@ -55,12 +55,23 @@ page("Événements")->css("event_list.css")
     </a>
 </div>
 
-<?= actions($can_edit)->link(
-    "/evenements/nouveau/choix",
-    "Ajouter un événement",
-    "fas fa-plus",
-    ["data-intro" => 'Créez un événement']
-) ?>
+<?php
+$action = actions();
+if ($can_edit) {
+    $action->link(
+        "/evenements/nouveau/choix",
+        "Ajouter un événement",
+        "fas fa-plus",
+        ["data-intro" => 'Créez un événement']
+    );
+}
+$action->link(
+    "/evenements/passes",
+    "Évenements passés",
+    "fa-clock-rotate-left",
+)
+    ?>
+<?= $action ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
@@ -81,11 +92,4 @@ if ($can_edit && count($draft_events)): ?>
     <?php foreach ($future_events as $event): ?>
         <?= render_events($event); ?>
     <?php endforeach ?>
-</div>
-
-<div id="loadEvents">
-    <button class="outline secondary" hx-get="/evenements/passes" hx-swap="outerHTML" hx-target="this">Charger
-        les
-        événements
-        passés</button>
 </div>

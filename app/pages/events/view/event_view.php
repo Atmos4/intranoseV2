@@ -17,12 +17,14 @@ $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
 
+$today = date_create("today");
+
 page($event->name)->css("event_view.css")->css("entry_list.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
 ?>
 <script src="/assets/js/start-intro.js"></script>
 
 <?= actions()
-    ->back("/evenements")
+    ->back($event->start_date >= $today_date ? "/evenements" : "/evenements/passes")
     ->if($can_edit, fn($b) => $b->dropdown(function ($dropdown) use ($event, $is_simple) {
         $dropdown->link("/evenements/$event->id/modifier" . ($is_simple ? "/simple" : "/complexe"), "Éditer", "fa-pen", ["class" => "secondary"]);
         $dropdown->link("/evenements/$event->id/rappel", "Rappel", "fa-bell", ["class" => "secondary"]);
