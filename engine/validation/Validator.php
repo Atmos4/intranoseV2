@@ -133,6 +133,12 @@ class Validator
         return $this->create($key, TextAreaField::class, $msg);
     }
 
+    /** Creates new rich text field (Quill editor) */
+    function richtext(string $key, string $msg = null): RichTextField
+    {
+        return $this->create($key, RichTextField::class, $msg);
+    }
+
     /** Creates new date field */
     function date(string $key, string $msg = null): DateField
     {
