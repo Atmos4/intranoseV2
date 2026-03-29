@@ -15,11 +15,18 @@ if ($can_edit)
 $current_date = new DateTime('now');
 $current_month_day = $current_date->format('m-d');
 
-// Fetch users whose birthday is today
+$current_month = $current_date->format('m');
+$prev_month = $current_month == '01' ? '12' : str_pad((int) $current_month - 1, 2, '0', STR_PAD_LEFT);
+$next_month = $current_month == '12' ? '01' : str_pad((int) $current_month + 1, 2, '0', STR_PAD_LEFT);
+
+// Fetch users whose birthday month is within range
 $all_users = em()->createQueryBuilder()
     ->select("u")
     ->from(User::class, "u")
-    ->where("u.birthdate IS NOT NULL")
+    ->where("MONTH(u.birthdate) = :prev OR MONTH(u.birthdate) = :curr OR MONTH(u.birthdate) = :next")
+    ->setParameter("prev", $prev_month)
+    ->setParameter("curr", $current_month)
+    ->setParameter("next", $next_month)
     ->getQuery()->getResult();
 
 $birthday_users = [];
