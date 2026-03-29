@@ -12,18 +12,23 @@ $future_events = EventService::listAllFutureOpenEvents($user->id);
 if ($can_edit)
     $draft_events = EventService::listDrafts();
 
-// Get the current date
-$current_date_month = date('m');
-$current_date_day = date('d');
+$current_date = new DateTime('now');
+$current_month_day = $current_date->format('m-d');
 
-// Query the database to get a list of users whose birthday matches the current date
-$birthday_users = em()->createQueryBuilder()
+// Fetch users whose birthday is today
+$all_users = em()->createQueryBuilder()
     ->select("u")
     ->from(User::class, "u")
-    ->where("MONTH(u.birthdate) = :month AND DAY(u.birthdate) = :day")
-    ->setParameter("month", $current_date_month)
-    ->setParameter("day", $current_date_day)
+    ->where("u.birthdate IS NOT NULL")
     ->getQuery()->getResult();
+
+$birthday_users = [];
+foreach ($all_users as $user_item) {
+    if ($user_item->birthdate->format('m-d') === $current_month_day) {
+        $birthday_users[] = $user_item;
+    }
+}
+
 $vowels = ["a", "e", "i", "o", "u"];
 
 page("Événements")->css("event_list.css")
