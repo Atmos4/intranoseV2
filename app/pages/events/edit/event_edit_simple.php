@@ -40,7 +40,7 @@ $start_date = $v->date_time("start_date");
 $end_date = $v->date_time("end_date");
 $location_label = $v->text("location_label");
 $location_url = $v->url("location_url");
-$description = $v->textarea("description");
+$description = $v->richtext("description")->min_height(250);
 $deadline = $v->date_time("deadline");
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
@@ -92,13 +92,14 @@ $action->submit($event_id ? "Modifier" : "Créer");
 
 page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activité")->enableHelp();
 ?>
-<form method="post">
+<form method="post" data-richtext-cleanup="true">
     <?= $action ?>
     <?= $v->render_validation() ?>
     <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ? $event_id : "new" ?>" hx-trigger="load"
         hx-vals='<?= htmlspecialchars(json_encode(["form_values" => $form_values, "is_simple" => true, "action" => "simple"]), ENT_QUOTES, 'UTF-8') ?>'>
     </div>
 </form>
+
 <?php if ($event_id): ?>
     <a href="/evenements/<?= $event_id ?>/type" type="button" class="secondary">Changer de type d'événement
         <sl-tooltip content="Vous pouvez passer à un événement complexe pour avoir plusieurs activités"><i

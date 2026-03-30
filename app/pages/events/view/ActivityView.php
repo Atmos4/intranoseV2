@@ -39,6 +39,6 @@ $groups = GroupService::getEventGroups($event->id);
     <?php if ($activity->description): ?>
         <hr>
         <h3>Description</h3>
-        <?= (new Parsedown)->text($activity->description) ?>
+        <?= richtext($activity->description) ?>
     <?php endif; ?>
 </article>
