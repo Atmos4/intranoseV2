@@ -15,9 +15,12 @@ if ($can_edit)
 $current_date = new DateTime('now');
 $current_month_day = $current_date->format('m-d');
 
+$prev_date = (clone $current_date)->modify('-1 month');
+$next_date = (clone $current_date)->modify('+1 month');
+
+$prev_month = $prev_date->format('m');
 $current_month = $current_date->format('m');
-$prev_month = $current_month == '01' ? '12' : str_pad((int) $current_month - 1, 2, '0', STR_PAD_LEFT);
-$next_month = $current_month == '12' ? '01' : str_pad((int) $current_month + 1, 2, '0', STR_PAD_LEFT);
+$next_month = $next_date->format('m');
 
 // Fetch users whose birthday month is within range
 $all_users = em()->createQueryBuilder()
