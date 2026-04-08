@@ -28,11 +28,13 @@ foreach ($activities as $a) {
 $form_values = [
     "name" => $team_group->name,
     "activity" => $is_simple ? $activities[0]->id : $team_group->activity?->id,
+    "relay_format" => $team_group->relay_format,
 ];
 
 $v = new Validator($form_values);
 $name = $v->text("name")->required()->placeholder("Nom")->label("Nom du pool d'équipes");
 $activity = $v->select("activity")->options($activity_options)->label("Activité liée");
+$relay_format = $v->select("relay_format")->options(RelayFormatService::groupOptions())->label("Type de compétition");
 
 if ($v->valid()) {
     $team_group->name = $name->value;
@@ -41,6 +43,7 @@ if ($v->valid()) {
     } else {
         $team_group->activity = $activity->value ? em()->find(Activity::class, $activity->value) : null;
     }
+    $team_group->relay_format = $relay_format->value ?: null;
     em()->persist($team_group);
     em()->flush();
 
@@ -69,6 +72,7 @@ page($is_new ? "Nouveau Pool d'Équipes" : "Modifier " . ($team_group->name ?: "
             <?php if (!$is_simple): ?>
                 <?= $activity->render() ?>
             <?php endif ?>
+            <?= $relay_format->render() ?>
 
             <button type="submit">
                 <i class="fa <?= $is_new ? 'fa-plus' : 'fa-save' ?>"></i>

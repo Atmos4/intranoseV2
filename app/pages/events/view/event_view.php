@@ -66,13 +66,11 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->css("team_pool
         hx-post="/evenements/<?= $event->id ?>/messages" hx-target="#messages">
         Messages
     </sl-tab>
-    <?php if ($can_edit): ?>
-        <sl-tab slot="nav" panel="pools" id="pools-tab" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/pools"
-            hx-target="#pools" <?= ($tab == "pools") ? "active" : "" ?>
-            data-intro="Gérez les pools d'équipes pour cet événement">
-            Équipes
-        </sl-tab>
-    <?php endif ?>
+    <sl-tab slot="nav" panel="pools" id="pools-tab" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/pools"
+        hx-target="#pools" <?= ($tab == "pools") ? "active" : "" ?>
+        data-intro="Gérez les pools d'équipes pour cet événement">
+        Équipes
+    </sl-tab>
 
 
     <sl-tab-panel name="information">
@@ -183,9 +181,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->css("team_pool
         <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
     <?php endif ?>
     <sl-tab-panel name="messages" id="messages"></sl-tab-panel>
-    <?php if ($can_edit): ?>
-        <sl-tab-panel name="pools" id="pools"></sl-tab-panel>
-    <?php endif ?>
+    <sl-tab-panel name="pools" id="pools"></sl-tab-panel>
 </sl-tab-group>
 
 <script>

@@ -48,6 +48,112 @@
   white-space: nowrap;
 }
 
+/* --- Relay format info --- */
+.relay-group-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  background: var(--pico-secondary-background);
+  color: var(--pico-secondary-inverse);
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.team-relay-format-select {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.team-format-hint {
+  margin-bottom: 0.5rem;
+  color: var(--pico-muted-color);
+}
+
+.team-format-rules {
+  margin: 0.25rem 0 0;
+  padding-left: 1rem;
+}
+
+.team-format-rules li {
+  margin-bottom: 0;
+}
+
+/* --- Slot validation status --- */
+.team-slots-status {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  font-size: 0.8rem;
+}
+
+.slots-summary {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.slots-complete {
+  color: var(--pico-ins-color);
+}
+
+.slots-incomplete {
+  color: var(--pico-del-color);
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0;
+}
+
+.slot-icon {
+  width: 1.2em;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.slot-filled .slot-icon {
+  color: var(--pico-ins-color);
+}
+
+.slot-empty .slot-icon {
+  color: var(--pico-muted-color);
+}
+
+.slot-label {
+  flex: 1;
+}
+
+.slot-constraint {
+  color: var(--pico-muted-color);
+  font-style: italic;
+}
+
+.slot-match {
+  color: var(--pico-ins-color);
+  font-weight: 600;
+}
+
+.slot-extras-warning {
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  background: color-mix(in srgb, var(--pico-del-color) 12%, transparent);
+  border: 1px solid var(--pico-del-color);
+  border-radius: var(--pico-border-radius);
+  color: var(--pico-del-color);
+  font-size: 0.85em;
+}
+
+.slot-extras-warning i {
+  margin-right: 0.3em;
+}
+
 /* --- Teams container (horizontal) --- */
 .teams-scroll-container {
   display: flex;
@@ -114,9 +220,11 @@
 
 /* --- Member chip --- */
 .team-member-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 0.4rem;
+  row-gap: 0.1rem;
   padding: 0.25rem 0.5rem;
   background: var(--pico-background-color);
   border: 1px solid var(--pico-muted-border-color);
@@ -125,6 +233,9 @@
 }
 
 .team-member-chip img {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -132,11 +243,23 @@
 }
 
 .team-member-chip span {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-member-chip .user-category-badge {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
 }
 
 .team-member-chip button {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
   background: none;
   border: none;
   cursor: pointer;
@@ -179,4 +302,17 @@
 .teams-subtitle {
   color: var(--pico-muted-color);
   margin-top: -0.5rem;
+}
+
+/* --- Mobile --- */
+@media (max-width: 600px) {
+  .team-column {
+    min-width: 200px;
+    max-width: 220px;
+  }
+
+  .team-add-column {
+    min-width: 120px;
+    min-height: 120px;
+  }
 }
