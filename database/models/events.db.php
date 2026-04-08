@@ -168,7 +168,8 @@ class EventDto
         public bool $open,
         /** @var UserGroup[] */
         public ?bool $registered,
-    ) {}
+    ) {
+    }
 
     /** Used to transfer basic event data without graph
      *  @return EventDto[] */
@@ -189,4 +190,38 @@ class EventDto
         }
         return $result;
     }
+}
+
+#[Entity, Table(name: 'team_groups')]
+class TeamGroup
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[ManyToOne]
+    public Event|null $event = null;
+
+    #[Column]
+    public string|null $name = null;
+
+    /** @var Collection<int, Team> */
+    #[OneToMany(targetEntity: Team::class, mappedBy: 'team_group', cascade: ["remove"])]
+    public Collection $teams;
+}
+
+#[Entity, Table(name: 'teams')]
+class Team
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string|null $name = null;
+
+    #[ManyToOne]
+    public TeamGroup|null $team_group = null;
+
+    /** @var Collection<int, User> */
+    #[ManyToMany(targetEntity: User::class)]
+    public Collection $members;
 }
