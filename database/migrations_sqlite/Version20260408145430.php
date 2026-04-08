@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260405125446 extends AbstractMigration
+final class Version20260408145430 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,8 +20,9 @@ final class Version20260405125446 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE orm_team_groups (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, event_id INTEGER DEFAULT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT FK_20A5426971F7E88B FOREIGN KEY (event_id) REFERENCES orm_events (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('CREATE TABLE orm_team_groups (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, event_id INTEGER DEFAULT NULL, activity_id INTEGER DEFAULT NULL, name VARCHAR(255) NOT NULL, published BOOLEAN NOT NULL, CONSTRAINT FK_20A5426971F7E88B FOREIGN KEY (event_id) REFERENCES orm_events (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_20A5426981C06096 FOREIGN KEY (activity_id) REFERENCES orm_activities (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_20A5426971F7E88B ON orm_team_groups (event_id)');
+        $this->addSql('CREATE INDEX IDX_20A5426981C06096 ON orm_team_groups (activity_id)');
         $this->addSql('CREATE TABLE orm_teams (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, team_group_id INTEGER DEFAULT NULL, name VARCHAR(255) NOT NULL, CONSTRAINT FK_CCFF8E7446160539 FOREIGN KEY (team_group_id) REFERENCES orm_team_groups (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_CCFF8E7446160539 ON orm_teams (team_group_id)');
         $this->addSql('CREATE TABLE orm_team_user (team_id INTEGER NOT NULL, user_id INTEGER NOT NULL, PRIMARY KEY(team_id, user_id), CONSTRAINT FK_87A266E4296CD8AE FOREIGN KEY (team_id) REFERENCES orm_teams (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_87A266E4A76ED395 FOREIGN KEY (user_id) REFERENCES orm_users (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE)');

@@ -29,6 +29,9 @@ $team_members = $post_form_values["team_members"] ?? [];
             <div class="team-member-chip" data-user-id="<?= $member['id'] ?>">
                 <img src="<?= htmlspecialchars($member['picture']) ?>" alt="">
                 <span><?= htmlspecialchars($member['name']) ?></span>
+                <?php if (!empty($member['category'])): ?>
+                    <small class="user-category-badge"><?= htmlspecialchars($member['category']) ?></small>
+                <?php endif ?>
                 <button type="button" onclick="removeMember(this, <?= $member['id'] ?>)">&times;</button>
             </div>
         <?php endforeach ?>
