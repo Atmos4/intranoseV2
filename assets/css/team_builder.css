@@ -1,0 +1,186 @@
+/* --- Pool name --- */
+h3:has(.pool-name-input) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--pico-spacing);
+}
+
+.pool-name-input {
+  font-size: inherit;
+  font-weight: inherit;
+  margin-bottom: 0 !important;
+}
+
+/* --- Users bar --- */
+.users-scroll-container {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  margin-bottom: 1.5rem;
+}
+
+.user-drag-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: max-content;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-card-background-color);
+  cursor: grab;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.user-drag-item:active {
+  cursor: grabbing;
+}
+
+.user-drag-item img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-in-team {
+  opacity: 0.4;
+}
+
+/* --- Teams container (horizontal) --- */
+.teams-scroll-container {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  align-items: flex-start;
+}
+
+.team-column {
+  min-width: 250px;
+  max-width: 300px;
+  flex-shrink: 0;
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: 0.75rem;
+}
+
+.team-column-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.team-column-header input {
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+}
+
+.team-column-header button {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  flex-shrink: 0;
+}
+
+/* --- Drop zone --- */
+.team-drop-zone {
+  min-height: 120px;
+  border: 2px dashed var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.team-drop-zone.drag-over {
+  border-color: var(--pico-primary);
+  background: color-mix(in srgb, var(--pico-primary) 8%, transparent);
+}
+
+.drop-hint {
+  text-align: center;
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+  margin: auto 0;
+}
+
+/* --- Member chip --- */
+.team-member-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--pico-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  font-size: 0.9rem;
+}
+
+.team-member-chip img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.team-member-chip span {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.team-member-chip button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  font-size: 1.1rem;
+  color: var(--pico-muted-color);
+  line-height: 1;
+  margin: 0;
+  width: auto;
+}
+
+.team-member-chip button:hover {
+  color: var(--pico-del-color);
+}
+
+/* --- Add team button --- */
+.team-add-column {
+  min-width: 200px;
+  min-height: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px dashed var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  cursor: pointer;
+  color: var(--pico-muted-color);
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.team-add-column:hover {
+  border-color: var(--pico-primary);
+  color: var(--pico-primary);
+}
+
+.teams-subtitle {
+  color: var(--pico-muted-color);
+  margin-top: -0.5rem;
+}
