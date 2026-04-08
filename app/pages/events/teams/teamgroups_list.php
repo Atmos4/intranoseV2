@@ -4,6 +4,7 @@ $event_id = get_route_param('event_id');
 $event = em()->find(Event::class, $event_id);
 
 $team_groups = em()->getRepository(TeamGroup::class)->findBy(['event' => $event], ['id' => 'ASC']);
+$is_simple = $event->type == EventType::Simple;
 ?>
 
 <div class="container">
@@ -24,8 +25,19 @@ $team_groups = em()->getRepository(TeamGroup::class)->findBy(['event' => $event]
                     </div>
                     <div class="pool-title">
                         <b><?= $team_group->name ?: "Pool #" . $team_group->id ?></b>
+                        <?php if ($team_group->published): ?>
+                            <span class="badge"><i class="fa fa-eye"></i> Publié</span>
+                        <?php else: ?>
+                            <span class="badge secondary"><i class="fa fa-eye-slash"></i> Masqué</span>
+                        <?php endif ?>
                     </div>
                     <div class="pool-stats">
+                        <?php if (!$is_simple && $team_group->activity): ?>
+                            <div class="pool-stat">
+                                <i class="fa fa-running"></i>
+                                <span><?= htmlspecialchars($team_group->activity->name) ?></span>
+                            </div>
+                        <?php endif ?>
                         <div class="pool-stat">
                             <i class="fa fa-users"></i>
                             <span><?= count($team_group->teams) ?>
@@ -37,6 +49,10 @@ $team_groups = em()->getRepository(TeamGroup::class)->findBy(['event' => $event]
                         </div>
                     </div>
                     <div class="pool-actions" onclick="event.stopPropagation();">
+                        <a role="button" class="secondary outline"
+                            href="/evenements/<?= $event_id ?>/pool/<?= $team_group->id ?>/modifier">
+                            <i class="fa fa-pen"></i>
+                        </a>
                         <a role="button" class="secondary outline"
                             href="/evenements/<?= $event_id ?>/pool/<?= $team_group->id ?>/supprimer">
                             <i class="fa fa-trash"></i>

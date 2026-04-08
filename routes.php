@@ -91,10 +91,12 @@ Router::add('/evenements/$event_id/type', __DIR__ . '/app/pages/events/edit/even
 
 // Team routes
 Router::add('/evenements/$event_id/pools', __DIR__ . '/app/pages/events/teams/teamgroups_list.php');
-Router::add('/evenements/$event_id/pool/nouveau', __DIR__ . '/app/pages/events/teams/teamgroup_create.php');
+Router::add('/evenements/$event_id/pool/nouveau', __DIR__ . '/app/pages/events/teams/teamgroup_edit.php');
 Router::add('/evenements/$event_id/pool/$pool_id/team_form', __DIR__ . '/app/pages/events/teams/team_edit_form.php');
 Router::add('/evenements/$event_id/pool/$pool_id/supprimer', __DIR__ . '/app/pages/events/teams/teamgroup_delete.php');
-Router::add('/evenements/$event_id/pool/$pool_id', __DIR__ . '/app/pages/events/teams/teams_view.php');
+Router::add('/evenements/$event_id/pool/$pool_id/publier', __DIR__ . '/app/pages/events/teams/teamgroup_publish.php');
+Router::add('/evenements/$event_id/pool/$pool_id/modifier', __DIR__ . '/app/pages/events/teams/teamgroup_edit.php');
+Router::add('/evenements/$event_id/pool/$pool_id', __DIR__ . '/app/pages/events/teams/teamgroup_view.php');
 
 //Vehicles
 Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');

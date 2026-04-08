@@ -18,10 +18,26 @@ if (!$team_group || $team_group->event->id !== $event->id) {
 
 $existing_teams = $team_group->teams->toArray();
 
+// If activity linked, use activity entries; otherwise use event entries
+$linked_activity = $team_group->activity;
 $registered_users = [];
-foreach ($all_event_entries as $event_entry) {
-    if ($event_entry->present) {
-        $registered_users[] = $event_entry->user;
+$user_categories = []; // user_id => category name
+
+if ($linked_activity) {
+    $activity_entries = ActivityService::getActivityEntries($linked_activity->id);
+    foreach ($activity_entries as $entry) {
+        if ($entry->present) {
+            $registered_users[] = $entry->user;
+            if ($entry->category) {
+                $user_categories[$entry->user->id] = $entry->category->name;
+            }
+        }
+    }
+} else {
+    foreach ($all_event_entries as $event_entry) {
+        if ($event_entry->present) {
+            $registered_users[] = $event_entry->user;
+        }
     }
 }
 
@@ -33,12 +49,7 @@ foreach ($existing_teams as $team) {
     }
 }
 
-$form_values = [
-    "pool_name" => $team_group->name
-];
-
-$v = new Validator($form_values);
-$pool_name = $v->text("pool_name")->required()->placeholder("Nom du Pool")->attributes(["class" => "pool-name-input"]);
+$v = new Validator();
 
 if ($v->valid()) {
     $team_count = intval($_POST["team_count"] ?? 0);
@@ -85,10 +96,6 @@ if ($v->valid()) {
         }
     }
 
-    // Update pool name
-    $team_group->name = $pool_name->value ?? $team_group->name;
-    em()->persist($team_group);
-
     em()->flush();
 
     Toast::success("Équipes sauvegardées");
@@ -98,26 +105,41 @@ if ($v->valid()) {
 page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_builder.css");
 ?>
 
-<?= actions()->back("/evenements/$event_id?tab=pools") ?>
+<?= actions()
+    ->back("/evenements/$event_id?tab=pools")
+    ->dropdown(function ($d) use ($event_id, $pool_id, $team_group) {
+        $d->link("/evenements/$event_id/pool/$pool_id/modifier", "Modifier", "fa-pen", ["class" => "secondary"]);
+        $d->link("/evenements/$event_id/pool/$pool_id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
+        $team_group->published
+            ? $d->link("/evenements/$event_id/pool/$pool_id/publier", "Retirer", "fa-eye-slash", ["class" => "destructive"])
+            : $d->link("/evenements/$event_id/pool/$pool_id/publier", "Publier", "fa-eye", ["class" => "secondary"]);
+    }) ?>
 
 <form method="post" id="teams-form">
     <?= $v->render_validation() ?>
 
     <h3>
         <i class="fa fa-users-gear"></i>
-        <?= $pool_name->render() ?>
+        <?= $team_group->name ?>
     </h3>
 
-    <h4>Participants inscrits</h4>
+    <h4>Participants <?= $linked_activity ? "inscrits à " . htmlspecialchars($linked_activity->name) : "inscrits" ?>
+    </h4>
     <p class="teams-subtitle">Glissez-déposez les participants dans les équipes</p>
     <div class="users-scroll-container" id="users-container">
-        <?php foreach ($registered_users as $user): ?>
+        <?php foreach ($registered_users as $user):
+            $category = $user_categories[$user->id] ?? null;
+            ?>
             <div class="user-drag-item <?= in_array($user->id, $assigned_user_ids) ? 'user-in-team' : '' ?>"
                 draggable="true" data-user-id="<?= $user->id ?>"
                 data-user-name="<?= htmlspecialchars($user->first_name . ' ' . $user->last_name) ?>"
-                data-user-picture="<?= htmlspecialchars($user->getPicture()) ?>">
+                data-user-picture="<?= htmlspecialchars($user->getPicture()) ?>"
+                data-user-category="<?= htmlspecialchars($category ?? '') ?>">
                 <img src="<?= $user->getPicture() ?>" alt="">
                 <span><?= htmlspecialchars($user->first_name . ' ' . $user->last_name) ?></span>
+                <?php if ($category): ?>
+                    <small class="user-category-badge"><?= htmlspecialchars($category) ?></small>
+                <?php endif ?>
             </div>
         <?php endforeach ?>
     </div>
@@ -137,6 +159,7 @@ page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_
                                 "id" => $m->id,
                                 "name" => $m->first_name . ' ' . $m->last_name,
                                 "picture" => $m->getPicture(),
+                                "category" => $user_categories[$m->id] ?? null,
                             ], $team->members->toArray()),
                         ]
                     ]), ENT_QUOTES, 'UTF-8') ?>'>
@@ -170,7 +193,8 @@ page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_
             e.dataTransfer.setData('text/plain', JSON.stringify({
                 id: item.dataset.userId,
                 name: item.dataset.userName,
-                picture: item.dataset.userPicture
+                picture: item.dataset.userPicture,
+                category: item.dataset.userCategory || ''
             }));
             e.dataTransfer.effectAllowed = 'move';
         });
@@ -215,9 +239,13 @@ page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_
             var chip = document.createElement('div');
             chip.className = 'team-member-chip';
             chip.dataset.userId = userId;
-            chip.innerHTML = '<img src="' + data.picture + '" alt="">'
-                + '<span>' + data.name + '</span>'
-                + '<button type="button" onclick="removeMember(this, ' + userId + ')">&times;</button>';
+            var chipHtml = '<img src="' + data.picture + '" alt="">'
+                + '<span>' + data.name + '</span>';
+            if (data.category) {
+                chipHtml += '<small class="user-category-badge">' + data.category + '</small>';
+            }
+            chipHtml += '<button type="button" onclick="removeMember(this, ' + userId + ')">&times;</button>';
+            chip.innerHTML = chipHtml;
             zone.appendChild(chip);
 
             // Add hidden input

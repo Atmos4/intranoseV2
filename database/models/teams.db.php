@@ -1,0 +1,52 @@
+<?php
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\Table;
+use Doctrine\Common\Collections\ArrayCollection;
+
+#[Entity, Table(name: 'team_groups')]
+class TeamGroup
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[ManyToOne]
+    public Event|null $event = null;
+
+    #[ManyToOne]
+    public Activity|null $activity = null;
+
+    #[Column]
+    public string|null $name = null;
+
+    /** @var Collection<int, Team> */
+    #[OneToMany(targetEntity: Team::class, mappedBy: 'team_group', cascade: ["remove"])]
+    public Collection $teams;
+
+    #[Column]
+    public bool $published = false;
+}
+
+#[Entity, Table(name: 'teams')]
+class Team
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string|null $name = null;
+
+    #[ManyToOne]
+    public TeamGroup|null $team_group = null;
+
+    /** @var Collection<int, User> */
+    #[ManyToMany(targetEntity: User::class)]
+    public Collection $members;
+}
