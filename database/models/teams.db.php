@@ -26,12 +26,20 @@ class TeamGroup
     #[Column]
     public string|null $name = null;
 
+    #[Column(nullable: true)]
+    public string|null $relay_format = null;
+
     /** @var Collection<int, Team> */
     #[OneToMany(targetEntity: Team::class, mappedBy: 'team_group', cascade: ["remove"])]
     public Collection $teams;
 
     #[Column]
     public bool $published = false;
+
+    public function getRelayGroup(): ?RelayGroupDto
+    {
+        return $this->relay_format ? RelayFormatService::getGroup($this->relay_format) : null;
+    }
 }
 
 #[Entity, Table(name: 'teams')]
@@ -43,10 +51,18 @@ class Team
     #[Column]
     public string|null $name = null;
 
+    #[Column(nullable: true)]
+    public string|null $relay_format = null;
+
     #[ManyToOne]
     public TeamGroup|null $team_group = null;
 
     /** @var Collection<int, User> */
     #[ManyToMany(targetEntity: User::class)]
     public Collection $members;
+
+    public function getRelayFormat(): ?RelayFormatDto
+    {
+        return $this->relay_format ? RelayFormatService::get($this->relay_format) : null;
+    }
 }
