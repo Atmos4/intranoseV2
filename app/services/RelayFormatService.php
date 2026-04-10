@@ -30,6 +30,23 @@ class RelaySlotDto
     {
         return ['label' => $this->label, 'sex' => $this->sex, 'min' => $this->min_category, 'max' => $this->max_category];
     }
+
+    public function constraintText(): string
+    {
+        $parts = [];
+        if ($this->sex)
+            $parts[] = $this->sex;
+        if ($this->min_category !== null) {
+            if ($this->max_category !== null) {
+                $parts[] = $this->min_category . '–' . $this->max_category;
+            } else {
+                $parts[] = $this->min_category . '+';
+            }
+        } elseif ($this->max_category !== null) {
+            $parts[] = '≤' . $this->max_category;
+        }
+        return implode('', $parts);
+    }
 }
 
 class RelayGroupDto
@@ -53,6 +70,10 @@ class RelayFormatDto
         public ?string $description = null,
         /** @var RelaySlotDto[] */
         public array $slots = [],
+        /** @var int[] Leg durations in minutes per position */
+        public array $legs = [],
+        /** If true, slot constraints are per-position (e.g. Relais-Sprint) */
+        public bool $ordered = false,
     ) {
     }
 
@@ -60,6 +81,12 @@ class RelayFormatDto
     public function getSlots(): array
     {
         return !empty($this->slots) ? $this->slots : RelayFormatService::autoSlots($this);
+    }
+
+    /** @return int[] - explicit legs or auto-generated equal splits */
+    public function getLegs(): array
+    {
+        return !empty($this->legs) ? $this->legs : RelayFormatService::autoLegs($this);
     }
 }
 
@@ -132,6 +159,36 @@ class RelayFormatService
         return null;
     }
 
+    /**
+     * Map a raw age to the FFCO category bracket number.
+     * 10,12,14,16,18,20 (every 2 years), 21 (ages 21–34), then 35,40,45,50,... (every 5 years).
+     */
+    public static function categoryBracket(int $age): int
+    {
+        if ($age < 10)
+            return 10;
+        if ($age <= 20)
+            return $age - ($age % 2);  // 10,12,14,16,18,20
+        if ($age < 35)
+            return 21;                   // 21–34 → 21
+        return $age - ($age % 5);                   // 35,40,45,50,...
+    }
+
+    /**
+     * Compute the FFCO-style category string from a user's birthdate and gender.
+     * Age as of Dec 31 of the event year, mapped to official bracket.
+     * Gender M → "H", W → "D".
+     * @return string e.g. "H21", "D16"
+     */
+    public static function computeCategory(User $user, DateTime $eventDate): string
+    {
+        $year = (int) $eventDate->format('Y');
+        $dec31 = new DateTime("$year-12-31");
+        $age = (int) $user->birthdate->diff($dec31)->y;
+        $sex = $user->gender === Gender::M ? 'H' : 'D';
+        return $sex . self::categoryBracket($age);
+    }
+
     /** @return RelaySlotDto[] */
     public static function simpleSlots(int $count, ?string $sex = null, ?int $min = null, ?int $max = null): array
     {
@@ -140,6 +197,12 @@ class RelayFormatService
             $slots[] = new RelaySlotDto("Relayeur " . ($i + 1), $sex, $min, $max);
         }
         return $slots;
+    }
+
+    /** @return int[] - empty for formats without explicit leg durations */
+    public static function autoLegs(RelayFormatDto $f): array
+    {
+        return [];
     }
 
     /** @return RelaySlotDto[] - auto-generate slots for simple formats */
@@ -317,6 +380,7 @@ class RelayFormatService
                     new RelaySlotDto("Homme 1", "H", 16),
                     new RelaySlotDto("Homme 2", "H", 16),
                 ],
+                legs: [50, 30, 20, 50, 30, 20, 30, 50],
             ),
             new RelayFormatDto(
                 id: "cfc_n2",
@@ -343,6 +407,7 @@ class RelayFormatService
                     new RelaySlotDto("Homme 1", "H", 16),
                     new RelaySlotDto("Homme 2", "H", 16),
                 ],
+                legs: [40, 30, 20, 40, 30, 20, 30, 40],
             ),
             new RelayFormatDto(
                 id: "cfc_n3",
@@ -364,6 +429,7 @@ class RelayFormatService
                     new RelaySlotDto("Coureur 2", null, 16),
                     new RelaySlotDto("Coureur 3", null, 16),
                 ],
+                legs: [30, 40, 20, 30, 40, 30],
             ),
             new RelayFormatDto(
                 id: "cfc_n4",
@@ -386,6 +452,7 @@ class RelayFormatService
                     new RelaySlotDto("Coureur 2", null, 16),
                     new RelaySlotDto("Coureur 3", null, 14),
                 ],
+                legs: [30, 40, 20, 20, 40, 30],
             ),
 
             // ===== Relais-Sprint (Article 10) =====
@@ -407,6 +474,8 @@ class RelayFormatService
                     new RelaySlotDto("Homme 2", "H", 14),
                     new RelaySlotDto("Dame 2", "D", 14),
                 ],
+                legs: [14, 14, 14, 14],
+                ordered: true,
             ),
 
             // ===== CNE — Critérium National des Équipes (Article 11) =====
@@ -423,6 +492,7 @@ class RelayFormatService
                 ],
                 description: "Total : 290 min. Nuit + jour. Niveau violet.",
                 slots: self::simpleSlots(7, null, 16),
+                legs: [40, 40, 50, 30, 50, 30, 50],
             ),
             new RelayFormatDto(
                 id: "cne_dames",
@@ -436,6 +506,7 @@ class RelayFormatService
                 ],
                 description: "Total : 170 min. Nuit + jour. Niveau violet.",
                 slots: self::simpleSlots(5, "D", 16),
+                legs: [30, 40, 30, 40, 30],
             ),
             new RelayFormatDto(
                 id: "cne_jeunes",
@@ -454,6 +525,7 @@ class RelayFormatService
                     new RelaySlotDto("Coureur 3", null, 14, 16),
                     new RelaySlotDto("Coureur 4", null, 14, 16),
                 ],
+                legs: [30, 30, 30, 30],
             ),
 
             // ===== Trophées spéciaux =====
@@ -475,6 +547,7 @@ class RelayFormatService
                     new RelaySlotDto("Relayeur 3", null, 14),
                     new RelaySlotDto("Relayeur 4", null, 10),
                 ],
+                legs: [30, 20, 30, 20],
             ),
 
             // ===== Relais de couleur (open) =====

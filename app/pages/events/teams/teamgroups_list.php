@@ -21,10 +21,12 @@ $is_simple = $event->type == EventType::Simple;
                         </div>
                         <div class="pool-title">
                             <b><?= $team_group->name ?: "Pool #" . $team_group->id ?></b>
-                            <?php if ($team_group->published): ?>
-                                <span class="badge"><i class="fa fa-eye"></i></span>
-                            <?php else: ?>
-                                <span class="badge secondary"><i class="fa fa-eye-slash"></i></span>
+                            <?php if ($can_edit): ?>
+                                <?php if ($team_group->published): ?>
+                                    <span class="badge"><i class="fa fa-eye"></i></span>
+                                <?php else: ?>
+                                    <span class="badge secondary"><i class="fa fa-eye-slash"></i></span>
+                                <?php endif ?>
                             <?php endif ?>
                         </div>
                         <div class="pool-stats">
