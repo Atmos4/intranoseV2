@@ -54,12 +54,33 @@ class Team
     #[Column(nullable: true)]
     public string|null $relay_format = null;
 
+    #[Column(nullable: true)]
+    public string|null $slot_order = null;
+
     #[ManyToOne]
     public TeamGroup|null $team_group = null;
 
     /** @var Collection<int, User> */
     #[ManyToMany(targetEntity: User::class)]
     public Collection $members;
+
+    /** Get ordered members array with nulls for empty slots */
+    public function getOrderedMembers(): array
+    {
+        if (!$this->slot_order) {
+            return $this->members->toArray();
+        }
+        $ids = json_decode($this->slot_order, true) ?: [];
+        $membersById = [];
+        foreach ($this->members as $m) {
+            $membersById[$m->id] = $m;
+        }
+        $ordered = [];
+        foreach ($ids as $id) {
+            $ordered[] = $id ? ($membersById[$id] ?? null) : null;
+        }
+        return $ordered;
+    }
 
     public function getRelayFormat(): ?RelayFormatDto
     {
