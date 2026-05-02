@@ -267,6 +267,59 @@ class RelayFormatService
         return $s;
     }
 
+    /**
+     * Parse POST data for a team index and resolve members with their categories.
+     * Shared by _slots_component.php and _composition_component.php to avoid duplication.
+     *
+     * @return array{
+     *   team_relay_format: string,
+     *   current_format: ?RelayFormatDto,
+     *   slot_defs: RelaySlotDto[],
+     *   is_ordered: bool,
+     *   team_members: array,
+     *   member_categories: string[]
+     * }
+     */
+    public static function resolveTeamContext(int|string $team_index, TeamGroup $team_group): array
+    {
+        $team_relay_format = $_POST["team_{$team_index}_relay_format"] ?? $_GET["relay_format"] ?? "";
+
+        $member_ids_raw = $_POST["team_{$team_index}_members"] ?? [];
+        $member_ids = is_string($member_ids_raw) ? json_decode($member_ids_raw, true) : $member_ids_raw;
+        if (!is_array($member_ids))
+            $member_ids = [];
+
+        $team_members = [];
+        $member_categories = [];
+
+        foreach ($member_ids as $member_id) {
+            if ($member_id) {
+                $user = em()->find(User::class, intval($member_id));
+                if ($user) {
+                    $category = self::computeCategory($user, $team_group->event->start_date);
+                    $team_members[] = [
+                        'id' => $user->id,
+                        'name' => $user->first_name . ' ' . $user->last_name,
+                        'picture' => $user->getPicture(),
+                        'category' => $category,
+                    ];
+                    if ($category)
+                        $member_categories[] = $category;
+                } else {
+                    $team_members[] = null;
+                }
+            } else {
+                $team_members[] = null;
+            }
+        }
+
+        $current_format = $team_relay_format ? self::get($team_relay_format) : null;
+        $slot_defs = $current_format ? $current_format->getSlots() : [];
+        $is_ordered = $current_format ? $current_format->ordered : false;
+
+        return compact('team_relay_format', 'current_format', 'slot_defs', 'is_ordered', 'team_members', 'member_categories');
+    }
+
     /** @return RelayFormatDto[] */
     public static function all(): array
     {

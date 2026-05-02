@@ -23,19 +23,6 @@ if (!$team_relay_format && !empty($relay_format_options)) {
 }
 
 $current_format = $team_relay_format ? RelayFormatService::get($team_relay_format) : null;
-$slot_defs = $current_format ? $current_format->getSlots() : [];
-$legs = $current_format ? $current_format->getLegs() : [];
-$num_slots = $current_format ? $current_format->team_size : 0;
-$slots_json = json_encode(array_map(fn($s) => $s->toArray(), $slot_defs));
-$legs_json = json_encode($legs);
-$is_ordered = $current_format ? $current_format->ordered : false;
-
-// Compute composition status for initial render (unordered formats only)
-$composition_result = null;
-if ($current_format && !$is_ordered && !empty($slot_defs)) {
-    $member_categories = array_filter(array_map(fn($m) => $m['category'] ?? null, $team_members));
-    $composition_result = RelayFormatService::validateComposition($slot_defs, array_values($member_categories));
-}
 ?>
 <div class="team-column" id="team-wrapper-<?= $team_index ?>" data-team-index="<?= $team_index ?>">
     <div class="team-column-header">
@@ -55,7 +42,9 @@ if ($current_format && !$is_ordered && !empty($slot_defs)) {
 
     <?php if ($can_edit && $relay_group_id && count($relay_format_options) > 1): ?>
         <select name="team_<?= $team_index ?>_relay_format" class="team-relay-format-select"
-            data-team-index="<?= $team_index ?>">
+            data-team-index="<?= $team_index ?>" hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_slots"
+            hx-target="#slots-<?= $team_index ?>" hx-swap="outerHTML"
+            hx-vals='<?= htmlspecialchars(json_encode(["team_index" => $team_index]), ENT_QUOTES) ?>'>
             <?php foreach ($relay_format_options as $val => $label): ?>
                 <option value="<?= htmlspecialchars($val) ?>" <?= $val === $team_relay_format ? 'selected' : '' ?>>
                     <?= htmlspecialchars($label) ?>
@@ -66,104 +55,14 @@ if ($current_format && !$is_ordered && !empty($slot_defs)) {
         <small class="relay-format-label"><i class="fa fa-tag"></i> <?= htmlspecialchars($current_format->name) ?></small>
     <?php endif ?>
 
-    <?php if ($num_slots > 0): ?>
-        <div class="team-slots-container" data-team-index="<?= $team_index ?>"
-            data-slots='<?= htmlspecialchars($slots_json, ENT_QUOTES) ?>'
-            data-legs='<?= htmlspecialchars($legs_json, ENT_QUOTES) ?>'
-            data-ordered="<?= $is_ordered ? '1' : '0' ?>">
-            <?php for ($i = 0; $i < $num_slots; $i++):
-                $slot = $slot_defs[$i] ?? null;
-                $member = $team_members[$i] ?? null;
-                $leg = $legs[$i] ?? null;
-            ?>
-                <div class="relay-slot <?= $member ? 'relay-slot-filled' : 'relay-slot-empty' ?>"
-                    data-slot-index="<?= $i ?>">
-                    <div class="relay-slot-header">
-                        <span class="relay-slot-position"><?= $i + 1 ?></span>
-                        <?php if ($leg): ?>
-                            <span class="relay-slot-duration"><?= $leg ?>'</span>
-                        <?php endif ?>
-                        <?php if ($slot && $is_ordered): ?>
-                            <small class="relay-slot-label"><?= htmlspecialchars($slot->label) ?></small>
-                        <?php endif ?>
-                    </div>
-                    <div class="relay-slot-drop" data-slot-index="<?= $i ?>">
-                        <?php if ($member): ?>
-                            <div class="team-member-chip" data-user-id="<?= $member['id'] ?>"
-                                data-user-category="<?= htmlspecialchars($member['category'] ?? '') ?>"
-                                <?= $can_edit ? 'draggable="true"' : '' ?>>
-                                <img src="<?= htmlspecialchars($member['picture']) ?>" alt="">
-                                <span><?= htmlspecialchars($member['name']) ?></span>
-                                <?php if (!empty($member['category'])): ?>
-                                    <small class="user-category-badge"><?= htmlspecialchars($member['category']) ?></small>
-                                <?php endif ?>
-                                <?php if ($can_edit): ?>
-                                    <button type="button" onclick="removeMember(this, <?= $member['id'] ?>)">&times;</button>
-                                <?php endif ?>
-                            </div>
-                        <?php elseif ($can_edit): ?>
-                            <span class="slot-drop-hint">Déposer ici</span>
-                        <?php else: ?>
-                            <span class="slot-drop-hint">—</span>
-                        <?php endif ?>
-                    </div>
-                </div>
-            <?php endfor ?>
-        </div>
-        <?php if ($composition_result !== null): ?>
-            <div class="team-composition-summary">
-                <?php foreach ($slot_defs as $si => $s):
-                    $is_met = ($composition_result['slots'][$si] ?? null) !== null;
-                ?>
-                    <div class="composition-rule <?= $is_met ? 'composition-met' : '' ?>" data-rule-index="<?= $si ?>">
-                        <i class="fa <?= $is_met ? 'fa-circle-check' : 'fa-circle' ?> composition-icon"></i>
-                        <span><?= htmlspecialchars($s->label) ?></span>
-                        <?php $ct = $s->constraintText(); if ($ct): ?>
-                            <small class="composition-constraint">(<?= htmlspecialchars($ct) ?>)</small>
-                        <?php endif ?>
-                    </div>
-                <?php endforeach ?>
-            </div>
-        <?php endif ?>
-    <?php else: ?>
-        <div class="team-drop-zone" data-team-index="<?= $team_index ?>">
-            <?php if (empty(array_filter($team_members))): ?>
-                <p class="drop-hint">Déposez des participants ici</p>
-            <?php endif ?>
-            <?php foreach ($team_members as $member): ?>
-                <?php if (!$member) continue; ?>
-                <div class="team-member-chip" data-user-id="<?= $member['id'] ?>"
-                    data-user-category="<?= htmlspecialchars($member['category'] ?? '') ?>"
-                    <?= $can_edit ? 'draggable="true"' : '' ?>>
-                    <?php if ($can_edit): ?>
-                        <div class="member-drag-handle" title="Glisser pour réordonner"><i class="fa fa-grip-vertical"></i></div>
-                    <?php endif ?>
-                    <img src="<?= htmlspecialchars($member['picture']) ?>" alt="">
-                    <span><?= htmlspecialchars($member['name']) ?></span>
-                    <?php if (!empty($member['category'])): ?>
-                        <small class="user-category-badge"><?= htmlspecialchars($member['category']) ?></small>
-                    <?php endif ?>
-                    <?php if ($can_edit): ?>
-                        <button type="button" onclick="removeMember(this, <?= $member['id'] ?>)">&times;</button>
-                    <?php endif ?>
-                </div>
-            <?php endforeach ?>
-        </div>
-    <?php endif ?>
+    <div hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_slots" hx-trigger="load" hx-vals='
+        <?= htmlspecialchars(json_encode([
+            "team_index" => $team_index,
+            "team_{$team_index}_relay_format" => $team_relay_format,
+            "team_{$team_index}_members" => json_encode(array_map(fn($m) => $m['id'] ?? '', $team_members)),
+            "can_edit" => $can_edit
+        ]), ENT_QUOTES) ?>' hx-swap="outerHTML">
+    </div>
 
-    <?php if ($can_edit): ?>
-        <?php if ($num_slots > 0): ?>
-            <?php for ($i = 0; $i < $num_slots; $i++): ?>
-                <input type="hidden" name="team_<?= $team_index ?>_members[]"
-                    value="<?= htmlspecialchars(($team_members[$i]['id'] ?? '')) ?>"
-                    data-slot-index="<?= $i ?>">
-            <?php endfor ?>
-        <?php else: ?>
-            <?php foreach ($team_members as $member): ?>
-                <?php if (!$member) continue; ?>
-                <input type="hidden" name="team_<?= $team_index ?>_members[]" value="<?= $member['id'] ?>"
-                    data-member-user-id="<?= $member['id'] ?>">
-            <?php endforeach ?>
-        <?php endif ?>
-    <?php endif ?>
+    <div class="team-composition-summary" id="composition-<?= $team_index ?>"></div>
 </div>
