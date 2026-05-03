@@ -18,7 +18,7 @@ details summary:focus:not([role="button"]) {
 
 .vehicle-article details summary {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr auto;
 }
 
 .vehicle-article:where(:hover, :focus, :focus-within) {

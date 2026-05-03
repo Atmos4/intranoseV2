@@ -92,7 +92,7 @@ page("Groupe : " . $group->name)->css("group_view.css");
                         <summary aria-haspopup="listbox" data-intro="Ajoutez de nouveaux membres au groupe">Ajouter au
                             groupe...
                         </summary>
-                        <ul data-placement=top>
+                        <ul>
                             <?php foreach ($add_member_list as $add_member): ?>
                                 <li>
                                     <label>
