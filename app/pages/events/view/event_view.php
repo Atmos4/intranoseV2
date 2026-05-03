@@ -10,8 +10,8 @@ if (!$event->open) {
 $tab = get_query_param("tab", false, false);
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
-$today_date = date_create("today");
-$deadline_in_future = $event->deadline >= $today_date;
+$now_date = date_create("now");
+$deadline_in_future = $event->deadline >= $now_date;
 $can_register = ($event->open && $deadline_in_future) || $can_edit;
 $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
@@ -24,7 +24,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
 <script src="/assets/js/start-intro.js"></script>
 
 <?= actions()
-    ->back($event->start_date >= $today_date ? "/evenements" : "/evenements/passes")
+    ->back($event->end_date >= $now_date ? "/evenements" : "/evenements/passes")
     ->if($can_edit, fn($b) => $b->dropdown(function ($dropdown) use ($event, $is_simple) {
         $dropdown->link("/evenements/$event->id/modifier" . ($is_simple ? "/simple" : "/complexe"), "Éditer", "fa-pen", ["class" => "secondary"]);
         $dropdown->link("/evenements/$event->id/rappel", "Rappel", "fa-bell", ["class" => "secondary"]);
@@ -74,8 +74,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
         } else {
 
             $deadline_class = $deadline_in_future ? "" : ($entry?->present ? "completed" : "missed");
-            $start_class = $event->start_date < $today_date ? $deadline_class : "";
-            $end_class = $event->end_date < $today_date ? $deadline_class : "";
+            $start_class = $event->start_date < $now_date ? $deadline_class : "";
+            $end_class = $event->end_date < $now_date ? $deadline_class : "";
 
             ?>
             <article>

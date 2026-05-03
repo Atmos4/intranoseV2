@@ -97,11 +97,11 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
 
 function RenderTimeline(Event|Activity $event_or_activity, bool $isPresent, bool $display_deadline = true, bool $is_activity = false)
 {
-    $today_date = date_create("today");
+    $now_date = date_create("now");
     $current_year = date('Y');
-    $deadline_class = $event_or_activity->deadline >= $today_date ? "" : ($isPresent ? "completed" : "missed");
-    $start_class = $event_or_activity->start_date < $today_date ? $deadline_class : "";
-    $end_class = $event_or_activity->end_date < $today_date ? $deadline_class : ""; ?>
+    $deadline_class = $event_or_activity->deadline >= $now_date ? "" : ($isPresent ? "completed" : "missed");
+    $start_class = $event_or_activity->start_date < $now_date ? $deadline_class : "";
+    $end_class = $event_or_activity->end_date < $now_date ? $deadline_class : ""; ?>
 
     <ul class="timeline timeline-vertical lg:timeline-horizontal">
         <?php if ($display_deadline): ?>
