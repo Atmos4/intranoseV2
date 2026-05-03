@@ -4,6 +4,9 @@ use Doctrine\ORM\EntityManager;
 // Project base path
 define('BASE_PATH', dirname(__DIR__));
 
+// Load helper classes
+require_once __DIR__ . '/helpers/RichTextHelper.php';
+
 function base_path(): string
 {
     return BASE_PATH;
