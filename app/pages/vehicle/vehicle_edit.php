@@ -26,6 +26,9 @@ if ($vehicle_id) {
     $vehicle = new Vehicle();
 }
 
+$member_list = em()->getRepository(User::class)->findAll();
+
+$vehicle_members = $vehicle->passengers;
 
 $v = new Validator($vehicle_mapping ?? []);
 $name = $v->text("name")->label("Nom du véhicule")->placeholder()->required();
@@ -45,10 +48,22 @@ if ($v->valid()) {
     $vehicle->capacity = $capacity->value;
     $vehicle->start_date = date_create($start_date->value);
     $vehicle->return_date = date_create($return_date->value);
-    $vehicle->passengers->add($user);
+    if (isset($_POST['add_members']) && count($_POST['add_members'])) {
+        if (count($_POST['add_members']) > $vehicle->capacity) {
+            $v->set_error("Trop de passagers");
+        }
+        $users = UserService::getFromList($_POST['add_members']);
+        // Add each user to the vehicle
+        $vehicle->passengers->clear();
+        foreach ($users as $user) {
+            if (!$vehicle->passengers->contains($user)) {
+                $vehicle->passengers->add($user);
+            }
+        }
+    }
     em()->persist($vehicle);
     em()->flush();
-    redirect("/evenements/$event->id");
+    redirect("/evenements/$event->id?tab=vehicules");
 }
 
 page(($vehicle_id ? "Modifier le véhicule" : "Ajouter un véhicule") . " pour $event->name");
@@ -76,6 +91,23 @@ page(($vehicle_id ? "Modifier le véhicule" : "Ajouter un véhicule") . " pour $
             </div>
             <div class="col-sm-12 col-lg-6">
                 <?= $return_date->render() ?>
+            </div>
+            <div>
+                <details class="dropdown">
+                    <summary aria-haspopup="listbox" data-intro="Ajouter des membres au véhicule">Ajouter au véhicule...
+                    </summary>
+                    <ul data-placement=top>
+                        <?php foreach ($member_list as $member): ?>
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="add_members[]" value="<?= $member->id ?>"
+                                        <?= $vehicle->passengers->contains($member) ? "checked" : "" ?>>
+                                    <?= "{$member->last_name} {$member->first_name}" ?>
+                                </label>
+                            </li>
+                        <?php endforeach ?>
+                    </ul>
+                </details>
             </div>
         </div>
     </article>

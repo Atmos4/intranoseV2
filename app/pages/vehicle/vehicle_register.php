@@ -39,51 +39,38 @@ if ($method == "POST") {
 <article class="vehicle-article">
     <details <?= $method == "POST" ? "open" : "" ?>>
         <summary>
-            <div class="summary-content">
-                <div class="vehicle-name">
+            <div>
+                <div>
                     <?= $vehicle->name ?>
                 </div>
             </div>
             <div>
-                <a href="/licencies?user=<?= $vehicle->manager->id ?>" <?= UserModal::props($vehicle->manager->id) ?>><i
-                        class="fas fa-user"></i>
-                    <?= $vehicle->manager->first_name ?>
-                    <?= $vehicle->manager->last_name ?>
-                </a>
-            </div>
-            <div class="capacity">
-                <i class="fas fa-chair"></i> <?= count($vehicle->passengers) ?> / <?= $vehicle->capacity ?>
+                <sl-tooltip content="Capacité du véhicule">
+                    <i class="fas fa-chair"></i> <?= count($vehicle->passengers) ?> / <?= $vehicle->capacity ?>
+                </sl-tooltip>
             </div>
         </summary>
 
         <div class="row">
-            <div class="col-6 col-md-4">
+            <div class="col-6">
                 <dl>
                     <dt>Départ</dt>
                     <dd>
                         <i class="fas fa-location-dot"></i>
                         <?= $vehicle->start_location ?> -
                         <i class="fas fa-calendar"></i>
-                        <?= $vehicle->start_date->format("d M - h:m") ?>
+                        <?= format_date($vehicle->start_date, 'dd MMM - HH:mm') ?>
                     </dd>
                 </dl>
             </div>
-            <div class="col-6 col-md-4">
+            <div class="col-6">
                 <dl>
                     <dt>Retour</dt>
                     <dd>
                         <i class="fas fa-location-dot"></i>
                         <?= $vehicle->return_location ?> -
                         <i class="fas fa-calendar"></i>
-                        <?= $vehicle->return_date->format("d M - h:m") ?>
-                    </dd>
-                </dl>
-            </div>
-            <div class="col-6 col-md-4">
-                <dl>
-                    <dt>Capacité</dt>
-                    <dd>
-                        <i class="fas fa-chair"></i> <?= count($vehicle->passengers) ?> / <?= $vehicle->capacity ?>
+                        <?= format_date($vehicle->return_date, 'dd MMM - HH:mm') ?>
                     </dd>
                 </dl>
             </div>
