@@ -5,14 +5,12 @@ function render_events(EventDto $event)
     $limit_class = $tooltip_content = "";
     if ($diff->invert) {
         $limit_class = "passed";
-        $tooltip_content = "data-tooltip='Deadline dépassée'";
+        $tooltip_content = "Deadline dépassée";
     } elseif ($diff->days < 7) {
         $limit_class = "warning";
-        $tooltip_content = "data-tooltip=\""
-            . ($diff->days == 0 ?
-                $diff->format("Plus que %h heures!") :
-                $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")))
-            . "\"";
+        $tooltip_content = ($diff->days == 0 ?
+            $diff->format("Plus que %h heures!") :
+            $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")));
     }
     $groups = GroupService::getEventGroups($event->id); ?>
 
@@ -41,20 +39,64 @@ function render_events(EventDto $event)
                 <?= GroupService::renderDots($groups) ?>
             </div>
             <div class="dates">
-                <span>
-                    <?= format_date($event->start) ?>
-                </span>
                 <?php if (!($event->end == $event->start)): ?>
-                    <i class="fas fa-arrow-right"></i>
-                    <span>
-                        <?= format_date($event->end) ?>
-                    </span>
+                    <div class="start-end">
+                        <div class="start-bloc">
+                        <?php endif ?>
+                        <div class="date-hour">
+                            <div class="date">
+                                <span>
+                                    <?= format_date($event->start, 'dd MMM') ?>
+                                </span>
+                            </div>
+                            <div class="hour">
+                                <span>
+                                    <?= format_date($event->deadline, 'HH:mm') ?>
+                                </span>
+                            </div>
+                        </div>
+                        <?php if (!($event->end == $event->start)): ?>
+                        </div>
+                        <div class="arrow-bloc">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="end-bloc">
+                            <div class="date-hour">
+                                <div class="date">
+                                    <span>
+                                        <?= format_date($event->start, 'dd MMM') ?>
+                                    </span>
+                                </div>
+                                <div class="hour">
+                                    <span>
+                                        <?= format_date($event->deadline, 'HH:mm') ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <?php endif ?>
             </div>
             <div class="event-limit <?= $limit_class ?>">
-                <i title="Deadline" class="fas fa-clock"></i><span <?= $tooltip_content ?> data-placement='left'>
-                    <?= format_date($event->deadline) ?>
-                </span>
+                <?php if ($tooltip_content): ?>
+                    <sl-tooltip content="<?= $tooltip_content ?>">
+                    <?php endif ?>
+                    <div class="date-hour with-clock">
+                        <div class="clock"><i title="Deadline" class="fas fa-clock"></i></div>
+                        <div class="date">
+                            <span>
+                                <?= format_date($event->deadline, 'dd MMM') ?>
+                            </span>
+                        </div>
+                        <div class="hour">
+                            <span>
+                                <?= format_date($event->deadline, 'HH:mm') ?>
+                            </span>
+                        </div>
+                    </div>
+                    <?php if ($tooltip_content): ?>
+                    </sl-tooltip>
+                <?php endif ?>
             </div>
         </div>
     </article>
