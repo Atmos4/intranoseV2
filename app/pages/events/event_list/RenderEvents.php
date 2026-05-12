@@ -49,11 +49,13 @@ function render_events(EventDto $event)
                                     <?= format_date($event->start, 'dd MMM') ?>
                                 </span>
                             </div>
-                            <div class="hour">
-                                <span>
-                                    <?= format_date($event->deadline, 'HH:mm') ?>
-                                </span>
-                            </div>
+                            <?php if (($event->end->format('Y-m-d') == $event->start->format('Y-m-d'))): ?>
+                                <div class="hour">
+                                    <span>
+                                        <?= format_date($event->start, 'HH:mm') ?>
+                                    </span>
+                                </div>
+                            <?php endif ?>
                         </div>
                         <?php if (!($event->end == $event->start)): ?>
                         </div>
@@ -64,14 +66,16 @@ function render_events(EventDto $event)
                             <div class="date-hour">
                                 <div class="date">
                                     <span>
-                                        <?= format_date($event->start, 'dd MMM') ?>
+                                        <?= format_date($event->end, 'dd MMM') ?>
                                     </span>
                                 </div>
-                                <div class="hour">
-                                    <span>
-                                        <?= format_date($event->deadline, 'HH:mm') ?>
-                                    </span>
-                                </div>
+                                <?php if (($event->end->format('Y-m-d') == $event->start->format('Y-m-d'))): ?>
+                                    <div class="hour">
+                                        <span>
+                                            <?= format_date($event->end, 'HH:mm') ?>
+                                        </span>
+                                    </div>
+                                <?php endif ?>
                             </div>
                         </div>
                     </div>
