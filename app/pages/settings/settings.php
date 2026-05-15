@@ -113,6 +113,58 @@ if ($v_picture->valid()) {
     }
 }
 
+$guardians_values = [];
+foreach ($user->guardians as $index => $guardian) {
+    $guardians_values["guardian_{$index}_first_name"] = $guardian->first_name;
+    $guardians_values["guardian_{$index}_last_name"] = $guardian->last_name;
+    $guardians_values["guardian_{$index}_phone"] = $guardian->phone;
+    $guardians_values["guardian_{$index}_email"] = $guardian->email;
+}
+
+$v_guardians = new Validator($guardians_values, action: "guardian_form");
+$guardian_rows = [];
+foreach ($user->guardians as $index => $guardian) {
+    $guardian_rows[$index]['first_name'] = $v_guardians->text("guardian_{$index}_first_name")->label("Prénom")->required();
+    $guardian_rows[$index]['last_name'] = $v_guardians->text("guardian_{$index}_last_name")->label("Nom")->required();
+    $guardian_rows[$index]['phone'] = $v_guardians->phone("guardian_{$index}_phone")->label("Téléphone")->required();
+    $guardian_rows[$index]['email'] = $v_guardians->email("guardian_{$index}_email")->label("Email")->required();
+}
+
+// New guardians submitted via new_guardians[n][field] array syntax
+$new_guardian_rows = [];
+if (isset($_POST["new_guardians"]) && is_array($_POST["new_guardians"])) {
+    foreach ($_POST["new_guardians"] as $i => $data) {
+        $new_guardian_rows[$i]['first_name'] = htmlspecialchars(trim($data["first_name"] ?? ""), ENT_QUOTES);
+        $new_guardian_rows[$i]['last_name'] = htmlspecialchars(trim($data["last_name"] ?? ""), ENT_QUOTES);
+        $new_guardian_rows[$i]['phone'] = htmlspecialchars(trim($data["phone"] ?? ""), ENT_QUOTES);
+        $new_guardian_rows[$i]['email'] = htmlspecialchars(trim($data["email"] ?? ""), ENT_QUOTES);
+    }
+}
+
+if ($v_guardians->valid()) {
+    foreach ($user->guardians as $index => $guardian) {
+        $guardian->first_name = $guardian_rows[$index]['first_name']->value;
+        $guardian->last_name = $guardian_rows[$index]['last_name']->value;
+        $guardian->phone = $guardian_rows[$index]['phone']->value;
+        $guardian->email = $guardian_rows[$index]['email']->value;
+        em()->persist($guardian);
+    }
+    foreach ($new_guardian_rows as $data) {
+        if ($data['first_name'] === "" && $data['last_name'] === "")
+            continue;
+        $guardian = new Guardian();
+        $guardian->first_name = $data['first_name'];
+        $guardian->last_name = $data['last_name'];
+        $guardian->phone = $data['phone'];
+        $guardian->email = $data['email'];
+        em()->persist($guardian);
+        $user->guardians->add($guardian);
+    }
+    em()->flush();
+    Toast::create("Tuteurs mis à jour !");
+    reload();
+}
+
 page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
 ?>
 
@@ -284,3 +336,92 @@ if ($v_password->valid()) {
     <?php endif ?>
 </form>
 <script src="/assets/js/copy-clipboard.js"></script>
+
+<h2 id="guardians">Tuteurs</h2>
+<form method="post" hx-swap="innerHTML show:#guardians:top" class="row">
+    <?= $v_guardians->render_validation() ?>
+
+    <div id="guardian-list" class="col-12">
+        <?php foreach ($guardian_rows as $index => $row):
+            $guardian = $user->guardians->get($index); ?>
+            <fieldset class="guardian-row">
+                <h4 style="margin:0;">Tuteur
+                    <?= $index + 1 ?>
+                </h4>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6"><?= $row['first_name']->render() ?></div>
+                    <div class="col-sm-12 col-md-6"><?= $row['last_name']->render() ?></div>
+                    <div class="col-sm-12 col-md-6"><?= $row['phone']->render() ?></div>
+                    <div class="col-sm-12 col-md-6"><?= $row['email']->render() ?></div>
+                </div>
+                <div class=row>
+                    <a href="/licencies/<?= $user->id ?>/tuteur/<?= $guardian->id ?>/supprimer"
+                        class="destructive outline"><i class="fas fa-trash"></i> Supprimer</a>
+                </div>
+            </fieldset>
+        <?php endforeach ?>
+
+        <div id="new-guardian-list">
+            <?php foreach ($new_guardian_rows as $i => $data): ?>
+                <fieldset class="guardian-row">
+                    <h4>Nouveau tuteur <?= $i + 1 ?></h4>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <input type="text" name="new_guardians[<?= $i ?>][first_name]" placeholder="Prénom"
+                                value="<?= $data['first_name'] ?>">
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <input type="text" name="new_guardians[<?= $i ?>][last_name]" placeholder="Nom"
+                                value="<?= $data['last_name'] ?>">
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <input type="tel" name="new_guardians[<?= $i ?>][phone]" placeholder="Téléphone"
+                                value="<?= $data['phone'] ?>">
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <input type="email" name="new_guardians[<?= $i ?>][email]" placeholder="Email"
+                                value="<?= $data['email'] ?>">
+                        </div>
+                    </div>
+                </fieldset>
+            <?php endforeach ?>
+        </div>
+    </div>
+
+    <div class="col-auto">
+        <button type="button" class="outline contrast" onclick="addGuardian()">
+            <i class="fa fa-plus"></i> Ajouter un tuteur
+        </button>
+    </div>
+    <div>
+        <input type="submit" class="outline" value="Mettre à jour les tuteurs">
+    </div>
+</form>
+
+<script>
+    var _newGuardianCount = <?= count($new_guardian_rows) ?>;
+
+    function addGuardian() {
+        var i = _newGuardianCount++;
+        var list = document.getElementById('new-guardian-list');
+        var fieldset = document.createElement('fieldset');
+        fieldset.className = 'guardian-row';
+        fieldset.innerHTML = `
+            <legend>Nouveau tuteur ${i + 1}</legend>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <input type="text" name="new_guardians[${i}][first_name]" placeholder="Prénom">
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <input type="text" name="new_guardians[${i}][last_name]" placeholder="Nom">
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <input type="tel" name="new_guardians[${i}][phone]" placeholder="Téléphone">
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <input type="email" name="new_guardians[${i}][email]" placeholder="Email">
+                </div>
+            </div>`;
+        list.appendChild(fieldset);
+    }
+</script>

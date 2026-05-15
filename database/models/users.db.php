@@ -84,9 +84,14 @@ class User
     #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'users')]
     public Collection $groups;
 
+    /** @var Collection<int,Guardian> entries */
+    #[ManyToMany(targetEntity: Guardian::class, inversedBy: 'users')]
+    public Collection $guardians;
+
     function __construct()
     {
         $this->groups = new ArrayCollection();
+        $this->guardians = new ArrayCollection();
         $this->birthdate = date_create();
     }
 
@@ -236,6 +241,34 @@ class Family
     function __construct()
     {
         $this->members = new ArrayCollection();
+    }
+}
+
+#[Entity, Table(name: 'guardians')]
+class Guardian
+{
+    #[Id, Column, GeneratedValue]
+    public int|null $id = null;
+
+    #[Column]
+    public string $last_name = "";
+
+    #[Column]
+    public string $first_name = "";
+
+    #[Column]
+    public string $email = "";
+
+    #[Column]
+    public string $phone = "";
+
+    /** @var Collection<int, User>  */
+    #[OneToMany(targetEntity: User::class, mappedBy: 'guardian')]
+    public Collection $pupils;
+
+    function __construct()
+    {
+        $this->pupils = new ArrayCollection();
     }
 }
 

@@ -108,6 +108,38 @@ if (!Component::mounted()) {
             <?php endif ?>
         </div>
 
+        <?php if ($user->guardians->count() > 0): ?>
+            <hr>
+            <details>
+                <summary>
+                    <i class="fa fa-shield-heart"></i>
+                    Tuteurs <small>(<?= $user->guardians->count() ?>)</small>
+                </summary>
+                <div class="grid">
+                    <?php foreach ($user->guardians as $guardian): ?>
+                        <article class="notice" style="margin: 0;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong><?= htmlspecialchars("$guardian->first_name $guardian->last_name", ENT_QUOTES) ?></strong>
+                                <?php if ($can_edit_users): ?>
+                                    <a href="/licencies/<?= $user->id ?>/tuteur/<?= $guardian->id ?>/supprimer" class="destructive outline" style="padding: 0.2rem 0.5rem; margin:0; font-size:0.8em;"><i class="fas fa-trash"></i></a>
+                                <?php endif ?>
+                            </div>
+                            <div>
+                                <?php if ($guardian->phone): ?>
+                                    <span>📞 <a class="contrast"
+                                            href="tel:<?= htmlspecialchars($guardian->phone, ENT_QUOTES) ?>"><?= htmlspecialchars($guardian->phone, ENT_QUOTES) ?></a></span>
+                                <?php endif ?>
+                                <?php if ($guardian->email): ?>
+                                    <span>✉️ <a class="contrast"
+                                            href="mailto:<?= htmlspecialchars($guardian->email, ENT_QUOTES) ?>"><?= htmlspecialchars($guardian->email, ENT_QUOTES) ?></a></span>
+                                <?php endif ?>
+                            </div>
+                        </article>
+                    <?php endforeach ?>
+                </div>
+            </details>
+        <?php endif ?>
+
         <?php if ($can_edit_users): ?>
             <footer>
                 <nav al-center>
