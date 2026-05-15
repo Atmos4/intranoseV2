@@ -17,21 +17,22 @@ class AuthService extends FactoryDependency
             return true;
         }
         if (AuthService::tryMatchUserPassword(UserService::getByEmail($this->em, $login), $password, $rememberMe, $v)) {
-          return true;
+            return true;
         }
         logger()->info("Login failed: not found", ["login" => $login]);
         $v->set_error("Utilisateur non trouvé");
         return false;
     }
 
-    private function tryMatchUserPassword(User|null $user, string $password, bool $rememberMe = false, Validator &$v = null): bool{
+    private function tryMatchUserPassword(User|null $user, string $password, bool $rememberMe = false, Validator &$v = null): bool
+    {
 
         if (!$user) {
             return false;
         }
         switch ($user->status) {
             case UserStatus::INACTIVE:
-                $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+                $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('P1D'));
                 $this->em->persist($token);
 
                 $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
@@ -100,7 +101,7 @@ class AuthService extends FactoryDependency
 
     function createActivationLink(User $user): string
     {
-        $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('PT15M'));
+        $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('P1D'));
         $this->em->persist($token);
         $this->em->flush();
         return env("BASE_URL") . "/activation?token=$token->id";
