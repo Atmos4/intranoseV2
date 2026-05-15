@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/activity_validators.php';
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id", strict: false, numeric: false);
@@ -46,28 +47,48 @@ $item_name = !$is_simple ? "activité" : "événement";
 $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
 
 $v = new Validator($form_values ?? ($event_id ? ["start_date" => $event->start_date->format("Y-m-d"), "end_date" => $event->end_date->format("Y-m-d")] : []));
-$name = $v->text("{$prefix}name")->label("Nom de l'" . $item_name)->placeholder()->required();
-$type = $v->select("{$prefix}type")->options($type_array)->label("Type d'$item_name");
-$start_date = $v->date_time("{$prefix}start_date")
-    ->label("Date de début")
-    ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux")
-    ->required();
-$end_date = $v->date_time("{$prefix}end_date")
-    ->label("Date de fin")
-    ->min($start_date->value, "Doit être après le départ")
-    ->required();
-if (!$is_simple && $event_id) {
-    $start_date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
-        ->max($event->end_date->format("Y-m-d H:i:s"), "Doit être avant la date de fin de l'$item_name", true);
-    $end_date->min($event->start_date->format("Y-m-d H:i:s"), "Doit être après la date de début de l'$item_name", true)
-        ->max($event->end_date->format("Y-m-d H:i:s"), "Doit être avant la date de fin de l'$item_name", true);
+
+// When pre-populated form_values are provided (e.g. after a failed POST propagated via hx-vals),
+// mark the validator as non-empty so should_test() runs constraint checks.
+if ($post_form_values) {
+    $v->empty = false;
 }
-$location_label = $v->text("{$prefix}location_label")->label("Nom du Lieu")->required();
-$location_url = $v->url("{$prefix}location_url")->label("URL du lieu");
-$description = $v->textarea("{$prefix}description")->label("Description de l'" . $item_name);
-$deadline = $v->date_time("{$prefix}deadline")
-    ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
-    ->label("Date limite d'inscription");
+
+if ($is_complex) {
+    // Prefer submitted event dates (passed via form_values after a failed POST) over entity values
+    $event_start = $post_form_values["event_start_date"]
+        ?? ($_POST["event_start_date"] ?? null)
+        ?? ($event?->id ? $event->start_date->format("Y-m-d H:i:s") : null);
+    $event_end = $post_form_values["event_end_date"]
+        ?? ($_POST["event_end_date"] ?? null)
+        ?? ($event?->id ? $event->end_date->format("Y-m-d H:i:s") : null);
+    $fields = build_activity_validator($v, (int) $activity_index, $event_start, $event_end);
+    $name = $fields["name"];
+    $type = $fields["type"];
+    $start_date = $fields["start_date"];
+    $end_date = $fields["end_date"];
+    $location_label = $fields["location_label"];
+    $location_url = $fields["location_url"];
+    $description = $fields["description"];
+    $deadline = $fields["deadline"];
+} else {
+    $name = $v->text("{$prefix}name")->label("Nom de l'" . $item_name)->placeholder()->required();
+    $type = $v->select("{$prefix}type")->options($type_array)->label("Type d'$item_name");
+    $start_date = $v->date_time("{$prefix}start_date")
+        ->label("Date de début")
+        ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux")
+        ->required();
+    $end_date = $v->date_time("{$prefix}end_date")
+        ->label("Date de fin")
+        ->min($start_date->value, "Doit être après le départ")
+        ->required();
+    $location_label = $v->text("{$prefix}location_label")->label("Nom du Lieu")->required();
+    $location_url = $v->url("{$prefix}location_url")->label("URL du lieu");
+    $description = $v->textarea("{$prefix}description")->label("Description de l'" . $item_name);
+    $deadline = $v->date_time("{$prefix}deadline")
+        ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
+        ->label("Date limite d'inscription");
+}
 $category_rows = [];
 foreach ($categories as $index => $category) {
     $category_rows[$index]['name'] = $v->text("{$prefix}category_{$index}_name")->required();
@@ -81,6 +102,13 @@ foreach ($categories as $index => $category) {
         id="activity-wrapper-<?= $activity_index ?>">
         <input type="hidden" name="activity_<?= $activity_index ?>_id" value="<?= $activity_id ?>">
         <input type="hidden" name="activity_<?= $activity_index ?>_category_count" value="<?= count($categories) ?>">
+        <?php foreach ($v->fields as $field): ?>
+            <?php if ($field->error): ?>
+                <label for="<?= $field->key ?>" class="error">
+                    <?= $field->get_label() ? $field->get_label() . ' : ' : '' ?>             <?= $field->error ?>
+                </label>
+            <?php endif ?>
+        <?php endforeach ?>
     <?php else: ?>
         <article>
         <?php endif; ?>
