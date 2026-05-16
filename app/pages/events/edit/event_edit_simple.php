@@ -7,33 +7,14 @@ if ($event && $event->type == EventType::Complex) {
     force_404("This event is a complex event.");
 }
 
-$form_values = [];
 if ($event_id) {
     $activity = $event->activities[0];
-    $form_values = [
-        "activity_name" => $activity->name,
-        "activity_type" => $activity->type->value,
-        "activity_start_date" => date_format($activity->start_date, "Y-m-d H:i:s"),
-        "activity_end_date" => date_format($activity->end_date, "Y-m-d H:i:s"),
-        "activity_location_label" => $activity->location_label,
-        "activity_location_url" => $activity->location_url,
-        "activity_description" => $activity->description,
-        "activity_deadline" => date_format($activity->deadline, "Y-m-d H:i:s"),
-    ];
-    $form_values["activity_categories"] = [];
-    foreach ($activity->categories as $index => $category) {
-        $form_values["activity_categories"][] = [
-            "name" => $category->name,
-            "removed" => $category->removed,
-            "entries" => $category->activity_entries
-        ];
-    }
 } else {
     $event = new Event();
     $activity = new Activity();
 }
 
-$v = new Validator();
+$v = new Validator([], 'simple');
 $name = $v->text("name");
 $type = $v->select("type");
 $start_date = $v->date_time("start_date");
@@ -46,6 +27,53 @@ $category_rows = [];
 foreach ($activity->categories as $index => $category) {
     $category_rows[$index]['name'] = $v->text("category_{$index}_name");
     $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle");
+}
+
+// Build hx_vals for re-rendering the partial.
+// After a failed POST ($v->empty === false) use submitted values so the user sees what they typed.
+// On initial load use entity values (or is_new for a brand-new event).
+if (!$v->empty) {
+    $hx_vals = [
+        'action' => 'simple',
+        'is_simple' => true,
+        'name' => $v->value('name'),
+        'type' => $v->value('type'),
+        'start_date' => $v->value('start_date'),
+        'end_date' => $v->value('end_date'),
+        'location_label' => $v->value('location_label'),
+        'location_url' => $v->value('location_url'),
+        'description' => $v->value('description'),
+        'deadline' => $v->value('deadline'),
+        'category_count' => count($activity->categories),
+    ];
+    foreach ($activity->categories as $i => $category) {
+        $hx_vals["category_{$i}_id"] = $category->id;
+        $hx_vals["category_{$i}_name"] = $v->value("category_{$i}_name") ?? $category->name;
+        $hx_vals["category_{$i}_toggle"] = $v->value("category_{$i}_toggle") ?? ($category->removed ? 0 : 1);
+        $hx_vals["category_{$i}_entry_count"] = count($category->activity_entries ?? []);
+    }
+} elseif ($event_id) {
+    $hx_vals = [
+        'action' => 'simple',
+        'is_simple' => true,
+        'name' => $activity->name,
+        'type' => $activity->type->value,
+        'start_date' => date_format($activity->start_date, "Y-m-d H:i:s"),
+        'end_date' => date_format($activity->end_date, "Y-m-d H:i:s"),
+        'location_label' => $activity->location_label,
+        'location_url' => $activity->location_url,
+        'description' => $activity->description,
+        'deadline' => date_format($activity->deadline, "Y-m-d H:i:s"),
+        'category_count' => count($activity->categories),
+    ];
+    foreach ($activity->categories as $i => $category) {
+        $hx_vals["category_{$i}_id"] = $category->id;
+        $hx_vals["category_{$i}_name"] = $category->name;
+        $hx_vals["category_{$i}_toggle"] = $category->removed ? 0 : 1;
+        $hx_vals["category_{$i}_entry_count"] = count($category->activity_entries ?? []);
+    }
+} else {
+    $hx_vals = ['action' => 'simple', 'is_simple' => true, 'is_new' => '1'];
 }
 
 if ($v->valid()) {
@@ -96,7 +124,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activ
     <?= $action ?>
     <?= $v->render_validation() ?>
     <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ? $event_id : "new" ?>" hx-trigger="load"
-        hx-vals='<?= htmlspecialchars(json_encode(["form_values" => $form_values, "is_simple" => true, "action" => "simple"]), ENT_QUOTES, 'UTF-8') ?>'>
+        hx-vals='<?= htmlspecialchars(json_encode($hx_vals), ENT_QUOTES, 'UTF-8') ?>'>
     </div>
 </form>
 <?php if ($event_id): ?>

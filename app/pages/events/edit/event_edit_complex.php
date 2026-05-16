@@ -51,7 +51,7 @@ if ($_POST) {
         $activity_id = $_POST["activity_{$i}_id"] ?? null;
         $av = new Validator();
         // Use the submitted event dates so bounds reflect what the user just typed
-        $fields = build_activity_validator($av, $i, $start_date->value, $end_date->value);
+        $fields = build_activity_validator($av, $start_date->value, $end_date->value, $i);
         $activity_validators[$i] = array_merge(["id" => $activity_id], $fields);
     }
 }
@@ -214,81 +214,57 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                     <?php endfor ?>
 
                     <?php foreach ($event->activities as $index => $activity):
-                        // After a failed POST, use the submitted values so the partial re-renders
-                        // with the user's input and shows any validation errors.
                         $has_post = !empty($_POST) && isset($activity_validators[$index]);
-                        $form_values_for_partial = $has_post ? [
-                            "event_start_date" => $start_date->value,
-                            "event_end_date" => $end_date->value,
-                            "activity_id" => $activity->id,
-                            "activity_name" => $_POST["activity_{$index}_name"] ?? "",
-                            "activity_type" => $_POST["activity_{$index}_type"] ?? "",
-                            "activity_start_date" => $_POST["activity_{$index}_start_date"] ?? "",
-                            "activity_end_date" => $_POST["activity_{$index}_end_date"] ?? "",
-                            "activity_location_label" => $_POST["activity_{$index}_location_label"] ?? "",
-                            "activity_location_url" => $_POST["activity_{$index}_location_url"] ?? "",
-                            "activity_description" => $_POST["activity_{$index}_description"] ?? "",
-                            "activity_deadline" => $_POST["activity_{$index}_deadline"] ?? "",
-                            "activity_categories" => array_map(function ($cat) {
-                                return [
-                                    "id" => $cat->id,
-                                    "name" => $cat->name,
-                                    "removed" => $cat->removed,
-                                    "entries" => $cat->activity_entries
-                                ];
-                            }, $activity->categories->toArray()),
-                        ] : [
-                            "event_start_date" => $event->start_date->format("Y-m-d H:i:s"),
-                            "event_end_date" => $event->end_date->format("Y-m-d H:i:s"),
-                            "activity_id" => $activity->id,
-                            "activity_name" => $activity->name,
-                            "activity_type" => $activity->type->value,
-                            "activity_start_date" => date_format($activity->start_date, "Y-m-d H:i:s"),
-                            "activity_end_date" => date_format($activity->end_date, "Y-m-d H:i:s"),
-                            "activity_location_label" => $activity->location_label,
-                            "activity_location_url" => $activity->location_url,
-                            "activity_description" => $activity->description,
-                            "activity_deadline" => date_format($activity->deadline, "Y-m-d H:i:s"),
-                            "activity_categories" => array_map(function ($cat) {
-                                return [
-                                    "id" => $cat->id,
-                                    "name" => $cat->name,
-                                    "removed" => $cat->removed,
-                                    "entries" => $cat->activity_entries
-                                ];
-                            }, $activity->categories->toArray()),
+                        $panel_vals = [
+                            'action' => $index,
+                            'event_start_date' => $has_post ? $start_date->value : $event->start_date->format("Y-m-d H:i:s"),
+                            'event_end_date' => $has_post ? $end_date->value : $event->end_date->format("Y-m-d H:i:s"),
+                            "activity_{$index}_id" => $activity->id,
+                            "activity_{$index}_name" => $has_post ? ($_POST["activity_{$index}_name"] ?? "") : $activity->name,
+                            "activity_{$index}_type" => $has_post ? ($_POST["activity_{$index}_type"] ?? "") : $activity->type->value,
+                            "activity_{$index}_start_date" => $has_post ? ($_POST["activity_{$index}_start_date"] ?? "") : date_format($activity->start_date, "Y-m-d H:i:s"),
+                            "activity_{$index}_end_date" => $has_post ? ($_POST["activity_{$index}_end_date"] ?? "") : date_format($activity->end_date, "Y-m-d H:i:s"),
+                            "activity_{$index}_location_label" => $has_post ? ($_POST["activity_{$index}_location_label"] ?? "") : $activity->location_label,
+                            "activity_{$index}_location_url" => $has_post ? ($_POST["activity_{$index}_location_url"] ?? "") : $activity->location_url,
+                            "activity_{$index}_description" => $has_post ? ($_POST["activity_{$index}_description"] ?? "") : $activity->description,
+                            "activity_{$index}_deadline" => $has_post ? ($_POST["activity_{$index}_deadline"] ?? "") : date_format($activity->deadline, "Y-m-d H:i:s"),
+                            "activity_{$index}_category_count" => count($activity->categories),
                         ];
+                        foreach ($activity->categories as $c => $cat) {
+                            $panel_vals["activity_{$index}_category_{$c}_id"] = $cat->id;
+                            $panel_vals["activity_{$index}_category_{$c}_name"] = $has_post ? ($_POST["activity_{$index}_category_{$c}_name"] ?? $cat->name) : $cat->name;
+                            $panel_vals["activity_{$index}_category_{$c}_toggle"] = $has_post ? ($_POST["activity_{$index}_category_{$c}_toggle"] ?? ($cat->removed ? 0 : 1)) : ($cat->removed ? 0 : 1);
+                            $panel_vals["activity_{$index}_category_{$c}_entry_count"] = count($cat->activity_entries ?? []);
+                        }
                         ?>
                         <sl-tab-panel name="activity-<?= $index ?>" id="panel-<?= $index ?>">
                             <div id="activity-wrapper-<?= $index ?>" hx-post="/evenements/activity_form/<?= $event_id ?>"
-                                hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
-                                    "form_values" => $form_values_for_partial,
-                                    "action" => $index,
-                                ]), ENT_QUOTES, 'UTF-8') ?>'>
+                                hx-trigger="load" hx-swap="outerHTML"
+                                hx-vals='<?= htmlspecialchars(json_encode($panel_vals), ENT_QUOTES, 'UTF-8') ?>'>
                             </div>
                         </sl-tab-panel>
                     <?php endforeach ?>
                     <?php for ($i = $existing_count; $i < $total_activity_count; $i++):
-                        $new_form_values = [
-                            "event_start_date" => $start_date->value,
-                            "event_end_date" => $end_date->value,
-                            "activity_id" => null,
-                            "activity_name" => $_POST["activity_{$i}_name"] ?? "",
-                            "activity_type" => $_POST["activity_{$i}_type"] ?? "",
-                            "activity_start_date" => $_POST["activity_{$i}_start_date"] ?? "",
-                            "activity_end_date" => $_POST["activity_{$i}_end_date"] ?? "",
-                            "activity_location_label" => $_POST["activity_{$i}_location_label"] ?? "",
-                            "activity_location_url" => $_POST["activity_{$i}_location_url"] ?? "",
-                            "activity_description" => $_POST["activity_{$i}_description"] ?? "",
-                            "activity_deadline" => $_POST["activity_{$i}_deadline"] ?? "",
-                            "activity_categories" => [],
-                        ]; ?>
+                        $new_panel_vals = [
+                            'action' => $i,
+                            'event_start_date' => $start_date->value,
+                            'event_end_date' => $end_date->value,
+                            "activity_{$i}_id" => null,
+                            "activity_{$i}_name" => $_POST["activity_{$i}_name"] ?? "",
+                            "activity_{$i}_type" => $_POST["activity_{$i}_type"] ?? "",
+                            "activity_{$i}_start_date" => $_POST["activity_{$i}_start_date"] ?? "",
+                            "activity_{$i}_end_date" => $_POST["activity_{$i}_end_date"] ?? "",
+                            "activity_{$i}_location_label" => $_POST["activity_{$i}_location_label"] ?? "",
+                            "activity_{$i}_location_url" => $_POST["activity_{$i}_location_url"] ?? "",
+                            "activity_{$i}_description" => $_POST["activity_{$i}_description"] ?? "",
+                            "activity_{$i}_deadline" => $_POST["activity_{$i}_deadline"] ?? "",
+                            "activity_{$i}_category_count" => 0,
+                        ];
+                        ?>
                         <sl-tab-panel name="activity-<?= $i ?>" id="panel-<?= $i ?>">
                             <div id="activity-wrapper-<?= $i ?>" hx-post="/evenements/activity_form/<?= $event_id ?>"
-                                hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
-                                    "form_values" => $new_form_values,
-                                    "action" => $i,
-                                ]), ENT_QUOTES, 'UTF-8') ?>'>
+                                hx-trigger="load" hx-swap="outerHTML"
+                                hx-vals='<?= htmlspecialchars(json_encode($new_panel_vals), ENT_QUOTES, 'UTF-8') ?>'>
                             </div>
                         </sl-tab-panel>
                     <?php endfor ?>
@@ -388,7 +364,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
         wrapper.setAttribute('hx-swap', 'outerHTML');
         wrapper.setAttribute('hx-vals', JSON.stringify({
             action: activityCount,
-            form_values: null,
+            is_new: '1',
             event_start_date: document.querySelector('input[name="start_date"]')?.value ?? '',
             event_end_date: document.querySelector('input[name="end_date"]')?.value ?? '',
         }));

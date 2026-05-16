@@ -9,7 +9,6 @@ if ($event_id) {
     $event = new Event();
 }
 
-$post_form_values = isset($_POST["form_values"]) ? json_decode($_POST["form_values"], true) : null;
 $is_simple = $_POST["is_simple"] ?? ($event ? $event->type == EventType::Simple : false);
 $activity_index = $_POST["action"] ?? null;
 
@@ -19,81 +18,45 @@ $is_complex = !$is_simple && $activity_index !== "single_activity";
 // Field name prefix for complex events with multiple activities
 $prefix = $is_complex ? "activity_{$activity_index}_" : "";
 
-if ($post_form_values) {
-    $form_values = [
-        $prefix . "name" => $post_form_values["activity_name"] ?? null,
-        $prefix . "type" => $post_form_values["activity_type"] ?? null,
-        $prefix . "start_date" => $post_form_values["activity_start_date"] ?? null,
-        $prefix . "end_date" => $post_form_values["activity_end_date"] ?? null,
-        $prefix . "location_label" => $post_form_values["activity_location_label"] ?? null,
-        $prefix . "location_url" => $post_form_values["activity_location_url"] ?? null,
-        $prefix . "description" => $post_form_values["activity_description"] ?? null,
-        $prefix . "deadline" => $post_form_values["activity_deadline"] ?? null,
+// Build categories from flat POST fields
+$category_count = (int) ($_POST["{$prefix}category_count"] ?? 0);
+$categories = [];
+for ($i = 0; $i < $category_count; $i++) {
+    $categories[$i] = [
+        'id' => $_POST["{$prefix}category_{$i}_id"] ?? null,
+        'entry_count' => (int) ($_POST["{$prefix}category_{$i}_entry_count"] ?? 0),
     ];
-    $activity_id = $post_form_values["activity_id"] ?? null;
-    $categories = $post_form_values["activity_categories"] ?? [];
-    foreach ($categories as $index => $category) {
-        $form_values["{$prefix}category_{$index}_name"] = $category["name"];
-        $form_values["{$prefix}category_{$index}_toggle"] = $category["removed"] ? 0 : 1;
-    }
-} else {
-    $form_values = $event_id ? ["start_date" => $event->start_date->format("Y-m-d"), "end_date" => $event->end_date->format("Y-m-d")] : [];
-    $activity_id = null;
-    $categories = [];
 }
+
+$activity_id = $_POST["{$prefix}id"] ?? null;
 
 $item_name = !$is_simple ? "activité" : "événement";
 
-$type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
+// Validator auto-reads all of $_POST and sets $v->empty = false when action matches
+$v = new Validator([], $_POST['action'] ?? null);
 
-$v = new Validator($form_values ?? ($event_id ? ["start_date" => $event->start_date->format("Y-m-d"), "end_date" => $event->end_date->format("Y-m-d")] : []));
-
-// When pre-populated form_values are provided (e.g. after a failed POST propagated via hx-vals),
-// mark the validator as non-empty so should_test() runs constraint checks.
-if ($post_form_values) {
-    $v->empty = false;
+// Suppress validation for brand-new (unsaved) activities to avoid errors on initial load
+if ($_POST['is_new'] ?? false) {
+    $v->empty = true;
 }
 
-if ($is_complex) {
-    // Prefer submitted event dates (passed via form_values after a failed POST) over entity values
-    $event_start = $post_form_values["event_start_date"]
-        ?? ($_POST["event_start_date"] ?? null)
-        ?? ($event?->id ? $event->start_date->format("Y-m-d H:i:s") : null);
-    $event_end = $post_form_values["event_end_date"]
-        ?? ($_POST["event_end_date"] ?? null)
-        ?? ($event?->id ? $event->end_date->format("Y-m-d H:i:s") : null);
-    $fields = build_activity_validator($v, (int) $activity_index, $event_start, $event_end);
-    $name = $fields["name"];
-    $type = $fields["type"];
-    $start_date = $fields["start_date"];
-    $end_date = $fields["end_date"];
-    $location_label = $fields["location_label"];
-    $location_url = $fields["location_url"];
-    $description = $fields["description"];
-    $deadline = $fields["deadline"];
-} else {
-    $name = $v->text("{$prefix}name")->label("Nom de l'" . $item_name)->placeholder()->required();
-    $type = $v->select("{$prefix}type")->options($type_array)->label("Type d'$item_name");
-    $start_date = $v->date_time("{$prefix}start_date")
-        ->label("Date de début")
-        ->min(date("Y-m-d H:i:s"), "Dans le futur c'est mieux")
-        ->required();
-    $end_date = $v->date_time("{$prefix}end_date")
-        ->label("Date de fin")
-        ->min($start_date->value, "Doit être après le départ")
-        ->required();
-    $location_label = $v->text("{$prefix}location_label")->label("Nom du Lieu")->required();
-    $location_url = $v->url("{$prefix}location_url")->label("URL du lieu");
-    $description = $v->textarea("{$prefix}description")->label("Description de l'" . $item_name);
-    $deadline = $v->date_time("{$prefix}deadline")
-        ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
-        ->label("Date limite d'inscription");
-}
+$event_start = $_POST["event_start_date"] ?? ($event?->id ? $event->start_date->format("Y-m-d H:i:s") : null);
+$event_end = $_POST["event_end_date"] ?? ($event?->id ? $event->end_date->format("Y-m-d H:i:s") : null);
+$fields = build_activity_validator($v, $event_start, $event_end, $is_complex ? (int) $activity_index : null);
+$name = $fields["name"];
+$type = $fields["type"];
+$start_date = $fields["start_date"];
+$end_date = $fields["end_date"];
+$location_label = $fields["location_label"];
+$location_url = $fields["location_url"];
+$description = $fields["description"];
+$deadline = $fields["deadline"];
 $category_rows = [];
-foreach ($categories as $index => $category) {
+foreach ($categories as $index => $cat) {
     $category_rows[$index]['name'] = $v->text("{$prefix}category_{$index}_name")->required();
     $category_rows[$index]['toggle'] = $v->switch("{$prefix}category_{$index}_toggle")->set_labels(" ", "Supprimer");
-    $category_rows[$index]['id'] = $category["id"] ?? null;
+    $category_rows[$index]['id'] = $cat['id'];
+    $category_rows[$index]['entry_count'] = $cat['entry_count'];
 }
 
 ?>
@@ -151,7 +114,7 @@ foreach ($categories as $index => $category) {
         <div id="<?= $is_complex ? "activity_{$activity_index}_categories" : "categories" ?>" class="col-12">
             <?php if (count($categories)):
                 foreach ($categories as $index => $category):
-                    $entry_count = count($category["entries"] ?? []); ?>
+                    $entry_count = $category_rows[$index]['entry_count']; ?>
                     <?php if ($is_complex): ?>
                         <input type="hidden" name="activity_<?= $activity_index ?>_category_<?= $index ?>_id"
                             value="<?= $category_rows[$index]['id'] ?>">

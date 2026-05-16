@@ -8,9 +8,9 @@
  * activity_edit_form.php (rendering).
  *
  * @param Validator  $v      The validator instance to register fields on.
- * @param int        $index  Activity index (used to build field name prefix).
  * @param string|null $event_start  Event start date string for min/max bounds (submitted or entity value).
  * @param string|null $event_end    Event end date string for min/max bounds (submitted or entity value).
+ * @param int|null   $index  Activity index (used to build field name prefix).
  *
  * @return array {
  *   id: mixed,
@@ -24,9 +24,9 @@
  *   deadline: DateTimeField,
  * }
  */
-function build_activity_validator(Validator $v, int $index, ?string $event_start, ?string $event_end): array
+function build_activity_validator(Validator $v, ?string $event_start, ?string $event_end, ?int $index = null): array
 {
-    $p = "activity_{$index}_";
+    $p = !is_null($index) ? "activity_{$index}_" : "";
 
     $name = $v->text("{$p}name")->label("Nom de l'activité")->placeholder()->required();
 
