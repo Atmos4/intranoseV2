@@ -31,6 +31,7 @@ page("Dev") ?>
     <ul>
         <?= DevButton("/dev/toast", "Toasts") ?>
         <?= DevButton("/dev/random", "Random") ?>
+        <?= DevButton("/dev/richtext", "Quill Editor - Richtext") ?>
     </ul>
 </nav>
 <b>Notifications</b>

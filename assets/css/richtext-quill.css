@@ -1,0 +1,622 @@
+/**
+ * Quill Rich Text Editor - Custom Styles
+ * Integrates Quill with Pico.css theme
+ */
+
+/* Override Quill styles to match Pico.css theme */
+.richtext-editor {
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: visible;
+}
+
+/* Reset inherited styles that might interfere */
+.richtext-editor *,
+.richtext-editor *::before,
+.richtext-editor *::after {
+  box-sizing: border-box;
+}
+
+.richtext-editor .ql-toolbar,
+.richtext-editor .ql-container {
+  font-family: var(--pico-font-family) !important;
+}
+
+/* Editor container */
+.richtext-editor .ql-container {
+  font-family: var(--pico-font-family);
+  font-size: var(--pico-font-size);
+  border-bottom-left-radius: var(--pico-border-radius);
+  border-bottom-right-radius: var(--pico-border-radius);
+  background: var(--pico-background-color);
+  border-color: var(--pico-muted-border-color) !important;
+}
+
+/* Toolbar */
+.richtext-editor .ql-toolbar {
+  background: var(--pico-card-background-color);
+  border-color: var(--pico-muted-border-color) !important;
+  border-top-left-radius: var(--pico-border-radius);
+  border-top-right-radius: var(--pico-border-radius);
+  padding: 0.5rem;
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Toolbar buttons */
+.richtext-editor .ql-toolbar button {
+  width: 28px;
+  height: 28px;
+  padding: 3px;
+  border-radius: var(--pico-border-radius);
+  transition: background-color 0.2s;
+}
+
+.richtext-editor .ql-toolbar button:hover {
+  background-color: var(--pico-secondary-hover-background);
+}
+
+.richtext-editor .ql-toolbar button.ql-active {
+  background-color: var(--pico-secondary-hover-background);
+  color: var(--pico-color);
+}
+
+.richtext-editor .ql-toolbar button svg {
+  opacity: 0.7;
+}
+
+.richtext-editor .ql-toolbar button:hover svg,
+.richtext-editor .ql-toolbar button.ql-active svg {
+  opacity: 1;
+}
+
+/* Toolbar stroke colors - adapt to theme */
+/* Override Quill's default blue (#06c) with theme colors */
+
+/* Default state - inactive color */
+.richtext-editor .ql-stroke {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-stroke-miter {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-fill,
+.richtext-editor .ql-stroke.ql-fill {
+  fill: var(--pico-color) !important;
+}
+
+/* Buttons - all states */
+.richtext-editor .ql-toolbar button:hover,
+.richtext-editor .ql-toolbar button:focus,
+.richtext-editor .ql-toolbar button.ql-active {
+  color: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar button:hover .ql-stroke,
+.richtext-editor .ql-toolbar button:focus .ql-stroke,
+.richtext-editor .ql-toolbar button.ql-active .ql-stroke {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar button:hover .ql-stroke-miter,
+.richtext-editor .ql-toolbar button:focus .ql-stroke-miter,
+.richtext-editor .ql-toolbar button.ql-active .ql-stroke-miter {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar button:hover .ql-fill,
+.richtext-editor .ql-toolbar button:focus .ql-fill,
+.richtext-editor .ql-toolbar button.ql-active .ql-fill,
+.richtext-editor .ql-toolbar button:hover .ql-stroke.ql-fill,
+.richtext-editor .ql-toolbar button:focus .ql-stroke.ql-fill,
+.richtext-editor .ql-toolbar button.ql-active .ql-stroke.ql-fill {
+  fill: var(--pico-color) !important;
+}
+
+/* Picker labels - all states */
+.richtext-editor .ql-toolbar .ql-picker-label:hover,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active {
+  color: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label:hover .ql-stroke,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active .ql-stroke {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label:hover .ql-stroke-miter,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active .ql-stroke-miter {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label:hover .ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active .ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-label:hover .ql-stroke.ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active .ql-stroke.ql-fill {
+  fill: var(--pico-color) !important;
+}
+
+/* Picker items - all states */
+.richtext-editor .ql-toolbar .ql-picker-item:hover,
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected {
+  color: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-item:hover .ql-stroke,
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-item:hover .ql-stroke-miter,
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter {
+  stroke: var(--pico-color) !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-item:hover .ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected .ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-item:hover .ql-stroke.ql-fill,
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected .ql-stroke.ql-fill {
+  fill: var(--pico-color) !important;
+}
+
+/* Toolbar dropdowns */
+.richtext-editor .ql-toolbar select {
+  background: var(--pico-background-color);
+  color: var(--pico-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: 0.25rem;
+}
+
+/* Picker (dropdown) labels - fix inherited styles */
+.richtext-editor .ql-toolbar .ql-picker-label {
+  display: inline-block;
+  cursor: pointer;
+  padding: 3px 5px;
+  border-radius: var(--pico-border-radius);
+  background: transparent;
+  border: none;
+  color: var(--pico-color);
+  font-size: inherit;
+  font-weight: normal;
+  font-family: var(--pico-font-family);
+  line-height: 1.5;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+  pointer-events: auto;
+  user-select: none;
+}
+
+/* Override background and border for role=button in dropdowns */
+.richtext-editor .ql-toolbar [role="button"] {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label:hover {
+  background-color: var(--pico-secondary-hover-background);
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active,
+.richtext-editor .ql-toolbar .ql-picker.ql-expanded .ql-picker-label {
+  background-color: var(--pico-secondary-hover-background);
+  color: var(--pico-color);
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label::before {
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label svg {
+  opacity: 0.7;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-label:hover svg,
+.richtext-editor .ql-toolbar .ql-picker-label.ql-active svg {
+  opacity: 1;
+}
+
+/* Picker arrow icon */
+.richtext-editor .ql-toolbar .ql-picker-label::after {
+  display: inline-block;
+  margin-left: 4px;
+  color: inherit;
+}
+
+/* Editor content area */
+.richtext-editor .ql-editor {
+  padding: 1rem;
+  min-height: 200px;
+  color: var(--pico-color);
+  line-height: 1.6;
+}
+
+.richtext-editor .ql-editor.ql-blank::before {
+  color: var(--pico-muted-color);
+  font-style: italic;
+  opacity: 0.6;
+}
+
+/* Content styling */
+.richtext-editor .ql-editor p {
+  margin-bottom: 1rem;
+}
+
+.richtext-editor .ql-editor h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+}
+
+.richtext-editor .ql-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.875rem;
+}
+
+.richtext-editor .ql-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.75rem;
+}
+
+.richtext-editor .ql-editor blockquote {
+  border-left: 4px solid var(--pico-primary);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--pico-muted-color);
+  font-style: italic;
+}
+
+.richtext-editor .ql-editor code {
+  background-color: var(--pico-code-background-color);
+  color: var(--pico-code-color);
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--pico-border-radius);
+  font-family: var(--pico-font-family-monospace);
+  font-size: 0.875em;
+}
+
+.richtext-editor .ql-editor pre {
+  background-color: var(--pico-code-background-color);
+  color: var(--pico-code-color);
+  padding: 1rem;
+  border-radius: var(--pico-border-radius);
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.richtext-editor .ql-editor pre.ql-syntax {
+  background-color: var(--pico-code-background-color);
+}
+
+/* Lists */
+.richtext-editor .ql-editor ul,
+.richtext-editor .ql-editor ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.richtext-editor .ql-editor li {
+  margin-bottom: 0.5rem;
+}
+
+/* Links */
+.richtext-editor .ql-editor a {
+  color: var(--pico-primary);
+  text-decoration: underline;
+}
+
+.richtext-editor .ql-editor a:hover {
+  color: var(--pico-primary-hover);
+}
+
+/* Images */
+.richtext-editor .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--pico-border-radius);
+  margin: 1rem 0;
+  display: block;
+}
+
+/* Image in paragraph */
+.richtext-editor .ql-editor p img {
+  margin: 0.5rem 0;
+}
+
+/* Focus state */
+.richtext-editor .ql-container.ql-snow:focus-within {
+  border-color: var(--pico-primary);
+  box-shadow: 0 0 0 0.2rem var(--pico-primary-focus);
+}
+
+/* Tooltip for toolbar */
+.richtext-editor .ql-toolbar .ql-picker-label::before,
+.richtext-editor .ql-toolbar button::before {
+  color: inherit;
+  display: inline-block;
+}
+
+/* Override Pico.css button styles that may affect Quill buttons */
+.richtext-editor .ql-toolbar button,
+.richtext-editor .ql-toolbar .ql-picker-label {
+  margin: 0;
+  box-shadow: none;
+  min-width: auto;
+  min-height: auto;
+  outline: none;
+  border: none;
+}
+
+.richtext-editor .ql-toolbar button:focus,
+.richtext-editor .ql-toolbar .ql-picker-label:focus {
+  outline: 2px solid var(--pico-primary);
+}
+
+.richtext-editor .ql-toolbar button:not([class*="ql-active"]):hover,
+.richtext-editor .ql-toolbar .ql-picker-label:not(.ql-active):hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* Reset any select/input styles from Pico */
+.richtext-editor .ql-toolbar select,
+.richtext-editor .ql-toolbar input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Disabled state */
+.richtext-editor .ql-container.ql-disabled .ql-editor {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Picker container */
+.richtext-editor .ql-toolbar .ql-picker {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: normal;
+  height: 28px;
+  position: relative;
+  vertical-align: middle;
+}
+
+/* Picker options dropdown - hidden by default */
+.richtext-editor .ql-toolbar .ql-picker-options {
+  display: none !important;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  min-width: 130px;
+  background-color: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  box-shadow: var(--pico-card-box-shadow);
+  padding: 0.25rem 0;
+  z-index: 1000;
+  pointer-events: auto;
+  overflow: visible;
+}
+
+/* Show dropdown when picker is expanded */
+.richtext-editor .ql-toolbar .ql-picker.ql-expanded .ql-picker-options,
+.richtext-editor
+  .ql-toolbar
+  .ql-picker[aria-expanded="true"]
+  .ql-picker-options {
+  display: block !important;
+}
+
+/* Picker items */
+.richtext-editor .ql-toolbar .ql-picker-item {
+  color: var(--pico-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: block;
+  font-family: var(--pico-font-family);
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.5;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.richtext-editor .ql-toolbar .ql-picker-item:hover {
+  background-color: var(--pico-secondary-hover-background);
+}
+
+.richtext-editor .ql-toolbar .ql-picker-item.ql-selected {
+  background-color: var(--pico-secondary-hover-background);
+  color: var(--pico-color);
+}
+
+/* Header picker - match font sizes to actual h1/h2/h3 */
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="1"]::before {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+}
+
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="2"]::before {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.875rem;
+}
+
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="3"]::before {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.75rem;
+}
+
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="4"]::before {
+  font-size: 1rem;
+}
+
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="5"]::before {
+  font-size: 0.875rem;
+}
+
+.richtext-editor
+  .ql-toolbar
+  .ql-picker.ql-header
+  .ql-picker-item[data-value="6"]::before {
+  font-size: 0.75rem;
+}
+
+/* Snow theme tooltip */
+.richtext-editor .ql-tooltip,
+.ql-tooltip {
+  background-color: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  box-shadow: var(--pico-card-box-shadow);
+  color: var(--pico-color);
+  border-radius: var(--pico-border-radius);
+  padding: 0.75rem;
+  font-family: var(--pico-font-family);
+  font-size: var(--pico-font-size);
+  z-index: 1001;
+}
+
+.richtext-editor .ql-tooltip input[type="text"],
+.ql-tooltip input[type="text"] {
+  background-color: var(--pico-background-color);
+  color: var(--pico-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: 0.5rem;
+  font-family: var(--pico-font-family);
+  font-size: var(--pico-font-size);
+  margin-right: 0.5rem;
+  min-width: 200px;
+}
+
+.richtext-editor .ql-tooltip input[type="text"]:focus,
+.ql-tooltip input[type="text"]:focus {
+  border-color: var(--pico-primary);
+  outline: none;
+  box-shadow: 0 0 0 0.2rem var(--pico-primary-focus);
+}
+
+.richtext-editor .ql-tooltip a.ql-action,
+.richtext-editor .ql-tooltip a.ql-remove,
+.ql-tooltip a.ql-action,
+.ql-tooltip a.ql-remove {
+  color: var(--pico-primary);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--pico-border-radius);
+  transition: background-color 0.2s;
+}
+
+.richtext-editor .ql-tooltip a.ql-action:hover,
+.richtext-editor .ql-tooltip a.ql-remove:hover,
+.ql-tooltip a.ql-action:hover,
+.ql-tooltip a.ql-remove:hover {
+  color: var(--pico-primary-hover);
+  background-color: var(--pico-secondary-hover-background);
+}
+
+.richtext-editor .ql-tooltip .ql-preview,
+.ql-tooltip .ql-preview {
+  display: inline-block;
+  max-width: 200px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+/* Dropdown menus - these styles are now defined above with proper scoping */
+
+/* Loading state for image upload */
+.richtext-editor .ql-editor [data-uploading="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Compact mode for smaller editors */
+.richtext-editor.compact .ql-editor {
+  min-height: 100px;
+}
+
+.richtext-editor.compact .ql-toolbar {
+  padding: 0.25rem;
+}
+
+.richtext-editor.compact .ql-toolbar button {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .richtext-editor .ql-toolbar {
+    padding: 0.25rem;
+  }
+
+  .richtext-editor .ql-toolbar button {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+  }
+
+  .richtext-editor .ql-editor {
+    padding: 0.75rem;
+    min-height: 150px;
+  }
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .richtext-editor .ql-toolbar {
+    background: var(--pico-card-background-color);
+  }
+
+  .richtext-editor .ql-container {
+    background: var(--pico-background-color);
+  }
+
+  .richtext-editor .ql-editor code,
+  .richtext-editor .ql-editor pre {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Print styles */
+@media print {
+  .richtext-editor .ql-toolbar {
+    display: none;
+  }
+
+  .richtext-editor .ql-container {
+    border: none;
+  }
+}

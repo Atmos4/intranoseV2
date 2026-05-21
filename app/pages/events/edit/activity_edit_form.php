@@ -64,7 +64,18 @@ if (!$is_simple && $event_id) {
 }
 $location_label = $v->text("{$prefix}location_label")->label("Nom du Lieu")->required();
 $location_url = $v->url("{$prefix}location_url")->label("URL du lieu");
-$description = $v->textarea("{$prefix}description")->label("Description de l'" . $item_name);
+
+// Set session ID for image uploads - uses event ID if editing, or 'new' for creation
+$session_id = $event_id ? "event-{$event_id}" : "event-new";
+if ($is_complex && $activity_id) {
+    $session_id = "activity-{$activity_id}";
+}
+
+$description = $v->richtext("{$prefix}description")
+    ->label("Description de l'" . $item_name)
+    ->min_height(200)
+    ->session_id($session_id);
+
 $deadline = $v->date_time("{$prefix}deadline")
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'" . $item_name)
     ->label("Date limite d'inscription");

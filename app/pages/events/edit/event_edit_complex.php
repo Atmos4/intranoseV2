@@ -37,7 +37,14 @@ $limit_date = $v->date_time("limit_date")
     ->label("Deadline")->required()
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
 $bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
-$description = $v->textarea("description")->label("Description");
+
+// Set session ID for image uploads
+$session_id = $event_id ? "event-{$event_id}" : "event-new";
+$description = $v->richtext("description")
+    ->label("Description")
+    ->min_height(250)
+    ->session_id($session_id);
+
 $is_accomodation = $v->switch("is_accomodation")->label("Hébergement");
 $is_transport = $v->switch("is_transport")->label("Transport");
 
@@ -57,7 +64,7 @@ if ($_POST) {
             "end_date" => $av->date_time("activity_{$i}_end_date"),
             "location_label" => $av->text("activity_{$i}_location_label"),
             "location_url" => $av->url("activity_{$i}_location_url"),
-            "description" => $av->textarea("activity_{$i}_description"),
+            "description" => $av->richtext("activity_{$i}_description")->min_height(200),
             "deadline" => $av->date_time("activity_{$i}_deadline"),
         ];
     }
@@ -156,7 +163,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 ?>
 <script src="/assets/js/start-intro.js"></script>
 <div id="form-div">
-    <form method="post">
+    <form method="post" data-richtext-cleanup="true">
         <?= $action ?>
         <article class="row">
             <?= $v->render_validation() ?>
@@ -172,8 +179,8 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
             </div>
             <div data-intro="Vous pouvez ajouer un lien vers un bulletin en ligne"><?= $bulletin_url->render() ?></div>
             <div
-                data-intro="Vous pouvez formatter le texte de la description en markdown. N'hésitez pas à aller voir <a href='https://www.markdownguide.org/' target='_blank'>cette ressource</a>">
-                <?= $description->attributes(["rows" => "8"])->render() ?>
+                data-intro="Utilisez l'éditeur de texte enrichi pour formatter la description. Vous pouvez ajouter des images, des liens, et du formatage.">
+                <?= $description->render() ?>
             </div>
             <?= GroupService::renderEventGroupChoice($event) ?>
             <div data-intro="Activez ou désactivez l'hébergement commun à tout le club sur cet événement...">
