@@ -82,3 +82,69 @@
   background-color: var(--pico-secondary-focus) !important;
   outline: none;
 }
+
+.date-hour {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "date"
+    "hour";
+  align-items: center;
+}
+
+.date-hour.with-clock {
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "clock date"
+    "clock hour";
+  column-gap: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .date-hour {
+    display: grid;
+    column-gap: 5px;
+    grid-template-columns: auto auto;
+    grid-template-areas: "date hour";
+  }
+
+  .date-hour.with-clock {
+    grid-template-columns: auto auto auto;
+    grid-template-areas: "clock date hour";
+  }
+}
+
+.date {
+  grid-area: date;
+}
+
+.hour {
+  grid-area: hour;
+}
+
+.clock {
+  grid-area: clock;
+}
+
+.start-end {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-areas: "start-bloc arrow-bloc end-bloc";
+  align-items: center;
+  column-gap: 10px;
+  justify-content: left;
+}
+
+.start-bloc {
+  grid-area: start-bloc;
+}
+
+.end-bloc {
+  grid-area: end-bloc;
+}
+
+.arrow-bloc {
+  grid-area: arrow-bloc;
+}
