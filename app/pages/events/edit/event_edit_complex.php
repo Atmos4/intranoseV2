@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/activity_validators.php';
+require_once __DIR__ . '/ActivityForm.php';
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id", strict: false);
@@ -42,21 +42,48 @@ $description = $v->textarea("description")->label("Description");
 $is_accomodation = $v->switch("is_accomodation")->label("Hébergement");
 $is_transport = $v->switch("is_transport")->label("Transport");
 
+$existing_count = $event_id ? count($event->activities) : 0;
+$total_activity_count = max($existing_count, $_POST ? intval($_POST["activity_count"] ?? 0) : 0);
+
 // Process activities
 $activity_validators = [];
 
+// if submit, handle the potential activities with activity_count
 if ($_POST) {
     $activity_count = intval($_POST["activity_count"] ?? 0);
     for ($i = 0; $i < $activity_count; $i++) {
         $activity_id = $_POST["activity_{$i}_id"] ?? null;
         $av = new Validator();
-        // Use the submitted event dates so bounds reflect what the user just typed
-        $fields = build_activity_validator($av, $start_date->value, $end_date->value, $i);
-        $activity_validators[$i] = array_merge(["id" => $activity_id], $fields);
+        $av_fields = build_activity_validator($av, $start_date->value, $end_date->value, $i);
+        $activity_validators[$i] = array_merge(["id" => $activity_id, "v" => $av], $av_fields);
     }
 }
 
-if ($v->valid() && (!$_POST || all_valid($activity_validators))) {
+// For inital load - build validators from entity data for existing activities
+foreach ($event->activities as $index => $activity) {
+    if (!isset($activity_validators[$index])) {
+        $entity_data = [
+            "activity_{$index}_name" => $activity->name,
+            "activity_{$index}_type" => $activity->type->value,
+            "activity_{$index}_start_date" => $activity->start_date->format("Y-m-d H:i:s"),
+            "activity_{$index}_end_date" => $activity->end_date->format("Y-m-d H:i:s"),
+            "activity_{$index}_location_label" => $activity->location_label,
+            "activity_{$index}_location_url" => $activity->location_url,
+            "activity_{$index}_description" => $activity->description,
+            "activity_{$index}_deadline" => $activity->deadline->format("Y-m-d H:i:s"),
+        ];
+        foreach ($activity->categories as $c => $cat) {
+            $entity_data["activity_{$index}_category_{$c}_name"] = $cat->name;
+            $entity_data["activity_{$index}_category_{$c}_toggle"] = $cat->removed ? 0 : 1;
+        }
+        $av = new Validator($entity_data);
+        $av_fields = build_activity_validator($av, $event->start_date->format("Y-m-d H:i:s"), $event->end_date->format("Y-m-d H:i:s"), $index);
+        $activity_validators[$index] = array_merge(["id" => $activity->id, "v" => $av], $av_fields);
+    }
+}
+
+
+if ($v->valid() && all_valid($activity_validators)) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
     $event->type = EventType::Complex;
     $event->description = $description->value;
@@ -125,31 +152,13 @@ if ($v->valid() && (!$_POST || all_valid($activity_validators))) {
 
 function all_valid($validators)
 {
-    foreach ($validators as $v) {
-        foreach ($v as $field) {
-            if (is_object($field) && method_exists($field, 'valid') && !$field->valid()) {
-                return false;
-            }
+    foreach ($validators as $validator_array) {
+        if (!$validator_array["v"]->valid()) {
+            return false;
         }
     }
     return true;
 }
-
-// Find the first activity index with a validation error (used by JS to switch to the right tab)
-$first_error_activity_index = null;
-if ($_POST && !all_valid($activity_validators)) {
-    foreach ($activity_validators as $index => $fields) {
-        foreach ($fields as $field) {
-            if (is_object($field) && method_exists($field, 'valid') && !$field->valid()) {
-                $first_error_activity_index = $index;
-                break 2;
-            }
-        }
-    }
-}
-
-$existing_count = $event_id ? count($event->activities) : 0;
-$total_activity_count = max($existing_count, $_POST ? intval($_POST["activity_count"] ?? 0) : 0);
 
 $action = actions();
 
@@ -169,6 +178,16 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
         <?= $action ?>
         <article class="row">
             <?= $v->render_validation() ?>
+            <?php foreach ($activity_validators as $index => $av_data): ?>
+                <?php if ($_POST && !$av_data['v']->valid()): ?>
+                    <label class="error">
+                        <a href="#"
+                            onclick="tabsGroup.show('activity-<?= $index ?>'); tabsGroup.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false;">
+                            Activité <?= $index + 1 ?> : contient des erreurs
+                        </a>
+                    </label>
+                <?php endif ?>
+            <?php endforeach ?>
             <?= $event_name->render() ?>
             <div class="col-sm-6 col-lg-4">
                 <?= $start_date->render() ?>
@@ -214,58 +233,48 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                     <?php endfor ?>
 
                     <?php foreach ($event->activities as $index => $activity):
-                        $has_post = !empty($_POST) && isset($activity_validators[$index]);
-                        $panel_vals = [
-                            'action' => $index,
-                            'event_start_date' => $has_post ? $start_date->value : $event->start_date->format("Y-m-d H:i:s"),
-                            'event_end_date' => $has_post ? $end_date->value : $event->end_date->format("Y-m-d H:i:s"),
-                            "activity_{$index}_id" => $activity->id,
-                            "activity_{$index}_name" => $has_post ? ($_POST["activity_{$index}_name"] ?? "") : $activity->name,
-                            "activity_{$index}_type" => $has_post ? ($_POST["activity_{$index}_type"] ?? "") : $activity->type->value,
-                            "activity_{$index}_start_date" => $has_post ? ($_POST["activity_{$index}_start_date"] ?? "") : date_format($activity->start_date, "Y-m-d H:i:s"),
-                            "activity_{$index}_end_date" => $has_post ? ($_POST["activity_{$index}_end_date"] ?? "") : date_format($activity->end_date, "Y-m-d H:i:s"),
-                            "activity_{$index}_location_label" => $has_post ? ($_POST["activity_{$index}_location_label"] ?? "") : $activity->location_label,
-                            "activity_{$index}_location_url" => $has_post ? ($_POST["activity_{$index}_location_url"] ?? "") : $activity->location_url,
-                            "activity_{$index}_description" => $has_post ? ($_POST["activity_{$index}_description"] ?? "") : $activity->description,
-                            "activity_{$index}_deadline" => $has_post ? ($_POST["activity_{$index}_deadline"] ?? "") : date_format($activity->deadline, "Y-m-d H:i:s"),
-                            "activity_{$index}_category_count" => count($activity->categories),
-                        ];
-                        foreach ($activity->categories as $c => $cat) {
-                            $panel_vals["activity_{$index}_category_{$c}_id"] = $cat->id;
-                            $panel_vals["activity_{$index}_category_{$c}_name"] = $has_post ? ($_POST["activity_{$index}_category_{$c}_name"] ?? $cat->name) : $cat->name;
-                            $panel_vals["activity_{$index}_category_{$c}_toggle"] = $has_post ? ($_POST["activity_{$index}_category_{$c}_toggle"] ?? ($cat->removed ? 0 : 1)) : ($cat->removed ? 0 : 1);
-                            $panel_vals["activity_{$index}_category_{$c}_entry_count"] = count($cat->activity_entries ?? []);
+                        $av_data = $activity_validators[$index];
+                        $panel_av = $av_data['v'];
+                        //filter out id and validator to keep only the fields
+                        $panel_fields = array_diff_key($av_data, array_flip(['id', 'v']));
+                        $cat_count = $_POST
+                            ? intval($_POST["activity_{$index}_category_count"] ?? count($activity->categories))
+                            : count($activity->categories);
+                        $panel_categories = [];
+                        $panel_category_rows = [];
+                        for ($c = 0; $c < $cat_count; $c++) {
+                            $cat_entity = $activity->categories[$c] ?? null;
+                            $panel_categories[$c] = [
+                                'id' => $cat_entity?->id ?? null,
+                                'entry_count' => count($cat_entity?->activity_entries ?? []),
+                            ];
+                            $panel_category_rows[$c]['id'] = $cat_entity?->id;
+                            $panel_category_rows[$c]['entry_count'] = count($cat_entity?->activity_entries ?? []);
+                            $panel_category_rows[$c]['name'] = $panel_av->text("activity_{$index}_category_{$c}_name")->required();
+                            $panel_category_rows[$c]['toggle'] = $panel_av->switch("activity_{$index}_category_{$c}_toggle")->set_labels(" ", "Supprimer");
                         }
                         ?>
                         <sl-tab-panel name="activity-<?= $index ?>" id="panel-<?= $index ?>">
-                            <div id="activity-wrapper-<?= $index ?>" hx-post="/evenements/activity_form/<?= $event_id ?>"
-                                hx-trigger="load" hx-swap="outerHTML"
-                                hx-vals='<?= htmlspecialchars(json_encode($panel_vals), ENT_QUOTES, 'UTF-8') ?>'>
-                            </div>
+                            <?php render_activity_form($panel_fields, $panel_category_rows, $panel_categories, $panel_av, true, false, $index, $activity->id, $event); ?>
                         </sl-tab-panel>
                     <?php endforeach ?>
                     <?php for ($i = $existing_count; $i < $total_activity_count; $i++):
-                        $new_panel_vals = [
-                            'action' => $i,
-                            'event_start_date' => $start_date->value,
-                            'event_end_date' => $end_date->value,
-                            "activity_{$i}_id" => null,
-                            "activity_{$i}_name" => $_POST["activity_{$i}_name"] ?? "",
-                            "activity_{$i}_type" => $_POST["activity_{$i}_type"] ?? "",
-                            "activity_{$i}_start_date" => $_POST["activity_{$i}_start_date"] ?? "",
-                            "activity_{$i}_end_date" => $_POST["activity_{$i}_end_date"] ?? "",
-                            "activity_{$i}_location_label" => $_POST["activity_{$i}_location_label"] ?? "",
-                            "activity_{$i}_location_url" => $_POST["activity_{$i}_location_url"] ?? "",
-                            "activity_{$i}_description" => $_POST["activity_{$i}_description"] ?? "",
-                            "activity_{$i}_deadline" => $_POST["activity_{$i}_deadline"] ?? "",
-                            "activity_{$i}_category_count" => 0,
-                        ];
+                        $av_data = $activity_validators[$i];
+                        $panel_av = $av_data['v'];
+                        $panel_fields = array_diff_key($av_data, array_flip(['id', 'v']));
+                        $new_cat_count = intval($_POST["activity_{$i}_category_count"] ?? 0);
+                        $panel_categories = [];
+                        $panel_category_rows = [];
+                        for ($c = 0; $c < $new_cat_count; $c++) {
+                            $panel_categories[$c] = ['id' => null, 'entry_count' => 0];
+                            $panel_category_rows[$c]['id'] = null;
+                            $panel_category_rows[$c]['entry_count'] = 0;
+                            $panel_category_rows[$c]['name'] = $panel_av->text("activity_{$i}_category_{$c}_name")->required();
+                            $panel_category_rows[$c]['toggle'] = $panel_av->switch("activity_{$i}_category_{$c}_toggle")->set_labels(" ", "Supprimer");
+                        }
                         ?>
                         <sl-tab-panel name="activity-<?= $i ?>" id="panel-<?= $i ?>">
-                            <div id="activity-wrapper-<?= $i ?>" hx-post="/evenements/activity_form/<?= $event_id ?>"
-                                hx-trigger="load" hx-swap="outerHTML"
-                                hx-vals='<?= htmlspecialchars(json_encode($new_panel_vals), ENT_QUOTES, 'UTF-8') ?>'>
-                            </div>
+                            <?php render_activity_form($panel_fields, $panel_category_rows, $panel_categories, $panel_av, true, false, $i, null, $event); ?>
                         </sl-tab-panel>
                     <?php endfor ?>
                     <?php if ($total_activity_count === 0): ?>
@@ -283,48 +292,6 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 <script>
     var activityCount = <?= $total_activity_count ?>;
     var tabsGroup = document.getElementById('activities-tabs');
-    var firstErrorActivityIndex = <?= json_encode($first_error_activity_index) ?>;
-
-    // Disable submit until all activity panels have loaded via HTMX (inputs don't exist yet
-    // before the swap, so validation would silently pass with no data).
-    // Also switches to the first error tab once all panels are ready (after a failed POST).
-    var _pendingValidation = null;
-
-    if (activityCount > 0) {
-        var submitBtn = document.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-
-        var _panelsToLoad = activityCount;
-        document.body.addEventListener('htmx:afterSwap', function panelLoadHandler(e) {
-            if (!e.detail.target.id?.startsWith('activity-wrapper-')) return;
-            _panelsToLoad--;
-            if (_panelsToLoad <= 0) {
-                document.body.removeEventListener('htmx:afterSwap', panelLoadHandler);
-                if (submitBtn) submitBtn.disabled = false;
-                if (firstErrorActivityIndex !== null) {
-                    const errorPanel = tabsGroup.querySelector(`sl-tab-panel[name="activity-${firstErrorActivityIndex}"]`);
-                    tabsGroup.show(`activity-${firstErrorActivityIndex}`);
-                    if (errorPanel) {
-                        const focusFirstInvalid = () => {
-                            const invalid = Array.from(errorPanel.querySelectorAll('input, select, textarea'))
-                                .find(el => el.willValidate && !el.validity.valid);
-                            if (invalid) invalid.reportValidity();
-                        };
-                        errorPanel.addEventListener('sl-after-show', function handler() {
-                            errorPanel.removeEventListener('sl-after-show', handler);
-                            focusFirstInvalid();
-                        });
-                        requestAnimationFrame(() => requestAnimationFrame(focusFirstInvalid));
-                    }
-                }
-                if (_pendingValidation) {
-                    var fn = _pendingValidation;
-                    _pendingValidation = null;
-                    fn();
-                }
-            }
-        });
-    }
 
     function addActivity() {
         // Hide the "no activity" message if it exists
@@ -359,7 +326,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 
         const wrapper = document.createElement('div');
         wrapper.id = `activity-wrapper-${activityCount}`;
-        wrapper.setAttribute('hx-post', '/evenements/activity_form/<?= $event_id ?? "new" ?>');
+        wrapper.setAttribute('hx-get', '/evenements/activity_form/<?= $event_id ?? "new" ?>');
         wrapper.setAttribute('hx-trigger', 'load');
         wrapper.setAttribute('hx-swap', 'outerHTML');
         wrapper.setAttribute('hx-vals', JSON.stringify({

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/activity_validators.php';
+require_once __DIR__ . '/ActivityForm.php';
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id", strict: false);
@@ -20,7 +20,30 @@ if ($event->type == EventType::Simple) {
     return "Pas d'ajout d'activité possible pour un événement simple";
 }
 
-$v = new Validator([], 'single_activity');
+// Build form_values: entity data pre-populates on GET; on POST the Validator reads $_POST instead
+$form_values = [];
+if ($activity_id) {
+    $activity = em()->find(Activity::class, $activity_id);
+    $form_values = [
+        'name' => $activity->name,
+        'type' => $activity->type->value,
+        'start_date' => date_format($activity->start_date, "Y-m-d H:i:s"),
+        'end_date' => date_format($activity->end_date, "Y-m-d H:i:s"),
+        'location_label' => $activity->location_label,
+        'location_url' => $activity->location_url,
+        'description' => $activity->description,
+        'deadline' => date_format($activity->deadline, "Y-m-d H:i:s"),
+    ];
+    foreach ($activity->categories as $i => $cat) {
+        $form_values["category_{$i}_name"] = $cat->name;
+        $form_values["category_{$i}_toggle"] = $cat->removed ? 0 : 1;
+        $form_values["category_{$i}_entry_count"] = count($cat->activity_entries ?? []);
+    }
+} else {
+    $activity = new Activity();
+}
+
+$v = new Validator($form_values, 'single_activity');
 $fields = build_activity_validator($v, $event->start_date->format("Y-m-d H:i:s"), $event->end_date->format("Y-m-d H:i:s"));
 $name = $fields["name"];
 $type = $fields["type"];
@@ -30,61 +53,18 @@ $location_label = $fields["location_label"];
 $location_url = $fields["location_url"];
 $description = $fields["description"];
 $deadline = $fields["deadline"];
+$categories = [];
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
+    $categories[$index] = [
+        'id' => $category->id,
+        'entry_count' => count($category->activity_entries ?? []),
+    ];
     $category_rows[$index]['name'] = $v->text("category_{$index}_name");
     $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle");
+    $category_rows[$index]['id'] = $category->id;
+    $category_rows[$index]['entry_count'] = count($category->activity_entries ?? []);
 }
-
-if (!$v->empty) {
-    $hx_vals = [
-        'name' => $name->value,
-        'type' => $type->value,
-        'start_date' => $start_date->value,
-        'end_date' => $end_date->value,
-        'location_label' => $location_label->value,
-        'location_url' => $location_url->value,
-        'description' => $description->value,
-        'deadline' => $deadline->value,
-        'category_count' => count($activity->categories),
-    ];
-    foreach ($activity->categories as $i => $category) {
-        $hx_vals["category_{$i}_id"] = $category->id;
-        $hx_vals["category_{$i}_name"] = $v->value("category_{$i}_name") ?? $category->name;
-        $hx_vals["category_{$i}_toggle"] = $v->value("category_{$i}_toggle") ?? ($category->removed ? 0 : 1);
-        $hx_vals["category_{$i}_entry_count"] = count($category->activity_entries ?? []);
-    }
-} elseif ($activity_id) {
-    $activity = em()->find(Activity::class, $activity_id ?? $event->activities[0]);
-    $hx_vals = [
-        'name' => $activity->name,
-        'type' => $activity->type->value,
-        'start_date' => date_format($activity->start_date, "Y-m-d H:i:s"),
-        'end_date' => date_format($activity->end_date, "Y-m-d H:i:s"),
-        'location_label' => $activity->location_label,
-        'location_url' => $activity->location_url,
-        'description' => $activity->description,
-        'deadline' => date_format($activity->deadline, "Y-m-d H:i:s"),
-        'category_count' => count($activity->categories),
-    ];
-    foreach ($activity->categories as $i => $category) {
-        $hx_vals["category_{$i}_id"] = $category->id;
-        $hx_vals["category_{$i}_name"] = $category->name;
-        $hx_vals["category_{$i}_toggle"] = $category->removed ? 0 : 1;
-        $hx_vals["category_{$i}_entry_count"] = count($category->activity_entries ?? []);
-    }
-} else {
-    $activity = new Activity();
-    $hx_vals = [
-        'is_new' => '1',
-    ];
-}
-
-$hx_vals += [
-    'action' => 'single_activity',
-    'event_start_date' => $event->start_date->format("Y-m-d H:i:s"),
-    'event_end_date' => $event->end_date->format("Y-m-d H:i:s"),
-];
 
 if ($v->valid()) {
     //right now the deadline is the same as the event - always. Can be changed in the future.
@@ -123,8 +103,5 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
 ?>
 <form method="post">
     <?= $action ?>
-    <?= $v->render_validation() ?>
-    <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ?>" hx-trigger="load"
-        hx-vals="<?= htmlspecialchars(json_encode($hx_vals), ENT_QUOTES, 'UTF-8') ?>">
-    </div>
+    <?php render_activity_form($fields, $category_rows, $categories, $v, false, false, null, $activity->id ?? null, $event); ?>
 </form>
