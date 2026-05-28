@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/ActivityForm.php';
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id", strict: false);
@@ -19,44 +20,50 @@ if ($event->type == EventType::Simple) {
     return "Pas d'ajout d'activité possible pour un événement simple";
 }
 
+// Build form_values: entity data pre-populates on GET; on POST the Validator reads $_POST instead
 $form_values = [];
 if ($activity_id) {
-    $activity = em()->find(Activity::class, $activity_id ?? $event->activities[0]);
+    $activity = em()->find(Activity::class, $activity_id);
     $form_values = [
-        "activity_name" => $activity->name,
-        "activity_type" => $activity->type->value,
-        "activity_start_date" => date_format($activity->start_date, "Y-m-d H:i:s"),
-        "activity_end_date" => date_format($activity->end_date, "Y-m-d H:i:s"),
-        "activity_location_label" => $activity->location_label,
-        "activity_location_url" => $activity->location_url,
-        "activity_description" => $activity->description,
-        "activity_deadline" => date_format($activity->deadline, "Y-m-d H:i:s"),
+        'name' => $activity->name,
+        'type' => $activity->type->value,
+        'start_date' => date_format($activity->start_date, "Y-m-d H:i:s"),
+        'end_date' => date_format($activity->end_date, "Y-m-d H:i:s"),
+        'location_label' => $activity->location_label,
+        'location_url' => $activity->location_url,
+        'description' => $activity->description,
+        'deadline' => date_format($activity->deadline, "Y-m-d H:i:s"),
     ];
-    $form_values["activity_categories"] = [];
-    foreach ($activity->categories as $index => $category) {
-        $form_values["activity_categories"][] = [
-            "name" => $category->name,
-            "removed" => $category->removed,
-            "entries" => $category->activity_entries
-        ];
+    foreach ($activity->categories as $i => $cat) {
+        $form_values["category_{$i}_name"] = $cat->name;
+        $form_values["category_{$i}_toggle"] = $cat->removed ? 0 : 1;
+        $form_values["category_{$i}_entry_count"] = count($cat->activity_entries ?? []);
     }
 } else {
     $activity = new Activity();
 }
 
-$v = new Validator();
-$name = $v->text("name");
-$type = $v->select("type");
-$start_date = $v->date_time("start_date");
-$end_date = $v->date_time("end_date");
-$location_label = $v->text("location_label");
-$location_url = $v->url("location_url");
-$description = $v->textarea("description");
-$deadline = $v->date_time("deadline");
+$v = new Validator($form_values, 'single_activity');
+$fields = build_activity_validator($v, $event->start_date->format("Y-m-d H:i:s"), $event->end_date->format("Y-m-d H:i:s"));
+$name = $fields["name"];
+$type = $fields["type"];
+$start_date = $fields["start_date"];
+$end_date = $fields["end_date"];
+$location_label = $fields["location_label"];
+$location_url = $fields["location_url"];
+$description = $fields["description"];
+$deadline = $fields["deadline"];
+$categories = [];
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
+    $categories[$index] = [
+        'id' => $category->id,
+        'entry_count' => count($category->activity_entries ?? []),
+    ];
     $category_rows[$index]['name'] = $v->text("category_{$index}_name");
     $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle");
+    $category_rows[$index]['id'] = $category->id;
+    $category_rows[$index]['entry_count'] = count($category->activity_entries ?? []);
 }
 
 if ($v->valid()) {
@@ -96,8 +103,5 @@ page($activity_id ? "{$activity->name} : Modifier" : "Ajouter une activité")->c
 ?>
 <form method="post">
     <?= $action ?>
-    <?= $v->render_validation() ?>
-    <div id="form-div" hx-post="/evenements/activity_form/<?= $event_id ?>" hx-trigger="load"
-        hx-vals="<?= htmlspecialchars(json_encode(['form_values' => $form_values, 'action' => 'single_activity']), ENT_QUOTES, 'UTF-8') ?>">
-    </div>
+    <?php render_activity_form($fields, $category_rows, $categories, $v, false, false, null, $activity->id ?? null, $event); ?>
 </form>
