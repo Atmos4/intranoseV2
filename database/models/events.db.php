@@ -132,6 +132,7 @@ class Event
         $this->is_accomodation = True;
         $this->is_transport = True;
         $this->conversation = new Conversation();
+        $this->activities = new ArrayCollection();
     }
 
     function set(

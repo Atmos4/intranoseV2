@@ -35,7 +35,7 @@ if ($event_id) {
 
 
 $v = new Validator($form_values, 'simple');
-$fields = build_activity_validator($v, $event->start_date->format("Y-m-d H:i:s"), $event->end_date->format("Y-m-d H:i:s"));
+$fields = build_activity_validator($v, $event_id ? $event->start_date->format("Y-m-d H:i:s") : null, $event_id ? $event->end_date->format("Y-m-d H:i:s") : null);
 $name = $fields["name"];
 $type = $fields["type"];
 $start_date = $fields["start_date"];
