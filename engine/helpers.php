@@ -113,7 +113,7 @@ function get_route_param($param, $strict = true, $numeric = true, $pattern = nul
 function get_query_param($param, $strict = false, $numeric = true, $pattern = null)
 {
     $query_param = $_GET[$param] ?? null;
-    if (!$query_param) {
+    if ($query_param === null) {
         if ($strict) {
             Router::abort(message: "Query parameter $param was not found");
         }
