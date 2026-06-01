@@ -721,6 +721,46 @@ sl-tab-group {
   --sl-color-primary-600: var(--pico-primary);
 }
 
+sl-select {
+  --sl-color-primary-600: var(--pico-primary);
+  --sl-color-primary-700: var(--pico-primary-hover);
+  --sl-input-border-color: var(--pico-form-element-border-color);
+  --sl-input-border-color-hover: var(--pico-form-element-active-border-color);
+  --sl-input-border-color-focus: var(--pico-form-element-active-border-color);
+  --sl-input-background-color: var(--pico-form-element-background-color);
+  --sl-input-background-color-hover: var(--pico-form-element-background-color);
+  --sl-input-background-color-focus: var(--pico-form-element-background-color);
+  --sl-input-color: var(--pico-form-element-color);
+  --sl-input-focus-ring-color: var(--pico-form-element-focus-color);
+  --sl-input-border-radius-medium: var(--pico-border-radius);
+  --sl-input-font-family: var(--pico-font-family);
+}
+
+sl-select::part(combobox) {
+  border-color: var(--pico-form-element-border-color);
+}
+
+sl-select::part(combobox):hover {
+  border-color: var(--pico-form-element-active-border-color);
+}
+
+sl-select[data-user-invalid]::part(combobox) {
+  border-color: var(--pico-form-element-invalid-border-color);
+}
+
+sl-select::part(listbox) {
+  background-color: var(--pico-background-color);
+  border-color: var(--pico-form-element-border-color);
+}
+
+sl-option::part(base) {
+  color: var(--pico-color);
+}
+
+sl-option::part(checked-icon) {
+  color: var(--pico-primary-inverse);
+}
+
 .tag {
   display: inline-flex;
   align-items: center;

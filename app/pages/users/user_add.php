@@ -74,3 +74,5 @@ page("Nouveau licencié")->css("settings.css")->enableHelp();
     </div>
 
 </form>
+
+<script src="/assets/js/shoelace-forms.js"></script>
