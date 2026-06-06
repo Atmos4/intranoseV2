@@ -12,9 +12,9 @@ function build_guardian_validator(Validator $v, string $prefix): array
 {
     return [
         'first_name' => $v->text("{$prefix}[first_name]")->label("Prénom")->required(),
-        'last_name'  => $v->text("{$prefix}[last_name]")->label("Nom")->required(),
-        'phone'      => $v->phone("{$prefix}[phone]")->label("Téléphone"),
-        'email'      => $v->email("{$prefix}[email]")->label("Email")->required(),
+        'last_name' => $v->text("{$prefix}[last_name]")->label("Nom")->required(),
+        'phone' => $v->phone("{$prefix}[phone]")->label("Téléphone"),
+        'email' => $v->email("{$prefix}[email]")->label("Email")->required(),
     ];
 }
 
@@ -35,8 +35,7 @@ function render_guardian_fieldset(
         <?php if ($delete_href || $js_delete): ?>
             <div class="row">
                 <?php if ($js_delete): ?>
-                    <a href="javascript:void(0)" class="destructive outline"
-                        onclick="this.closest('fieldset').remove()">
+                    <a href="javascript:void(0)" class="destructive outline" onclick="this.closest('fieldset').remove()">
                         <i class="fas fa-trash"></i> Supprimer
                     </a>
                 <?php else: ?>
@@ -55,7 +54,9 @@ function render_guardian_form(
     Validator $v,
     User $user,
 ): void { ?>
-    <h2 id="guardians">Tuteurs</h2>
+    <h2 id="guardians"
+        data-intro="Vous pouvez ajouter des tuteurs à un utilisateur. Ces tuteurs seront inclus dans toutes les communications.">
+        Tuteurs</h2>
     <form method="post" hx-swap="innerHTML show:#guardians:top" class="row">
         <?= $v->render_validation() ?>
 
@@ -81,10 +82,8 @@ function render_guardian_form(
         </div>
 
         <div class="col-auto">
-            <button type="button" class="outline contrast"
-                hx-get="/licencies/<?= $user->id ?>/tuteur/form"
-                hx-target="#new-guardian-list"
-                hx-swap="beforeend"
+            <button type="button" class="outline contrast" hx-get="/licencies/<?= $user->id ?>/tuteur/form"
+                hx-target="#new-guardian-list" hx-swap="beforeend"
                 hx-vals='js:{"index": document.querySelectorAll("#new-guardian-list .guardian-row").length}'>
                 <i class="fa fa-plus"></i> Ajouter un tuteur
             </button>

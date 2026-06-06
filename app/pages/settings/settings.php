@@ -164,7 +164,7 @@ if ($v_guardians->valid()) {
     reload();
 }
 
-page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
+page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css")->enableHelp();
 ?>
 
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
@@ -184,7 +184,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 
 <?= actions(check_auth(Access::$ROOT))->link("/licencies/$user->id/debug", "Debug", "fa-laptop-code") ?>
 
-<h2 id="identity">Infos</h2>
+<h2 id="identity" data-intro="Remplissez vos infos générales ici.">Infos</h2>
 
 <form method="post" hx-swap="innerHTML show:#identity:top" class="row">
     <?= $v_infos->render_validation() ?>
@@ -296,7 +296,7 @@ if ($v_password->valid()) {
 <?php if (!$is_visiting || $can_reset_credentials): ?>
     <div class="row">
         <form method="post" hx-swap="innerHTML show:#login:top" class="col-sm-12 col-md-6 align-end">
-            <h2 id="login">Login</h2>
+            <h2 id="login" data-intro="Modifiez votre login ici.">Login</h2>
             <?= $v_login->render_validation() ?>
             <?= "Login actuel: $user->login" ?>
             <?= $new_login->render() ?>
@@ -306,13 +306,15 @@ if ($v_password->valid()) {
             <h2 id="password">Mot de passe</h2>
             <?= $v_password->render_validation() ?>
             <?php if (!$can_reset_credentials): ?>
-                <input type="text" name="username" value="<?= $user->login ?>" autocomplete="username" class="hidden">
+                <input type="text" name="username" value="<?= $user->login ?>" autocomplete="username" class="hidden"
+                    data-intro="Pour modifier votre mot de passe.">
                 <?= $current_password->render() ?>
                 <?= $new_password->render() ?>
                 <?= $confirm_password->render() ?>
             <?php endif ?>
             <input type="submit" class="outline" name="submitPassword"
-                value="<?= $can_reset_credentials ? "Réinitialiser" : "Changer le mot de passe" ?>">
+                value="<?= $can_reset_credentials ? "Réinitialiser" : "Changer le mot de passe" ?>"
+                data-intro="Réinitalisez votre mot de passe ici.">
         </form>
     </div>
 <?php endif ?>
