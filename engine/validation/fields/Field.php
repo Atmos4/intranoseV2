@@ -83,8 +83,9 @@ class Field
     function props(bool $includeValue = true): string
     {
         $v = e($this->value);
+        $id = Validator::keyToId($this->key);
         return
-            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$this->key\""
+            "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$id\""
             . ($includeValue ? " value=\"$v\"" : "")
             . ($this->valid() ? "" : " aria-invalid=true autofocus")
             . ($this->autocomplete ? " autocomplete = \"$this->autocomplete\"" : "")
@@ -104,7 +105,8 @@ class Field
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
             $data_intro = $this->help ? ("data-intro=\"" . $this->help . "\"") : "";
-            $input_render = "<label {$this->render_attrs()} $data_intro for=\"$this->key\">{$label_content}</label>";
+            $id = Validator::keyToId($this->key);
+            $input_render = "<label {$this->render_attrs()} $data_intro for=\"{$id}\">{$label_content}</label>";
         }
         return $input_render;
     }
