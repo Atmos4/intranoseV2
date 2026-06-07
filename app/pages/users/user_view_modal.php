@@ -115,19 +115,19 @@ if (!Component::mounted()) {
                     <i class="fa fa-shield-heart"></i>
                     Tuteurs <small>(<?= $user->guardians->count() ?>)</small>
                 </summary>
-                <div class="grid" style="grid-template-columns: 1fr;">
+                <div class="guardian-grid">
                     <?php foreach ($user->guardians as $guardian): ?>
                         <article class="notice" style="margin: 0;">
                             <div>
                                 <strong><?= $guardian->first_name . " " . $guardian->last_name ?></strong>
                             </div>
-                            <div>
+                            <div class="guardian-infos">
                                 <?php if ($guardian->phone): ?>
                                     <span><i class="fas fa-phone"></i> <a class="contrast"
                                             href="tel:<?= $guardian->phone ?>"><?= $guardian->phone ?></a></span>
                                 <?php endif ?>
                                 <?php if ($guardian->email): ?>
-                                    <span>✉️ <a class="contrast"
+                                    <span><i class="fas fa-envelope"></i> <a class="contrast"
                                             href="mailto:<?= $guardian->email ?>"><?= $guardian->email ?></a></span>
                                 <?php endif ?>
                             </div>

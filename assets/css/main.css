@@ -443,6 +443,18 @@ article.notice > header,
   display: none;
 }
 
+/* User modal */
+
+#userViewDialog .guardian-grid {
+  grid-template-columns: 1fr;
+  display: grid;
+}
+
+#userViewDialog .guardian-infos {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Timeline */
 
 .timeline {
