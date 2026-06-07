@@ -35,13 +35,17 @@ function render_guardian_fieldset(
         <?php if ($delete_href || $js_delete): ?>
             <div class="row">
                 <?php if ($js_delete): ?>
-                    <a href="javascript:void(0)" class="destructive outline" onclick="this.closest('fieldset').remove()">
-                        <i class="fas fa-trash"></i> Supprimer
-                    </a>
+                    <div class="col-auto">
+                        <button type="link" class="destructive outline" onclick="this.closest('fieldset').remove()">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
                 <?php else: ?>
-                    <a href="<?= $delete_href ?>" class="destructive outline">
-                        <i class="fas fa-trash"></i> Supprimer
-                    </a>
+                    <div class="col-auto">
+                        <a type="button" href="<?= $delete_href ?>" class="destructive outline">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </div>
                 <?php endif ?>
             </div>
         <?php endif ?>
