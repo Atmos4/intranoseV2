@@ -113,7 +113,58 @@ if ($v_picture->valid()) {
     }
 }
 
-page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css");
+require_once __DIR__ . '/guardians/GuardianForm.php';
+
+if (isset($_POST["new_guardians"]) && is_array($_POST["new_guardians"])) {
+    $length_new_guardians = count($_POST["new_guardians"]);
+}
+
+
+$guardians_values = [];
+foreach ($user->guardians as $index => $guardian) {
+    $guardians_values["guardian[$index][first_name]"] = $guardian->first_name;
+    $guardians_values["guardian[$index][last_name]"] = $guardian->last_name;
+    $guardians_values["guardian[$index][phone]"] = $guardian->phone;
+    $guardians_values["guardian[$index][email]"] = $guardian->email;
+}
+
+$v_guardians = new Validator($guardians_values, action: "guardian_form");
+$guardian_rows = [];
+foreach ($user->guardians as $index => $guardian) {
+    $guardian_rows[$index] = build_guardian_validator($v_guardians, "guardian[$index]");
+}
+
+// New guardians submitted via new_guardians[n][field] array syntax
+$new_guardian_rows = [];
+if (isset($length_new_guardians) && $length_new_guardians > 0) {
+    foreach (range(0, $length_new_guardians - 1) as $i) {
+        $new_guardian_rows[$i] = build_guardian_validator($v_guardians, "new_guardians[$i]");
+    }
+}
+
+if ($v_guardians->valid()) {
+    foreach ($user->guardians as $index => $guardian) {
+        $guardian->first_name = $guardian_rows[$index]['first_name']->value;
+        $guardian->last_name = $guardian_rows[$index]['last_name']->value;
+        $guardian->phone = $guardian_rows[$index]['phone']->value;
+        $guardian->email = $guardian_rows[$index]['email']->value;
+        em()->persist($guardian);
+    }
+    foreach ($new_guardian_rows as $i => $data) {
+        $guardian = new Guardian();
+        $guardian->first_name = $data['first_name']->value;
+        $guardian->last_name = $data['last_name']->value;
+        $guardian->phone = $data['phone']->value;
+        $guardian->email = $data['email']->value;
+        em()->persist($guardian);
+        $user->guardians->add($guardian);
+    }
+    em()->flush();
+    Toast::create("Tuteurs mis à jour !");
+    reload();
+}
+
+page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil")->css("settings.css")->enableHelp();
 ?>
 
 <form method="post" class="row center" enctype="multipart/form-data" id="pictureForm">
@@ -133,7 +184,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
 
 <?= actions(check_auth(Access::$ROOT))->link("/licencies/$user->id/debug", "Debug", "fa-laptop-code") ?>
 
-<h2 id="identity">Infos</h2>
+<h2 id="identity" data-intro="Remplissez vos infos générales ici.">Infos</h2>
 
 <form method="post" hx-swap="innerHTML show:#identity:top" class="row">
     <?= $v_infos->render_validation() ?>
@@ -245,7 +296,7 @@ if ($v_password->valid()) {
 <?php if (!$is_visiting || $can_reset_credentials): ?>
     <div class="row">
         <form method="post" hx-swap="innerHTML show:#login:top" class="col-sm-12 col-md-6 align-end">
-            <h2 id="login">Login</h2>
+            <h2 id="login" data-intro="Modifiez votre login ici.">Login</h2>
             <?= $v_login->render_validation() ?>
             <?= "Login actuel: $user->login" ?>
             <?= $new_login->render() ?>
@@ -255,13 +306,15 @@ if ($v_password->valid()) {
             <h2 id="password">Mot de passe</h2>
             <?= $v_password->render_validation() ?>
             <?php if (!$can_reset_credentials): ?>
-                <input type="text" name="username" value="<?= $user->login ?>" autocomplete="username" class="hidden">
+                <input type="text" name="username" value="<?= $user->login ?>" autocomplete="username" class="hidden"
+                    data-intro="Pour modifier votre mot de passe.">
                 <?= $current_password->render() ?>
                 <?= $new_password->render() ?>
                 <?= $confirm_password->render() ?>
             <?php endif ?>
             <input type="submit" class="outline" name="submitPassword"
-                value="<?= $can_reset_credentials ? "Réinitialiser" : "Changer le mot de passe" ?>">
+                value="<?= $can_reset_credentials ? "Réinitialiser" : "Changer le mot de passe" ?>"
+                data-intro="Réinitalisez votre mot de passe ici.">
         </form>
     </div>
 <?php endif ?>
@@ -284,3 +337,5 @@ if ($v_password->valid()) {
     <?php endif ?>
 </form>
 <script src="/assets/js/copy-clipboard.js"></script>
+
+<?php render_guardian_form($guardian_rows, $new_guardian_rows, $v_guardians, $user); ?>

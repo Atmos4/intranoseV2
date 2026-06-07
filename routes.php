@@ -123,6 +123,8 @@ Router::add('/licencies/inactif', __DIR__ . '/app/pages/users/user_list_inactive
 Router::add('/licencies/$user_id', __DIR__ . '/app/pages/users/user_view_modal.php');
 Router::add('/licencies/$user_id/desactiver', __DIR__ . '/app/pages/users/user_deactivation_confirm.php');
 Router::add('/licencies/$user_id/supprimer', __DIR__ . '/app/pages/users/user_delete_confirm.php');
+Router::add('/licencies/$user_id/tuteur/form', __DIR__ . '/app/pages/settings/guardians/guardian_form.php');
+Router::add('/licencies/$user_id/tuteur/$guardian_id/supprimer', __DIR__ . '/app/pages/settings/guardians/guardian_delete_confirm.php');
 Router::add('/licencies/$user_id/creer-famille', __DIR__ . '/app/pages/users/family/family_create.php');
 Router::add('/licencies/$user_id/debug', __DIR__ . '/app/pages/users/user_debug.php');
 // Familles

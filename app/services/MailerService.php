@@ -294,14 +294,7 @@ class RecipientResolver
             EventRecipientType::ALL_USERS => UserService::getActiveUserList(),
         };
 
-        // Convert users to email format and filter out null/empty emails
-        return array_values(array_filter(
-            array_map(
-                fn($user) => ["real_email" => $user->real_email],
-                $users
-            ),
-            fn($email) => !empty($email['real_email'])
-        ));
+        return self::expandWithGuardians($users);
     }
 
     public static function getGroupEmails(UserGroup $group): array
@@ -310,14 +303,22 @@ class RecipientResolver
         foreach ($group->members as $member) {
             $members[$member->id] = $member;
         }
-        $users = array_values($members);
-        return array_values(array_filter(
-            array_map(
-                fn($user) => ["real_email" => $user->real_email],
-                $users
-            ),
-            fn($email) => !empty($email['real_email'])
-        ));
+        return self::expandWithGuardians(array_values($members));
+    }
 
+    private static function expandWithGuardians(array $users): array
+    {
+        $emails = [];
+        foreach ($users as $user) {
+            if (!empty($user->real_email)) {
+                $emails[] = ["real_email" => $user->real_email];
+            }
+            foreach ($user->guardians as $guardian) {
+                if (!empty($guardian->email)) {
+                    $emails[] = ["real_email" => $guardian->email];
+                }
+            }
+        }
+        return $emails;
     }
 }

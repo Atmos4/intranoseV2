@@ -72,7 +72,8 @@ class Validator
         foreach ($this->fields as $field) {
             if ($field->error) {
                 $label = $field->get_label();
-                $result .= "<label for=\"$field->key\" class=\"error\">" .
+                $id = self::keyToId($field->key);
+                $result .= "<label for=\"{$id}\" class=\"error\">" .
                     ($label ? "{$field->get_label()} : " : "") . "$field->error</label>";
             }
         }
@@ -106,12 +107,39 @@ class Validator
         return $this->get_field($key)->render();
     }
 
+    /**
+     * Converts a bracket-notation key like "user[0][first_name]" to a flat
+     * HTML-safe id like "user_0_first_name" suitable for id/for attributes.
+     */
+    static function keyToId(string $key): string
+    {
+        return rtrim(preg_replace('/\[([^\]]*)\]/', '_$1', $key), '_');
+    }
+
+    /**
+     * Resolves a bracket-notation key against a nested array.
+     * e.g. "user[0][first_name]" against $_POST returns $_POST['user'][0]['first_name']
+     */
+    static function resolveNestedValue(array $data, string $key): mixed
+    {
+        preg_match_all('/([^\[\]]+)/', $key, $matches);
+        $current = $data;
+        foreach ($matches[1] as $segment) {
+            if (!is_array($current) || !array_key_exists($segment, $current)) {
+                return null;
+            }
+            $current = $current[$segment];
+        }
+        return $current;
+    }
+
     /** 
      * Magic function to create a certain field type
      */
     private function create($key, $field, $msg)
     {
-        $this->fields[$key] = new $field($key, $this->value($key), $this);
+        $value = $this->empty ? ($this->fields[$key]->value ?? null) : self::resolveNestedValue($_POST, $key);
+        $this->fields[$key] = new $field($key, $value, $this);
         $this->fields[$key]->check($msg);
         return $this->fields[$key];
     }
