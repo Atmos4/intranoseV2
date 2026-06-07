@@ -447,7 +447,6 @@ article.notice > header,
 
 #userViewDialog .guardian-grid {
   grid-template-columns: 1fr;
-  display: grid;
 }
 
 #userViewDialog .guardian-infos {

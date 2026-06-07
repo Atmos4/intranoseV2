@@ -115,7 +115,7 @@ if (!Component::mounted()) {
                     <i class="fa fa-shield-heart"></i>
                     Tuteurs <small>(<?= $user->guardians->count() ?>)</small>
                 </summary>
-                <div class="guardian-grid">
+                <div class="grid guardian-grid">
                     <?php foreach ($user->guardians as $guardian): ?>
                         <article class="notice" style="margin: 0;">
                             <div>
