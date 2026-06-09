@@ -10,7 +10,7 @@ class DateTimeField extends Field
     {
         if (!$date)
             return $date;
-        return preg_replace('/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})/', '$1T$2', $date);
+        return preg_replace('/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?/', '$1T$2', $date);
     }
 
     function check(string $msg = null): void
