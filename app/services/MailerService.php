@@ -313,7 +313,8 @@ class RecipientResolver
             if (!empty($user->real_email)) {
                 $emails[] = ["real_email" => $user->real_email];
             }
-            foreach ($user->guardians as $guardian) {
+            $guardians = isset($user->guardians) ? $user->guardians : [];
+            foreach ($guardians as $guardian) {
                 if (!empty($guardian->email)) {
                     $emails[] = ["real_email" => $guardian->email];
                 }
