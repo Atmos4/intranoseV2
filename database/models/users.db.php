@@ -85,7 +85,7 @@ class User
     public Collection $groups;
 
     /** @var Collection<int,Guardian> entries */
-    #[ManyToMany(targetEntity: Guardian::class, inversedBy: 'users')]
+    #[ManyToMany(targetEntity: Guardian::class, inversedBy: 'pupils')]
     public Collection $guardians;
 
     function __construct()
@@ -263,7 +263,7 @@ class Guardian
     public string $phone = "";
 
     /** @var Collection<int, User>  */
-    #[OneToMany(targetEntity: User::class, mappedBy: 'guardian')]
+    #[OneToMany(targetEntity: User::class, mappedBy: 'guardians')]
     public Collection $pupils;
 
     function __construct()
