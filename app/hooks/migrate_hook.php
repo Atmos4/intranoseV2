@@ -1,4 +1,5 @@
 <?php
+
 $validToken = env("WEBHOOK_MIGRATION_TOKEN");
 $tryToken = $_GET["token"] ?? null;
 $br = "<br>" . PHP_EOL;
@@ -49,9 +50,13 @@ foreach ($clubs as $c) {
     $saved_em ??= $db->em();
     if (!SeedingService::applyMigrations($db)) {
         echo "Could not apply migrations to $c{$br}";
-    } else
+    } else {
         echo "Migrated $c{$br}";
+    }
 }
+
+// remove database query / metadata cache
+rm_rf(base_path() . '/database/cache');
 
 // Generate proxies
 if (env("DOCTRINE_DISABLE_PROXIES")) {
