@@ -3,6 +3,7 @@ app/uploads/*
 /vendor
 /node_modules
 /composer.phar
+/.php-cs-fixer.cache
 
 # Env
 env.php
