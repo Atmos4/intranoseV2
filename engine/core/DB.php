@@ -6,7 +6,6 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
-
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
@@ -23,11 +22,11 @@ class DB extends SingletonDependency
 
     private EntityManager $entityManager;
 
-    function isSqlite()
+    public function isSqlite()
     {
         return true; //!!$this->sqlite; Uncomment if we switch back to another system
     }
-    function em()
+    public function em()
     {
         return $this->entityManager;
     }
@@ -35,7 +34,7 @@ class DB extends SingletonDependency
     /**
      * The DB constructor should be private. If there are more use cases you need to cover, create a factory function
      */
-    private function __construct(public string|null $sqlitePath = null, public Connection|null $connection = null)
+    private function __construct(public ?string $sqlitePath = null, public ?Connection $connection = null)
     {
         if (!$sqlitePath && !$connection) {
             throw new Error("Unable to create DB connection");
@@ -47,7 +46,7 @@ class DB extends SingletonDependency
         }
 
         // ORM Tables prefix
-        $evm = new \Doctrine\Common\EventManager;
+        $evm = new \Doctrine\Common\EventManager();
         $tablePrefix = new \TablePrefix('orm_');
         $evm->addEventListener(\Doctrine\ORM\Events::loadClassMetadata, $tablePrefix);
 
@@ -70,7 +69,7 @@ class DB extends SingletonDependency
         Type::overrideType('datetime', UTCDateTimeType::class);
         Type::overrideType('datetimetz', UTCDateTimeType::class);
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(paths: array("database/models"), isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
+        $config = ORMSetup::createAttributeMetadataConfiguration(paths: ["database/models"], isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
@@ -93,26 +92,26 @@ class DB extends SingletonDependency
         $this->entityManager = new EntityManager($connection, $config, $evm);
     }
 
-    function path()
+    public function path()
     {
         return dirname($this->sqlitePath);
     }
 
-    static function get()
+    public static function get()
     {
         return self::getInstance()->em();
     }
 
-    static function forClub($slug)
+    public static function forClub($slug)
     {
         return new DB(SqliteFactory::clubPath($slug));
     }
-    static function forTest($path)
+    public static function forTest($path)
     {
         return new DB($path);
     }
 
-    static function setupForClub($slug)
+    public static function setupForClub($slug)
     {
         assert(!!$slug, "Club namespace should be defined"); // TODO - refactor this in the future
         self::factory(fn() => self::forClub($slug));
@@ -124,7 +123,7 @@ class DBFactory
     /**
      * @deprecated We use SQLite now
      */
-    static function mysql($dbName = null)
+    public static function mysql($dbName = null)
     {
         return DriverManager::getConnection([
             'driver' => 'pdo_mysql',
@@ -136,27 +135,27 @@ class DBFactory
         ]);
     }
 
-    static function sqlite($fileName)
+    public static function sqlite($fileName)
     {
         mk_dir(dirname($fileName));
         return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
     }
     // Configuration factory
-    static function getConfig(DB $db)
+    public static function getConfig(DB $db)
     {
-        return !!$db->isSqlite() ?
-            new PhpFile(__DIR__ . "/../../database/config/sqlite.php") :
-            new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+        return !!$db->isSqlite()
+            ? new PhpFile(__DIR__ . "/../../database/config/sqlite.php")
+            : new PhpFile(__DIR__ . "/../../database/config/migrations.php");
     }
 }
 
 class SqliteFactory
 {
-    static function clubPath($slug)
+    public static function clubPath($slug)
     {
         return club_data_path($slug) . "/db.sqlite";
     }
-    static function mainPath($file = 'db.sqlite')
+    public static function mainPath($file = 'db.sqlite')
     {
         return base_path() . "/.sqlite/$file";
     }
@@ -263,7 +262,7 @@ class TablePrefix
 
         if (!$classMetadata->isInheritanceTypeSingleTable() || $classMetadata->getName() === $classMetadata->rootEntityName) {
             $classMetadata->setPrimaryTable([
-                'name' => $this->prefix . $classMetadata->getTableName()
+                'name' => $this->prefix . $classMetadata->getTableName(),
             ]);
         }
 

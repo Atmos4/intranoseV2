@@ -9,11 +9,12 @@ $fn = $v->text("first_name")->required()->placeholder("first name")->label("Firs
 $ln = $v->text("last_name")->required()->placeholder("last name");
 $login = $v->text("login")->placeholder("login");
 $password = $v->password("password")->placeholder("password");
-if ($password->value)
+if ($password->value) {
     $password->secure();
+}
 $direct_login = $v->switch("direct_login")->label("Login directly");
 
-if ($v->valid())
+if ($v->valid()) {
     do {
         $r = ClubManagementService::createNewClub($name->value, $slug->value);
         if (!$r->success) {
@@ -26,10 +27,11 @@ if ($v->valid())
             $ln->value,
             $em,
             $login->value,
-            $password->value
+            $password->value,
         );
-        if (!(new AuthService($em))->tryLogin($user->login, $pw, false, $v))
+        if (!(new AuthService($em))->tryLogin($user->login, $pw, false, $v)) {
             break;
+        }
         if ($direct_login->value) {
             ClubManagementService::selectClub($slug->value);
             Toast::success("Logged in as $user->login");
@@ -40,6 +42,7 @@ if ($v->valid())
         - password: $pw<br>
         Change it asap");
     } while (false);
+}
 
 ?>
 <form method="post">

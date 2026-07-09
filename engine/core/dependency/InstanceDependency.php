@@ -1,4 +1,5 @@
 <?php
+
 /** Modified singleton. Needs to be initialized during config and then acts as a global object */
 class InstanceDependency
 {

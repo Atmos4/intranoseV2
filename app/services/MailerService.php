@@ -70,7 +70,7 @@ class EmailTemplates
 
         return [
             'subject' => "Activation du compte " . self::getAppName(),
-            'content' => "Voici le lien pour activer ton compte: $base_url/activation?token=$token"
+            'content' => "Voici le lien pour activer ton compte: $base_url/activation?token=$token",
         ];
     }
 
@@ -93,7 +93,7 @@ class EmailTemplates
 
         return [
             'subject' => $prefix . "$event->name",
-            'content' => "<h3>Un nouvel événement a été publié sur " . self::getAppName() . " !</h3><br>" . $footer
+            'content' => "<h3>Un nouvel événement a été publié sur " . self::getAppName() . " !</h3><br>" . $footer,
         ];
     }
 
@@ -105,7 +105,7 @@ class EmailTemplates
 
         return [
             'subject' => $prefix . "$event->name : $subject",
-            'content' => $content
+            'content' => $content,
         ];
     }
 
@@ -116,7 +116,7 @@ class EmailTemplates
 
         return [
             'subject' => $prefix . "$group->name : $subject",
-            'content' => $content
+            'content' => $content,
         ];
     }
 
@@ -138,7 +138,7 @@ class EmailTemplates
 
     private static function buildMessageEmailHtml(string $title, Message $message, string $footer): string
     {
-        $message_html = (new Parsedown)->text($message->content);
+        $message_html = (new Parsedown())->text($message->content);
         $sender_name = htmlspecialchars($message->sender->first_name . ' ' . $message->sender->last_name);
         $sent_at = $message->sentAt->format("d/m H:i");
 

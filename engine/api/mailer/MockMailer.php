@@ -5,14 +5,14 @@ class MockMailer extends Mailer
     public MockedEmail $mockedMail;
 
     // Only allow new instance with create() function
-    function __construct()
+    public function __construct()
     {
         $this->mockedMail = new MockedEmail();
         $this->global_address = "test@test.fr";
         $this->mockedMail->addresses = [];
     }
 
-    function createEmail($address, $subject, $content): self
+    public function createEmail($address, $subject, $content): self
     {
         $this->mockedMail->addresses[] = $address;
         $this->mockedMail->subject = $subject;
@@ -20,7 +20,7 @@ class MockMailer extends Mailer
         return $this;
     }
 
-    function createBulkEmails($addresses, $subject, $content): self
+    public function createBulkEmails($addresses, $subject, $content): self
     {
         $this->mockedMail->addresses = $addresses;
         $this->mockedMail->subject = $subject;
@@ -28,7 +28,7 @@ class MockMailer extends Mailer
         return $this;
     }
 
-    function send(): MailResult
+    public function send(): MailResult
     {
         logger()->debug("MockMailer: sent email to {address} with subject {subject}", [
             "address" => $this->mockedMail->addresses,

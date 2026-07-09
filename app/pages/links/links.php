@@ -1,11 +1,11 @@
 <?php restrict_access();
 $user = User::getCurrent();
-$jot_params = "?nom=" . $user->last_name . "&prenom=" .
-    $user->first_name . "&email=" . $user->real_email;
+$jot_params = "?nom=" . $user->last_name . "&prenom="
+    . $user->first_name . "&email=" . $user->real_email;
 $jot_link = new Link(
     "https://form.jotform.com/250042921370345$jot_params",
     "JotForm",
-    "Lien pour accéder au formulaire de remboursement."
+    "Lien pour accéder au formulaire de remboursement.",
 );
 
 $links = em()->createQuery("SELECT l FROM Link l")->getResult();

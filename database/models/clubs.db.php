@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
@@ -15,19 +16,19 @@ class Club
 
     #[Column(options: ["default" => "green"])]
     public ThemeColor $themeColor;
-    function __construct($name, $slug)
+    public function __construct($name, $slug)
     {
         $this->name = $name;
         $this->slug = $slug;
         $this->themeColor = ThemeColor::green;
     }
 
-    function toForm()
+    public function toForm()
     {
         return [
             "name" => $this->name,
             "slug" => $this->slug,
-            "color" => $this->themeColor->value
+            "color" => $this->themeColor->value,
         ];
     }
 }
@@ -73,7 +74,7 @@ enum ThemeColor: string
         };
     }
 
-    static function colorsList(): array
+    public static function colorsList(): array
     {
         return array_reduce(ThemeColor::cases(), function ($carry, $c) {
             $carry[$c->value] = $c->getColorCode();
@@ -81,7 +82,7 @@ enum ThemeColor: string
         }, []);
     }
 
-    function translate(): string
+    public function translate(): string
     {
         return match ($this) {
             self::fuchsia => "Fuchsia",

@@ -2,7 +2,7 @@
 
 class GroupService
 {
-    static function renderTags($groups, $delimiter = false, $is_div = true)
+    public static function renderTags($groups, $delimiter = false, $is_div = true)
     {
         $is_groups = $groups && (count($groups) > 0);
         echo $is_groups && $is_div ? "<div id='groups'>" : "";
@@ -13,7 +13,7 @@ class GroupService
         echo ($is_groups && $delimiter) ? "<hr>" : "";
     }
 
-    static function renderDots($groups)
+    public static function renderDots($groups)
     {
         $is_groups = $groups && (count($groups) > 0);
         echo $is_groups ? "<div class='dot-block'>" : "";
@@ -26,7 +26,7 @@ class GroupService
         echo $is_groups ? "</div>" : "";
     }
 
-    static function getAllEventGroups($event)
+    public static function getAllEventGroups($event)
     {
         if (!$event || !$event->id) {
             // For new events, just return all groups without checking associations
@@ -51,7 +51,7 @@ class GroupService
             ->getArrayResult();
     }
 
-    static function getEventGroups(string $eventId): array
+    public static function getEventGroups(string $eventId): array
     {
         return em()->createQueryBuilder()
             ->select('g')
@@ -63,7 +63,7 @@ class GroupService
             ->getResult();
     }
 
-    static function getUserGroups(string $userId): array
+    public static function getUserGroups(string $userId): array
     {
         return em()->createQueryBuilder()
             ->select('g')
@@ -75,7 +75,7 @@ class GroupService
             ->getResult();
     }
 
-    static function getAllUserGroups($user)
+    public static function getAllUserGroups($user)
     {
         return em()->createQueryBuilder()
             ->select('g.id, g.name')
@@ -101,7 +101,7 @@ class GroupService
             ->getArrayResult();
     }
 
-    static function renderGroupChoice($groups)
+    public static function renderGroupChoice($groups)
     { ?>
         <fieldset>
             <legend style="margin-bottom: 0;">Groupes</legend>
@@ -124,13 +124,13 @@ class GroupService
         <?php
     }
 
-    static function renderEventGroupChoice($event)
+    public static function renderEventGroupChoice($event)
     {
         $groups = self::getAllEventGroups($event);
         echo self::renderGroupChoice($groups);
     }
 
-    static function getGroups($list = [])
+    public static function getGroups($list = [])
     {
         return em()->createQueryBuilder()
             ->select('g')
@@ -142,7 +142,7 @@ class GroupService
             ->getResult();
     }
 
-    static function getAllGroups()
+    public static function getAllGroups()
     {
         return em()->createQueryBuilder()
             ->select('g.id, g.name')
@@ -152,7 +152,7 @@ class GroupService
             ->getResult();
     }
 
-    static function processEventGroupChoice($event)
+    public static function processEventGroupChoice($event)
     {
         $event->groups->clear();
         $groups = self::getGroups($_POST['add_groups'] ?? []);
@@ -169,7 +169,7 @@ class GroupService
     /**
      *  need to flush after calling this function
      */
-    static function processUserGroupChoice($user)
+    public static function processUserGroupChoice($user)
     {
         $user->groups->clear();
         $groups = self::getGroups($_POST['add_groups'] ?? []);
@@ -182,13 +182,13 @@ class GroupService
         em()->persist($user);
     }
 
-    static function renderUserGroupChoice($user = null)
+    public static function renderUserGroupChoice($user = null)
     {
         $groups = $user ? self::getAllUserGroups($user) : self::getAllGroups();
         echo self::renderGroupChoice($groups);
     }
 
-    static function listGroups()
+    public static function listGroups()
     {
         return em()->createQueryBuilder()
             ->select('g')
@@ -198,7 +198,7 @@ class GroupService
             ->getResult();
     }
 
-    static function RenderGroupsWarning(User $user, Event $event)
+    public static function RenderGroupsWarning(User $user, Event $event)
     {
         $users_from_event_groups = em()->createQueryBuilder()
             ->select('egm.id')

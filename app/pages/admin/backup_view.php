@@ -1,6 +1,6 @@
 <?php
 restrict_access(Access::$ROOT);
-$service = new BackupService;
+$service = new BackupService();
 $v = new Validator(action: "create_backup");
 if ($v->valid()) {
     $service->createBackup();

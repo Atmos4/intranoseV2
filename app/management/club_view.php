@@ -17,10 +17,11 @@ if ($v_backup->valid()) {
 // Delete club - be careful with this
 $v_delete = new Validator(action: "delete");
 if ($v_delete->valid()) {
-    if ($s->deleteClub())
+    if ($s->deleteClub()) {
         redirect("/mgmt");
-    else
+    } else {
         Toast::error("Could not delete club");
+    }
 }
 
 $colorList = ThemeColor::colorsList();

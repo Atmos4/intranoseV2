@@ -4,20 +4,20 @@ use Doctrine\ORM\EntityManager;
 
 class UserService
 {
-    static function getByLogin(EntityManager $em, $login): User|null
+    public static function getByLogin(EntityManager $em, $login): ?User
     {
         $result = $em->getRepository(User::class)->findByLogin($login);
         return count($result) ? $result[0] : null;
     }
 
-    static function getByEmail(EntityManager $em, $login)
+    public static function getByEmail(EntityManager $em, $login)
     {
         $result = User::findByEmail($login);
         return count($result) ? $result[0] : null;
     }
 
     /** @return User[] */
-    static function getAll(DB $db)
+    public static function getAll(DB $db)
     {
         return $db->em()
             ->createQuery("SELECT u FROM User u")
@@ -25,7 +25,7 @@ class UserService
     }
 
     /** @return User[] */
-    static function getActiveUserList()
+    public static function getActiveUserList()
     {
         return em()->createQuery("SELECT u FROM User u WHERE u.status != :status ORDER BY u.last_name ASC, u.first_name ASC")
             ->setParameters(['status' => UserStatus::DEACTIVATED])->getResult();
@@ -33,20 +33,20 @@ class UserService
 
 
     /** @return DeactivatedUserDto[] */
-    static function getDeactivatedUserList()
+    public static function getDeactivatedUserList()
     {
         return em()->createQuery("SELECT NEW DeactivatedUserDto(u.id, u.last_name, u.first_name) FROM User u WHERE u.status = :status ORDER BY u.last_name ASC, u.first_name ASC")
             ->setParameters(['status' => UserStatus::DEACTIVATED])->getResult();
     }
 
     /** @return User[] */
-    static function getInactiveUserList()
+    public static function getInactiveUserList()
     {
         return em()->createQuery("SELECT u FROM User u WHERE u.status = :status ORDER BY u.last_name ASC, u.first_name ASC")
             ->setParameters(['status' => UserStatus::INACTIVE])->getResult();
     }
 
-    static function countUsersWithSameEmail($email)
+    public static function countUsersWithSameEmail($email)
     {
         return em()->createQuery("SELECT COUNT(u) FROM User u WHERE u.real_email = :email")
             ->setParameters(['email' => $email])->getSingleScalarResult();
@@ -55,13 +55,13 @@ class UserService
     /** @param User[] $users
      * @return bool true if successful, false otherwise
      */
-    static function reactivateUsers(array $users): bool
+    public static function reactivateUsers(array $users): bool
     {
         foreach ($users as $user) {
             $user->status = UserStatus::INACTIVE;
             logger()->info(
                 "User reactivated",
-                ["login" => $user->login, "adminUserId" => User::getMainUserId()]
+                ["login" => $user->login, "adminUserId" => User::getMainUserId()],
             );
             Toast::success("$user->first_name réactivé");
         }
@@ -69,7 +69,7 @@ class UserService
         return true;
     }
 
-    static function deactivateUser(User $user)
+    public static function deactivateUser(User $user)
     {
         $user->status = UserStatus::DEACTIVATED;
         em()->flush();
@@ -78,7 +78,7 @@ class UserService
         return true;
     }
 
-    static function getFromList($user_ids)
+    public static function getFromList($user_ids)
     {
         return em()->createQueryBuilder()
             ->select('u')
@@ -108,7 +108,7 @@ class UserService
         if ($include_declined_users) {
             $qb->andWhere($qb->expr()->orX(
                 'ee IS NULL',
-                'ee.present = false'
+                'ee.present = false',
             ));
         } else {
             $qb->andWhere('ee IS NULL');
@@ -160,7 +160,7 @@ class UserHelper
         return $result;
     }
 
-    static function generateUserEmail($firstName, $lastName)
+    public static function generateUserEmail($firstName, $lastName)
     {
         [$firstName, $lastName] = self::sanitizeName($firstName, $lastName);
         $nose_email = "$firstName.$lastName@nose42.fr";
@@ -183,7 +183,7 @@ class UserHelper
         throw new UserCreationException("Couldnt create email");
     }
 
-    static function generateUserLogin($firstName, $lastName)
+    public static function generateUserLogin($firstName, $lastName)
     {
         [$firstName, $lastName] = self::sanitizeName($firstName, $lastName);
         $login = $lastName . "_" . substr($firstName, 0, 1);
@@ -209,11 +209,9 @@ class UserHelper
 // DTOs
 class DeactivatedUserDto
 {
-    function __construct(
+    public function __construct(
         public int $id,
         public string $last_name,
         public string $first_name,
-    ) {
-
-    }
+    ) {}
 }

@@ -1,12 +1,14 @@
 <?php
+
 class UserManagementService
 {
-    static function changeEmails($user, ?string $newNoseEmail, string $newRealEmail, bool $gmailWarning = false)
+    public static function changeEmails($user, ?string $newNoseEmail, string $newRealEmail, bool $gmailWarning = false)
     {
         $oldRealEmail = $user->real_email;
         $user->real_email = $newRealEmail;
-        if ($newNoseEmail)
+        if ($newNoseEmail) {
             $user->nose_email = $newNoseEmail;
+        }
 
         $family_members = [];
 
@@ -15,12 +17,12 @@ class UserManagementService
                 "SELECT COUNT(u) FROM User u 
                 WHERE u.family = :family_id 
                 AND u.real_email = :real_email 
-                AND u.id != :user_id"
+                AND u.id != :user_id",
             )
                 ->setParameters([
                     "real_email" => $oldRealEmail,
                     "family_id" => $user->family->id,
-                    "user_id" => $user->id
+                    "user_id" => $user->id,
                 ])
                 ->getSingleScalarResult();
             if ($family_members) {
@@ -32,15 +34,9 @@ class UserManagementService
         $gmailWarning && Toast::warning("Pensez à mettre à jour sur Gmail !");
     }
 
-    static function deactivateUser($user)
-    {
-    }
+    public static function deactivateUser($user) {}
 
-    static function reactivateUser($form, $users)
-    {
-    }
+    public static function reactivateUser($form, $users) {}
 
-    static function addUser($nose_email, $real_email)
-    {
-    }
+    public static function addUser($nose_email, $real_email) {}
 }

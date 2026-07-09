@@ -1,4 +1,5 @@
 <?php
+
 restrict_access();
 $user = User::getMain();
 $family = em()->find(Family::class, get_route_param("family_id"));

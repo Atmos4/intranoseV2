@@ -28,7 +28,7 @@ if (count($past_events)) {
     foreach ($past_events as $event) {
         render_events($event);
     }
-} else if ($page === 1) { ?>
+} elseif ($page === 1) { ?>
         <p>Pas d'événements passés 😿</p>
 <?php } ?>
 

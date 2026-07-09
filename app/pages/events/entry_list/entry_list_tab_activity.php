@@ -20,8 +20,8 @@ endif ?>
         <tbody>
             <?php
             ob_start();
-            $totalEntries = 0;
-            foreach ($activityEntries as $entry): ?>
+$totalEntries = 0;
+foreach ($activityEntries as $entry): ?>
                 <?php if ($entry->present):
                     $totalEntries++ ?>
                     <tr class="clickable" tabindex=0 <?= UserModal::props($entry->user->id) ?>>
@@ -37,7 +37,7 @@ endif ?>
                     </tr>
                 <?php endif ?>
             <?php endforeach;
-            $table = ob_get_clean() ?>
+$table = ob_get_clean() ?>
             <?= TotalRow("Total", $totalEntries, "") ?>
             <?= $table ?>
         </tbody>

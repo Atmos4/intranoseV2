@@ -1,4 +1,5 @@
 <?php
+
 restrict_access();
 $user = User::getMain();
 $controlled_user = User::get(get_route_param('user_id'));

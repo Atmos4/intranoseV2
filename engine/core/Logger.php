@@ -1,4 +1,5 @@
 <?php
+
 use Monolog\Logger;
 
 class MainLogger extends InstanceDependency
@@ -10,7 +11,7 @@ class MainLogger extends InstanceDependency
         $this->logger = $logger;
     }
 
-    static function get()
+    public static function get()
     {
         return self::getInstance()->logger;
     }

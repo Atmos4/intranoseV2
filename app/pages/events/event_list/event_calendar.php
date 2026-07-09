@@ -59,25 +59,25 @@ page("Calendrier")->css("event_list.css")->css("event_calendar.css")->noPadding(
         <div class="grid-h">D</div>
         <?php
         $day = clone $startDate;
-        while ($day <= $endDate) {
-            $dateStr = $day->format("Y-m-d");
-            $dayNr = $day->format("d");
-            $className = $day->format("m") == $month ? "" : "class=\"faint\"";
-            if ($dateStr == date("Y-m-d")) {
-                $className = "class=\"today\"";
-            }
-            echo "<div class=\"inner-div\" hx-get=\"/cal/view?date=$dateStr\">
+while ($day <= $endDate) {
+    $dateStr = $day->format("Y-m-d");
+    $dayNr = $day->format("d");
+    $className = $day->format("m") == $month ? "" : "class=\"faint\"";
+    if ($dateStr == date("Y-m-d")) {
+        $className = "class=\"today\"";
+    }
+    echo "<div class=\"inner-div\" hx-get=\"/cal/view?date=$dateStr\">
                 <strong $className>$dayNr</strong>
                 <div class=\"event-wrapper\">";
-            if (isset($eventsByDate[$dateStr])) {
-                foreach ($eventsByDate[$dateStr] as $event) {
-                    echo "<span class='event'></span>";
-                }
-            }
-            echo "</div></div>";
-            $day->modify("+1 day");
+    if (isset($eventsByDate[$dateStr])) {
+        foreach ($eventsByDate[$dateStr] as $event) {
+            echo "<span class='event'></span>";
         }
-        ?>
+    }
+    echo "</div></div>";
+    $day->modify("+1 day");
+}
+?>
     </div>
     <div id="event-list" style="padding:1rem">
         <p style="text-align:center">Sélectionnez un jour</p>

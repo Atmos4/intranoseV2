@@ -36,8 +36,9 @@ function renderDocument(SharedFile $shared_doc)
 
 function renderTable($title, $docs)
 {
-    if (!$docs)
-        return; ?>
+    if (!$docs) {
+        return;
+    } ?>
     <thead>
         <tr>
             <th colspan="4">

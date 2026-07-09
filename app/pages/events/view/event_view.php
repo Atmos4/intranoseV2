@@ -28,9 +28,9 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     ->if($can_edit, fn($b) => $b->dropdown(function ($dropdown) use ($event, $is_simple) {
         $dropdown->link("/evenements/$event->id/modifier" . ($is_simple ? "/simple" : "/complexe"), "Éditer", "fa-pen", ["class" => "secondary"]);
         $dropdown->link("/evenements/$event->id/rappel", "Rappel", "fa-bell", ["class" => "secondary"]);
-        $event->open ?
-            $dropdown->link("/evenements/$event->id/publier", "Retirer", "fa-calendar-minus", ["class" => "destructive"]) :
-            $dropdown->link("/evenements/$event->id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
+        $event->open
+            ? $dropdown->link("/evenements/$event->id/publier", "Retirer", "fa-calendar-minus", ["class" => "destructive"])
+            : $dropdown->link("/evenements/$event->id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
     })) ?>
 
 <?php if (!$event->open): ?>
@@ -162,7 +162,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
                         <br>
                         <section>
                             <h3>Description</h3>
-                            <?= (new Parsedown)->text($event->description) ?>
+                            <?= (new Parsedown())->text($event->description) ?>
                         </section>
                     <?php else: ?>
                         Pas encore de description pour cet événement 🪶

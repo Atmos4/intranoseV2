@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class UserFeature
 {
     #[Id, Column]
-    public string|null $featureName = null;
+    public ?string $featureName = null;
 
     #[Id, ManyToOne]
     public User $user;
@@ -18,7 +19,7 @@ class UserFeature
     #[Column]
     public bool $enabled = false;
 
-    function __construct(User $user, Feature $feature)
+    public function __construct(User $user, Feature $feature)
     {
         $this->featureName = $feature->value;
         $this->user = $user;
@@ -30,7 +31,7 @@ class UserFeature
 class ClubFeature
 {
     #[Id, Column]
-    public string|null $featureName = null;
+    public ?string $featureName = null;
 
     #[Id, ManyToOne, JoinColumn(name: "club_slug", referencedColumnName: "slug")]
     public Club $club;
@@ -38,7 +39,7 @@ class ClubFeature
     #[Column]
     public bool $enabled = false;
 
-    function __construct(Club $club, Feature $feature)
+    public function __construct(Club $club, Feature $feature)
     {
         $this->featureName = $feature->value;
         $this->club = $club;
@@ -52,12 +53,12 @@ enum Feature: string
     case JootForm = "JootForm";
     case Calendar = "Calendar";
 
-    function on()
+    public function on()
     {
         return has_feature($this);
     }
 
-    function translate()
+    public function translate()
     {
         return match ($this) {
             Feature::Messages => "Messagerie",

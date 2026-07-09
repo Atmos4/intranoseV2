@@ -1,4 +1,5 @@
 <?php
+
 if (AuthService::create()->isUserLoggedIn()) {
     redirect("evenements");
 }

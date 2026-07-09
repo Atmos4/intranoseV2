@@ -56,5 +56,6 @@ page("Messages")->heading(false)->noPadding()->css("messages.css") ?>
         <button><i class="fa fa-paper-plane"></i></button>
     </form>
 </div>
-<?php if ($has_firebase_updates)
-    include __DIR__ . "/firebase_updater.php" ?>
+<?php if ($has_firebase_updates) {
+    include __DIR__ . "/firebase_updater.php";
+} ?>

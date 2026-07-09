@@ -1,4 +1,5 @@
 <?php
+
 restrict_access();
 $file_id = $_GET['id'];
 

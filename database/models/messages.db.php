@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping\Table;
 class Message
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $content;
@@ -41,7 +42,7 @@ class Message
 class Conversation
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $name = "";
@@ -62,7 +63,7 @@ class Conversation
         $this->messages = new ArrayCollection();
     }
 
-    static function upsertPrivateConversation(User $u1, User $u2): Conversation
+    public static function upsertPrivateConversation(User $u1, User $u2): Conversation
     {
         assert($u1->id != $u2->id, "Cannot create a conversation with yourself");
         $ids = [$u1->id, $u2->id];
@@ -94,7 +95,7 @@ class Conversation
         return $conversations[0];
     }
 
-    static function getAllFromUser(string $user_id)
+    public static function getAllFromUser(string $user_id)
     {
         $conversations = em()->createQuery("SELECT c,p,u from Conversation c
             JOIN c.participants p
@@ -106,20 +107,21 @@ class Conversation
         return $conversations;
     }
 
-    static function getUrlFromHash(string $hash, string $user_id)
+    public static function getUrlFromHash(string $hash, string $user_id)
     {
         $ids = explode("_", $hash);
-        if ($ids[0] == $user_id)
+        if ($ids[0] == $user_id) {
             return $ids[1];
+        }
         return $ids[0];
     }
 
-    function getMessages()
+    public function getMessages()
     {
         return em()->createQuery("SELECT m from Message m WHERE m.conversation = :conv ORDER BY m.sentAt DESC")->setParameter("conv", $this->id)->getResult();
     }
 
-    function sendMessage($user, $content)
+    public function sendMessage($user, $content)
     {
         $m = new Message($user, $this, $content);
         $this->messages->add($m);
@@ -142,7 +144,7 @@ class UserConversation
 
     /** Only set for private conversations */
     #[ManyToOne]
-    public User|null $directUser = null;
+    public ?User $directUser = null;
 
     #[Column]
     public DateTime $joinedAt;

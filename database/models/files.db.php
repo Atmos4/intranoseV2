@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping\Table;
 class SharedFile
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $name = "";
@@ -28,17 +29,17 @@ class SharedFile
     public Permission $permission_level = Permission::USER;
 
     #[ManyToOne]
-    public Activity|null $activity = null;
+    public ?Activity $activity = null;
 
     #[ManyToOne]
-    public Event|null $event = null;
+    public ?Event $event = null;
 
-    function __construct()
+    public function __construct()
     {
         $this->date = date_create();
     }
 
-    function set(string $name, string $path, string $mime)
+    public function set(string $name, string $path, string $mime)
     {
         $this->name = $name;
         $this->path = $path;
@@ -46,13 +47,13 @@ class SharedFile
     }
 
     /** Get document by ID */
-    static function get($file_id): SharedFile|null
+    public static function get($file_id): ?SharedFile
     {
         return em()->find(SharedFile::class, $file_id);
     }
 
     /** @return self[] */
-    static function findBy($permission): array
+    public static function findBy($permission): array
     {
         return em()->getRepository(self::class)->findBy(['permission_level' => $permission]);
     }

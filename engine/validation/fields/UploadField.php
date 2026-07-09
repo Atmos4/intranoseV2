@@ -1,4 +1,5 @@
 <?php
+
 class UploadField extends Field
 {
     public static array $FILE_MIME = [
@@ -22,7 +23,7 @@ class UploadField extends Field
             'image/x-pcx',
             'zz-application/zz-winassoc-pcx',
             'image/jp2',
-            'image/heif'
+            'image/heif',
         ],
         'doc' => [
             'application/msword',
@@ -56,7 +57,7 @@ class UploadField extends Field
         ],
         'zip' => ['application/zip'],
     ];
-    function set_type(): void
+    public function set_type(): void
     {
         $this->type = FieldType::File;
     }
@@ -66,7 +67,7 @@ class UploadField extends Field
 
     public array $allowed_mime = [];
 
-    function __construct(string $key, mixed $value = null, Validator $context = null)
+    public function __construct(string $key, mixed $value = null, Validator $context = null)
     {
         parent::__construct($key, $value, $context);
         if (isset($_FILES[$this->key])) {
@@ -75,12 +76,12 @@ class UploadField extends Field
         }
     }
 
-    function get_ext()
+    public function get_ext()
     {
         return strtolower(pathinfo($this->file_name, PATHINFO_EXTENSION));
     }
 
-    function required(string $msg = null): static
+    public function required(string $msg = null): static
     {
         if ($this->should_test() && !$this->file_name) {
             $this->set_error($msg ?? "Requis");
@@ -88,14 +89,14 @@ class UploadField extends Field
         return $this;
     }
 
-    function check(string $msg = null): void
+    public function check(string $msg = null): void
     {
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {
-                // Check if the error field is ok 
+                // Check if the error field is ok
                 if (
-                    !isset($_FILES[$this->key]['error']) ||
-                    is_array($_FILES[$this->key]['error'])
+                    !isset($_FILES[$this->key]['error'])
+                    || is_array($_FILES[$this->key]['error'])
                 ) {
                     $this->set_error('Paramètres incorrects');
                 } else {
@@ -116,7 +117,7 @@ class UploadField extends Field
                             $this->set_error("Erreur inconnue");
                     }
 
-                    // Check custom filesize here. 
+                    // Check custom filesize here.
                     if ($_FILES[$this->key]['size'] > 1000000) {
                         $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
                     }
@@ -125,7 +126,7 @@ class UploadField extends Field
         }
     }
 
-    function mime(array $mimes): static
+    public function mime(array $mimes): static
     {
         if ($this->should_test()) {
             $this->allowed_mime = $mimes;
@@ -138,7 +139,7 @@ class UploadField extends Field
                 !in_array(
                     $finfo->file($_FILES[$this->key]['tmp_name']),
                     $flatArray,
-                    true
+                    true,
                 )
             ) {
                 $this->set_error("Seuls les formats " . implode(", ", array_keys($this->allowed_mime)) . " sont acceptés");
@@ -147,9 +148,9 @@ class UploadField extends Field
         return $this;
     }
 
-    function max_size(int $size): static
+    public function max_size(int $size): static
     {
-        // Check custom filesize here. 
+        // Check custom filesize here.
         if ($this->should_test() && $_FILES[$this->key]['size'] > $size) {
             $this->set_error('Fichier trop lourd - ' . round($_FILES[$this->key]['size'] / 1000000, 2) . 'MB');
         }
@@ -157,7 +158,7 @@ class UploadField extends Field
     }
 
 
-    function save_file(string $location): string|false
+    public function save_file(string $location): string|false
     {
         $path = path($location, $this->file_name);
         mk_dir(dirname($path), true);
@@ -176,7 +177,7 @@ class UploadField extends Field
         return $path;
     }
 
-    function set_file_name(string $name, string $suffix = ""): static
+    public function set_file_name(string $name, string $suffix = ""): static
     {
         $this->file_name = $name . ($suffix ?: "." . bin2hex(random_bytes(4)) . "." . $this->get_ext());
         return $this;

@@ -31,7 +31,7 @@ $user_infos = [
     "gender" => $user->gender->value,
     "phone" => $user->phone,
     "birthdate" => date_format($user->birthdate, "Y-m-d"),
-    "permission" => $user->permission->value
+    "permission" => $user->permission->value,
 ];
 
 $v_infos = new Validator($user_infos, "identity_form");
@@ -96,7 +96,7 @@ $profile_picture = $user->getPicture();
 $image_mime_types = [
     'jpg' => ['image/jpeg'],
     'png' => ['image/png'],
-    'gif' => ['image/gif']
+    'gif' => ['image/gif'],
 ];
 $v_picture = new Validator(action: "picture_form");
 $picture = $v_picture->upload("picture")->mime($image_mime_types)->max_size(2 * 1024 * 1024);
@@ -176,7 +176,7 @@ page($is_visiting ? "Profil - $user->first_name $user->last_name" : "Mon profil"
             ->attributes([
                 "style" => "width: auto",
                 "onchange" => "document.getElementById('pictureForm').submit()",
-                "class" => "hidden"
+                "class" => "hidden",
             ])
             ->render() ?>
     </label>

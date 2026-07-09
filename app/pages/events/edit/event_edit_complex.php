@@ -106,7 +106,7 @@ if ($v->valid() && all_valid($activity_validators)) {
             $av_fields["end_date"]->value,
             $av_fields["location_label"]->value,
             $av_fields["location_url"]->value,
-            $av_fields["description"]->value
+            $av_fields["description"]->value,
         );
         $activity->type = ActivityType::from($av_fields["type"]->value);
         $activity->deadline = $av_fields["deadline"]->value ? date_create($av_fields["deadline"]->value) : $event->deadline;

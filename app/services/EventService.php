@@ -6,7 +6,7 @@ use Doctrine\ORM\Query\Expr\Join;
 class EventService
 {
     /** @return ActivityInfoDto[] */
-    static function getActivityIdList(string $eventId)
+    public static function getActivityIdList(string $eventId)
     {
         return em()->createQueryBuilder()
             ->select("NEW ActivityInfoDto(r.id, r.name)")
@@ -16,7 +16,7 @@ class EventService
             ->getQuery()->getResult();
     }
 
-    static function getEventInfos(string $eventId): EventInfoDto
+    public static function getEventInfos(string $eventId): EventInfoDto
     {
         return em()->createQueryBuilder()
             ->select("NEW EventInfoDto(e.id, e.name, e.open)")
@@ -26,7 +26,7 @@ class EventService
             ->getQuery()->getSingleResult();
     }
 
-    static function getEntryCount(string $eventId): int
+    public static function getEntryCount(string $eventId): int
     {
         return em()->createQueryBuilder()
             ->select("COUNT(e.present)")
@@ -36,7 +36,7 @@ class EventService
             ->getQuery()->getSingleScalarResult();
     }
 
-    static function getEventWithAllData($event_id, $user_id = null): Event|null
+    public static function getEventWithAllData($event_id, $user_id = null): ?Event
     {
         $qb = em()->createQueryBuilder();
         $qb->select('e', 'ee', 'r', 're', 'c')
@@ -57,39 +57,39 @@ class EventService
     }
 
     /** @return EventDto[] */
-    static function listAllFutureOpenEvents($user_id)
+    public static function listAllFutureOpenEvents($user_id)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " AND ev.end_date > CURRENT_DATE()" .
-                " ORDER BY ev.start_date ASC")
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+                . " LEFT JOIN ev.entries en WITH en.user = ?1"
+                . " WHERE ev.open = 1"
+                . " AND ev.end_date > CURRENT_DATE()"
+                . " ORDER BY ev.start_date ASC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
 
         return EventDto::fromEventList($events);
     }
 
-    static function listDrafts()
+    public static function listDrafts()
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev" .
-                " WHERE ev.open = 0" .
-                " ORDER BY ev.start_date ASC")
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open FROM Event ev"
+                . " WHERE ev.open = 0"
+                . " ORDER BY ev.start_date ASC")
             ->getArrayResult();
         return EventDto::fromEventList($events);
     }
 
     /** @return EventDto[] */
-    static function listAllPastOpen($user_id)
+    public static function listAllPastOpen($user_id)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " AND ev.end_date <= CURRENT_DATE()" .
-                " ORDER BY ev.start_date DESC")
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+                . " LEFT JOIN ev.entries en WITH en.user = ?1"
+                . " WHERE ev.open = 1"
+                . " AND ev.end_date <= CURRENT_DATE()"
+                . " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
             ->getArrayResult();
 
@@ -97,14 +97,14 @@ class EventService
     }
 
     /** @return EventDto[] */
-    static function listPastOpenPaginated($user_id, $limit, $offset)
+    public static function listPastOpenPaginated($user_id, $limit, $offset)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev" .
-                " LEFT JOIN ev.entries en WITH en.user = ?1" .
-                " WHERE ev.open = 1" .
-                " AND ev.end_date <= CURRENT_DATE()" .
-                " ORDER BY ev.start_date DESC")
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+                . " LEFT JOIN ev.entries en WITH en.user = ?1"
+                . " WHERE ev.open = 1"
+                . " AND ev.end_date <= CURRENT_DATE()"
+                . " ORDER BY ev.start_date DESC")
             ->setParameter(1, $user_id)
             ->setMaxResults($limit)
             ->setFirstResult($offset)
@@ -114,7 +114,7 @@ class EventService
     }
 
     /** @return EventEntry[] */
-    static function getAllEntries($event_id): array
+    public static function getAllEntries($event_id): array
     {
         return em()->createQueryBuilder()
             ->select('e', 'u', 're')
@@ -132,13 +132,13 @@ class EventService
     /**
      * @return Event[]
      */
-    static function getEventsForPeriod(DateTime $start, DateTime $end)
+    public static function getEventsForPeriod(DateTime $start, DateTime $end)
     {
         return em()->createQuery(
             "SELECT e FROM Event e 
             WHERE e.start_date BETWEEN :start AND :end 
             AND e.open = 1 
-            ORDER BY e.start_date"
+            ORDER BY e.start_date",
         )
             ->setParameter('start', $start)
             ->setParameter('end', $end)
@@ -148,7 +148,7 @@ class EventService
     /**
      * @return EventDto[]
      */
-    static function getEventsForDay(string $date, string $uid)
+    public static function getEventsForDay(string $date, string $uid)
     {
         $currentDate_b = (new DateTime($date))->setTime(0, 0, 0);
         $currentDate_e = (clone $currentDate_b)->setTime(23, 59, 59);
@@ -159,7 +159,7 @@ class EventService
             WHERE ev.open = 1 
             AND :current_date_e >= ev.start_date 
             AND :current_date_b <= ev.end_date
-            ORDER BY ev.start_date DESC"
+            ORDER BY ev.start_date DESC",
         )
             ->setParameter('current_date_e', $currentDate_e)
             ->setParameter('current_date_b', $currentDate_b)
@@ -167,7 +167,7 @@ class EventService
             ->getArrayResult());
     }
 
-    static function formatActivitiesDate(Activity $activity)
+    public static function formatActivitiesDate(Activity $activity)
     {
         $current_year = date('Y');
         $formatted_end_date = format_date($activity->end_date, 'd MMMM y HH:mm');
@@ -187,14 +187,10 @@ class EventService
 
 class EventInfoDto
 {
-    function __construct(public int $id, public string $name, public bool $open)
-    {
-    }
+    public function __construct(public int $id, public string $name, public bool $open) {}
 }
 
 class ActivityInfoDto
 {
-    function __construct(public int $id, public string $name)
-    {
-    }
+    public function __construct(public int $id, public string $name) {}
 }

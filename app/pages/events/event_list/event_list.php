@@ -9,8 +9,9 @@ $_SESSION["event_home"] = "/evenements";
 formatter("d MMM");
 $user = User::getCurrent();
 $future_events = EventService::listAllFutureOpenEvents($user->id);
-if ($can_edit)
+if ($can_edit) {
     $draft_events = EventService::listDrafts();
+}
 
 $current_date = new DateTime('now');
 $current_month_day = $current_date->format('m-d');
@@ -77,7 +78,7 @@ if ($can_edit) {
         "/evenements/nouveau/choix",
         "Ajouter un événement",
         "fas fa-plus",
-        ["data-intro" => 'Créez un événement']
+        ["data-intro" => 'Créez un événement'],
     );
 }
 $action->link(
@@ -85,21 +86,21 @@ $action->link(
     "Évenements passés",
     "fa-clock-rotate-left",
 )
-    ?>
+?>
 <?= $action ?>
 
 <?php if (!count($future_events) && !($can_edit && count($draft_events))): ?>
     <p class="center">Pas d'événement pour le moment 😴</p>
 <?php endif ?>
 
-<?php // Draft events 
+<?php // Draft events
 if ($can_edit && count($draft_events)): ?>
 
     <h6>Événements en attente</h6>
     <?php
-    foreach ($draft_events as $draft_event) {
-        render_events($draft_event);
-    } ?>
+foreach ($draft_events as $draft_event) {
+    render_events($draft_event);
+} ?>
     <h6>Événements publiés</h6>
 <?php endif ?>
 

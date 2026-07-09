@@ -1,21 +1,24 @@
-<?php class FeatureService
-{
+<?php
 
-    static function globalEnabled(Feature $f)
+class FeatureService
+{
+    public static function globalEnabled(Feature $f)
     {
         return match ($f) {
             Feature::Messages => dev_or_staging(),
             Feature::Calendar => dev_or_staging(),
-            default => false
+            default => false,
         };
     }
 
-    static function enabled(Feature $f, $uid = null)
+    public static function enabled(Feature $f, $uid = null)
     {
-        if (self::globalEnabled($f))
+        if (self::globalEnabled($f)) {
             return true;
-        if (env("FEATURE_" . $f->value) == 'true')
+        }
+        if (env("FEATURE_" . $f->value) == 'true') {
             return true;
+        }
         $uid ??= User::getMainUserId();
         return self::hasFeature($uid, $f->value);
     }
@@ -24,7 +27,7 @@
      * Get all feature from a user : first check the ClubFeatures level then the UserFeatures level
      * @return bool
      */
-    static function hasFeature($uid, $feature)
+    public static function hasFeature($uid, $feature)
     {
         $club_slug = ClubManagementService::getSelectedClubSlug();
         if (
@@ -44,7 +47,7 @@
      * list all feature for one user
      * @return UserFeature[]
      */
-    static function listUser($uid)
+    public static function listUser($uid)
     {
         return em()->createQuery("SELECT f FROM UserFeature f INDEX BY f.featureName LEFT JOIN ClubFeature c WITH f.featureName = c.featureName WHERE f.user = :u")->setParameters(["u" => $uid])->getResult();
     }
@@ -53,7 +56,7 @@
      * list all feature for one user
      * @return ClubFeature[]
      */
-    static function listClub($slug = null, $service = null)
+    public static function listClub($slug = null, $service = null)
     {
         if (!$slug) {
             $slug = ClubManagementService::getSelectedClubSlug();

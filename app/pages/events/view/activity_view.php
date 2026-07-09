@@ -18,7 +18,7 @@ page($activity->name)->css("event_view.css");
         // I love functional programming :D
         fn($a) => $a->dropdown(fn($b) => $b
             ->link("/evenements/$event_id/activite/$activity->id/modifier", "Éditer", "fas fa-pen")
-            ->link("/evenements/$event_id/activite/$activity->id/supprimer", "Supprimer", "fas fa-trash", ["class" => "destructive"]))
+            ->link("/evenements/$event_id/activite/$activity->id/supprimer", "Supprimer", "fas fa-trash", ["class" => "destructive"])),
     ) ?>
 
 <?= RenderActivityEntry($activity) ?>

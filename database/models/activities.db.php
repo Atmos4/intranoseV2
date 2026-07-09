@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -13,13 +14,13 @@ use Doctrine\ORM\Mapping\Table;
 class ActivityEntry
 {
     #[Id, ManyToOne]
-    public User|null $user = null;
+    public ?User $user = null;
 
     #[Id, ManyToOne]
-    public Activity|null $activity = null;
+    public ?Activity $activity = null;
 
     #[ManyToOne]
-    public Category|null $category = null;
+    public ?Category $category = null;
 
     #[Column]
     public bool $present = false;
@@ -27,7 +28,7 @@ class ActivityEntry
     #[Column]
     public string $comment = "";
 
-    function set($user, $activity, $present, $comment)
+    public function set($user, $activity, $present, $comment)
     {
         $this->user = $user;
         $this->activity = $activity;
@@ -42,7 +43,7 @@ enum ActivityType: string
     case TRAINING = "TRAINING";
     case OTHER = "OTHER";
 
-    function toIcon()
+    public function toIcon()
     {
         return match ($this) {
             self::RACE => "fa-flag-checkered",
@@ -51,7 +52,7 @@ enum ActivityType: string
         };
     }
 
-    function toName()
+    public function toName()
     {
         return match ($this) {
             self::RACE => "Course",
@@ -65,7 +66,7 @@ enum ActivityType: string
 class Activity
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public ActivityType $type = ActivityType::RACE;
@@ -77,7 +78,7 @@ class Activity
     public DateTime $end_date;
 
     #[Column]
-    public DateTime|null $deadline = null;
+    public ?DateTime $deadline = null;
 
     #[Column]
     public bool $open = false;
@@ -95,7 +96,7 @@ class Activity
     public string $description = "";
 
     #[ManyToOne]
-    public Event|null $event = null;
+    public ?Event $event = null;
 
     #[OneToMany(targetEntity: ActivityEntry::class, mappedBy: "activity", cascade: ["remove"])]
     public Collection $entries;
@@ -104,13 +105,13 @@ class Activity
     #[OneToMany(targetEntity: Category::class, mappedBy: "activity", cascade: ["persist", "remove"])]
     public Collection $categories;
 
-    function __construct()
+    public function __construct()
     {
         $this->entries = new ArrayCollection();
         $this->categories = new ArrayCollection();
     }
 
-    function set(string $name, string $start_date, string $end_date, string $location_label = "", string $location_url = "", string $description = "")
+    public function set(string $name, string $start_date, string $end_date, string $location_label = "", string $location_url = "", string $description = "")
     {
         $this->name = $name;
         $this->start_date = date_create($start_date);

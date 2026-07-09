@@ -8,9 +8,9 @@ function render_events(EventDto $event)
         $tooltip_content = "Deadline dépassée";
     } elseif ($diff->days < 7) {
         $limit_class = "warning";
-        $tooltip_content = ($diff->days == 0 ?
-            $diff->format("Plus que %h heures!") :
-            $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")));
+        $tooltip_content = ($diff->days == 0
+            ? $diff->format("Plus que %h heures!")
+            : $diff->format("Dans %d jour" . ($diff->days == 1 ? "" : "s")));
     }
     $groups = GroupService::getEventGroups($event->id); ?>
 
@@ -25,7 +25,8 @@ function render_events(EventDto $event)
                         <del><i class="fas fa-xmark fa-xl" title="Pas inscrit"></i></del>
                     <?php else: ?>
                         <i class="fas fa-question fa-xl" title="Pas encore inscrit"></i>
-                    <?php endif; else: ?>
+                    <?php endif;
+    else: ?>
                     <i class="fas fa-file" title="Brouillon"></i>
                 <?php endif ?>
             </div>

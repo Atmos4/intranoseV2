@@ -1,4 +1,5 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
@@ -6,17 +7,17 @@ class MailResult
 {
     public bool $success = false;
     public string $message = "";
-    function __construct($success, $message)
+    public function __construct($success, $message)
     {
         $this->success = $success;
         $this->message = $message;
     }
-    static function success($message = "")
+    public static function success($message = "")
     {
         return new MailResult(true, $message);
     }
 
-    static function error($message = "")
+    public static function error($message = "")
     {
         return new MailResult(false, $message);
     }
@@ -27,7 +28,7 @@ class Mailer extends FactoryDependency
     public PHPMailer $mail;
 
     // Only allow new instance with create() function
-    function __construct()
+    public function __construct()
     {
         $this->mail = new PHPMailer();
         $this->mail->CharSet = "UTF-8";
@@ -52,12 +53,12 @@ class Mailer extends FactoryDependency
         }
     }
 
-    static function getGlobalAddress()
+    public static function getGlobalAddress()
     {
         return env("MAIL_GLOBAL_ADDRESS") ?? "devs@nose42.fr";
     }
 
-    function createEmail($address, $subject, $content): self
+    public function createEmail($address, $subject, $content): self
     {
         $this->mail->addAddress($address);
         $this->mail->Subject = $subject;
@@ -65,7 +66,7 @@ class Mailer extends FactoryDependency
         return $this;
     }
 
-    function createBulkEmails($addresses, $subject, $content): self
+    public function createBulkEmails($addresses, $subject, $content): self
     {
         foreach ($addresses as $email => $name) {
             $this->mail->addBCC($email, $name);
@@ -75,7 +76,7 @@ class Mailer extends FactoryDependency
         return $this;
     }
 
-    function send(): MailResult
+    public function send(): MailResult
     {
         try {
             $this->mail->send();
@@ -89,7 +90,7 @@ class Mailer extends FactoryDependency
 class MailHelper
 {
     // Shamelessly taken from StackOverflow
-    static function obfuscate($email)
+    public static function obfuscate($email)
     {
         $em = explode("@", $email);
         $name = implode('@', array_slice($em, 0, count($em) - 1));

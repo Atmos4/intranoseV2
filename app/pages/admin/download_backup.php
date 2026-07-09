@@ -1,7 +1,8 @@
 <?php
+
 restrict_access(Access::$ROOT);
 $backup = $_GET['backup'];
-$path = (new BackupService)->getBackupFile($backup);
+$path = (new BackupService())->getBackupFile($backup);
 
 if (file_exists($path)) {
     header("Content-Type: application/octet-stream");

@@ -1,7 +1,7 @@
 <?php
 managementPage("MGMT - login");
 
-$v = new Validator;
+$v = new Validator();
 $password = $v->password("mgmt_pw")->required();
 if ($v->valid()) {
     if (ClubManagementService::login($password->value)) {

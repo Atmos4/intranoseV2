@@ -2,38 +2,37 @@
 
 class ToastItem
 {
-    function __construct(
+    public function __construct(
         public string $message = "",
-        public ToastLevel $level = ToastLevel::Success
-    ) {
-    }
+        public ToastLevel $level = ToastLevel::Success,
+    ) {}
 }
 
 class Toast
 {
     /** @var ToastItem[] */
     public static array $toasts = [];
-    static function create($message, $level = ToastLevel::Success)
+    public static function create($message, $level = ToastLevel::Success)
     {
         self::$toasts[] = new ToastItem($message, $level);
     }
 
-    static function stash()
+    public static function stash()
     {
         $_SESSION['toasts'] = self::$toasts;
     }
 
-    static function popStash()
+    public static function popStash()
     {
         self::$toasts = array_merge(self::$toasts, $_SESSION['toasts'] ?? []);
     }
 
-    static function clearStash()
+    public static function clearStash()
     {
         unset($_SESSION['toasts']);
     }
 
-    static function render()
+    public static function render()
     {
         self::popStash();
         $toasts = "";
@@ -48,38 +47,38 @@ class Toast
         return $toasts;
     }
 
-    static function renderRoot()
+    public static function renderRoot()
     { ?>
         <div id="toast-root">
             <?= self::render() ?>
         </div>
     <?php }
 
-    static function renderOob()
+    public static function renderOob()
     { ?>
         <div id="toast-root" hx-swap-oob="afterbegin">
             <?= self::render() ?>
         </div>
     <?php }
 
-    static function error(string $message)
+    public static function error(string $message)
     {
         return self::create($message, ToastLevel::Error);
     }
-    static function success(string $message)
+    public static function success(string $message)
     {
         return self::create($message, ToastLevel::Success);
     }
-    static function info(string $message)
+    public static function info(string $message)
     {
         return self::create($message, ToastLevel::Info);
     }
-    static function warning(string $message)
+    public static function warning(string $message)
     {
         return self::create($message, ToastLevel::Warning);
     }
 
-    static function fromResult(Result $r)
+    public static function fromResult(Result $r)
     {
         return $r->success ? self::success($r->print()) : self::error($r->print());
     }

@@ -28,8 +28,8 @@ if ($can_edit_user) {
                 "/groupes/$group->id/supprimer",
                 "Supprimer le groupe",
                 "fa fa-trash",
-                ["class" => "destructive outline"]
-            )
+                ["class" => "destructive outline"],
+            ),
     );
 }
 
@@ -78,7 +78,7 @@ page("Groupe : " . $group->name)->css("group_view.css");
                                 </ul>
                             </nav>
                             <?php
-                                                    },
+                            },
                         ) ?>
                     </div>
                 <?php endforeach ?>

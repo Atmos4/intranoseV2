@@ -29,8 +29,9 @@ endif;
     <?php
     renderTable("Documents publics", $publicDocs);
 
-    if ($adminDocs)
-        renderTable("Documents privés", $adminDocs);
-    ?>
+if ($adminDocs) {
+    renderTable("Documents privés", $adminDocs);
+}
+?>
 
 </table>
