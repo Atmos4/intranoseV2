@@ -11,7 +11,7 @@ use Eluceo\iCal\Domain\ValueObject\Alarm;
 use Eluceo\iCal\Domain\ValueObject\Alarm\DisplayAction;
 use Eluceo\iCal\Domain\ValueObject\Alarm\AbsoluteDateTimeTrigger;
 use Eluceo\iCal\Presentation\Factory\CalendarFactory;
-use \Eluceo\iCal\Domain\ValueObject\Location;
+use Eluceo\iCal\Domain\ValueObject\Location;
 
 class CalendarFeedService
 {
@@ -34,7 +34,7 @@ class CalendarFeedService
             LEFT JOIN e.activities a
             WHERE e.open = 1 
             AND e.end_date >= :sixMonthsAgo
-            ORDER BY e.start_date"
+            ORDER BY e.start_date",
         )
             ->setParameter('sixMonthsAgo', $sixMonthsAgo)
             ->getResult();
@@ -79,8 +79,8 @@ class CalendarFeedService
             new ICalDateTime($event->start_date, true),
             new ICalDateTime(
                 $event->end_date,
-                true
-            )
+                true,
+            ),
         );
         $iCalEvent->setOccurrence($occurrence);
 
@@ -92,7 +92,7 @@ class CalendarFeedService
             $firstActivity = $event->activities[0];
             if ($firstActivity->location_label) {
                 $iCalEvent->setLocation(
-                    new Location($firstActivity->location_label)
+                    new Location($firstActivity->location_label),
                 );
             }
         }
@@ -101,7 +101,7 @@ class CalendarFeedService
         if ($event->deadline < $event->start_date) {
             $alarm = new Alarm(
                 new DisplayAction("Deadline d'inscription : $event->name"),
-                new AbsoluteDateTimeTrigger(new Timestamp($event->deadline))
+                new AbsoluteDateTimeTrigger(new Timestamp($event->deadline)),
             );
             $iCalEvent->addAlarm($alarm);
         }

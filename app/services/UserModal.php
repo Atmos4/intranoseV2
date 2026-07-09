@@ -1,7 +1,8 @@
 <?php
+
 class UserModal
 {
-    static function props($id)
+    public static function props($id)
     {
         return <<<EOL
         hx-get="/licencies/$id" 
@@ -11,7 +12,7 @@ class UserModal
         EOL;
     }
 
-    static function renderRoot()
+    public static function renderRoot()
     {
         $id = get_query_param("user");
         $content = $id ? component(app_path() . "/pages/users/user_view_modal.php")->render(["user_id" => $id, "open" => !!$id]) : "";
@@ -23,7 +24,7 @@ class UserModal
         HTML;
     }
 
-    static function triggerShowModal($id)
+    public static function triggerShowModal($id)
     {
         header("HX-Trigger-After-Settle: {\"showModal\":{\"modalId\":\"$id\"}}");
     }

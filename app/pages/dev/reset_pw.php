@@ -1,4 +1,5 @@
 <?php
+
 restrict_dev();
 
 $user = em()->find(User::class, get_route_param("user_id"));

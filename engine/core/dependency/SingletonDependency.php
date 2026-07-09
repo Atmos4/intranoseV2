@@ -1,4 +1,5 @@
 <?php
+
 class SingletonDependency extends FactoryDependency
 {
     private static $instances = [];

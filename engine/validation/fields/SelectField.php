@@ -1,10 +1,11 @@
 <?php
+
 class SelectField extends Field
 {
     /** @var SelectFieldOption[] */
     public array $options = [];
 
-    function render()
+    public function render()
     {
         $result = "<select {$this->props()}>";
         foreach ($this->options as $option) {
@@ -14,13 +15,13 @@ class SelectField extends Field
         return $this->render_label($result . "</select>");
     }
 
-    function option(string $value, string $label): static
+    public function option(string $value, string $label): static
     {
         $this->options[] = new SelectFieldOption($value, $label, $this->value == $value);
         return $this;
     }
 
-    function options(array $options): static
+    public function options(array $options): static
     {
         foreach ($options as $value => $label) {
             $this->option($value, $label);
@@ -31,10 +32,9 @@ class SelectField extends Field
 
 class SelectFieldOption
 {
-    function __construct(
+    public function __construct(
         public string $value = "",
         public string $label = "",
         public bool $selected = false,
-    ) {
-    }
+    ) {}
 }

@@ -2,19 +2,19 @@
 
 class BackupService
 {
-    const MAX_BACKUPS = 6;
+    public const MAX_BACKUPS = 6;
     public string $backupDir;
     public Outputable $out;
 
-    function __construct(bool $forCli = false, public string|null $dbPath = null)
+    public function __construct(bool $forCli = false, public ?string $dbPath = null)
     {
         $this->forCli = $forCli;
-        $this->out = $forCli ? new CliOuput : new ToastOutput;
+        $this->out = $forCli ? new CliOuput() : new ToastOutput();
         $this->dbPath ??= DB::getInstance()->sqlitePath;
         $this->backupDir = dirname($this->dbPath) . "/backup";
     }
 
-    function createBackup($maxBackups = self::MAX_BACKUPS)
+    public function createBackup($maxBackups = self::MAX_BACKUPS)
     {
         $backupFileName = basename(dirname($this->dbPath)) . "_" . date('Ymd_His') . ".sqlite";
         $backupFile = $this->getBackupFile($backupFileName);
@@ -52,12 +52,12 @@ class BackupService
         }
     }
 
-    function getBackups()
+    public function getBackups()
     {
         return glob("$this->backupDir/*.sqlite");
     }
 
-    function getBackupFile($filename)
+    public function getBackupFile($filename)
     {
         return "$this->backupDir/$filename";
     }
@@ -67,35 +67,34 @@ class BackupService
 
 interface Outputable
 {
-    function info($m);
-    function error($m);
-    function success($m);
-    function warning($m);
+    public function info($m);
+    public function error($m);
+    public function success($m);
+    public function warning($m);
 
 }
 
 class CliOuput implements Outputable
 {
-
     private Cli $cli;
 
-    function __construct()
+    public function __construct()
     {
-        $this->cli = new Cli;
+        $this->cli = new Cli();
     }
-    function info($m)
+    public function info($m)
     {
         $this->cli->out($m);
     }
-    function error($m)
+    public function error($m)
     {
         $this->cli->error($m);
     }
-    function success($m)
+    public function success($m)
     {
         $this->cli->ok($m);
     }
-    function warning($m)
+    public function warning($m)
     {
         $this->cli->warning($m);
     }
@@ -103,19 +102,19 @@ class CliOuput implements Outputable
 
 class ToastOutput implements Outputable
 {
-    function info($m)
+    public function info($m)
     {
         Toast::info($m);
     }
-    function error($m)
+    public function error($m)
     {
         Toast::error($m);
     }
-    function success($m)
+    public function success($m)
     {
         Toast::success($m);
     }
-    function warning($m)
+    public function warning($m)
     {
         Toast::warning($m);
     }

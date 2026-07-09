@@ -15,7 +15,7 @@ page("Les licenciés")->enableHelp() ?>
             ->link(
                 "/licencies/inactif",
                 "Licenciés inactifs",
-                "fa-user-lock"
+                "fa-user-lock",
             )
             ->link(
                 "/licencies/desactive",
@@ -25,11 +25,10 @@ page("Les licenciés")->enableHelp() ?>
             ->link(
                 "/groupes",
                 "Groupes",
-                "fa-user-group"
-            )
-        ,
+                "fa-user-group",
+            ),
         "Plus",
-        ["data-intro" => "Visualisez les familles et les licenciés désactivés ici"]
+        ["data-intro" => "Visualisez les familles et les licenciés désactivés ici"],
     ) ?>
 <form method="get">
     <input type="search" id="search-users" name="search" placeholder="Rechercher..."
@@ -44,9 +43,9 @@ page("Les licenciés")->enableHelp() ?>
             <?php UserCard(
                 $user,
                 subtitle: function ($user) use ($groups) {
-                            GroupService::renderDots($groups);
+                    GroupService::renderDots($groups);
 
-                        }
+                },
             ) ?>
         </div>
     <?php endforeach ?>

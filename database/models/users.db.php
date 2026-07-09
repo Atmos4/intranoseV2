@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -15,13 +16,13 @@ use Ramsey\Uuid\Uuid;
 class User
 {
     /** Current user singleton */
-    private static User|null $currentUser = null;
+    private static ?User $currentUser = null;
 
     /** Main user singleton */
-    private static User|null $mainUser = null;
+    private static ?User $mainUser = null;
 
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $last_name = "";
@@ -63,7 +64,7 @@ class User
     public UserStatus $status = UserStatus::INVALID;
 
     #[ManyToOne]
-    public Family|null $family = null;
+    public ?Family $family = null;
 
     #[Column]
     public bool $family_leader = false;
@@ -88,59 +89,59 @@ class User
     #[ManyToMany(targetEntity: Guardian::class, inversedBy: 'pupils')]
     public Collection $guardians;
 
-    function __construct()
+    public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->guardians = new ArrayCollection();
         $this->birthdate = date_create();
     }
 
-    function set_identity($last_name, $first_name, $gender)
+    public function set_identity($last_name, $first_name, $gender)
     {
         $this->last_name = $last_name;
         $this->first_name = $first_name;
         $this->gender = $gender;
     }
 
-    function set_email($real_email, $nose_email)
+    public function set_email($real_email, $nose_email)
     {
         $this->real_email = $real_email;
         $this->nose_email = $nose_email;
     }
 
-    function set_password($password)
+    public function set_password($password)
     {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    function set_login($login)
+    public function set_login($login)
     {
         $this->login = $login;
     }
 
-    function getPicture()
+    public function getPicture()
     {
         return self::getUserPicture($this->picture);
     }
 
-    static function getUserPicture($file)
+    public static function getUserPicture($file)
     {
         return $file && file_exists($file) ? "/" . $file : "/assets/images/none.jpg";
     }
 
-    function replacePicture(string $newPicture)
+    public function replacePicture(string $newPicture)
     {
         $this->picture && file_exists($this->picture) && unlink($this->picture);
         $this->picture = $newPicture;
     }
 
     /** Get user by ID */
-    static function get($user_id): User|null
+    public static function get($user_id): ?User
     {
         return $user_id ? em()->find(User::class, $user_id) : null;
     }
 
-    static function getControlledUserId(): int|null
+    public static function getControlledUserId(): ?int
     {
         if (isset($_SESSION['controlled_user_id'])) {
             Page::getInstance()->controlled();
@@ -148,29 +149,29 @@ class User
         return $_SESSION['controlled_user_id'] ?? null;
     }
 
-    static function getMainUserId(): int|null
+    public static function getMainUserId(): ?int
     {
         return $_SESSION['user_id'] ?? null;
     }
 
-    static function getCurrentUserId(): int|null
+    public static function getCurrentUserId(): ?int
     {
         return self::getControlledUserId() ?? self::getMainUserId();
     }
 
-    static function getCurrent(): User|null
+    public static function getCurrent(): ?User
     {
         self::$currentUser ??= User::get(self::getCurrentUserId());
         return self::$currentUser;
     }
 
-    static function getMain(): User|null
+    public static function getMain(): ?User
     {
         self::$mainUser ??= User::get(self::getMainUserId());
         return self::$mainUser;
     }
 
-    static function existsWithLogin($login): bool
+    public static function existsWithLogin($login): bool
     {
         $logins = em()
             ->createQuery("SELECT u.login FROM User u WHERE u.login = :login")
@@ -179,7 +180,7 @@ class User
         return count($logins);
     }
 
-    static function findAllByLogin($login): array
+    public static function findAllByLogin($login): array
     {
         return em()
             ->createQuery("SELECT u.login FROM User u WHERE u.login LIKE :login")
@@ -187,7 +188,7 @@ class User
             ->getSingleColumnResult();
     }
 
-    static function existsWithEmail($email): bool
+    public static function existsWithEmail($email): bool
     {
         $emails = em()
             ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email = :email')
@@ -196,7 +197,7 @@ class User
         return count($emails);
     }
 
-    static function findEmailWithPattern($email): array
+    public static function findEmailWithPattern($email): array
     {
         return em()
             ->createQuery('SELECT u.nose_email FROM User u WHERE u.nose_email LIKE :email')
@@ -204,12 +205,12 @@ class User
             ->getSingleColumnResult();
     }
 
-    function hasFeature(Feature $f)
+    public function hasFeature(Feature $f)
     {
         return has_feature($f, $this->id);
     }
 
-    static function findByEmail($email): array
+    public static function findByEmail($email): array
     {
         return em()
             ->createQuery('SELECT u FROM User u WHERE u.real_email = :email')
@@ -229,7 +230,7 @@ enum UserStatus: string
 class Family
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $name = "";
@@ -238,7 +239,7 @@ class Family
     #[OneToMany(targetEntity: User::class, mappedBy: 'family')]
     public Collection $members;
 
-    function __construct()
+    public function __construct()
     {
         $this->members = new ArrayCollection();
     }
@@ -248,7 +249,7 @@ class Family
 class Guardian
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $last_name = "";
@@ -266,7 +267,7 @@ class Guardian
     #[OneToMany(targetEntity: User::class, mappedBy: 'guardians')]
     public Collection $pupils;
 
-    function __construct()
+    public function __construct()
     {
         $this->pupils = new ArrayCollection();
     }
@@ -309,13 +310,13 @@ class AccessToken
 {
     #[Id]
     #[Column(length: 36, unique: true)]
-    public string|null $id = null;
+    public ?string $id = null;
 
     #[ManyToOne]
-    public User|null $user = null;
+    public ?User $user = null;
 
     #[Column(nullable: true)]
-    public string|null $hashed_validator = null;
+    public ?string $hashed_validator = null;
 
     #[Column]
     public DateTime $expiration;
@@ -323,7 +324,7 @@ class AccessToken
     #[Column(length: 20)]
     public AccessTokenType $type;
 
-    function __construct(User $user, AccessTokenType $type, DateInterval $duration = new DateInterval('PT5M'))
+    public function __construct(User $user, AccessTokenType $type, DateInterval $duration = new DateInterval('PT5M'))
     {
         $this->id = Uuid::uuid4();
         $this->user = $user;
@@ -335,14 +336,14 @@ class AccessToken
      * - compromised DB with the hash
      * - timing attacks
      * Use this for long lived tokens */
-    function createHashedValidator(): string
+    public function createHashedValidator(): string
     {
         $validator = bin2hex(random_bytes(32));
         $this->hashed_validator = password_hash($validator, PASSWORD_DEFAULT);
         return $validator;
     }
 
-    static function retrieve(string $uuid, bool $forceExit = false): ?AccessToken
+    public static function retrieve(string $uuid, bool $forceExit = false): ?AccessToken
     {
         if (!Uuid::isValid($uuid)) {
             return $forceExit ? force_404("invalid token") : null;
@@ -360,7 +361,7 @@ class AccessToken
         return $token;
     }
 
-    static function retrieveOrFail(string $uuid): AccessToken
+    public static function retrieveOrFail(string $uuid): AccessToken
     {
         return self::retrieve($uuid, true) ?? throw new Exception("Token not found");
     }

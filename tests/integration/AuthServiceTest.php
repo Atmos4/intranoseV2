@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 final class AuthServiceTest extends BaseTestCase
 {
-
-    function testExistingUserCanLogin()
+    public function testExistingUserCanLogin()
     {
         [$service, $user, $password] = $this->setupTest();
         $v = new Validator();
@@ -12,7 +13,7 @@ final class AuthServiceTest extends BaseTestCase
         $this->assertEquals($_SESSION["user_id"], $user->id);
     }
 
-    function testLoginWithEmail()
+    public function testLoginWithEmail()
     {
         [$service, $user, $password] = $this->setupTest();
         $v = new Validator();
@@ -21,7 +22,7 @@ final class AuthServiceTest extends BaseTestCase
         $this->assertEquals($_SESSION["user_id"], $user->id);
     }
 
-    function testMissingUserCannotLogin()
+    public function testMissingUserCannotLogin()
     {
         [$service] = $this->setupTest();
         $v = new Validator();
@@ -31,7 +32,7 @@ final class AuthServiceTest extends BaseTestCase
         $this->assertFalse(isset($_SESSION["user_id"]));
     }
 
-    function testLogoutWorks()
+    public function testLogoutWorks()
     {
         [$service, $user, $password] = $this->setupTest();
         $service->tryLogin($user->login, $password);
@@ -41,7 +42,7 @@ final class AuthServiceTest extends BaseTestCase
     }
 
     /** @return array{AuthService, User, string} */
-    function setupTest()
+    public function setupTest()
     {
         [$u, $pw] = SeedingService::createTestUser("Jon", "Doe", $this->db->em());
         return [new AuthService($this->db->em()), $u, $pw];

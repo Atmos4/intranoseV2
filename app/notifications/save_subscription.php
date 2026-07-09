@@ -27,6 +27,7 @@ if (isset($_SERVER['CONTENT_TYPE']) && trim(strtolower($_SERVER['CONTENT_TYPE'])
                 echo "The browser is not registered.";
                 return;
             }
+            // no break
         case 'PUT':
             // update the key and token of subscription corresponding to the endpoint
             $subscription = $json ? em()->getRepository('NotificationSubscription')->findOneBy(['endpoint' => $json['endpoint']]) : null;

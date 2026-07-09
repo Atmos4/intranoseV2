@@ -1,19 +1,20 @@
 <?php
+
 class MainMenu extends FactoryDependency
 {
     /** @var MainMenuItem[] */
     public array $items;
 
-    function __construct()
+    public function __construct()
     {
         $this->items = [];
     }
 
-    function addItem(
+    public function addItem(
         string $label,
         string $url,
         string $icon = "",
-        bool $disableBoost = false
+        bool $disableBoost = false,
     ) {
         $this->items[] = new MainMenuItem($label, $url, $icon, $disableBoost);
         return $this;
@@ -27,11 +28,11 @@ class MainMenuItem
     public string $icon;
     public bool $disableBoost;
 
-    function __construct(
+    public function __construct(
         string $label,
         string $url,
         string $icon = "",
-        bool $disableBoost = false
+        bool $disableBoost = false,
     ) {
         $this->label = $label;
         $this->url = $url;

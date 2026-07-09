@@ -14,7 +14,7 @@ function RenderActivityEntry(?Activity $activity, ?bool $can_register = null)
                 !$activity_entry => IconText("fa-question", "Pas encore inscrit", "span"),
                 !$activity_entry->present => IconText("fa-xmark", "Je ne participe pas", "del"),
                 $activity_entry->present => IconText("fa-check", "Inscrit", "ins"),
-                default => "Erreur"
+                default => "Erreur",
             } ?>
         </b>
         <?php if ($can_register): ?>
@@ -58,7 +58,7 @@ function RenderEventEntry(?EventEntry $entry, Event $event, bool $can_edit)
                 !$entry => IconText("fa-question", "Pas encore inscrit", "span"),
                 !$entry->present => IconText("fa-xmark", "Je ne participe pas", "del"),
                 $entry->present => IconText("fa-check", "Inscrit", "ins"),
-                default => "Erreur"
+                default => "Erreur",
             } ?>
         </b>
         <?php if (($event->open && $event->deadline >= date_create("today")) || $can_edit): ?>

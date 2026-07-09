@@ -22,7 +22,7 @@ if ($activity_entry) {
     $form_values = [
         "activity_entry" => $activity_entry->present,
         "activity_comment" => $activity_entry->comment,
-        "activity_category" => $activity_entry->category->id ?? ""
+        "activity_category" => $activity_entry->category->id ?? "",
     ];
 }
 

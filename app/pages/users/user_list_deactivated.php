@@ -21,9 +21,9 @@ if (isset($_POST['action'])) {
 
         if ($_POST['action'] === 'reactivate') {
             $success = UserService::reactivateUsers($users);
-            $success ?
-                $form->set_success("Utilisateurs réactivés") :
-                $form->set_error("Erreurs présentes. Vérifiez les utilisateurs");
+            $success
+                ? $form->set_success("Utilisateurs réactivés")
+                : $form->set_error("Erreurs présentes. Vérifiez les utilisateurs");
         }
     }
 }

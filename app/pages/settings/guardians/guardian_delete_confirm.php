@@ -5,12 +5,14 @@ $user_id = get_route_param("user_id");
 $guardian_id = get_route_param("guardian_id");
 
 $user = em()->find(User::class, $user_id);
-if (!$user)
+if (!$user) {
     force_404("Cet utilisateur n'existe pas");
+}
 
 $guardian = em()->find(Guardian::class, $guardian_id);
-if (!$guardian)
+if (!$guardian) {
     force_404("Ce tuteur n'existe pas");
+}
 
 $form = new Validator(action: "confirm-delete-guardian");
 

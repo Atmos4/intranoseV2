@@ -6,13 +6,11 @@ class AuthService extends FactoryDependency
 {
     private const REMEMBERME_COOKIE = 'rememberme';
 
-    function __construct(private EntityManager $em)
-    {
-    }
+    public function __construct(private EntityManager $em) {}
 
-    function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null): bool
+    public function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null): bool
     {
-        $v ??= new Validator;
+        $v ??= new Validator();
         if (AuthService::tryMatchUserPassword(UserService::getByLogin($this->em, $login), $password, $rememberMe, $v)) {
             return true;
         }
@@ -24,7 +22,7 @@ class AuthService extends FactoryDependency
         return false;
     }
 
-    private function tryMatchUserPassword(User|null $user, string $password, bool $rememberMe = false, Validator &$v = null): bool
+    private function tryMatchUserPassword(?User $user, string $password, bool $rememberMe = false, Validator &$v = null): bool
     {
 
         if (!$user) {
@@ -85,21 +83,21 @@ class AuthService extends FactoryDependency
         $_SESSION['user_permission'] = $user->permission;
     }
 
-    function logout()
+    public function logout()
     {
         // Remove session data.
         $this->deleteUserTokens($_SESSION['user_id']);
         self::destroySession();
     }
 
-    static function destroySession()
+    public static function destroySession()
     {
         $_SESSION = [];
         setcookie(self::REMEMBERME_COOKIE, '', -1);
         session_destroy();
     }
 
-    function createActivationLink(User $user): string
+    public function createActivationLink(User $user): string
     {
         $token = new AccessToken($user, AccessTokenType::ACTIVATE, new DateInterval('P1D'));
         $this->em->persist($token);
@@ -107,7 +105,7 @@ class AuthService extends FactoryDependency
         return env("BASE_URL") . "/activation?token=$token->id";
     }
 
-    function createRememberMeToken(User $user)
+    public function createRememberMeToken(User $user)
     {
         // Delete user tokens
         // AP 2024-04 - commenting this for now. Let's see if this poses a security issue.
@@ -121,13 +119,13 @@ class AuthService extends FactoryDependency
             self::REMEMBERME_COOKIE,
             "$token->id:$validator",
             $token->expiration->getTimestamp(),
-            httponly: true
+            httponly: true,
         );
     }
 
-    /** Always delete all user tokens when invalidating. 
+    /** Always delete all user tokens when invalidating.
      * If you want more custom behavior, write another function. But maybe you shouldn't. */
-    function deleteUserTokens(string $userId)
+    public function deleteUserTokens(string $userId)
     {
         $this->em?->createQueryBuilder()
             ->delete(AccessToken::class, 'a')
@@ -136,24 +134,27 @@ class AuthService extends FactoryDependency
             ->getQuery()->execute();
     }
 
-    function isUserLoggedIn()
+    public function isUserLoggedIn()
     {
         if (isset($_SESSION['user_permission'])) {
             return true;
         }
 
         $sessionString = filter_input(INPUT_COOKIE, self::REMEMBERME_COOKIE, FILTER_SANITIZE_STRING);
-        if (!$sessionString)
+        if (!$sessionString) {
             return false;
+        }
 
         [$selector, $validator] = self::parseSessionToken($sessionString);
         $token = AccessToken::retrieve($selector);
-        if (!$token || $token->type !== AccessTokenType::REMEMBER_ME || !$token->hashed_validator)
+        if (!$token || $token->type !== AccessTokenType::REMEMBER_ME || !$token->hashed_validator) {
             return false;
+        }
 
         // AP 2024-03: we may want to throw an alert here. If this password_verify fails, it is very concerning.
-        if (!password_verify($validator, $token->hashed_validator))
+        if (!password_verify($validator, $token->hashed_validator)) {
             return false;
+        }
 
         // At this point, the user has been verified and can be logged in!
         logger()->info("User {userId} logged in with long-lived session token", ["userId" => $token->user->id]);

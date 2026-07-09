@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping\Table;
 class NotificationSubscription
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
     #[Column]
     public string $endpoint = "";
     #[Column]
@@ -18,5 +19,5 @@ class NotificationSubscription
     #[Column]
     public string $auth = "";
     #[ManyToOne]
-    public User|null $user = null;
+    public ?User $user = null;
 }

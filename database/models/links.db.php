@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping\Table;
 class Link
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $url = "";

@@ -22,9 +22,9 @@ $options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
 
             <?php
             ob_start();
-            $totalTransport = 0;
-            $totalAccomodation = 0;
-            foreach ($all_event_entries as $entry): ?>
+$totalTransport = 0;
+$totalAccomodation = 0;
+foreach ($all_event_entries as $entry): ?>
                 <?php if ($entry->present):
                     $totalTransport += $entry->transport;
                     $totalAccomodation += $entry->accomodation ?>
@@ -48,17 +48,17 @@ $options = check_auth(Access::$ADD_EVENTS) ? ["0", "1"] : ["❌", "✅"];
                     </tr>
                 <?php endif ?>
             <?php endforeach;
-            $table = ob_get_clean() ?>
+$table = ob_get_clean() ?>
             <?php
-            $totalRowArgs = ["Total"];
-            if ($event->is_transport) {
-                $totalRowArgs[] = [$totalTransport, true];
-            }
-            if ($event->is_accomodation) {
-                $totalRowArgs[] = [$totalAccomodation, true];
-            }
-            $totalRowArgs[] = "";
-            ?>
+$totalRowArgs = ["Total"];
+if ($event->is_transport) {
+    $totalRowArgs[] = [$totalTransport, true];
+}
+if ($event->is_accomodation) {
+    $totalRowArgs[] = [$totalAccomodation, true];
+}
+$totalRowArgs[] = "";
+?>
             <?= TotalRow(...$totalRowArgs) ?>
             <?= $table ?>
         </tbody>

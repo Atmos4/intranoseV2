@@ -2,33 +2,31 @@
 
 class Cli
 {
-    function __construct(public string $message = "")
-    {
-    }
+    public function __construct(public string $message = "") {}
 
-    function out(string $m = "")
+    public function out(string $m = "")
     {
         print $this->add($m)->flush() . PHP_EOL;
         return $this;
     }
-    function flush()
+    public function flush()
     {
         $r = $this->message;
         $this->message = "";
         return $r;
     }
-    function __tostring()
+    public function __tostring()
     {
         return $this->flush();
     }
-    function exit($c = 1)
+    public function exit($c = 1)
     {
         exit($c);
     }
     /**
      * Concatenates the provided string to the message
      */
-    function add(string $m)
+    public function add(string $m)
     {
         $this->message .= $m;
         return $this;
@@ -36,7 +34,7 @@ class Cli
     /**
      * Switches output to provided color
      */
-    function color(CliColor $color)
+    public function color(CliColor $color)
     {
         $this->add($color->value);
         return $this;
@@ -44,42 +42,42 @@ class Cli
     /**
      * Resets color output
      */
-    function reset()
+    public function reset()
     {
         return $this->color(CliColor::RESET);
     }
     /**
      * Preformatted error message with an xmark
      */
-    function error($m)
+    public function error($m)
     {
         return $this->color(CliColor::RED)->xmark()->reset()->out(" $m");
     }
     /**
      * Preformatted abort message, terminates the CLI with code 1.
      */
-    function abort($m)
+    public function abort($m)
     {
         $this->error($m)->exit();
     }
     /**
      * Preformatted success message with a checkmark
      */
-    function ok($m)
+    public function ok($m)
     {
         return $this->color(CliColor::GREEN)->check()->reset()->out(" $m");
     }
     /**
      * Preformatted warning message
      */
-    function warning($m)
+    public function warning($m)
     {
         return $this->color(CliColor::YELLOW)->add("!")->reset()->out(" $m");
     }
     /**
      * Preformatted success message, terminates the CLI with code 0
      */
-    function success($m = "All done")
+    public function success($m = "All done")
     {
         exit(PHP_EOL . "$m \u{2728}" . PHP_EOL);
     }
@@ -87,21 +85,21 @@ class Cli
     /**
      * Adds a check mark to the message
      */
-    function check()
+    public function check()
     {
         return $this->add("\u{2713}");
     }
     /**
      * x-mark
      */
-    function xmark()
+    public function xmark()
     {
         return $this->add("\u{2716}");
     }
     /**
      * new line
      */
-    function br()
+    public function br()
     {
         return $this->add(PHP_EOL);
     }

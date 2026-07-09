@@ -1,4 +1,5 @@
 <?php
+
 // create empty .env file if not exist
 if (!file_exists(base_path() . "/.env")) {
     fopen(".env", "");
@@ -7,8 +8,9 @@ if (!file_exists(base_path() . "/.env")) {
 $dotenv = Dotenv\Dotenv::createImmutable(base_path());
 $dotenv->load();
 
-if (env("STAGING") || env("PRODUCTION"))
+if (env("STAGING") || env("PRODUCTION")) {
     $dotenv->required("MGMT_PASSWORD");
+}
 
 // TODO - this is temporary. remove when proper club selection logic is in place.
 if (env("PRODUCTION")) {

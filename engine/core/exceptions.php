@@ -1,4 +1,3 @@
 <?php
-class UserCreationException extends Exception
-{
-}
+
+class UserCreationException extends Exception {}

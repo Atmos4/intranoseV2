@@ -1,10 +1,11 @@
 <?php
+
 class Router extends Singleton
 {
     private array $dynamicSegments;
     private int $level = 0;
 
-    function render($path_to_include = "app/pages/404.php")
+    public function render($path_to_include = "app/pages/404.php")
     {
         try {
             $this->level = ob_get_level();
@@ -45,7 +46,7 @@ class Router extends Singleton
         return $this;
     }
 
-    static function abort(string $message = null, int $code = 404)
+    public static function abort(string $message = null, int $code = 404)
     {
         http_response_code($code);
         Page::reset();
@@ -56,7 +57,7 @@ class Router extends Singleton
         $instance->render();
     }
 
-    static function getParameter($param, $strict = true, $numeric = true, $pattern = null)
+    public static function getParameter($param, $strict = true, $numeric = true, $pattern = null)
     {
         $router = self::getInstance();
         if (empty($router->dynamicSegments[$param])) {
@@ -75,7 +76,7 @@ class Router extends Singleton
         return $found_param;
     }
 
-    static function add($route, $path_to_include)
+    public static function add($route, $path_to_include)
     {
         $router = self::getInstance();
         $_SESSION['current_route'] = $route;
@@ -104,7 +105,7 @@ class Router extends Singleton
                 $route_part = ltrim($route_part, '$');
                 array_push($parameters, $request_url_parts[$__i__]);
                 $router->dynamicSegments[$route_part] = $request_url_parts[$__i__];
-            } else if ($route_parts[$__i__] != $request_url_parts[$__i__]) {
+            } elseif ($route_parts[$__i__] != $request_url_parts[$__i__]) {
                 return;
             }
         }

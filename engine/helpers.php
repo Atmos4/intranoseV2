@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\ORM\EntityManager;
 
 // Project base path
@@ -66,7 +67,7 @@ function config(string $key, $fallback = null)
 {
     $c = match ($key) {
         "name" => $_SESSION["selected_club_name"] ?? "Intranose",
-        default => null
+        default => null,
     };
     return $c ?? $fallback ?? "";
 }
@@ -130,10 +131,10 @@ function get_query_param($param, $strict = false, $numeric = true, $pattern = nu
 
 /**
  * Returns the value of a request header
- * @param string $headerName 
- * @return string header value 
+ * @param string $headerName
+ * @return string header value
  */
-function get_header($headerName): string|null
+function get_header($headerName): ?string
 {
     return $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $headerName))] ?? null;
 }
@@ -300,8 +301,9 @@ function logger()
 /** Same as mkdir */
 function mk_dir($path, $r = false)
 {
-    if (!file_exists($path))
+    if (!file_exists($path)) {
         mkdir($path, recursive: $r);
+    }
 }
 
 /** Same as `rm -rf` */
@@ -336,16 +338,14 @@ function scan_dir($path, $filter = null)
  */
 class Result
 {
-    function __construct(public bool $success, public $data, public string $message)
-    {
-    }
+    public function __construct(public bool $success, public $data, public string $message) {}
 
-    static function wrap($data = null, string $msg = "")
+    public static function wrap($data = null, string $msg = "")
     {
         return new static(true, $data, $msg);
     }
 
-    static function ok(string $msg = "")
+    public static function ok(string $msg = "")
     {
         return new static(true, null, $msg);
     }
@@ -355,7 +355,7 @@ class Result
      * @param callable():Result $f
      * @return Result
      */
-    static function try(callable $f): Result
+    public static function try(callable $f): Result
     {
         try {
             return $f() ?? Result::ok();
@@ -364,30 +364,28 @@ class Result
         }
     }
 
-    static function error(string $msg = "")
+    public static function error(string $msg = "")
     {
         return new static(false, null, $msg);
     }
 
-    function print()
+    public function print()
     {
         return $this->message;
     }
 
-    function __tostring()
+    public function __tostring()
     {
         return $this->print();
     }
 
-    function unwrap()
+    public function unwrap()
     {
         return $this->data;
     }
 }
 
-class ResultException extends Exception
-{
-}
+class ResultException extends Exception {}
 
 function IconText($icon, $text, $wrapper = null)
 {

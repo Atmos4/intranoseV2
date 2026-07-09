@@ -8,13 +8,13 @@ restrict_access([Permission::ROOT]);
 $subscriptions = em()->getRepository('NotificationSubscription')->findAll();
 $last_subscription = end($subscriptions);
 
-$auth = array(
-    'VAPID' => array(
+$auth = [
+    'VAPID' => [
         'subject' => 'Intranose',
         'publicKey' => env("PUBLIC_VAPID_KEY"),
         'privateKey' => env("PRIVATE_VAPID_KEY"),
-    ),
-);
+    ],
+];
 
 $webPush = new WebPush($auth);
 
@@ -37,7 +37,7 @@ if ($v->valid()) {
             "keys" => [
                 'p256dh' => $subscriptionEntity->p256dh,
                 'auth' => $subscriptionEntity->auth,
-            ]
+            ],
         ]);
 
         // Add the Subscription object to the array

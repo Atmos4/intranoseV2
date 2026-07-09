@@ -2,7 +2,6 @@
 
 class MessageService
 {
-
     public static function renderMessages(array $messages, User $me_user, string $id, MessageSourceType $type)
     {
 
@@ -19,7 +18,7 @@ class MessageService
             <?php foreach ($messages as $message):
                 $fromMe = $message->sender == $me_user; ?>
                 <article>
-                    <?= (new Parsedown)->text($message->content) ?>
+                    <?= (new Parsedown())->text($message->content) ?>
                     <footer style="display: flex;flex-direction: column;">
                         <small>
                             <?= $fromMe ? "Moi" : $message->sender->first_name ?>
@@ -40,11 +39,11 @@ enum MessageSourceType: string
 {
     case EVENT = "EVENT";
     case GROUP = "GROUP";
-    function toFrench()
+    public function toFrench()
     {
         return match ($this) {
             self::EVENT => "evenements",
-            self::GROUP => "groupes"
+            self::GROUP => "groupes",
         };
     }
 }

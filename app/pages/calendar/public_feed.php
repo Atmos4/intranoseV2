@@ -4,7 +4,7 @@
  * Public Calendar Feed
  * Generates an iCal (.ics) feed for all published events
  * URL: /cal/club.ics
- * 
+ *
  * This feed can be subscribed to in any calendar application:
  * - Google Calendar
  * - Apple Calendar

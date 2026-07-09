@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class SeedingService
 {
-    static function createTestUser($first_name, $last_name, $em, $login = null, $password = null)
+    public static function createTestUser($first_name, $last_name, $em, $login = null, $password = null)
     {
         $login = $login ?: self::getFakeLogin($first_name, $last_name);
         if (UserService::getByLogin($em, $login)) {
@@ -37,18 +37,18 @@ class SeedingService
         return [$newUser, $password];
     }
 
-    static function getFakeLogin($first_name, $last_name)
+    public static function getFakeLogin($first_name, $last_name)
     {
         return strtolower($last_name . "_" . substr($first_name, 0, 1));
 
     }
-    static function getFakePassword($first_name)
+    public static function getFakePassword($first_name)
     {
         return strtolower($first_name);
 
     }
 
-    static function createTestEvent($em)
+    public static function createTestEvent($em)
     {
         $event = new Event();
         $event->name = "WE Championnats de France";
@@ -78,18 +78,18 @@ class SeedingService
         $em->flush();
     }
 
-    static function applyMigrations(DB $db)
+    public static function applyMigrations(DB $db)
     {
         $migrateCommand = new MigrateCommand(
             DependencyFactory::fromEntityManager(
                 DBFactory::getConfig($db),
                 new ExistingEntityManager($db->em()),
-            )
+            ),
         );
         return self::runCommand($migrateCommand);
     }
 
-    static function generateProxies(EntityManager $em)
+    public static function generateProxies(EntityManager $em)
     {
         $command = new GenerateProxiesCommand(new SingleManagerProvider($em));
         return self::runCommand($command);
@@ -99,7 +99,7 @@ class SeedingService
     {
         $input = new ArrayInput([]);
         $input->setInteractive(false);
-        $exitcode = $c->run($input, new BufferedOutput);
+        $exitcode = $c->run($input, new BufferedOutput());
         return $exitcode === 0;
     }
 }

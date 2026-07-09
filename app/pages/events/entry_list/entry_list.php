@@ -39,19 +39,19 @@ $event_email_list = array_unique(array_merge($user_emails, $family_leader_emails
 $string_email_list = implode(',', $event_email_list);
 $dropdown = new PageActionDropdownBuilder(label: "Actions", rtl: true, attributes: [
     "data-intro" => "Vous pouvez copier
-le contenu du tableau affiché ici"
+le contenu du tableau affiché ici",
 ], standalone: true);
 $dropdown->link("#", "Copier le tableau", icon: "fa-clipboard", attributes: [
     "onclick" => "selectTable()",
-    "role" =>
-        "link"
+    "role"
+        => "link",
 ])
     ->link("#", "Copier la liste d'emails de l'événement", icon: "fa-clipboard", attributes: [
-        "onclick" =>
-            "copyEntryEmails(\"$string_email_list\")",
-        "role" => "link"
+        "onclick"
+            => "copyEntryEmails(\"$string_email_list\")",
+        "role" => "link",
     ])
-    ?>
+?>
 <div class="entries-header"><?= $dropdown ?></div>
 <div id="tabs" hx-target="#tabs" hx-swap="innerHTML">
     <?= $is_simple ? component(__DIR__ . "/entry_list_tab_activity.php")->render(["activity_id" => EventService::getActivityIdList($event_id)[0]->id]) : component(__DIR__ . "/entry_list_tabs.php")->render(["event_id" => $event_id]) ?>

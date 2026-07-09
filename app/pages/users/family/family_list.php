@@ -16,7 +16,7 @@ page("Familles") ?>
             </td>
         </tr>
     <?php endforeach;
-    if (!$families): ?>
+if (!$families): ?>
         <p class="center">Pas encore de familles 🥺</p>
     <?php endif ?>
 </table>

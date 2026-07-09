@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/ActivityForm.php';
 restrict_access(Access::$ADD_EVENTS);
 

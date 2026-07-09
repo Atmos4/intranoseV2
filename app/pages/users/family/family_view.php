@@ -70,9 +70,9 @@ page($family->name)->css("family_list.css")->enableHelp() ?>
                         </ul>
                     </details>
                 <?php endif;
-                }
+                },
             );
-            ?>
+        ?>
         </div>
     <?php endforeach ?>
 </section>

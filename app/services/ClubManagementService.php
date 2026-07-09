@@ -2,28 +2,26 @@
 
 class ClubManagementService
 {
+    public function __construct(public DB $db, public string $slug) {}
 
-    function __construct(public DB $db, public string $slug)
-    {
-    }
-
-    static function isLoggedIn()
+    public static function isLoggedIn()
     {
         // Refactor later to allow for multi user
         return isset($_SESSION["mgmt_authorized"]);
     }
 
-    static function login($pw)
+    public static function login($pw)
     {
-        if ($pw != env("MGMT_PASSWORD"))
+        if ($pw != env("MGMT_PASSWORD")) {
             return false;
+        }
 
         $_SESSION["mgmt_authorized"] = true;
         return true;
 
     }
 
-    static function create($slug = null): self|null
+    public static function create($slug = null): ?self
     {
         if ($slug == null) {
             $slug = self::getSelectedClubSlug();
@@ -31,7 +29,7 @@ class ClubManagementService
         return new self(DB::forClub($slug), $slug);
     }
 
-    static function clubExists($slug)
+    public static function clubExists($slug)
     {
         return file_exists(club_data_path($slug));
     }
@@ -56,7 +54,7 @@ class ClubManagementService
         return rename(club_data_path($this->slug), $deletedClubsDir . "/$this->slug" . date("YmdHis"));
     }
 
-    public function updateClub(Club $c, $newName = null, $color = null, /* $newSlug = null */): Result
+    public function updateClub(Club $c, $newName = null, $color = null /* $newSlug = null */): Result
     {
         if ($newName) {
             $c->name = $newName;
@@ -74,7 +72,7 @@ class ClubManagementService
         return Result::ok("Club updated");
     }
 
-    static function listClubs(): array
+    public static function listClubs(): array
     {
         $path = club_data_path();
         if (!is_dir($path)) {
@@ -87,17 +85,18 @@ class ClubManagementService
         return array_values($dirs);
     }
 
-    static function isClubSelectionAvailable()
+    public static function isClubSelectionAvailable()
     {
         return !env("SELECTED_CLUB");
     }
 
-    static function getSelectedClubSlug()
+    public static function getSelectedClubSlug()
     {
         $club = env("SELECTED_CLUB") ?? $_SESSION["selected_club"] ?? null;
         if ($club && !isset($_SESSION["selected_club_name"])) {
-            if (!self::selectClub($club))
+            if (!self::selectClub($club)) {
                 return null;
+            }
         }
         return $club;
     }
@@ -111,7 +110,7 @@ class ClubManagementService
             ->getResult()[0];
     }
 
-    static function selectClub($slug)
+    public static function selectClub($slug)
     {
         if (!self::clubExists($slug)) {
             return false;
@@ -121,7 +120,7 @@ class ClubManagementService
         return true;
     }
 
-    static function createNewClub($name, $slug): Result
+    public static function createNewClub($name, $slug): Result
     {
         $path = club_data_path($slug);
         if (file_exists($path)) {
@@ -130,8 +129,9 @@ class ClubManagementService
         try {
             $db = DB::forClub($slug);
             $em = $db->em();
-            if (!SeedingService::applyMigrations($db))
+            if (!SeedingService::applyMigrations($db)) {
                 throw new ResultException("failed to apply migrations");
+            }
 
             $clubData = new Club($name, $slug);
             $em->persist($clubData);

@@ -1,4 +1,5 @@
 <?php
+
 class Formatter extends Singleton
 {
     private IntlDateFormatter $formatter;
@@ -8,7 +9,7 @@ class Formatter extends Singleton
         $this->formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE, "Europe/Paris");
     }
 
-    static function get(string $format = null)
+    public static function get(string $format = null)
     {
         if ($format) {
             self::getInstance()->formatter->setPattern($format);

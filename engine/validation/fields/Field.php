@@ -1,4 +1,5 @@
 <?php
+
 class Field
 {
     public string $key;
@@ -15,7 +16,7 @@ class Field
     private ?string $help;
     private array $attributes = [];
 
-    function __construct(string $key, mixed $value = null, Validator $context = null)
+    public function __construct(string $key, mixed $value = null, Validator $context = null)
     {
         $this->key = $key;
         $this->value = $value;
@@ -30,30 +31,30 @@ class Field
      * Adds a label to the field
      * @param string $label
      */
-    function label(string $label): static
+    public function label(string $label): static
     {
         $this->label = $label;
         return $this;
     }
 
-    function get_label(): string
+    public function get_label(): string
     {
         return $this->label;
     }
 
-    function attributes(array $attrs): static
+    public function attributes(array $attrs): static
     {
         $this->attributes = array_merge($this->attributes, $attrs);
         return $this;
     }
 
-    function help(string $help): static
+    public function help(string $help): static
     {
         $this->help = $help;
         return $this;
     }
 
-    function reset(): static
+    public function reset(): static
     {
         $this->value = null;
         return $this;
@@ -64,13 +65,13 @@ class Field
      * @param string $attrs
      * @return string
      */
-    function render()
+    public function render()
     {
 
         return $this->render_label($this->render_core());
     }
 
-    function __tostring()
+    public function __tostring()
     {
         return $this->render();
     }
@@ -80,7 +81,7 @@ class Field
         return "<input {$this->props()}>";
     }
 
-    function props(bool $includeValue = true): string
+    public function props(bool $includeValue = true): string
     {
         $v = e($this->value);
         $id = Validator::keyToId($this->key);
@@ -117,13 +118,13 @@ class Field
         $this->error = $err;
     }
 
-    function valid(): bool
+    public function valid(): bool
     {
         return !$this->error;
     }
 
     /** Outputs a variable (Decorator pattern) */
-    function out(string &$var): static
+    public function out(string &$var): static
     {
         $var = $this->value;
         return $this;
@@ -134,13 +135,13 @@ class Field
         return !$this->context?->empty && !$this->error;
     }
 
-    function disabled(): static
+    public function disabled(): static
     {
         $this->disabled = true;
         return $this;
     }
 
-    function readonly(): static
+    public function readonly(): static
     {
         $this->readonly = true;
         return $this;
@@ -153,7 +154,7 @@ class Field
     }
 
     /** Makes the field required */
-    function required(string $msg = null): static
+    public function required(string $msg = null): static
     {
         $this->required = true;
         if ($this->should_test() && !$this->value) {
@@ -162,9 +163,7 @@ class Field
         return $this;
     }
 
-    function check(string $msg = null): void
-    {
-    }
+    public function check(string $msg = null): void {}
 
     protected function set_type(): void
     {
@@ -172,7 +171,7 @@ class Field
     }
 
     /** Add a condition that if false will set the according error message */
-    function condition(bool $condition, string $error_msg): static
+    public function condition(bool $condition, string $error_msg): static
     {
         if ($this->should_test() and !$condition) {
             $this->set_error($error_msg);
@@ -181,7 +180,7 @@ class Field
     }
 
     /** See more information: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete */
-    function autocomplete(string $autocomplete = ""): static
+    public function autocomplete(string $autocomplete = ""): static
     {
         $this->autocomplete = $autocomplete;
         return $this;

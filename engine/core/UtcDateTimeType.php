@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\DateTimeType;
 use Doctrine\DBAL\Types\ConversionException;
@@ -6,7 +7,7 @@ use Doctrine\DBAL\Types\ConversionException;
 /**
  * Custom DateTime type that stores all dates in UTC in the database
  * and automatically converts to/from Europe/Paris timezone for the application.
- * 
+ *
  * This provides transparent timezone handling at the ORM level:
  * - When loading from DB: UTC -> Europe/Paris
  * - When saving to DB: Europe/Paris -> UTC
@@ -17,7 +18,7 @@ class UtcDateTimeType extends DateTimeType
 
     /**
      * Convert from database value (UTC) to PHP DateTime object (Europe/Paris)
-     * 
+     *
      * @param mixed $value The database value
      * @param AbstractPlatform $platform The database platform
      * @return \DateTime|null DateTime in local timezone
@@ -31,13 +32,13 @@ class UtcDateTimeType extends DateTimeType
         $converted = \DateTime::createFromFormat(
             $platform->getDateTimeFormatString(),
             $value,
-            self::getUtc()
+            self::getUtc(),
         );
         if (!$converted) {
             throw ConversionException::conversionFailedFormat(
                 $value,
                 $this->getName(),
-                $platform->getDateTimeFormatString()
+                $platform->getDateTimeFormatString(),
             );
         }
         $converted->setTimezone(self::getLocal());
@@ -46,7 +47,7 @@ class UtcDateTimeType extends DateTimeType
 
     /**
      * Convert from PHP DateTime object (Europe/Paris) to database value (UTC)
-     * 
+     *
      * @param mixed $value The PHP DateTime value
      * @param AbstractPlatform $platform The database platform
      * @return string|null DateTime string in UTC timezone

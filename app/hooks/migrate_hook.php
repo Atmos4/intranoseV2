@@ -78,7 +78,7 @@ if (env("SELECTED_CLUB")) {
 
     $paths = [
         [BASE_PATH . "/assets/images/profile", club_data_path(env("SELECTED_CLUB"), "uploads")],
-        [BASE_PATH . "/app/uploads", club_data_path(env("SELECTED_CLUB"), "profile")]
+        [BASE_PATH . "/app/uploads", club_data_path(env("SELECTED_CLUB"), "profile")],
     ];
 
 

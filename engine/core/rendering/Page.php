@@ -1,4 +1,5 @@
 <?php
+
 class Page extends SingletonDependency
 {
     public string|false $title = "";
@@ -33,7 +34,7 @@ class Page extends SingletonDependency
         $this->heading = $heading;
         return $this;
     }
-    function noPadding()
+    public function noPadding()
     {
         $this->no_padding = true;
         return $this;

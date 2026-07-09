@@ -5,7 +5,7 @@ $event = EventService::getEventWithAllData(get_route_param('event_id'), $user_id
 
 $vehicles = em()->createQuery('SELECT v FROM Vehicle v WHERE v.event = ?1')->setParameter(
     1,
-    $event->id
+    $event->id,
 )->getResult();
 
 ?>

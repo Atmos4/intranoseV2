@@ -1,8 +1,9 @@
 <?php
+
 class ActivityService
 {
     /** @return ActivityEntry[] */
-    static function getActivityEntries($activityId)
+    public static function getActivityEntries($activityId)
     {
         return em()->createQueryBuilder()
             ->select("a")

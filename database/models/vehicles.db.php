@@ -1,4 +1,5 @@
 <?php
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping\Table;
 class Vehicle
 {
     #[Id, Column, GeneratedValue]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Column]
     public string $name;
@@ -34,7 +35,7 @@ class Vehicle
     public DateTime $return_date;
 
     #[ManyToOne]
-    public User|null $manager = null;
+    public ?User $manager = null;
 
     #[ManyToOne]
     public Event $event;

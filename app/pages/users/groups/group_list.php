@@ -17,7 +17,7 @@ page("Groupes")->css("group_list.css"); ?>
             </div>
         </article>
     <?php endforeach;
-    if (!$groups): ?>
+if (!$groups): ?>
         <p class="center">Pas encore de groupes 😲</p>
     <?php endif ?>
 </table>

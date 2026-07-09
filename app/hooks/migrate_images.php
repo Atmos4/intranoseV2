@@ -1,4 +1,5 @@
 <?php
+
 $validToken = env("WEBHOOK_MIGRATION_TOKEN");
 $tryToken = $_GET["token"] ?? null;
 $br = "<br>" . PHP_EOL;

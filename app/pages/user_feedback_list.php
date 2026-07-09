@@ -24,7 +24,7 @@ page("Feedbacks")->css('user_feedback_list.css') ?>
     <?php if (!count($user_feedbacks)): ?>
         <p>Pas de retours pour le moment ☀️</p>
     <?php endif;
-    foreach ($user_feedbacks as $user_feedback): ?>
+foreach ($user_feedbacks as $user_feedback): ?>
 
         <div id="row">
             <div class="grid">
