@@ -1,0 +1,70 @@
+.pool-article {
+  padding: var(--pico-spacing);
+  margin: 0 0 var(--pico-spacing);
+  cursor: pointer;
+}
+
+.pool-article:where(:hover, :focus, :focus-within) {
+  background-color: var(--pico-secondary-focus) !important;
+  outline: none;
+}
+
+.pool-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "icon title actions"
+    "icon stats actions";
+  align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  .pool-grid {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "icon title"
+      "icon stats"
+      "actions actions";
+  }
+}
+
+.pool-icon {
+  grid-area: icon;
+  text-align: center;
+  align-self: center;
+  padding: 0.2rem;
+  font-size: 1.5rem;
+}
+
+.pool-title {
+  grid-area: title;
+  align-self: center;
+}
+
+.pool-stats {
+  grid-area: stats;
+  display: flex;
+  gap: 1.5rem;
+  color: var(--pico-muted-color);
+  font-size: 0.9rem;
+}
+
+.pool-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.pool-actions {
+  grid-area: actions;
+  display: flex;
+  gap: 0.5rem;
+  justify-self: end;
+}
+
+.pool-actions a,
+.pool-actions button {
+  margin: 0;
+}
