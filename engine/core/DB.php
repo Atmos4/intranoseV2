@@ -34,13 +34,17 @@ class DB extends SingletonDependency
     /**
      * The DB constructor should be private. If there are more use cases you need to cover, create a factory function
      */
-    private function __construct(public ?string $sqlitePath = null, public ?Connection $connection = null)
-    {
+    public function __construct(
+        public ?string $sqlitePath = null,
+        public ?Connection $connection = null,
+        public string $basePath = "database",
+        public string $configPath = "config/sqlite.php",
+    ) {
         if (!$sqlitePath && !$connection) {
             throw new Error("Unable to create DB connection");
         }
         $connection ??= DBFactory::sqlite($sqlitePath);
-        $proxyPath = path(base_path(), self::PATH_PROXIES);
+        $proxyPath = path(base_path(), "$basePath/proxies");
         if ($this->sqlitePath) {
             $connection->executeQuery("PRAGMA journal_mode = WAL;"); // speeds up sqlite
         }
@@ -56,7 +60,7 @@ class DB extends SingletonDependency
             $queryCache = new ArrayAdapter();
             $metadataCache = new ArrayAdapter();
         } else {
-            $cacheDir = base_path() . '/database/cache';
+            $cacheDir = base_path() . "/$basePath/cache";
             $queryCache = new PhpFilesAdapter('doctrine_queries', 0, $cacheDir);
             $metadataCache = new PhpFilesAdapter('doctrine_metadata', 0, $cacheDir);
         }
@@ -69,7 +73,7 @@ class DB extends SingletonDependency
         Type::overrideType('datetime', UTCDateTimeType::class);
         Type::overrideType('datetimetz', UTCDateTimeType::class);
 
-        $config = ORMSetup::createAttributeMetadataConfiguration(paths: ["database/models"], isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
+        $config = ORMSetup::createAttributeMetadataConfiguration(paths: ["$basePath/models"], isDevMode: $devMode, proxyDir: self::PATH_PROXIES);
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
 
@@ -97,6 +101,11 @@ class DB extends SingletonDependency
         return dirname($this->sqlitePath);
     }
 
+    public function config(): string
+    {
+        return path(base_path(), $this->basePath, $this->configPath);
+    }
+
     public static function get()
     {
         return self::getInstance()->em();
@@ -109,6 +118,10 @@ class DB extends SingletonDependency
     public static function forTest($path)
     {
         return new DB($path);
+    }
+    public static function auth()
+    {
+        return new DB(path(base_path(), ".sqlite", "auth.sqlite"), basePath: "auth", configPath: "config.php");
     }
 
     public static function setupForClub($slug)
@@ -141,11 +154,31 @@ class DBFactory
         return DriverManager::getConnection(['driver' => 'pdo_sqlite', 'path' => $fileName]);
     }
     // Configuration factory
-    public static function getConfig(DB $db)
+    public static function getConfig(DB $db): PhpFile
     {
         return !!$db->isSqlite()
             ? new PhpFile(__DIR__ . "/../../database/config/sqlite.php")
             : new PhpFile(__DIR__ . "/../../database/config/migrations.php");
+    }
+}
+
+class AuthDB extends SingletonDependency
+{
+    public function __construct(private DB $db) {}
+
+    public static function get(): DB
+    {
+        return self::getInstance()->db;
+    }
+
+    public static function em()
+    {
+        return self::getInstance()->db->em();
+    }
+
+    public static function getConfig(DB $db): PhpFile
+    {
+        return new PhpFile(base_path() . "/auth/config.php");
     }
 }
 

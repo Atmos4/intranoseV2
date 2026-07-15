@@ -24,3 +24,5 @@ env.php
 
 # clubs
 /.club_data
+
+/.php-cs-fixer.cache

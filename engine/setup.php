@@ -23,4 +23,5 @@ MainLogger::instance(new MainLogger($logger));
 Mailer::factory(fn() => (is_dev() && !env("EMAIL_MOCK_OFF")) || env("EMAIL_MOCK") ? new MockMailer() : new Mailer());
 
 //services DI
-AuthService::factory(fn() => new AuthService(em()));
+AuthDB::factory(fn() => new AuthDB(DB::auth()));
+AuthService::factory(fn() => new AuthService(AuthDB::em()));

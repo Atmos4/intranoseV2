@@ -25,6 +25,9 @@ class User
     public ?int $id = null;
 
     #[Column]
+    public string $authUserId = "";
+
+    #[Column]
     public string $last_name = "";
 
     #[Column]

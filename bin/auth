@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Tools\Console\Command;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../engine/load_env.php';
+
+$db = DB::auth();
+
+$deps = DependencyFactory::fromEntityManager(new PhpFile(path(base_path(), "auth", "config.php")), new ExistingEntityManager($db->em()));
+
+ConsoleRunner::run(new SingleManagerProvider($db->em()), [
+    new Command\ExecuteCommand($deps),
+    new Command\GenerateCommand($deps),
+    new Command\MigrateCommand($deps),
+    new Command\DiffCommand($deps),
+    new Command\StatusCommand($deps),
+    new Command\ListCommand($deps),
+    new Command\RollupCommand($deps),
+    new Command\VersionCommand($deps),
+    new Command\LatestCommand($deps),
+]);
+

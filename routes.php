@@ -23,6 +23,10 @@ Router::add('/logout-club', function () {
     redirect("/");
 });
 
+Router::add('/', __DIR__ . '/app/pages/index.php');
+Router::add('/login', __DIR__ . '/app/pages/login.php');
+Router::add('/about', __DIR__ . '/app/pages/about.php');
+
 Router::add("/select-club", __DIR__ . "/app/pages/select_club.php");
 
 // Club selection middleware

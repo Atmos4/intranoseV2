@@ -1,6 +1,6 @@
 <?php
 $page = Page::getInstance();
-$clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementService::create()->getClubColor($_SESSION["selected_club"] ?? null) : null; ?>
+$clubColor =  null; ?>
 <!doctype html>
 <html lang="en">
 

@@ -6,15 +6,27 @@ class AuthService extends FactoryDependency
 {
     private const REMEMBERME_COOKIE = 'rememberme';
 
-    public function __construct(private EntityManager $em) {}
+    public function __construct(private EntityManager $authEm)
+    {
+    }
 
     public function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null): bool
     {
         $v ??= new Validator();
-        if (AuthService::tryMatchUserPassword(UserService::getByLogin($this->em, $login), $password, $rememberMe, $v)) {
+        if (AuthService::tryMatchAuthUserPassword(
+            AuthUser::findByLogin($this->authEm, $login),
+            $password,
+            $rememberMe,
+            $v,
+        )) {
             return true;
         }
-        if (AuthService::tryMatchUserPassword(UserService::getByEmail($this->em, $login), $password, $rememberMe, $v)) {
+        if (AuthService::tryMatchAuthUserPassword(
+            AuthUser::findByEmail($this->authEm, $login),
+            $password,
+            $rememberMe,
+            $v,
+        )) {
             return true;
         }
         logger()->info("Login failed: not found", ["login" => $login]);
@@ -22,9 +34,66 @@ class AuthService extends FactoryDependency
         return false;
     }
 
+    private function tryMatchAuthUserPassword(
+        ?AuthUser $user,
+        string $password,
+        bool $rememberMe = false,
+        Validator &$v = null,
+    ): bool {
+        if (!$user) {
+            return false;
+        }
+        switch ($user->status) {
+            case UserStatus::INACTIVE:
+                $token = new AuthAccessToken($user, AuthAccessTokenType::ACTIVATE, new DateInterval('P1D'));
+                $this->em->persist($token);
+
+                $result = MailerFactory::createActivationEmail($user->real_email, $token->id)->send();
+
+                if ($result->success) {
+                    logger()->info("Activation email sent to user {login}", ["login" => $user->login]);
+                    $v->set_success("Un email a été envoyé à l'adresse " . MailHelper::obfuscate($user->real_email))
+                        . ". Utilisez-le pour activer votre compte.";
+                    $this->em->flush();
+                    return false;
+                } else {
+                    logger()->warning("Activation email failed to send for user {login}", ["login" => $user->login]);
+                    $v->set_error($result->message);
+                }
+                return false;
+            case UserStatus::ACTIVE:
+                if (password_verify($password, $user->password)) {
+                    logger()->info("Login successful for user {login}", ["login" => $user->login]);
+                    $this->loginUserSession($user);
+                    $user->last_connection = date_create();
+                    if ($rememberMe) {
+                        $this->createRememberMeToken($user);
+                    }
+
+                    $this->em->flush();
+
+                    if (isset($_SESSION["deep_url"])) {
+                        redirect($_SESSION["deep_url"]);
+                        unset($_SESSION["deep_url"]);
+                        return false;
+                    }
+                    return true;
+                }
+                logger()->info("Login failed for user {login}: wrong password", ["login" => $user->login]);
+                $v->set_error("Mauvais mot de passe");
+                return false;
+            case UserStatus::DEACTIVATED:
+                logger()->info("Login failed for user {login}: deactivated account", ["login" => $user->login]);
+                $v->set_error("Votre compte est bloqué. Contactez un administrateur.");
+                return false;
+            default:
+                break;
+        }
+        return false;
+    }
+
     private function tryMatchUserPassword(?User $user, string $password, bool $rememberMe = false, Validator &$v = null): bool
     {
-
         if (!$user) {
             return false;
         }

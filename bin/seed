@@ -6,10 +6,17 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../engine/load_env.php';
 
-$cli = new Cli;
+$cli = new Cli();
 
-if (env("PRODUCTION"))
+if (env("PRODUCTION")) {
     $cli->abort("Cannot be used in production");
+}
+
+$purgeExisting = readline("Purge existing data? (y/n)") ?: "";
+if ($purgeExisting == "y") {
+    rm_rf(".club_data");
+    rm_rf(".sqlite");
+}
 
 echo "Existing clubs:" . PHP_EOL;
 foreach (ClubManagementService::listClubs() as $c) {
@@ -32,9 +39,15 @@ $firstName = readline("First name (Jon):") ?: "Jon";
 $lastName = readline("Last name (Doe):") ?: "Doe";
 !preg_match('/[\w-]+/', $lastName) && $cli->abort("Invalid last name");
 
+$authDb = DB::auth();
+
 DB::setupForClub($club_slug);
-if (!SeedingService::applyMigrations($db))
+if (!SeedingService::applyMigrations($db)) {
     $cli->abort("There was a problem applying migrations");
+}
+if (!SeedingService::applyMigrations($authDb)) {
+    $cli->abort("Auth db migration problem");
+}
 $cli->ok("Migrations applied");
 
 if (!$db->isSqlite()) {
@@ -50,6 +63,15 @@ if (!$db->isSqlite()) {
 $cli->ok("Created test user $firstName $lastName")
     ->out(" - Login: $user->login")
     ->out(" - Password: $pw");
+
+$authUser = new AuthUser(
+    $user->login,
+    $user->real_email,
+    $user->password,
+    AuthRole::ROOT
+);
+$authDb->em()->persist($authUser);
+$authDb->em()->flush();
 
 SeedingService::createTestEvent($db->em());
 $cli->ok("Created test event and activities");

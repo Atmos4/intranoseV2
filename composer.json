@@ -16,6 +16,7 @@
   },
   "autoload": {
     "classmap": [
+      "auth/models",
       "database/models/",
       "engine/core/",
       "engine/validation/",

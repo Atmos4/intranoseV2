@@ -33,6 +33,11 @@ function relative_club_data_path(...$parts)
     return path(".club_data", ...$parts);
 }
 
+function auth_db_path()
+{
+    return path(base_path(), ".sqlite", "auth_db.sqlite");
+}
+
 /** readline polyfill because Linux sucks balls */
 if (!function_exists("readline")) {
     function readline($prompt = null)
@@ -310,7 +315,7 @@ function mk_dir($path, $r = false)
 function rm_rf($path)
 {
     if (!is_dir($path)) {
-        return unlink($path);
+        return false;
     }
     $items = scandir($path);
     foreach ($items as $item) {

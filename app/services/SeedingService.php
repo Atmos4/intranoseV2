@@ -1,6 +1,7 @@
 <?php
 
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
 use Doctrine\ORM\EntityManager;
@@ -12,8 +13,13 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class SeedingService
 {
-    public static function createTestUser($first_name, $last_name, $em, $login = null, $password = null)
-    {
+    public static function createTestUser(
+        $first_name,
+        $last_name,
+        $em,
+        $login = null,
+        $password = null,
+    ) {
         $login = $login ?: self::getFakeLogin($first_name, $last_name);
         if (UserService::getByLogin($em, $login)) {
             return false;
@@ -82,7 +88,7 @@ class SeedingService
     {
         $migrateCommand = new MigrateCommand(
             DependencyFactory::fromEntityManager(
-                DBFactory::getConfig($db),
+                new PhpFile($db->config()),
                 new ExistingEntityManager($db->em()),
             ),
         );
