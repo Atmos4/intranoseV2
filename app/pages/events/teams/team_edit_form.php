@@ -33,7 +33,9 @@ $current_format = $team_relay_format ? RelayFormatService::get($team_relay_forma
                 <i class="fa fa-trash"></i>
             </button>
         <?php else: ?>
-            <strong><?= htmlspecialchars($team_name) ?></strong>
+            <strong>
+                <?= htmlspecialchars($team_name) ?>
+            </strong>
         <?php endif ?>
     </div>
     <?php if ($can_edit): ?>
@@ -52,7 +54,9 @@ $current_format = $team_relay_format ? RelayFormatService::get($team_relay_forma
             <?php endforeach ?>
         </select>
     <?php elseif ($current_format): ?>
-        <small class="relay-format-label"><i class="fa fa-tag"></i> <?= htmlspecialchars($current_format->name) ?></small>
+        <small class="relay-format-label"><i class="fa fa-tag"></i>
+            <?= htmlspecialchars($current_format->name) ?>
+        </small>
     <?php endif ?>
 
     <div hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_slots" hx-trigger="load" hx-vals='
