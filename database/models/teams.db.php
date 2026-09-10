@@ -30,7 +30,7 @@ class TeamGroup
     public string|null $relay_format = null;
 
     /** @var Collection<int, Team> */
-    #[OneToMany(targetEntity: Team::class, mappedBy: 'team_group', cascade: ["remove"])]
+    #[OneToMany(targetEntity: Team::class, mappedBy: 'team_group', cascade: ["remove", "persist"])]
     public Collection $teams;
 
     #[Column]

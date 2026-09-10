@@ -1,10 +1,105 @@
 (function () {
+  var CHIP_GROUP = "team-members";
+
+  // Builds/rebuilds a chip's contents on an existing node, in place, so
+  // callers that need to preserve the node's identity (e.g. the node
+  // Sortable is actively dragging) can restyle it without a swap.
+  function fillChipContents(chip, data) {
+    chip.innerHTML = "";
+    chip.dataset.userId = data.id;
+    chip.dataset.userCategory = data.category || "";
+
+    var img = document.createElement("img");
+    img.src = data.picture;
+    img.alt = "";
+    chip.appendChild(img);
+
+    var name = document.createElement("span");
+    name.textContent = data.name;
+    chip.appendChild(name);
+
+    if (data.category) {
+      var badge = document.createElement("small");
+      badge.className = "user-category-badge";
+      badge.textContent = data.category;
+      chip.appendChild(badge);
+    }
+
+    var removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", function () {
+      window.removeMember(removeBtn, data.id);
+    });
+    chip.appendChild(removeBtn);
+
+    return chip;
+  }
+
+  function clearDragOver() {
+    document.querySelectorAll(".drag-over").forEach(function (el) {
+      el.classList.remove("drag-over");
+    });
+  }
+
+  // A raw item from the user panel needs to become a real team-member chip.
+  // Restyled in place (not via replaceWith) so it can also be called on
+  // the item the instant a drag starts, while Sortable is still holding
+  // a reference to that exact node and moving it around the DOM.
+  function convertDragItemToChip(item) {
+    if (!item.classList.contains("user-drag-item")) return item;
+    var data = {
+      id: item.dataset.userId,
+      name: item.dataset.userName,
+      picture: item.dataset.userPicture,
+      category: item.dataset.userCategory || "",
+    };
+    item.classList.remove("user-drag-item");
+    item.classList.add("team-member-chip");
+    return fillChipContents(item, data);
+  }
+
+  // Relay slots hold a single member: evict/swap the surplus chip
+  function evictSurplusFromSlot(toEl, keptItem, fromEl) {
+    if (!toEl.classList.contains("relay-slot-drop")) return;
+    var chips = toEl.querySelectorAll(".team-member-chip");
+    if (chips.length <= 1) return;
+
+    var surplus = null;
+    chips.forEach(function (c) {
+      if (c !== keptItem) surplus = c;
+    });
+    if (!surplus) return;
+
+    var canReturnToSource =
+      fromEl !== toEl &&
+      (fromEl.classList.contains("relay-slot-drop") ||
+        fromEl.classList.contains("team-drop-zone"));
+    if (canReturnToSource) {
+      fromEl.appendChild(surplus);
+    } else {
+      surplus.remove();
+    }
+  }
+
+  // A member can only be in one team/slot at a time
+  function removeDuplicateChips(item, onRemoved) {
+    document
+      .querySelectorAll(
+        '.team-member-chip[data-user-id="' + item.dataset.userId + '"]',
+      )
+      .forEach(function (chip) {
+        if (chip === item) return;
+        onRemoved(chip);
+        chip.remove();
+      });
+  }
+
   function init() {
     var container = document.getElementById("teams-container");
-    if (!container || container.dataset.tbInit) return;
-    container.dataset.tbInit = "1";
-
-    var teamCount = parseInt(container.dataset.teamCount, 10);
+    if (!container) {
+      return;
+    }
 
     var canEdit = container.dataset.canEdit === "true";
     var eventId = container.dataset.eventId;
@@ -21,11 +116,14 @@
     }
 
     function reloadTeamStructure(col) {
+      if (!col) return;
       var teamIndex = col.dataset.teamIndex;
       var slotsContainer =
         col.querySelector(".team-slots-container") ||
         col.querySelector(".team-drop-zone");
-      if (!slotsContainer) return;
+      if (!slotsContainer) {
+        return;
+      }
 
       // Collect current members in their current positions
       var memberIds = [];
@@ -68,315 +166,162 @@
       );
     }
 
-    // --- Drag & Drop (editor mode) ---
-    if (canEdit) {
-      var draggedChip = null;
-      var dragSourceSlot = null;
-      var dragFromHandle = false;
+    // --- Drag & Drop (editor mode), powered by Sortable.js ---
+    function handleSortEnd(evt) {
+      clearDragOver();
+      var item = evt.item;
+      if (!item.isConnected) {
+        return; // dropped on an invalid target and discarded
+      }
 
-      // Track mousedown on drag handle
-      container.addEventListener("mousedown", function (e) {
-        dragFromHandle = !!e.target.closest(".member-drag-handle");
+      var fromEl = evt.from;
+      var toEl = evt.to;
+
+      // Dropped back onto the source panel
+      if (toEl.id === "users-container") {
+        return;
+      }
+
+      item = convertDragItemToChip(item);
+
+      // Pure cosmetic : don't show back the hint when dropped
+      var slotHint = toEl.querySelector(".slot-drop-hint");
+      if (slotHint) slotHint.remove();
+      var hint = toEl.querySelector(".drop-hint");
+      if (hint) hint.remove();
+
+      var affectedCols = {};
+      function markCol(el) {
+        var col = el && el.closest && el.closest(".team-column");
+        if (col) affectedCols[col.dataset.teamIndex] = col;
+      }
+      markCol(toEl);
+      if (fromEl.id !== "users-container") markCol(fromEl);
+
+      evictSurplusFromSlot(toEl, item, fromEl);
+      removeDuplicateChips(item, markCol);
+
+      Object.keys(affectedCols).forEach(function (idx) {
+        reloadTeamStructure(affectedCols[idx]);
       });
+      refreshUserAssignments();
+    }
 
-      // User panel dragstart
-      document
-        .getElementById("users-container")
-        .addEventListener("dragstart", function (e) {
-          var item = e.target.closest(".user-drag-item");
-          if (!item) return;
-          e.dataTransfer.setData(
-            "text/plain",
-            JSON.stringify({
-              id: item.dataset.userId,
-              name: item.dataset.userName,
-              picture: item.dataset.userPicture,
-              category: item.dataset.userCategory || "",
-            }),
-          );
-          e.dataTransfer.effectAllowed = "move";
+    function initSortables() {
+      if (typeof Sortable === "undefined") return;
+
+      var usersContainer = document.getElementById("users-container");
+      if (usersContainer && !usersContainer._sortable) {
+        usersContainer._sortable = Sortable.create(usersContainer, {
+          group: { name: CHIP_GROUP, pull: "clone", put: false },
+          sort: false,
+          filter: "button",
+          preventOnFilter: true,
+          animation: 150,
+          // Restyle the dragged item into chip form the instant the drag
+          // starts (evt.item is the node Sortable actually moves through
+          // the DOM as you hover over slots — a separate hidden clone is
+          // left behind in the users panel to fill the gap), so it has
+          // its final (narrower) shape for the whole drag instead of
+          // overflowing the wide users-panel layout until it's dropped.
+          onStart: function (evt) {
+            convertDragItemToChip(evt.item);
+          },
+          onEnd: handleSortEnd,
         });
+      }
 
-      // Member chip dragstart
-      container.addEventListener("dragstart", function (e) {
-        var chip = e.target.closest(".team-member-chip");
-        if (!chip) return;
-        var slotDrop = chip.closest(".relay-slot-drop");
-        if (slotDrop) {
-          draggedChip = chip;
-          dragSourceSlot = slotDrop;
-          chip.classList.add("member-dragging");
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/member-swap", chip.dataset.userId);
-        } else {
-          if (!dragFromHandle) {
-            e.preventDefault();
-            return;
-          }
-          draggedChip = chip;
-          dragSourceSlot = null;
-          chip.classList.add("member-dragging");
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/member-reorder", chip.dataset.userId);
-        }
-      });
-
-      // Dragover
-      container.addEventListener("dragover", function (e) {
-        var slotDrop = e.target.closest(".relay-slot-drop");
-        if (slotDrop) {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-          slotDrop.classList.add("drag-over");
-          return;
-        }
-        var zone = e.target.closest(".team-drop-zone");
-        if (zone) {
-          if (draggedChip && dragSourceSlot) return;
-          if (draggedChip) {
-            var target = e.target.closest(".team-member-chip");
-            if (!target || target === draggedChip || !zone.contains(target))
-              return;
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            var rect = target.getBoundingClientRect();
-            if (e.clientY > rect.top + rect.height / 2) {
-              target.parentNode.insertBefore(draggedChip, target.nextSibling);
-            } else {
-              target.parentNode.insertBefore(draggedChip, target);
-            }
-          } else {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            zone.classList.add("drag-over");
-          }
-        }
-      });
-
-      // Dragleave
-      container.addEventListener("dragleave", function (e) {
-        var slotDrop = e.target.closest(".relay-slot-drop");
-        if (slotDrop && !slotDrop.contains(e.relatedTarget)) {
-          slotDrop.classList.remove("drag-over");
-        }
-        var zone = e.target.closest(".team-drop-zone");
-        if (zone && !zone.contains(e.relatedTarget)) {
-          zone.classList.remove("drag-over");
-        }
-      });
-
-      // Drop
-      container.addEventListener("drop", function (e) {
-        var slotDrop = e.target.closest(".relay-slot-drop");
-        if (slotDrop) {
-          slotDrop.classList.remove("drag-over");
-
-          // Slot swap within/between teams
-          if (draggedChip && dragSourceSlot) {
-            e.preventDefault();
-            if (dragSourceSlot === slotDrop) return;
-
-            var sourceChip = dragSourceSlot.querySelector(".team-member-chip");
-            var targetChip = slotDrop.querySelector(".team-member-chip");
-            var sourceCol = dragSourceSlot.closest(".team-column");
-            var targetCol = slotDrop.closest(".team-column");
-
-            // Swap chips in DOM (optimistic update)
-            if (sourceChip) sourceChip.remove();
-            if (targetChip) targetChip.remove();
-            if (sourceChip)
-              dragSourceSlot.appendChild(
-                targetChip || document.createElement("span"),
-              );
-            if (targetChip)
-              slotDrop.appendChild(
-                sourceChip || document.createElement("span"),
-              );
-
-            setTimeout(function () {
-              reloadTeamStructure(sourceCol);
-              if (targetCol !== sourceCol) reloadTeamStructure(targetCol);
-            }, 0);
-            return;
-          }
-
-          // Drop from user panel
-          if (e.dataTransfer.types.indexOf("text/plain") === -1) return;
-          e.preventDefault();
-          var data = JSON.parse(e.dataTransfer.getData("text/plain"));
-          var col = slotDrop.closest(".team-column");
-
-          // Remove from existing location
-          document
-            .querySelectorAll(
-              '.team-member-chip[data-user-id="' + data.id + '"]',
-            )
-            .forEach(function (chip) {
-              var oldCol = chip.closest(".team-column");
-              chip.remove();
-              if (oldCol && oldCol !== col) {
-                setTimeout(function () {
-                  reloadTeamStructure(oldCol);
-                }, 0);
-              }
-            });
-
-          // Create chip optimistically
-          var existing = slotDrop.querySelector(".team-member-chip");
-          if (existing) existing.remove();
-
-          var newChip = document.createElement("div");
-          newChip.className = "team-member-chip";
-          newChip.draggable = true;
-          newChip.dataset.userId = data.id;
-          newChip.dataset.userCategory = data.category || "";
-          newChip.innerHTML =
-            '<img src="' +
-            data.picture +
-            '" alt=""><span>' +
-            data.name +
-            "</span>" +
-            (data.category
-              ? '<small class="user-category-badge">' +
-                data.category +
-                "</small>"
-              : "") +
-            '<button type="button" onclick="removeMember(this, ' +
-            data.id +
-            ')">&times;</button>';
-          slotDrop.appendChild(newChip);
-
-          setTimeout(function () {
-            reloadTeamStructure(col);
-          }, 0);
-          return;
-        }
-
-        // Drop zone (non-relay)
-        var zone = e.target.closest(".team-drop-zone");
-        if (!zone) return;
-        if (e.dataTransfer.types.indexOf("text/member-reorder") !== -1) return;
-        if (draggedChip) return;
-        e.preventDefault();
-        zone.classList.remove("drag-over");
-
-        var data = JSON.parse(e.dataTransfer.getData("text/plain"));
-        document
-          .querySelectorAll('.team-member-chip[data-user-id="' + data.id + '"]')
-          .forEach(function (chip) {
-            var oldCol = chip.closest(".team-column");
-            chip.remove();
-            if (oldCol) {
-              setTimeout(function () {
-                reloadTeamStructure(oldCol);
-              }, 0);
-            }
+      // Highlighting is driven by native dragenter, not Sortable's onMove:
+      // onMove is skipped by Sortable's internal "revert" fast path when a
+      // dragged item comes back over its own origin slot, which left that
+      // slot's previous drag-over target stuck highlighted. dragenter fires
+      // off the real cursor position, so it can't be skipped that way.
+      container
+        .querySelectorAll(".relay-slot-drop, .team-drop-zone")
+        .forEach(function (el) {
+          if (el._sortable) return;
+          var isFreeZone = el.classList.contains("team-drop-zone");
+          el._sortable = Sortable.create(el, {
+            group: { name: CHIP_GROUP, pull: true, put: true },
+            sort: isFreeZone,
+            draggable: ".team-member-chip",
+            filter: "button",
+            preventOnFilter: true,
+            animation: 150,
+            ghostClass: "member-dragging",
+            onEnd: handleSortEnd,
           });
-
-        var hint = zone.querySelector(".drop-hint");
-        if (hint) hint.remove();
-
-        var newChip = document.createElement("div");
-        newChip.className = "team-member-chip";
-        newChip.draggable = true;
-        newChip.dataset.userId = data.id;
-        newChip.dataset.userCategory = data.category || "";
-        newChip.innerHTML =
-          '<div class="member-drag-handle" title="Glisser pour réordonner"><i class="fa fa-grip-vertical"></i></div>' +
-          '<img src="' +
-          data.picture +
-          '" alt=""><span>' +
-          data.name +
-          "</span>" +
-          (data.category
-            ? '<small class="user-category-badge">' + data.category + "</small>"
-            : "") +
-          '<button type="button" onclick="removeMember(this, ' +
-          data.id +
-          ')">&times;</button>';
-        zone.appendChild(newChip);
-
-        var col = zone.closest(".team-column");
-        setTimeout(function () {
-          reloadTeamStructure(col);
-        }, 0);
-      });
-
-      // Dragend
-      container.addEventListener("dragend", function (e) {
-        if (!draggedChip) return;
-        draggedChip.classList.remove("member-dragging");
-
-        // Free zone reorder
-        if (!dragSourceSlot) {
-          var zone = draggedChip.closest(".team-drop-zone");
-          if (zone) {
-            var col = zone.closest(".team-column");
-            setTimeout(function () {
-              reloadTeamStructure(col);
-            }, 0);
-          }
-        }
-
-        draggedChip = null;
-        dragSourceSlot = null;
-      });
-    } // end canEdit
+          el.addEventListener("dragenter", function () {
+            clearDragOver();
+            el.classList.add("drag-over");
+          });
+        });
+    }
 
     // --- Team management ---
-    window.addTeam = function () {
-      var wrapper = document.createElement("div");
-      wrapper.id = "team-wrapper-" + teamCount;
-      wrapper.setAttribute(
-        "hx-post",
-        "/evenements/" + eventId + "/pool/" + poolId + "/team_form",
-      );
-      wrapper.setAttribute("hx-trigger", "load");
-      wrapper.setAttribute("hx-swap", "outerHTML");
-      wrapper.setAttribute(
-        "hx-vals",
-        JSON.stringify({
-          action: teamCount,
-          form_values: null,
-        }),
-      );
+    function oneTimeSetup() {
+      var teamCount = parseInt(container.dataset.teamCount, 10);
 
-      container.insertBefore(
-        wrapper,
-        container.querySelector(".team-add-column"),
-      );
-      htmx.process(wrapper);
-      teamCount++;
-      document.getElementById("team-count").value = teamCount;
-    };
+      window.addTeam = function () {
+        var wrapper = document.createElement("div");
+        wrapper.id = "team-wrapper-" + teamCount;
+        wrapper.setAttribute(
+          "hx-post",
+          "/evenements/" + eventId + "/pool/" + poolId + "/team_form",
+        );
+        wrapper.setAttribute("hx-trigger", "load");
+        wrapper.setAttribute("hx-swap", "outerHTML");
+        wrapper.setAttribute(
+          "hx-vals",
+          JSON.stringify({
+            action: teamCount,
+            form_values: null,
+          }),
+        );
 
-    window.removeTeam = function (index) {
-      var wrapper = document.getElementById("team-wrapper-" + index);
-      if (!wrapper) return;
-      wrapper.remove();
-      teamCount--;
-      document.getElementById("team-count").value = teamCount;
-      refreshUserAssignments();
-    };
+        container.insertBefore(
+          wrapper,
+          container.querySelector(".team-add-column"),
+        );
+        htmx.process(wrapper);
+        teamCount++;
+        document.getElementById("team-count").value = teamCount;
+      };
 
-    window.removeMember = function (btn, userId) {
-      var chip = btn.closest(".team-member-chip");
-      var col = chip.closest(".team-column");
-      chip.remove();
-      setTimeout(function () {
-        reloadTeamStructure(col);
+      window.removeTeam = function (index) {
+        var wrapper = document.getElementById("team-wrapper-" + index);
+        if (!wrapper) {
+          return;
+        }
+        wrapper.remove();
+        teamCount--;
+        document.getElementById("team-count").value = teamCount;
         refreshUserAssignments();
-      }, 0);
-    };
+      };
 
-    // --- HTMX after settle ---
-    document.body.addEventListener("htmx:afterSettle", function () {
-      refreshUserAssignments();
-    });
+      window.removeMember = function (btn, userId) {
+        var chip = btn.closest(".team-member-chip");
+        var col = chip.closest(".team-column");
+        chip.remove();
+        setTimeout(function () {
+          reloadTeamStructure(col);
+          refreshUserAssignments();
+        }, 0);
+      };
+    }
 
-    // --- Init ---
     refreshUserAssignments();
+    if (canEdit) initSortables();
+
+    if (container.dataset.tbInit) {
+      return;
+    }
+    container.dataset.tbInit = "1";
+    oneTimeSetup();
   }
+
   init();
-  document.body.addEventListener("htmx:afterSettle", init);
+  document.body.addEventListener("htmx:afterSettle", function () {
+    init();
+  });
 })();

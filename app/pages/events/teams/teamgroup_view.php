@@ -16,12 +16,79 @@ if (!$team_group || $team_group->event->id !== $event->id) {
     redirect("/evenements/$event_id?tab=pools");
 }
 
+# case if the teamgroup is not published
 if (!$team_group->published && !$can_edit) {
     Toast::error("Pool d'équipes introuvable");
     redirect("/evenements/$event_id?tab=pools");
 }
 
 $existing_teams = $team_group->teams->toArray();
+
+$v = new Validator();
+
+if ($can_edit && $v->valid()) {
+    $team_count = intval($_POST["team_count"] ?? 0);
+    $submitted_team_ids = [];
+    $saved_teams = [];
+
+    for ($i = 0; $i < $team_count; $i++) {
+        // Skip removed teams
+        if (!isset($_POST["team_{$i}_name"]))
+            continue;
+
+        $team_db_id = $_POST["team_{$i}_id"] ?? null;
+        $team_name = $_POST["team_{$i}_name"] ?? "Équipe " . ($i + 1);
+        $member_ids = $_POST["team_{$i}_members"] ?? [];
+        $team_relay_format = $_POST["team_{$i}_relay_format"] ?? null;
+
+        if ($team_db_id) {
+            $team = em()->find(Team::class, $team_db_id);
+            $submitted_team_ids[] = intval($team_db_id);
+        } else {
+            $team = new Team();
+            $team_group->teams->add($team);
+            $team->team_group = $team_group;
+            $team->members = new \Doctrine\Common\Collections\ArrayCollection();
+        }
+
+        $team->name = $team_name;
+        $team->relay_format = $team_relay_format ?: null;
+
+        // Persist slot/member order (array of user IDs, with empty strings for empty slots)
+        $team->slot_order = json_encode(array_values($member_ids));
+
+        $team->members->clear();
+        foreach ($member_ids as $member_id) {
+            if ($member_id) {
+                $user = em()->find(User::class, intval($member_id));
+                if ($user) {
+                    $team->members->add($user);
+                }
+            }
+        }
+
+        em()->persist($team_group);
+        $saved_teams[] = $team;
+    }
+
+
+    foreach ($existing_teams as $existing_team) {
+        if (!in_array($existing_team->id, $submitted_team_ids)) {
+            $team_group->teams->removeElement($existing_team);
+            em()->remove($existing_team);
+        }
+    }
+
+    em()->flush();
+
+    Toast::success("Équipes sauvegardées");
+    $existing_teams = $team_group->teams->toArray();
+
+    // Save is submitted via htmx (hx-swap="none"); just flush the toast, don't re-render the page
+    if (get_header("hx-request")) {
+        return;
+    }
+}
 
 // If activity linked, use activity entries; otherwise use event entries
 $linked_activity = $team_group->activity;
@@ -64,65 +131,6 @@ foreach ($existing_teams as $team) {
     }
 }
 
-$v = new Validator();
-
-if ($can_edit && $v->valid()) {
-    $team_count = intval($_POST["team_count"] ?? 0);
-    $submitted_team_ids = [];
-    $saved_teams = [];
-
-    for ($i = 0; $i < $team_count; $i++) {
-        // Skip removed teams
-        if (!isset($_POST["team_{$i}_name"]))
-            continue;
-
-        $team_db_id = $_POST["team_{$i}_id"] ?? null;
-        $team_name = $_POST["team_{$i}_name"] ?? "Équipe " . ($i + 1);
-        $member_ids = $_POST["team_{$i}_members"] ?? [];
-        $team_relay_format = $_POST["team_{$i}_relay_format"] ?? null;
-
-        if ($team_db_id) {
-            $team = em()->find(Team::class, $team_db_id);
-            $submitted_team_ids[] = intval($team_db_id);
-        } else {
-            $team = new Team();
-            $team->team_group = $team_group;
-            $team->members = new \Doctrine\Common\Collections\ArrayCollection();
-        }
-
-        $team->name = $team_name;
-        $team->relay_format = $team_relay_format ?: null;
-
-        // Persist slot/member order (array of user IDs, with empty strings for empty slots)
-        $team->slot_order = json_encode(array_values($member_ids));
-
-        $team->members->clear();
-        foreach ($member_ids as $member_id) {
-            if ($member_id) {
-                $user = em()->find(User::class, intval($member_id));
-                if ($user) {
-                    $team->members->add($user);
-                }
-            }
-        }
-
-        em()->persist($team);
-        $saved_teams[] = $team;
-    }
-
-
-    foreach ($existing_teams as $existing_team) {
-        if (!in_array($existing_team->id, $submitted_team_ids)) {
-            em()->remove($existing_team);
-        }
-    }
-
-    em()->flush();
-
-    Toast::success("Équipes sauvegardées");
-    #redirect("/evenements/$event_id/pool/$pool_id");
-}
-
 page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_builder.css")->script("team_builder.js");
 ?>
 
@@ -138,7 +146,7 @@ if ($can_edit) {
 }
 echo $actions; ?>
 
-<form method="post" id="teams-form">
+<form method="post" id="teams-form" hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>" hx-swap="none">
     <?php if ($can_edit): ?>
         <?= $v->render_validation() ?>
     <?php endif ?>

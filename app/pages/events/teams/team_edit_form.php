@@ -1,5 +1,5 @@
 <?php
-restrict_access();
+restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id");
 $pool_id = get_route_param("pool_id");

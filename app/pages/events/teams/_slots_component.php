@@ -81,11 +81,7 @@ $num_slots = $current_format ? $current_format->team_size : 0;
         <?php foreach ($team_members as $member): ?>
             <?php if (!$member) continue; ?>
             <div class="team-member-chip" data-user-id="<?= $member['id'] ?>"
-                data-user-category="<?= htmlspecialchars($member['category'] ?? '') ?>"
-                <?= $can_edit ? 'draggable="true"' : '' ?>>
-                <?php if ($can_edit): ?>
-                    <div class="member-drag-handle" title="Glisser pour réordonner"><i class="fa fa-grip-vertical"></i></div>
-                <?php endif ?>
+                data-user-category="<?= htmlspecialchars($member['category'] ?? '') ?>">
                 <img src="<?= htmlspecialchars($member['picture']) ?>" alt="">
                 <span><?= htmlspecialchars($member['name']) ?></span>
                 <?php if (!empty($member['category'])): ?>
