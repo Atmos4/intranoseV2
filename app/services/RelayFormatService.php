@@ -225,12 +225,14 @@ class RelayFormatService
     /**
      * Validate team composition against slots.
      * @param RelaySlotDto[] $slots
-     * @param string[] $categories - member category strings (e.g. ["H21", "D16", ...])
-     * @return array{filled: int, total: int, slots: array} - each slot => matched category or null
+     * @param string[] $team_members - team member array : [ id => ['id' => int, 'name' => string, 'picture' => string, 'category' => string]]
+     * @return array{filled: int, total: int, slots: array, extras: array} - slots: each slot => matched category or null; extras: leftover team members (full data, in original team order) that matched no slot
      */
-    public static function validateComposition(array $slots, array $categories): array
+    public static function validateComposition(array $slots, array $team_members): array
     {
-        $available = $categories;
+        // Keep $unmatched keyed like $team_members (insertion order) so leftover "extras" stay in team order
+        $unmatched = $team_members;
+
         // Sort slot indices by specificity (most constrained first)
         $indices = array_keys($slots);
         usort($indices, function ($a, $b) use ($slots) {
@@ -240,10 +242,10 @@ class RelayFormatService
         $assignments = [];
         foreach ($indices as $i) {
             $assignments[$i] = null;
-            foreach ($available as $k => $cat) {
-                if ($slots[$i]->matches($cat)) {
-                    $assignments[$i] = $cat;
-                    unset($available[$k]);
+            foreach ($unmatched as $id => $member) {
+                if ($member && $slots[$i]->matches($member['category'] ?? null)) {
+                    $assignments[$i] = $member['category'];
+                    unset($unmatched[$id]);
                     break;
                 }
             }
@@ -251,7 +253,7 @@ class RelayFormatService
         ksort($assignments);
 
         $filled = count(array_filter($assignments, fn($v) => $v !== null));
-        $extras = array_values(array_filter($available));
+        $extras = array_values(array_filter($unmatched));
         return ['filled' => $filled, 'total' => count($slots), 'slots' => $assignments, 'extras' => $extras];
     }
 
@@ -269,7 +271,6 @@ class RelayFormatService
 
     /**
      * Parse POST data for a team index and resolve members with their categories.
-     * Shared by _slots_component.php and _composition_component.php to avoid duplication.
      *
      * @return array{
      *   team_relay_format: string,
@@ -280,11 +281,8 @@ class RelayFormatService
      *   member_categories: string[]
      * }
      */
-    public static function resolveTeamContext(int|string $team_index, TeamGroup $team_group): array
+    public static function resolveTeamContext(string|null $team_relay_format, $member_ids_raw, TeamGroup $team_group): array
     {
-        $team_relay_format = $_POST["team_{$team_index}_relay_format"] ?? $_GET["relay_format"] ?? "";
-
-        $member_ids_raw = $_POST["team_{$team_index}_members"] ?? [];
         $member_ids = is_string($member_ids_raw) ? json_decode($member_ids_raw, true) : $member_ids_raw;
         if (!is_array($member_ids))
             $member_ids = [];

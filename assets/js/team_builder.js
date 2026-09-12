@@ -1,39 +1,51 @@
 (function () {
   var CHIP_GROUP = "team-members";
 
-  // Builds/rebuilds a chip's contents on an existing node, in place, so
+  // Builds/rebuilds an item's contents on an existing node, in place, so
   // callers that need to preserve the node's identity (e.g. the node
   // Sortable is actively dragging) can restyle it without a swap.
-  function fillChipContents(chip, data) {
-    chip.innerHTML = "";
-    chip.dataset.userId = data.id;
-    chip.dataset.userCategory = data.category || "";
+  // `removable` controls whether the chip-only "×" remove button is added.
+  function fillItemContents(item, data, removable) {
+    item.innerHTML = "";
+    item.dataset.userId = data.id;
+    item.dataset.userCategory = data.category || "";
 
     var img = document.createElement("img");
     img.src = data.picture;
     img.alt = "";
-    chip.appendChild(img);
+    item.appendChild(img);
 
     var name = document.createElement("span");
     name.textContent = data.name;
-    chip.appendChild(name);
+    item.appendChild(name);
 
     if (data.category) {
       var badge = document.createElement("small");
       badge.className = "user-category-badge";
       badge.textContent = data.category;
-      chip.appendChild(badge);
+      item.appendChild(badge);
     }
 
-    var removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.textContent = "×";
-    removeBtn.addEventListener("click", function () {
-      window.removeMember(removeBtn, data.id);
-    });
-    chip.appendChild(removeBtn);
+    if (removable) {
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.textContent = "×";
+      removeBtn.addEventListener("click", function () {
+        window.removeMember(removeBtn, data.id);
+      });
+      item.appendChild(removeBtn);
+    }
 
-    return chip;
+    return item;
+  }
+
+  function readMemberData(item) {
+    return {
+      id: item.dataset.userId,
+      name: item.dataset.userName,
+      picture: item.dataset.userPicture,
+      category: item.dataset.userCategory || "",
+    };
   }
 
   function clearDragOver() {
@@ -48,15 +60,21 @@
   // a reference to that exact node and moving it around the DOM.
   function convertDragItemToChip(item) {
     if (!item.classList.contains("user-drag-item")) return item;
-    var data = {
-      id: item.dataset.userId,
-      name: item.dataset.userName,
-      picture: item.dataset.userPicture,
-      category: item.dataset.userCategory || "",
-    };
+    var data = readMemberData(item);
     item.classList.remove("user-drag-item");
     item.classList.add("team-member-chip");
-    return fillChipContents(item, data);
+    return fillItemContents(item, data, true);
+  }
+
+  // Reverses convertDragItemToChip: used when a chip is dropped back onto
+  // the users panel (or otherwise discarded) so it returns to its original
+  // narrow drag-item look instead of staying styled as a chip.
+  function convertChipItemToDrag(item) {
+    if (!item.classList.contains("team-member-chip")) return item;
+    var data = readMemberData(item);
+    item.classList.remove("team-member-chip");
+    item.classList.add("user-drag-item");
+    return fillItemContents(item, data, false);
   }
 
   // Relay slots hold a single member: evict/swap the surplus chip
@@ -142,26 +160,23 @@
           });
       }
 
-      var formatSelect = col.querySelector(
-        'select[name="team_' + teamIndex + '_relay_format"]',
-      );
+      var formatSelect = col.querySelector(".team-relay-format-select");
       var relayFormat = formatSelect ? formatSelect.value : "";
 
-      var postData = {
+      var getData = {
         team_index: teamIndex,
-        can_edit: canEdit,
       };
-      postData["team_" + teamIndex + "_relay_format"] = relayFormat;
-      postData["team_" + teamIndex + "_members"] = JSON.stringify(memberIds);
+      getData["relay_format"] = relayFormat;
+      getData["team_members"] = JSON.stringify(memberIds);
 
-      // Reload slots; _slots_component will OOB-swap the composition block too
+      // Reload slots
       htmx.ajax(
-        "POST",
+        "GET",
         "/evenements/" + eventId + "/pool/" + poolId + "/team_slots",
         {
           target: "#slots-" + teamIndex,
           swap: "outerHTML",
-          values: postData,
+          values: getData,
         },
       );
     }
@@ -171,6 +186,7 @@
       clearDragOver();
       var item = evt.item;
       if (!item.isConnected) {
+        convertChipItemToDrag(item);
         return; // dropped on an invalid target and discarded
       }
 
@@ -179,10 +195,11 @@
 
       // Dropped back onto the source panel
       if (toEl.id === "users-container") {
+        convertChipItemToDrag(item);
         return;
       }
 
-      item = convertDragItemToChip(item);
+      // item = convertDragItemToChip(item);
 
       // Pure cosmetic : don't show back the hint when dropped
       var slotHint = toEl.querySelector(".slot-drop-hint");
@@ -217,17 +234,15 @@
           sort: false,
           filter: "button",
           preventOnFilter: true,
-          animation: 150,
-          // Restyle the dragged item into chip form the instant the drag
-          // starts (evt.item is the node Sortable actually moves through
-          // the DOM as you hover over slots — a separate hidden clone is
-          // left behind in the users panel to fill the gap), so it has
-          // its final (narrower) shape for the whole drag instead of
-          // overflowing the wide users-panel layout until it's dropped.
-          onStart: function (evt) {
-            convertDragItemToChip(evt.item);
-          },
+          animation: 0,
           onEnd: handleSortEnd,
+        });
+        // while still dragging, going back over the users
+        // panel should show the item in its original
+        // drag-item form again, not stay stuck as a chip.
+        usersContainer.addEventListener("dragenter", function () {
+          clearDragOver();
+          if (Sortable.dragged) convertChipItemToDrag(Sortable.dragged);
         });
       }
 
@@ -254,6 +269,7 @@
           el.addEventListener("dragenter", function () {
             clearDragOver();
             el.classList.add("drag-over");
+            if (Sortable.dragged) convertDragItemToChip(Sortable.dragged);
           });
         });
     }
@@ -261,12 +277,13 @@
     // --- Team management ---
     function oneTimeSetup() {
       var teamCount = parseInt(container.dataset.teamCount, 10);
+      console.log(teamCount);
 
       window.addTeam = function () {
         var wrapper = document.createElement("div");
         wrapper.id = "team-wrapper-" + teamCount;
         wrapper.setAttribute(
-          "hx-post",
+          "hx-get",
           "/evenements/" + eventId + "/pool/" + poolId + "/team_form",
         );
         wrapper.setAttribute("hx-trigger", "load");
@@ -274,7 +291,7 @@
         wrapper.setAttribute(
           "hx-vals",
           JSON.stringify({
-            action: teamCount,
+            team_index: teamCount,
             form_values: null,
           }),
         );

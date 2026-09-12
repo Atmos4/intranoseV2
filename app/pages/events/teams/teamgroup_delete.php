@@ -6,7 +6,7 @@ $event = em()->find(Event::class, $event_id);
 $team_group = em()->find(TeamGroup::class, $pool_id);
 
 if (!$team_group || $team_group->event->id !== $event->id) {
-    Toast::error("Pool d'équipes introuvable");
+    Toast::error("Groupe d'équipes introuvable");
     redirect("/evenements/$event_id?tab=pools");
 }
 
@@ -16,7 +16,7 @@ if ($v->valid()) {
     em()->remove($team_group);
     em()->flush();
 
-    Toast::success("Pool d'équipes supprimé");
+    Toast::success("Groupe d'équipes supprimé");
     redirect("/evenements/$event_id?tab=pools");
 }
 
@@ -28,7 +28,7 @@ page("Confirmation de suppression");
 <form method="POST">
     <?= $v->render_validation() ?>
     <div class="row center">
-        <p>Sûr de vouloir supprimer le pool <strong><?= $team_group->name ?: "Pool #$pool_id" ?></strong> ?</p>
+        <p>Sûr de vouloir supprimer le groupe <strong><?= $team_group->name ?: "Groupe #$pool_id" ?></strong> ?</p>
         <p class="row">
             <span>
                 <i class="fa fa-chevron-right"></i>

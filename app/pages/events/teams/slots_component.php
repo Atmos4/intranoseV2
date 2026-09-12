@@ -1,19 +1,21 @@
 <?php
 restrict_access();
+$can_edit = check_auth(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id");
 $pool_id = get_route_param("pool_id");
 $team_group = em()->find(TeamGroup::class, $pool_id);
 
-$team_index = $_POST["team_index"] ?? $_GET["team_index"] ?? 0;
-$can_edit = $_POST["can_edit"] ?? $_GET["can_edit"] ?? check_auth(Access::$ADD_EVENTS);
+$team_index = get_query_param("team_index") ?? 0;
+$team_relay_format = get_query_param("relay_format", numeric: false);
+$member_ids_raw = get_query_param("team_members", numeric: false);
 
-$ctx = RelayFormatService::resolveTeamContext($team_index, $team_group);
+$ctx = RelayFormatService::resolveTeamContext($team_relay_format, $member_ids_raw, $team_group);
 $current_format = $ctx['current_format'];
-$slot_defs      = $ctx['slot_defs'];
-$is_ordered     = $ctx['is_ordered'];
-$team_members   = $ctx['team_members'];
-$legs     = $current_format ? $current_format->getLegs() : [];
+$slot_defs = $ctx['slot_defs'];
+$is_ordered = $ctx['is_ordered'];
+$team_members = $ctx['team_members'];
+$legs = $current_format ? $current_format->getLegs() : [];
 $num_slots = $current_format ? $current_format->team_size : 0;
 ?>
 
@@ -105,7 +107,7 @@ $num_slots = $current_format ? $current_format->team_size : 0;
 <?php
 // Include composition as OOB swap (for format dropdown changes)
 ob_start();
-include __DIR__ . '/_composition_component.php';
+include __DIR__ . '/composition_component.php';
 $composition_html = ob_get_clean();
 // Add hx-swap-oob attribute to the composition div
 echo preg_replace('/<div class="team-composition-summary" id="composition-' . $team_index . '">/', 

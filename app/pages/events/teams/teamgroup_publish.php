@@ -6,7 +6,7 @@ $event = em()->find(Event::class, $event_id);
 
 $team_group = em()->find(TeamGroup::class, $pool_id);
 if (!$team_group || $team_group->event->id !== $event->id) {
-    Toast::error("Pool d'équipes introuvable");
+    Toast::error("Groupe d'équipes introuvable");
     redirect("/evenements/$event_id?tab=pools");
 }
 
@@ -16,11 +16,11 @@ if ($v->valid()) {
     $team_group->published = !$team_group->published;
     em()->persist($team_group);
     em()->flush();
-    $team_group->published ? Toast::success("Pool publié") : Toast::success("Pool retiré");
+    $team_group->published ? Toast::success("Groupe publié") : Toast::success("Groupe retiré");
     redirect("/evenements/$event_id/pool/$pool_id");
 }
 
-page(($team_group->published ? "Retirer" : "Publier") . " - " . ($team_group->name ?: "Pool #$pool_id"));
+page(($team_group->published ? "Retirer" : "Publier") . " - " . ($team_group->name ?: "Groupe #$pool_id"));
 ?>
 
 <?= actions()->back("/evenements/$event_id/pool/$pool_id") ?>
@@ -30,8 +30,8 @@ page(($team_group->published ? "Retirer" : "Publier") . " - " . ($team_group->na
         <form method="post" class="center">
             <?= $v->render_validation() ?>
             <p>
-                Sûr de vouloir <?= $team_group->published ? "retirer" : "publier" ?> le pool
-                <strong><?= htmlspecialchars($team_group->name ?: "Pool #$pool_id") ?></strong> ?
+                Sûr de vouloir <?= $team_group->published ? "retirer" : "publier" ?> le groupe d'équipe
+                <strong><?= htmlspecialchars($team_group->name ?: "Groupe #$pool_id") ?></strong> ?
             </p>
             <p>
                 <?php if ($team_group->published): ?>

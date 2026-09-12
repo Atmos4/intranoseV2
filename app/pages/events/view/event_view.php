@@ -68,7 +68,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->css("team_pool
     </sl-tab>
     <sl-tab slot="nav" panel="pools" id="pools-tab" hx-trigger="load" hx-post="/evenements/<?= $event->id ?>/pools"
         hx-target="#pools" <?= ($tab == "pools") ? "active" : "" ?>
-        data-intro="Gérez les pools d'équipes pour cet événement">
+        data-intro="Gérez les groupes d'équipes pour cet événement">
         Équipes
     </sl-tab>
 

@@ -105,7 +105,7 @@ class Field
     {
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
-            $data_intro = $this->help ? ("data-intro=\"" . $this->help . "\"") : "";
+            $data_intro = $this->help ? ("data-intro=\"" . e($this->help) . "\"") : "";
             $id = Validator::keyToId($this->key);
             $input_render = "<label {$this->render_attrs()} $data_intro for=\"{$id}\">{$label_content}</label>";
         }

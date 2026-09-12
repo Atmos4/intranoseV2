@@ -59,7 +59,7 @@ class TextAreaField extends StringField
     public function render()
     {
         $this->attributes(["placeholder" => $this->placeholder ?? $this->label]);
-        $result = "<textarea {$this->props(false)}>$this->value</textarea>";
+        $result = "<textarea {$this->props(false)}>" . e($this->value) . "</textarea>";
         return $this->render_label($result);
     }
 }
@@ -150,7 +150,9 @@ class PasswordField extends StringField
         $this->type = FieldType::Password;
     }
 
-    public function check(?string $msg = null): void {}
+    public function check(?string $msg = null): void
+    {
+    }
 
     public function secure(): static
     {

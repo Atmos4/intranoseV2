@@ -20,7 +20,7 @@ $is_simple = $event->type == EventType::Simple;
                             <i class="fa fa-people-group"></i>
                         </div>
                         <div class="pool-title">
-                            <b><?= $team_group->name ?: "Pool #" . $team_group->id ?></b>
+                            <b><?= $team_group->name ?: "Groupe #" . $team_group->id ?></b>
                             <?php if ($can_edit): ?>
                                 <?php if ($team_group->published): ?>
                                     <span class="badge"><i class="fa fa-eye"></i></span>
@@ -53,12 +53,12 @@ $is_simple = $event->type == EventType::Simple;
             <?php endif ?>
         <?php endforeach;
         if (empty($team_groups)): ?>
-            <p class="center">Pas encore de pools d'équipes 🏃</p>
+            <p class="center">Pas encore de groupes d'équipes 🏃</p>
         <?php endif ?>
     </table>
     <?php if ($can_edit): ?>
         <a role="button" class="secondary" href="/evenements/<?= $event_id ?>/pool/nouveau">
-            <i class="fa fa-plus"></i> Nouveau Pool d'Équipes
+            <i class="fa fa-plus"></i> Nouveau Groupe d'Équipes
         </a>
     <?php endif ?>
 </div>

@@ -12,13 +12,13 @@ if (!$pool_id) {
 
 $team_group = em()->find(TeamGroup::class, $pool_id);
 if (!$team_group || $team_group->event->id !== $event->id) {
-    Toast::error("Pool d'équipes introuvable");
+    Toast::error("Groupe d'équipes introuvable");
     redirect("/evenements/$event_id?tab=pools");
 }
 
 # case if the teamgroup is not published
 if (!$team_group->published && !$can_edit) {
-    Toast::error("Pool d'équipes introuvable");
+    Toast::error("Groupe d'équipes introuvable");
     redirect("/evenements/$event_id?tab=pools");
 }
 
@@ -84,7 +84,7 @@ if ($can_edit && $v->valid()) {
     Toast::success("Équipes sauvegardées");
     $existing_teams = $team_group->teams->toArray();
 
-    // Save is submitted via htmx (hx-swap="none"); just flush the toast, don't re-render the page
+    // just flush the toast, don't re-render the page
     if (get_header("hx-request")) {
         return;
     }
@@ -131,7 +131,7 @@ foreach ($existing_teams as $team) {
     }
 }
 
-page(($team_group->name ?: "Pool #$pool_id") . " - " . $event->name)->css("team_builder.css")->script("team_builder.js");
+page(($team_group->name ?: "Groupe #$pool_id") . " - " . $event->name)->css("team_builder.css")->script("team_builder.js");
 ?>
 
 <?php $actions = actions()->back("/evenements/$event_id?tab=pools");
@@ -153,19 +153,19 @@ echo $actions; ?>
 
     <h3>
         <i class="fa fa-people-group"></i>
-        <?= $team_group->name ?>
+        <?= e($team_group->name) ?>
     </h3>
 
     <?php $relay_group = $team_group->getRelayGroup(); ?>
     <?php if ($relay_group): ?>
         <p class="relay-group-badge">
             <i class="fa fa-trophy"></i>
-            <?= htmlspecialchars($relay_group->name) ?>
+            <?= e($relay_group->name) ?>
         </p>
     <?php endif ?>
 
     <?php if ($can_edit): ?>
-        <h4>Participants <?= $linked_activity ? "inscrits à " . htmlspecialchars($linked_activity->name) : "inscrits" ?>
+        <h4>Participants <?= $linked_activity ? "inscrits à " . e($linked_activity->name) : "inscrits" ?>
         </h4>
         <p class="teams-subtitle">Glissez-déposez les participants dans les équipes</p>
         <div class="users-scroll-container" id="users-container">
@@ -174,13 +174,12 @@ echo $actions; ?>
                 ?>
                 <div class="user-drag-item <?= in_array($user->id, $assigned_user_ids) ? 'user-in-team' : '' ?>"
                     draggable="true" data-user-id="<?= $user->id ?>"
-                    data-user-name="<?= htmlspecialchars($user->first_name . ' ' . $user->last_name) ?>"
-                    data-user-picture="<?= htmlspecialchars($user->getPicture()) ?>"
-                    data-user-category="<?= htmlspecialchars($category ?? '') ?>">
+                    data-user-name="<?= e($user->first_name . ' ' . $user->last_name) ?>"
+                    data-user-picture="<?= e($user->getPicture()) ?>" data-user-category="<?= e($category ?? '') ?>">
                     <img src="<?= $user->getPicture() ?>" alt="">
-                    <span><?= htmlspecialchars($user->first_name . ' ' . $user->last_name) ?></span>
+                    <span><?= e($user->first_name . ' ' . $user->last_name) ?></span>
                     <?php if ($category): ?>
-                        <small class="user-category-badge"><?= htmlspecialchars($category) ?></small>
+                        <small class="user-category-badge"><?= e($category) ?></small>
                     <?php endif ?>
                 </div>
             <?php endforeach ?>
@@ -193,21 +192,18 @@ echo $actions; ?>
         data-can-edit="<?= $can_edit ? 'true' : 'false' ?>">
         <?php if (count($existing_teams)):
             foreach ($existing_teams as $index => $team): ?>
-                <div id="team-wrapper-<?= $index ?>" hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_form"
+                <div id="team-wrapper-<?= $index ?>" hx-get="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_form"
                     hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
-                        "action" => $index,
-                        "form_values" => [
-                            "team_id" => $team->id,
-                            "team_name" => $team->name ?: "Équipe " . ($index + 1),
-                            "team_relay_format" => $team->relay_format,
-                            "team_members" => array_map(fn($m) => $m ? [
-                                "id" => $m->id,
-                                "name" => $m->first_name . ' ' . $m->last_name,
-                                "picture" => $m->getPicture(),
-                                "category" => $user_categories[$m->id] ?? null,
-                            ] : null, $team->getOrderedMembers()),
-                            "can_edit" => $can_edit,
-                        ]
+                        "team_index" => $index,
+                        "team_id" => $team->id,
+                        "team_name" => $team->name ?: "Équipe " . ($index + 1),
+                        "team_relay_format" => $team->relay_format,
+                        "team_members" => json_encode(array_map(fn($m) => $m ? [
+                            "id" => $m->id,
+                            "name" => $m->first_name . ' ' . $m->last_name,
+                            "picture" => $m->getPicture(),
+                            "category" => $user_categories[$m->id] ?? null,
+                        ] : [], $team->getOrderedMembers())),
                     ]), ENT_QUOTES, 'UTF-8') ?>'>
                 </div>
             <?php endforeach;

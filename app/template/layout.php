@@ -45,6 +45,13 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <script src="/assets/js/htmx1.9.5-core.min.js" defer></script>
     <script src="/assets/js/htmx1.9.5-head.js" defer></script>
     <script src="/assets/js/htmx1.9.5-loading.js" defer></script>
+    <script>
+        // hx-push-url navigations don't reset scroll like a real page load would.
+        // Problematic with nested htmx fragments.
+        document.addEventListener("htmx:pushedIntoHistory", function () {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        });
+    </script>
 
     <script src="/assets/js/theme.js"></script>
 

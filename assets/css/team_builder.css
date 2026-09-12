@@ -7,6 +7,10 @@
   border: 1px solid var(--pico-muted-border-color);
   border-radius: var(--pico-border-radius);
   margin-bottom: 1.5rem;
+  position: sticky;
+  top: 2.8rem;
+  z-index: 2;
+  background-color: var(--pico-background-color);
 }
 
 .user-drag-item {
