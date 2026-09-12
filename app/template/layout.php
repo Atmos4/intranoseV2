@@ -66,7 +66,9 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
     <script>function start_intro() { introJs().start() }</script>
 
     <!-- Sortable.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" defer></script>
+    <?php if ($page->_sortable): ?>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" defer></script>
+    <?php endif ?>
 
     <!-- Custom JS -->
     <?php foreach ($page->scripts as $script): ?>

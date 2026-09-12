@@ -131,7 +131,7 @@ foreach ($existing_teams as $team) {
     }
 }
 
-page(($team_group->name ?: "Groupe #$pool_id") . " - " . $event->name)->css("team_builder.css")->script("team_builder.js");
+page(($team_group->name ?: "Groupe #$pool_id") . " - " . $event->name)->css("team_builder.css")->sortable()->script("team_builder.js");
 ?>
 
 <?php $actions = actions()->back("/evenements/$event_id?tab=pools");
