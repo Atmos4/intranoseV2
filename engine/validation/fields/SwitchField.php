@@ -10,7 +10,7 @@ class SwitchField extends Field
     public string $true_label = "";
     public string $false_label = "";
 
-    public function check(string $msg = null): void
+    public function check(?string $msg = null): void
     {
         if (!$this->test('/\D*$/')) {
             $this->set_error($msg ?? "Format invalide");

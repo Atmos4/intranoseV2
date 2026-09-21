@@ -15,7 +15,7 @@ class DateTimeField extends Field
         return preg_replace('/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?/', '$1T$2', $date);
     }
 
-    public function check(string $msg = null): void
+    public function check(?string $msg = null): void
     {
         if (!$this->test("/^[\d\- :T]*$/")) {
             $this->set_error($msg ?? "Format invalide");
@@ -23,7 +23,7 @@ class DateTimeField extends Field
     }
 
     /** Set upper date limit */
-    public function max(?string $date, string $msg = null, bool $as_attr = false): static
+    public function max(?string $date, ?string $msg = null, bool $as_attr = false): static
     {
         if ($this->should_test() && $date && $this->value && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
@@ -35,7 +35,7 @@ class DateTimeField extends Field
     }
 
     /** Set lower date limit */
-    public function min(?string $date, string $msg = null, bool $as_attr = false): static
+    public function min(?string $date, ?string $msg = null, bool $as_attr = false): static
     {
         if ($this->should_test() && $date && $this->value && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");

@@ -16,7 +16,7 @@ class Field
     private ?string $help;
     private array $attributes = [];
 
-    public function __construct(string $key, mixed $value = null, Validator $context = null)
+    public function __construct(string $key, mixed $value = null, ?Validator $context = null)
     {
         $this->key = $key;
         $this->value = $value;
@@ -148,13 +148,13 @@ class Field
     }
 
     /** @param non-empty-string $preg */
-    protected function test(string $preg, string $value = null): false|int
+    protected function test(string $preg, ?string $value = null): false|int
     {
         return preg_match($preg, $value ?? $this->value ?? "");
     }
 
     /** Makes the field required */
-    public function required(string $msg = null): static
+    public function required(?string $msg = null): static
     {
         $this->required = true;
         if ($this->should_test() && !$this->value) {
@@ -163,7 +163,7 @@ class Field
         return $this;
     }
 
-    public function check(string $msg = null): void {}
+    public function check(?string $msg = null): void {}
 
     protected function set_type(): void
     {
