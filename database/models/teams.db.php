@@ -36,7 +36,11 @@ class TeamGroup
     #[Column]
     public bool $published = false;
 
-    public function getRelayGroup(): ?RelayGroupDto
+    function __construct()
+    {
+        $this->teams = new ArrayCollection();
+    }
+    public function getRelayGroup(): ?RelayGroup
     {
         return $this->relay_format ? RelayFormatService::getGroup($this->relay_format) : null;
     }
@@ -82,7 +86,7 @@ class Team
         return $ordered;
     }
 
-    public function getRelayFormat(): ?RelayFormatDto
+    public function getRelayFormat(): ?RelayFormat
     {
         return $this->relay_format ? RelayFormatService::get($this->relay_format) : null;
     }
