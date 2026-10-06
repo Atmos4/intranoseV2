@@ -15,13 +15,13 @@ if ($v->valid()) {
     em()->flush();
 
     Toast::success("Groupe d'équipes créé avec succès");
-    redirect("/evenements/$event_id/pool/$team_group->id");
+    redirect("/evenements/$event_id/groupe-equipes/$team_group->id");
 }
 
 page("Créer un Groupe d'Équipes");
 ?>
 
-<?= actions()->back("/evenements/$event_id?tab=pools") ?>
+<?= actions()->back("/evenements/$event_id?tab=teams") ?>
 
 <div class="container">
     <article>

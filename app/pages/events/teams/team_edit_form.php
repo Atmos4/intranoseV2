@@ -2,7 +2,7 @@
 restrict_access(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id");
-$pool_id = get_route_param("pool_id");
+$team_group_id = get_route_param("team_group_id");
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
@@ -12,7 +12,7 @@ $team_name = get_query_param("team_name", numeric: false) ?? "Équipe " . ($team
 $team_members = json_decode(get_query_param("team_members", numeric: false) ?? "[]", true);
 $team_relay_format = get_query_param("team_relay_format", numeric: false) ?? "";
 
-$team_group = em()->find(TeamGroup::class, $pool_id);
+$team_group = em()->find(TeamGroup::class, $team_group_id);
 $relay_group_id = $team_group->relay_format;
 $relay_format_options = $relay_group_id ? RelayFormatService::formatOptions($relay_group_id) : [];
 
@@ -45,7 +45,7 @@ $current_format = $team_relay_format ? RelayFormatService::get($team_relay_forma
         # you can use js:{} to reference a live dom value. pretty cool.
         ?>
         <select name="team_<?= $team_index ?>_relay_format" class="team-relay-format-select"
-            data-team-index="<?= $team_index ?>" hx-get="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_slots"
+            data-team-index="<?= $team_index ?>" hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_slots"
             hx-target="#slots-<?= $team_index ?>" hx-swap="outerHTML"
             hx-vals='js:{"team_index": <?= (int) $team_index ?>, "relay_format": event.target.value}'>
             <?php foreach ($relay_format_options as $val => $label): ?>
@@ -60,7 +60,7 @@ $current_format = $team_relay_format ? RelayFormatService::get($team_relay_forma
         </small>
     <?php endif ?>
 
-    <div hx-get="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_slots" hx-trigger="load" hx-vals='
+    <div hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_slots" hx-trigger="load" hx-vals='
         <?= htmlspecialchars(json_encode([
             "team_index" => $team_index,
             "relay_format" => $team_relay_format,

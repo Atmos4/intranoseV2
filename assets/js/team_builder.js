@@ -121,7 +121,7 @@
 
     var canEdit = container.dataset.canEdit === "true";
     var eventId = container.dataset.eventId;
-    var poolId = container.dataset.poolId;
+    var teamGroupId = container.dataset.teamGroupId;
 
     function refreshUserAssignments() {
       document.querySelectorAll(".user-drag-item").forEach(function (item) {
@@ -172,7 +172,11 @@
       // Reload slots
       htmx.ajax(
         "GET",
-        "/evenements/" + eventId + "/pool/" + poolId + "/team_slots",
+        "/evenements/" +
+          eventId +
+          "/groupe-equipes/" +
+          teamGroupId +
+          "/team_slots",
         {
           target: "#slots-" + teamIndex,
           swap: "outerHTML",
@@ -284,7 +288,11 @@
         wrapper.id = "team-wrapper-" + teamCount;
         wrapper.setAttribute(
           "hx-get",
-          "/evenements/" + eventId + "/pool/" + poolId + "/team_form",
+          "/evenements/" +
+            eventId +
+            "/groupe-equipes/" +
+            teamGroupId +
+            "/team_form",
         );
         wrapper.setAttribute("hx-trigger", "load");
         wrapper.setAttribute("hx-swap", "outerHTML");

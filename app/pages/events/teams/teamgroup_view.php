@@ -2,24 +2,24 @@
 restrict_access();
 $can_edit = check_auth(Access::$ADD_EVENTS);
 $event_id = get_route_param('event_id');
-$pool_id = get_route_param('pool_id', false);
+$team_group_id = get_route_param('team_group_id', false);
 $event = em()->find(Event::class, $event_id);
 $all_event_entries = EventService::getAllEntries($event_id);
 
-if (!$pool_id) {
-    redirect("/evenements/$event_id?tab=pools");
+if (!$team_group_id) {
+    redirect("/evenements/$event_id?tab=teams");
 }
 
-$team_group = em()->find(TeamGroup::class, $pool_id);
+$team_group = em()->find(TeamGroup::class, $team_group_id);
 if (!$team_group || $team_group->event->id !== $event->id) {
     Toast::error("Groupe d'équipes introuvable");
-    redirect("/evenements/$event_id?tab=pools");
+    redirect("/evenements/$event_id?tab=teams");
 }
 
 # case if the teamgroup is not published
 if (!$team_group->published && !$can_edit) {
     Toast::error("Groupe d'équipes introuvable");
-    redirect("/evenements/$event_id?tab=pools");
+    redirect("/evenements/$event_id?tab=teams");
 }
 
 $existing_teams = $team_group->teams->toArray();
@@ -131,22 +131,23 @@ foreach ($existing_teams as $team) {
     }
 }
 
-page(($team_group->name ?: "Groupe #$pool_id") . " - " . $event->name)->css("team_builder.css")->sortable()->script("team_builder.js");
+page(($team_group->name ?: "Groupe #$team_group_id") . " - " . $event->name)->css("team_builder.css")->sortable()->script("team_builder.js");
 ?>
 
-<?php $actions = actions()->back("/evenements/$event_id?tab=pools");
+<?php $actions = actions()->back("/evenements/$event_id?tab=teams");
 if ($can_edit) {
-    $actions->dropdown(function ($d) use ($event_id, $pool_id, $team_group) {
-        $d->link("/evenements/$event_id/pool/$pool_id/modifier", "Modifier", "fa-pen", ["class" => "secondary"]);
-        $d->link("/evenements/$event_id/pool/$pool_id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
+    $actions->dropdown(function ($d) use ($event_id, $team_group_id, $team_group) {
+        $d->link("/evenements/$event_id/groupe-equipes/$team_group_id/modifier", "Modifier", "fa-pen", ["class" => "secondary"]);
+        $d->link("/evenements/$event_id/groupe-equipes/$team_group_id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
         $team_group->published
-            ? $d->link("/evenements/$event_id/pool/$pool_id/publier", "Retirer", "fa-eye-slash", ["class" => "destructive"])
-            : $d->link("/evenements/$event_id/pool/$pool_id/publier", "Publier", "fa-eye", ["class" => "secondary"]);
+            ? $d->link("/evenements/$event_id/groupe-equipes/$team_group_id/publier", "Retirer", "fa-eye-slash", ["class" => "destructive"])
+            : $d->link("/evenements/$event_id/groupe-equipes/$team_group_id/publier", "Publier", "fa-eye", ["class" => "secondary"]);
     });
 }
 echo $actions; ?>
 
-<form method="post" id="teams-form" hx-post="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>" hx-swap="none">
+<form method="post" id="teams-form" hx-post="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>"
+    hx-swap="none">
     <?php if ($can_edit): ?>
         <?= $v->render_validation() ?>
     <?php endif ?>
@@ -188,12 +189,13 @@ echo $actions; ?>
 
     <h4>Équipes</h4>
     <div class="teams-scroll-container" id="teams-container" data-event-id="<?= $event_id ?>"
-        data-pool-id="<?= $pool_id ?>" data-team-count="<?= count($existing_teams) ?>"
+        data-team-group-id="<?= $team_group_id ?>" data-team-count="<?= count($existing_teams) ?>"
         data-can-edit="<?= $can_edit ? 'true' : 'false' ?>">
         <?php if (count($existing_teams)):
             foreach ($existing_teams as $index => $team): ?>
-                <div id="team-wrapper-<?= $index ?>" hx-get="/evenements/<?= $event_id ?>/pool/<?= $pool_id ?>/team_form"
-                    hx-trigger="load" hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
+                <div id="team-wrapper-<?= $index ?>"
+                    hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_form" hx-trigger="load"
+                    hx-swap="outerHTML" hx-vals='<?= htmlspecialchars(json_encode([
                         "team_index" => $index,
                         "team_id" => $team->id,
                         "team_name" => $team->name ?: "Équipe " . ($index + 1),

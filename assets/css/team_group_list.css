@@ -1,15 +1,15 @@
-.pool-article {
+.team-group-article {
   padding: var(--pico-spacing);
   margin: 0 0 var(--pico-spacing);
   cursor: pointer;
 }
 
-.pool-article:where(:hover, :focus, :focus-within) {
+.team-group-article:where(:hover, :focus, :focus-within) {
   background-color: var(--pico-secondary-focus) !important;
   outline: none;
 }
 
-.pool-grid {
+.team-group-grid {
   display: grid;
   gap: 10px;
   grid-template-columns: auto 1fr auto;
@@ -21,7 +21,7 @@
 }
 
 @media screen and (max-width: 768px) {
-  .pool-grid {
+  .team-group-grid {
     grid-template-columns: auto 1fr;
     grid-template-areas:
       "icon title"
@@ -30,7 +30,7 @@
   }
 }
 
-.pool-icon {
+.team-group-icon {
   grid-area: icon;
   text-align: center;
   align-self: center;
@@ -38,12 +38,12 @@
   font-size: 1.5rem;
 }
 
-.pool-title {
+.team-group-title {
   grid-area: title;
   align-self: center;
 }
 
-.pool-stats {
+.team-group-stats {
   grid-area: stats;
   display: flex;
   gap: 1.5rem;
@@ -51,20 +51,20 @@
   font-size: 0.9rem;
 }
 
-.pool-stat {
+.team-group-stat {
   display: flex;
   align-items: center;
   gap: 0.3rem;
 }
 
-.pool-actions {
+.team-group-actions {
   grid-area: actions;
   display: flex;
   gap: 0.5rem;
   justify-self: end;
 }
 
-.pool-actions a,
-.pool-actions button {
+.team-group-actions a,
+.team-group-actions button {
   margin: 0;
 }

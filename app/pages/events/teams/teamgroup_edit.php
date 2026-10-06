@@ -1,19 +1,19 @@
 <?php
 restrict_access(Access::$ADD_EVENTS);
 $event_id = get_route_param('event_id');
-$pool_id = get_route_param('pool_id', false);
+$team_group_id = get_route_param('team_group_id', false);
 $event = em()->find(Event::class, $event_id);
 
-$is_new = !$pool_id;
+$is_new = !$team_group_id;
 
 if ($is_new) {
     $team_group = new TeamGroup();
     $team_group->event = $event;
 } else {
-    $team_group = em()->find(TeamGroup::class, $pool_id);
+    $team_group = em()->find(TeamGroup::class, $team_group_id);
     if (!$team_group || $team_group->event->id !== $event->id) {
         Toast::error("Groupe d'équipes introuvable");
-        redirect("/evenements/$event_id?tab=pools");
+        redirect("/evenements/$event_id?tab=teams");
     }
 }
 
@@ -56,22 +56,27 @@ if ($v->valid()) {
 
     if ($is_new) {
         Toast::success("Groupe d'équipes créé");
-        redirect("/evenements/$event_id/pool/$team_group->id");
+        redirect("/evenements/$event_id/groupe-equipes/$team_group->id");
     } else {
         Toast::success("Groupe d'équipes modifié");
-        redirect("/evenements/$event_id/pool/$pool_id");
+        redirect("/evenements/$event_id/groupe-equipes/$team_group_id");
     }
 }
 
-page($is_new ? "Nouveau Groupe d'Équipes" : "Modifier " . ($team_group->name ?: "Groupe #$pool_id"));
+page($is_new ? "Nouveau Groupe d'Équipes" : "Modifier " . ($team_group->name ?: "Groupe #$team_group_id"));
 ?>
 
-<?= actions()->back($is_new ? "/evenements/$event_id?tab=pools" : "/evenements/$event_id/pool/$pool_id") ?>
+<?= actions()->back($is_new ? "/evenements/$event_id?tab=teams" : "/evenements/$event_id/groupe-equipes/$team_group_id") ?>
 
 <div class="container">
     <article>
         <header>
             <h2><?= $is_new ? "Créer un nouveau Groupe d'Équipes" : "Modifier le Groupe d'Équipes" ?></h2>
+            <p>
+                Un groupe d'équipes vous permet de regrouper plusieurs équipes pour un même contexte
+                (ex: équipes de relais, équipes de vaisselle, équipes de nettoyage, etc.).
+                Vous pourrez ensuite créer et gérer les équipes dans ce groupe.
+            </p>
         </header>
         <form method="post" id="teamgroup-form">
             <?= $v->render_validation() ?>
@@ -81,7 +86,10 @@ page($is_new ? "Nouveau Groupe d'Équipes" : "Modifier " . ($team_group->name ?:
             <?php endif ?>
             <?= $relay_format->render() ?>
             <?php if ($team_count > 0): ?>
-                <p><i class="fa fa-triangle-exclamation"></i> Changer le type de compétition supprimera les <?= $team_count ?> équipe<?= $team_count > 1 ? 's' : '' ?> déjà composée<?= $team_count > 1 ? 's' : '' ?> dans ce groupe.</p>
+                <p><i class="fa fa-triangle-exclamation"></i> Changer le type de compétition supprimera les
+                    <?= $team_count ?> équipe<?= $team_count > 1 ? 's' : '' ?> déjà
+                    composée<?= $team_count > 1 ? 's' : '' ?> dans ce groupe.
+                </p>
             <?php endif ?>
 
             <button type="submit">
