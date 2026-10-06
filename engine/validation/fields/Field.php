@@ -84,7 +84,7 @@ class Field
     public function props(bool $includeValue = true): string
     {
         $v = e($this->value);
-        $id = Validator::keyToId($this->key);
+        $id = Validator::key_to_id($this->key);
         return
             "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$id\""
             . ($includeValue ? " value=\"$v\"" : "")
@@ -106,7 +106,7 @@ class Field
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
             $data_intro = $this->help ? ("data-intro=\"" . e($this->help) . "\"") : "";
-            $id = Validator::keyToId($this->key);
+            $id = Validator::key_to_id($this->key);
             $input_render = "<label {$this->render_attrs()} $data_intro for=\"{$id}\">{$label_content}</label>";
         }
         return $input_render;
@@ -163,7 +163,9 @@ class Field
         return $this;
     }
 
-    public function check(?string $msg = null): void {}
+    public function check(?string $msg = null): void
+    {
+    }
 
     protected function set_type(): void
     {
@@ -199,4 +201,5 @@ enum FieldType: string
     case Checkbox = "checkbox";
     case File = "file";
     case Url = "url";
+    case Hidden = "hidden";
 }

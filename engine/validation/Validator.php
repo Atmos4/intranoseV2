@@ -1,7 +1,7 @@
 <?php
 
 /** Simple validation class */
-class Validator
+class Validator extends FieldBuilder
 {
     /** @var Field[] */
     public array $fields = [];
@@ -59,27 +59,31 @@ class Validator
         return "hx-vals='" . json_encode($vals) . "'";
     }
 
-    public function render_validation(): string
+    public function render_validation(?string $prefix = null): string
     {
         $result = "";
 
-        // Add form action name
-        if ($this->action) {
-            $result .= "<input type=\"hidden\" name=\"action\" value=\"$this->action\">";
+        if ($prefix === null) {
+            // Add form action name
+            if ($this->action) {
+                $result .= "<input type=\"hidden\" name=\"action\" value=\"$this->action\">";
+            }
+
+            // Add csrf
+            $result .= set_csrf();
         }
-
-        // Add csrf
-        $result .= set_csrf();
-
-        foreach ($this->fields as $field) {
+        foreach ($this->fields as $key => $field) {
+            if ($prefix !== null && $key !== $prefix && !str_starts_with($key, "{$prefix}[")) {
+                continue;
+            }
             if ($field->error) {
                 $label = $field->get_label();
-                $id = self::keyToId($field->key);
+                $id = self::key_to_id($field->key);
                 $result .= "<label for=\"{$id}\" class=\"error\">"
                     . ($label ? "{$field->get_label()} : " : "") . "$field->error</label>";
             }
         }
-        if (!$this->empty) {
+        if ($prefix === null && !$this->empty) {
             if ($this->error_msg) {
                 $result .= "<label class=\"error\">$this->error_msg</label>";
             } elseif ($this->valid() && $this->success) {
@@ -87,6 +91,20 @@ class Validator
             }
         }
         return $result;
+    }
+
+    /**
+     * Checks that every registered field whose key is $prefix, or nested under it
+     * (e.g. "activity[2]" matches "activity[2][name]"), is valid.
+     */
+    public function valid_prefix(string $prefix): bool
+    {
+        foreach ($this->fields as $key => $field) {
+            if (($key === $prefix || str_starts_with($key, "{$prefix}[")) && !$field->valid()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function __tostring()
@@ -113,7 +131,7 @@ class Validator
      * Converts a bracket-notation key like "user[0][first_name]" to a flat
      * HTML-safe id like "user_0_first_name" suitable for id/for attributes.
      */
-    public static function keyToId(string $key): string
+    public static function key_to_id(string $key): string
     {
         return rtrim(preg_replace('/\[([^\]]*)\]/', '_$1', $key), '_');
     }
@@ -122,7 +140,7 @@ class Validator
      * Resolves a bracket-notation key against a nested array.
      * e.g. "user[0][first_name]" against $_POST returns $_POST['user'][0]['first_name']
      */
-    public static function resolveNestedValue(array $data, string $key): mixed
+    public static function resolve_nested_value(array $data, string $key): mixed
     {
         preg_match_all('/([^\[\]]+)/', $key, $matches);
         $current = $data;
@@ -138,74 +156,29 @@ class Validator
     /**
      * Magic function to create a certain field type
      */
-    private function create($key, $field, $msg)
+    public function create($key, $field, $msg)
     {
-        $value = $this->empty ? ($this->fields[$key]->value ?? null) : self::resolveNestedValue($_POST, $key);
+        $value = $this->empty ? (self::resolve_nested_value($this->nested_initial_values($key), $key) ?? null) : self::resolve_nested_value($_POST, $key);
         $this->fields[$key] = new $field($key, $value, $this);
         $this->fields[$key]->check($msg);
         return $this->fields[$key];
     }
 
-    /** Creates new number field */
-    public function number(string $key, ?string $msg = null): NumberField
+    private function nested_initial_values(string $key): array
     {
-        return $this->create($key, NumberField::class, $msg);
+        preg_match('/^[^\[]+/', $key, $m);
+        $root = $m[0] ?? $key;
+        return isset($this->fields[$root]) ? [$root => $this->fields[$root]->value] : [];
     }
 
-    /** Creates new text field */
-    public function text(string $key, ?string $msg = null): StringField
+    public function row_keys(string $prefix): array
     {
-        return $this->create($key, StringField::class, $msg);
+        $rows = self::resolve_nested_value($this->empty ? $this->nested_initial_values($prefix) : $_POST, $prefix);
+        return is_array($rows) ? array_keys($rows) : [];
     }
 
-    public function textarea(string $key, ?string $msg = null): TextAreaField
+    public function collection(string $key): FieldCollection
     {
-        return $this->create($key, TextAreaField::class, $msg);
-    }
-
-    /** Creates new date field */
-    public function date(string $key, ?string $msg = null): DateField
-    {
-        return $this->create($key, DateField::class, $msg);
-    }
-
-    public function date_time(string $key, ?string $msg = null): DateTimeField
-    {
-        return $this->create($key, DateTimeField::class, $msg);
-    }
-
-    public function switch(string $key, ?string $msg = null): SwitchField
-    {
-        return $this->create($key, SwitchField::class, $msg);
-    }
-
-    public function upload(string $key, ?string $msg = null): UploadField
-    {
-        return $this->create($key, UploadField::class, $msg);
-    }
-
-    public function email(string $key, ?string $msg = null): EmailField
-    {
-        return $this->create($key, EmailField::class, $msg);
-    }
-
-    public function phone(string $key, ?string $msg = null): PhoneField
-    {
-        return $this->create($key, PhoneField::class, $msg);
-    }
-
-    public function password(string $key, ?string $msg = null): PasswordField
-    {
-        return $this->create($key, PasswordField::class, $msg);
-    }
-
-    public function select(string $key): SelectField
-    {
-        return $this->create($key, SelectField::class, null);
-    }
-
-    public function url(string $key): UrlField
-    {
-        return $this->create($key, UrlField::class, null);
+        return new FieldCollection($this, $key);
     }
 }
