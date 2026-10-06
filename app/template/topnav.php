@@ -1,5 +1,5 @@
 <?php
-return function (bool $messages, bool $help = false, User $main_user = null) { ?>
+return function (bool $messages, bool $help = false, ?User $main_user = null) { ?>
     <nav class="topnav">
         <ul>
             <li>

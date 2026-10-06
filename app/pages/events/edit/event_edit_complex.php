@@ -16,74 +16,73 @@ if ($event_id) {
     }
     $event_mapping = [
         "event_name" => $event->name,
-        "start_date" => date_format($event->start_date, "Y-m-d H:i:s"),
-        "end_date" => date_format($event->end_date, "Y-m-d H:i:s"),
-        "limit_date" => date_format($event->deadline, "Y-m-d H:i:s"),
-        "bulletin_url" => $event->bulletin_url,
-        "description" => $event->description,
-        "is_accomodation" => $event->is_accomodation,
-        "is_transport" => $event->is_transport,
+        "event_start_date" => date_format($event->start_date, "Y-m-d H:i:s"),
+        "event_end_date" => date_format($event->end_date, "Y-m-d H:i:s"),
+        "event_limit_date" => date_format($event->deadline, "Y-m-d H:i:s"),
+        "event_bulletin_url" => $event->bulletin_url,
+        "event_description" => $event->description,
+        "event_is_accomodation" => $event->is_accomodation,
+        "event_is_transport" => $event->is_transport,
     ];
+    foreach ($event->activities as $index => $activity) {
+        $event_mapping["activity"][$index] = [
+            "id" => $activity->id,
+            "name" => $activity->name,
+            "type" => $activity->type->value,
+            "start_date" => $activity->start_date->format("Y-m-d H:i:s"),
+            "end_date" => $activity->end_date->format("Y-m-d H:i:s"),
+            "location_label" => $activity->location_label,
+            "location_url" => $activity->location_url,
+            "description" => $activity->description,
+            "deadline" => $activity->deadline->format("Y-m-d H:i:s"),
+        ];
+        foreach ($activity->categories as $c => $cat) {
+            $event_mapping["activity"][$index]["category"][$c] = [
+                "id" => $cat->id,
+                "name" => $cat->name,
+                "toggle" => $cat->removed ? 0 : 1,
+            ];
+        }
+    }
 } else {
     $event = new Event();
 }
 
 $v = new Validator($event_mapping ?? []);
 $event_name = $v->text("event_name")->label("Nom de l'événement")->placeholder()->required();
-$start_date = $v->date_time("start_date")->label("Date de début")->required();
-$end_date = $v->date_time("end_date")
+$start_date = $v->date_time("event_start_date")->label("Date de début")->required();
+$end_date = $v->date_time("event_end_date")
     ->label("Date de fin")->required()
     ->min($start_date->value, "Doit être après le début");
-$limit_date = $v->date_time("limit_date")
+$limit_date = $v->date_time("event_limit_date")
     ->label("Deadline")->required()
     ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de départ");
-$bulletin_url = $v->url("bulletin_url")->label("Lien vers le bulletin")->placeholder();
-$description = $v->textarea("description")->label("Description");
-$is_accomodation = $v->switch("is_accomodation")->label("Hébergement");
-$is_transport = $v->switch("is_transport")->label("Transport");
+$bulletin_url = $v->url("event_bulletin_url")->label("Lien vers le bulletin")->placeholder();
+$description = $v->textarea("event_description")->label("Description");
+$is_accomodation = $v->switch("event_is_accomodation")->label("Hébergement");
+$is_transport = $v->switch("event_is_transport")->label("Transport");
 
-$existing_count = $event_id ? count($event->activities) : 0;
-$total_activity_count = max($existing_count, $_POST ? intval($_POST["activity_count"] ?? 0) : 0);
-
-// Process activities
-$activity_validators = [];
-
-// if submit, handle the potential activities with activity_count
-if ($_POST) {
-    $activity_count = intval($_POST["activity_count"] ?? 0);
-    for ($i = 0; $i < $activity_count; $i++) {
-        $activity_id = $_POST["activity_{$i}_id"] ?? null;
-        $av = new Validator();
-        $av_fields = build_activity_validator($av, $start_date->value, $end_date->value, $i);
-        $activity_validators[$i] = array_merge(["id" => $activity_id, "v" => $av], $av_fields);
-    }
+$activities = $v->collection("activity");
+$activity_rows = [];
+foreach ($activities as $index => $field_row) {
+    $fields = build_activity_validator($field_row, $start_date->value, $end_date->value);
+    $categories = $field_row->collection("category");
+    $category_id = $categories->hidden("id");
+    $category_name = $categories->text("name")->required();
+    $category_toggle = $categories->switch("toggle")->set_labels(" ", "Supprimer");
+    $activity_rows[$index] = array_merge(
+        [
+            "field_row" => $field_row,
+            "categories" => $categories,
+            "category_id" => $category_id,
+            "category_name" => $category_name,
+            "category_toggle" => $category_toggle,
+        ],
+        $fields
+    );
 }
 
-// For inital load - build validators from entity data for existing activities
-foreach ($event->activities as $index => $activity) {
-    if (!isset($activity_validators[$index])) {
-        $entity_data = [
-            "activity_{$index}_name" => $activity->name,
-            "activity_{$index}_type" => $activity->type->value,
-            "activity_{$index}_start_date" => $activity->start_date->format("Y-m-d H:i:s"),
-            "activity_{$index}_end_date" => $activity->end_date->format("Y-m-d H:i:s"),
-            "activity_{$index}_location_label" => $activity->location_label,
-            "activity_{$index}_location_url" => $activity->location_url,
-            "activity_{$index}_description" => $activity->description,
-            "activity_{$index}_deadline" => $activity->deadline->format("Y-m-d H:i:s"),
-        ];
-        foreach ($activity->categories as $c => $cat) {
-            $entity_data["activity_{$index}_category_{$c}_name"] = $cat->name;
-            $entity_data["activity_{$index}_category_{$c}_toggle"] = $cat->removed ? 0 : 1;
-        }
-        $av = new Validator($entity_data);
-        $av_fields = build_activity_validator($av, $event->start_date->format("Y-m-d H:i:s"), $event->end_date->format("Y-m-d H:i:s"), $index);
-        $activity_validators[$index] = array_merge(["id" => $activity->id, "v" => $av], $av_fields);
-    }
-}
-
-
-if ($v->valid() && all_valid($activity_validators)) {
+if ($v->valid()) {
     $event->set($event_name->value, $start_date->value, $end_date->value, $limit_date->value, $bulletin_url->value ?? "");
     $event->type = EventType::Complex;
     $event->description = $description->value;
@@ -93,50 +92,41 @@ if ($v->valid() && all_valid($activity_validators)) {
     em()->persist($event);
 
     // Process activities
-    foreach ($activity_validators as $index => $av_fields) {
-        if ($av_fields["id"]) {
-            $activity = em()->find(Activity::class, $av_fields["id"]);
+    foreach ($activity_rows as $index => $row) {
+        if ($row["id"]->value) {
+            $activity = $event->activities->filter(fn($a) => (string) $a->id === (string) $row["id"]->value)->first() ?: null;
+            if (!$activity) {
+                force_404("Cette activité n'appartient pas à l'événement.");
+            }
         } else {
             $activity = new Activity();
         }
 
         $activity->set(
-            $av_fields["name"]->value,
-            $av_fields["start_date"]->value,
-            $av_fields["end_date"]->value,
-            $av_fields["location_label"]->value,
-            $av_fields["location_url"]->value,
-            $av_fields["description"]->value,
+            $row["name"]->value,
+            $row["start_date"]->value,
+            $row["end_date"]->value,
+            $row["location_label"]->value,
+            $row["location_url"]->value,
+            $row["description"]->value,
         );
-        $activity->type = ActivityType::from($av_fields["type"]->value);
-        $activity->deadline = $av_fields["deadline"]->value ? date_create($av_fields["deadline"]->value) : $event->deadline;
+        $activity->type = ActivityType::from($row["type"]->value);
+        $activity->deadline = $row["deadline"]->value ? date_create($row["deadline"]->value) : $event->deadline;
         $activity->event = $event;
 
-        // Process categories
-        $category_count = intval($_POST["activity_{$index}_category_count"] ?? 0);
-        for ($c = 0; $c < $category_count; $c++) {
-            $category_id = $_POST["activity_{$index}_category_{$c}_id"] ?? null;
-            $category_name = $_POST["activity_{$index}_category_{$c}_name"] ?? null;
-            $category_removed = !($_POST["activity_{$index}_category_{$c}_toggle"] ?? 0);
-
-            if ($category_id) {
-                $category = em()->find(Category::class, $category_id);
-                if ($category) {
-                    $category->name = $category_name;
-                    $category->removed = $category_removed;
-                    if ($category_removed) {
-                        em()->remove($category);
-                        $activity->categories->removeElement($category);
-                    }
+        // Process categories: rows with an id update that category, rows without are new.
+        foreach ($row["category_name"]->fields() as $c => $name_field) {
+            $existing = find_owned_category($activity, $row["category_id"]->fields()[$c]->value);
+            if ($existing) {
+                $existing->name = $name_field->value;
+                $existing->removed = !($row["category_toggle"]->fields()[$c]->value ?? 0);
+                if ($existing->removed) {
+                    em()->remove($existing);
+                    $activity->categories->removeElement($existing);
                 }
-            }
-        }
-
-        $new_categories = $_POST["activity_{$index}_new_categories"] ?? [];
-        foreach ($new_categories as $category_name) {
-            if ($category_name) {
+            } else {
                 $category = new Category();
-                $category->name = $category_name;
+                $category->name = $name_field->value;
                 $category->activity = $activity;
                 $activity->categories[] = $category;
             }
@@ -148,16 +138,6 @@ if ($v->valid() && all_valid($activity_validators)) {
     em()->flush();
     Toast::success("Enregistré");
     redirect("/evenements/$event->id");
-}
-
-function all_valid($validators)
-{
-    foreach ($validators as $validator_array) {
-        if (!$validator_array["v"]->valid()) {
-            return false;
-        }
-    }
-    return true;
 }
 
 $action = actions();
@@ -178,8 +158,8 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
         <?= $action ?>
         <article class="row">
             <?= $v->render_validation() ?>
-            <?php foreach ($activity_validators as $index => $av_data): ?>
-                <?php if ($_POST && !$av_data['v']->valid()): ?>
+            <?php foreach ($activity_rows as $index => $row): ?>
+                <?php if (!$v->empty && !$row['field_row']->valid()): ?>
                     <label class="error">
                         <a href="#"
                             onclick="tabsGroup.show('activity-<?= $index ?>'); tabsGroup.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false;">
@@ -221,76 +201,42 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
                     </button>
                 </div>
                 <sl-tab-group id="activities-tabs">
-                    <?php foreach ($event->activities as $index => $activity): ?>
+                    <?php foreach ($activity_rows as $index => $row): ?>
                         <sl-tab slot="nav" panel="activity-<?= $index ?>" id="tab-<?= $index ?>" closable>
-                            <?= $activity->name ?: "Activité " . ($index + 1) ?>
+                            <?= htmlspecialchars($row['name']->value ?: "Activité " . ($index + 1), ENT_QUOTES) ?>
                         </sl-tab>
                     <?php endforeach ?>
-                    <?php for ($i = $existing_count; $i < $total_activity_count; $i++): ?>
-                        <sl-tab slot="nav" panel="activity-<?= $i ?>" id="tab-<?= $i ?>" closable>
-                            <?= htmlspecialchars($_POST["activity_{$i}_name"] ?: "Activité " . ($i + 1), ENT_QUOTES) ?>
-                        </sl-tab>
-                    <?php endfor ?>
 
-                    <?php foreach ($event->activities as $index => $activity):
-                        $av_data = $activity_validators[$index];
-                        $panel_av = $av_data['v'];
-                        //filter out id and validator to keep only the fields
-                        $panel_fields = array_diff_key($av_data, array_flip(['id', 'v']));
-                        $cat_count = $_POST
-                            ? intval($_POST["activity_{$index}_category_count"] ?? count($activity->categories))
-                            : count($activity->categories);
-                        $panel_categories = [];
+                    <?php foreach ($activity_rows as $index => $row):
+                        $panel_categories = $row['categories'];
+                        $activity_entity = $event->activities[$index] ?? null;
+                        //filter out bookkeeping keys to keep only the activity fields
+                        $panel_fields = array_diff_key($row, array_flip(['field_row', 'categories', 'category_id', 'category_name', 'category_toggle']));
                         $panel_category_rows = [];
-                        for ($c = 0; $c < $cat_count; $c++) {
-                            $cat_entity = $activity->categories[$c] ?? null;
-                            $panel_categories[$c] = [
-                                'id' => $cat_entity?->id ?? null,
+                        foreach ($panel_categories as $c => $cat_row) {
+                            $cat_entity = $activity_entity?->categories[$c] ?? null;
+                            $panel_category_rows[$c] = [
                                 'entry_count' => count($cat_entity?->activity_entries ?? []),
                             ];
-                            $panel_category_rows[$c]['id'] = $cat_entity?->id;
-                            $panel_category_rows[$c]['entry_count'] = count($cat_entity?->activity_entries ?? []);
-                            $panel_category_rows[$c]['name'] = $panel_av->text("activity_{$index}_category_{$c}_name")->required();
-                            $panel_category_rows[$c]['toggle'] = $panel_av->switch("activity_{$index}_category_{$c}_toggle")->set_labels(" ", "Supprimer");
                         }
                         ?>
                         <sl-tab-panel name="activity-<?= $index ?>" id="panel-<?= $index ?>">
-                            <?php render_activity_form($panel_fields, $panel_category_rows, $panel_categories, $panel_av, true, false, $index, $activity->id, $event); ?>
+                            <?php render_activity_form($panel_fields, $panel_category_rows, $panel_categories, $row['field_row'], true, false, $index, $event); ?>
                         </sl-tab-panel>
                     <?php endforeach ?>
-                    <?php for ($i = $existing_count; $i < $total_activity_count; $i++):
-                        $av_data = $activity_validators[$i];
-                        $panel_av = $av_data['v'];
-                        $panel_fields = array_diff_key($av_data, array_flip(['id', 'v']));
-                        $new_cat_count = intval($_POST["activity_{$i}_category_count"] ?? 0);
-                        $panel_categories = [];
-                        $panel_category_rows = [];
-                        for ($c = 0; $c < $new_cat_count; $c++) {
-                            $panel_categories[$c] = ['id' => null, 'entry_count' => 0];
-                            $panel_category_rows[$c]['id'] = null;
-                            $panel_category_rows[$c]['entry_count'] = 0;
-                            $panel_category_rows[$c]['name'] = $panel_av->text("activity_{$i}_category_{$c}_name")->required();
-                            $panel_category_rows[$c]['toggle'] = $panel_av->switch("activity_{$i}_category_{$c}_toggle")->set_labels(" ", "Supprimer");
-                        }
-                        ?>
-                        <sl-tab-panel name="activity-<?= $i ?>" id="panel-<?= $i ?>">
-                            <?php render_activity_form($panel_fields, $panel_category_rows, $panel_categories, $panel_av, true, false, $i, null, $event); ?>
-                        </sl-tab-panel>
-                    <?php endfor ?>
-                    <?php if ($total_activity_count === 0): ?>
+                    <?php if (count($activity_rows) === 0): ?>
                         <div id="no-activity-message" style="padding: 2rem; text-align: center;">
                             <p>Aucune activité. Cliquez sur "Ajouter une activité" pour commencer.</p>
                         </div>
                     <?php endif ?>
                 </sl-tab-group>
             </div>
-            <input type="hidden" id="activity-count" name="activity_count" value="<?= $total_activity_count ?>">
         </article>
     </form>
 </div>
 
 <script>
-    var activityCount = <?= $total_activity_count ?>;
+    var activityCount = <?= count($activity_rows) ?>;
     var tabsGroup = document.getElementById('activities-tabs');
 
     function addActivity() {
@@ -353,7 +299,6 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
         document.body.addEventListener('htmx:afterSwap', activateTabHandler);
 
         activityCount++;
-        document.getElementById('activity-count').value = activityCount;
     }
 
     function removeActivity(index) {
@@ -361,7 +306,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
         const panel = document.getElementById(`panel-${index}`);
 
         if (tab && panel) {
-            const activityId = document.querySelector(`input[name="activity_${index}_id"]`)?.value;
+            const activityId = document.querySelector(`input[name="activity[${index}][id]"]`)?.value;
 
             // If activity has an ID - redirect to delete page
             if (activityId) {
@@ -392,14 +337,14 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 
     function addCategoryToActivity(activityIndex) {
         const categoriesDiv = document.getElementById(`activity_${activityIndex}_categories`);
-        const categoryCount = document.querySelector(`input[name="activity_${activityIndex}_category_count"]`);
-        const currentCount = parseInt(categoryCount.value);
+        const nextIndex = categoriesDiv.querySelectorAll('.category-row').length;
 
-        const input = document.createElement("input");
-        input.name = `activity_${activityIndex}_new_categories[]`;
-        input.placeholder = "Entrer le nom de la catégorie";
+        const row = document.createElement("div");
+        row.className = "category-row";
+        row.innerHTML = `<input name="activity[${activityIndex}][category][${nextIndex}][name]" placeholder="Entrer le nom de la catégorie" required>`
+            + `<input type="hidden" name="activity[${activityIndex}][category][${nextIndex}][toggle]" value="1">`;
 
-        categoriesDiv.appendChild(input);
+        categoriesDiv.appendChild(row);
     }
 
     // Add close event listeners to existing tabs
@@ -413,8 +358,8 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement multi-acti
 
     // Update tab name when activity name changes
     document.addEventListener('input', (e) => {
-        if (e.target.name && e.target.name.match(/^activity_\d+_name$/)) {
-            const match = e.target.name.match(/^activity_(\d+)_name$/);
+        if (e.target.name && e.target.name.match(/^activity\[(\d+)\]\[name\]$/)) {
+            const match = e.target.name.match(/^activity\[(\d+)\]\[name\]$/);
             if (match) {
                 const index = match[1];
                 const tab = document.getElementById(`tab-${index}`);

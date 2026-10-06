@@ -13,6 +13,7 @@ class Page extends SingletonDependency
     public bool $no_padding = false;
     public bool $help = false;
     public bool $_boost = false;
+    public bool $_sortable = false;
 
     public function css(string $css)
     {
@@ -66,6 +67,11 @@ class Page extends SingletonDependency
     public function enableHelp()
     {
         $this->help = true;
+        return $this;
+    }
+    public function sortable()
+    {
+        $this->_sortable = true;
         return $this;
     }
 }

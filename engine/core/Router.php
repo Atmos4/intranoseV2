@@ -46,7 +46,7 @@ class Router extends Singleton
         return $this;
     }
 
-    public static function abort(string $message = null, int $code = 404)
+    public static function abort(?string $message = null, int $code = 404)
     {
         http_response_code($code);
         Page::reset();
