@@ -4,9 +4,9 @@ $can_edit = check_auth(Access::$ADD_EVENTS);
 
 $event_id = get_route_param("event_id");
 $team_group_id = get_route_param("team_group_id");
+$team_index = get_route_param("team_index");
 $team_group = em()->find(TeamGroup::class, $team_group_id);
 
-$team_index = get_query_param("team_index") ?? 0;
 $team_relay_format = get_query_param("relay_format", numeric: false);
 $member_ids_raw = get_query_param("team_members", numeric: false);
 
