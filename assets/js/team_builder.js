@@ -164,10 +164,9 @@
       var relayFormat = formatSelect ? formatSelect.value : "";
 
       var getData = {
-        team_index: teamIndex,
+        relay_format: relayFormat,
+        team_members: JSON.stringify(memberIds),
       };
-      getData["relay_format"] = relayFormat;
-      getData["team_members"] = JSON.stringify(memberIds);
 
       // Reload slots
       htmx.ajax(
@@ -176,7 +175,8 @@
           eventId +
           "/groupe-equipes/" +
           teamGroupId +
-          "/team_slots",
+          "/team_slots/" +
+          teamIndex,
         {
           target: "#slots-" + teamIndex,
           swap: "outerHTML",

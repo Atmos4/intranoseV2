@@ -6,7 +6,7 @@ $team_group_id = get_route_param("team_group_id");
 
 $can_edit = check_auth(Access::$ADD_EVENTS);
 
-$team_index = get_query_param("team_index") ?? 1;
+$team_index = get_query_param("team_index") ?? 0;
 $team_id = get_query_param("team_id");
 $team_name = get_query_param("team_name", numeric: false) ?? "Équipe " . ($team_index + 1);
 $team_members = json_decode(get_query_param("team_members", numeric: false) ?? "[]", true);
@@ -50,7 +50,8 @@ $team_slot_data = http_build_query([
         <select name="team_<?= $team_index ?>_relay_format" class="team-relay-format-select"
             data-team-index="<?= $team_index ?>"
             hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_slots/<?= $team_index ?>"
-            hx-target="#slots-<?= $team_index ?>" hx-swap="outerHTML" hx-inlcude="[name=team_<?= $team_index ?>]">
+            hx-target="#slots-<?= $team_index ?>" hx-swap="outerHTML"
+            hx-vals='js:{"relay_format": event.target.value}'>
             <?php foreach ($relay_format_options as $val => $label): ?>
                 <option value="<?= e($val) ?>" <?= $val === $team_relay_format ? 'selected' : '' ?>>
                     <?= e($label) ?>
@@ -63,7 +64,7 @@ $team_slot_data = http_build_query([
         </small>
     <?php endif ?>
 
-    <div hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_slots/<?= $team_index ?>?<?= $team_slot_data ?>"
+    <div hx-get="/evenements/<?= $event_id ?>/groupe-equipes/<?= $team_group_id ?>/team_slots/<?= $team_index ?>?<?= e($team_slot_data) ?>"
         hx-trigger="load" hx-swap="outerHTML">
     </div>
 

@@ -7,7 +7,7 @@ $team_group = em()->find(TeamGroup::class, $team_group_id);
 
 $team_relay_format = get_query_param("relay_format", numeric: false);
 $member_ids_raw = get_query_param("team_members", numeric: false);
-$team_index = get_query_param("team_index");
+$team_index ??= get_query_param("team_index");
 
 $ctx = RelayFormatService::resolveTeamContext($team_relay_format, $member_ids_raw, $team_group);
 $current_format = $ctx['current_format'];
