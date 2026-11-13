@@ -2,6 +2,37 @@
 
 class GroupService
 {
+    /** Id of the virtual group containing every non-deactivated user (not stored in DB) */
+    public const CLUB_ID = 'club';
+    public const CLUB_NAME = 'Tout le club';
+
+    public static function isClub($group_id): bool
+    {
+        return $group_id === self::CLUB_ID;
+    }
+
+    /**
+     * @param string $group_id real group id, or CLUB_ID
+     * @param bool $include_deactivated only applies to the club group
+     * @return User[]|null null if the group does not exist
+     */
+    public static function getMembers($group_id, bool $include_deactivated = false): ?array
+    {
+        if (self::isClub($group_id)) {
+            if ($include_deactivated) {
+                return em()->createQuery("SELECT u FROM User u ORDER BY u.last_name ASC, u.first_name ASC")->getResult();
+            }
+            return UserService::getActiveUserList();
+        }
+        $group = em()->find(UserGroup::class, $group_id);
+        if (!$group) {
+            return null;
+        }
+        $members = $group->members->toArray();
+        usort($members, fn($a, $b) => [$a->last_name, $a->first_name] <=> [$b->last_name, $b->first_name]);
+        return $members;
+    }
+
     public static function renderTags($groups, $delimiter = false, $is_div = true)
     {
         $is_groups = $groups && (count($groups) > 0);
