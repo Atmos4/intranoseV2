@@ -7,7 +7,7 @@ class DateField extends Field
         $this->type = FieldType::Date;
     }
 
-    public function check(string $msg = null): void
+    public function check(?string $msg = null): void
     {
         if (!$this->test("/^[\d-]*$/")) {
             $this->set_error($msg ?? "Format invalide");
@@ -15,7 +15,7 @@ class DateField extends Field
     }
 
     /** Set upper date limit */
-    public function max(?string $date, string $msg = null, bool $as_attr = false): static
+    public function max(?string $date, ?string $msg = null, bool $as_attr = false): static
     {
         if ($this->should_test() && $date && $this->value && strtotime($this->value) > strtotime($date)) {
             $this->set_error($msg ?? "Trop tard");
@@ -27,7 +27,7 @@ class DateField extends Field
     }
 
     /** Set lower date limit */
-    public function min(?string $date, string $msg = null, bool $as_attr = false): static
+    public function min(?string $date, ?string $msg = null, bool $as_attr = false): static
     {
         if ($this->should_test() && $date && strtotime($this->value) < strtotime($date)) {
             $this->set_error($msg ?? "Trop tôt");

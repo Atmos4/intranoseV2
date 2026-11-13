@@ -8,7 +8,7 @@ class AuthService extends FactoryDependency
 
     public function __construct(private EntityManager $em) {}
 
-    public function tryLogin(string $login, string $password, bool $rememberMe = false, Validator &$v = null): bool
+    public function tryLogin(string $login, string $password, bool $rememberMe = false, ?Validator &$v = null): bool
     {
         $v ??= new Validator();
         if (AuthService::tryMatchUserPassword(UserService::getByLogin($this->em, $login), $password, $rememberMe, $v)) {
@@ -22,7 +22,7 @@ class AuthService extends FactoryDependency
         return false;
     }
 
-    private function tryMatchUserPassword(?User $user, string $password, bool $rememberMe = false, Validator &$v = null): bool
+    private function tryMatchUserPassword(?User $user, string $password, bool $rememberMe = false, ?Validator &$v = null): bool
     {
 
         if (!$user) {

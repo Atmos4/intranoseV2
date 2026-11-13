@@ -16,7 +16,7 @@ class Field
     private ?string $help;
     private array $attributes = [];
 
-    public function __construct(string $key, mixed $value = null, Validator $context = null)
+    public function __construct(string $key, mixed $value = null, ?Validator $context = null)
     {
         $this->key = $key;
         $this->value = $value;
@@ -84,7 +84,7 @@ class Field
     public function props(bool $includeValue = true): string
     {
         $v = e($this->value);
-        $id = Validator::keyToId($this->key);
+        $id = Validator::key_to_id($this->key);
         return
             "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$id\""
             . ($includeValue ? " value=\"$v\"" : "")
@@ -105,8 +105,8 @@ class Field
     {
         if ($this->label) {
             $label_content = $reverse ? $input_render . $this->label : $this->label . $input_render;
-            $data_intro = $this->help ? ("data-intro=\"" . $this->help . "\"") : "";
-            $id = Validator::keyToId($this->key);
+            $data_intro = $this->help ? ("data-intro=\"" . e($this->help) . "\"") : "";
+            $id = Validator::key_to_id($this->key);
             $input_render = "<label {$this->render_attrs()} $data_intro for=\"{$id}\">{$label_content}</label>";
         }
         return $input_render;
@@ -148,13 +148,13 @@ class Field
     }
 
     /** @param non-empty-string $preg */
-    protected function test(string $preg, string $value = null): false|int
+    protected function test(string $preg, ?string $value = null): false|int
     {
         return preg_match($preg, $value ?? $this->value ?? "");
     }
 
     /** Makes the field required */
-    public function required(string $msg = null): static
+    public function required(?string $msg = null): static
     {
         $this->required = true;
         if ($this->should_test() && !$this->value) {
@@ -163,7 +163,9 @@ class Field
         return $this;
     }
 
-    public function check(string $msg = null): void {}
+    public function check(?string $msg = null): void
+    {
+    }
 
     protected function set_type(): void
     {
@@ -199,4 +201,5 @@ enum FieldType: string
     case Checkbox = "checkbox";
     case File = "file";
     case Url = "url";
+    case Hidden = "hidden";
 }

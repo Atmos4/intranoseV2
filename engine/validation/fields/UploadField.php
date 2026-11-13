@@ -67,7 +67,7 @@ class UploadField extends Field
 
     public array $allowed_mime = [];
 
-    public function __construct(string $key, mixed $value = null, Validator $context = null)
+    public function __construct(string $key, mixed $value = null, ?Validator $context = null)
     {
         parent::__construct($key, $value, $context);
         if (isset($_FILES[$this->key])) {
@@ -81,7 +81,7 @@ class UploadField extends Field
         return strtolower(pathinfo($this->file_name, PATHINFO_EXTENSION));
     }
 
-    public function required(string $msg = null): static
+    public function required(?string $msg = null): static
     {
         if ($this->should_test() && !$this->file_name) {
             $this->set_error($msg ?? "Requis");
@@ -89,7 +89,7 @@ class UploadField extends Field
         return $this;
     }
 
-    public function check(string $msg = null): void
+    public function check(?string $msg = null): void
     {
         if (isset($_FILES[$this->key])) {
             if ($_FILES[$this->key]["name"] != '') {

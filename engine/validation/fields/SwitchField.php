@@ -10,7 +10,7 @@ class SwitchField extends Field
     public string $true_label = "";
     public string $false_label = "";
 
-    public function check(string $msg = null): void
+    public function check(?string $msg = null): void
     {
         if (!$this->test('/\D*$/')) {
             $this->set_error($msg ?? "Format invalide");
@@ -31,7 +31,8 @@ class SwitchField extends Field
 
     public function render()
     {
-        return "<label for=\"$this->key\">"
+        $id = Validator::key_to_id($this->key);
+        return "<label for=\"$id\">"
             . "<input role=switch value=1 " . $this->props() . ($this->value ? " checked" : "") . ">"
             . ($this->true_label && $this->false_label
                 ? "<ins>$this->true_label <i class=\"fas fa-check\"></i></ins><del>$this->false_label <i class=\"fas fa-xmark\"></i></del>"

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/ActivityForm.php';
 restrict_access(Access::$ADD_EVENTS);
+
 $event_id = get_route_param("event_id", strict: false);
 $event = $event_id ? em()->find(Event::class, $event_id) : null;
 
@@ -28,8 +29,9 @@ if ($event_id) {
         'deadline' => $activity->deadline->format("Y-m-d H:i:s"),
     ];
     foreach ($activity->categories as $i => $cat) {
-        $form_values["category_{$i}_name"] = $cat->name;
-        $form_values["category_{$i}_toggle"] = $cat->removed ? 0 : 1;
+        $form_values["category"][$i]["id"] = $cat->id;
+        $form_values["category"][$i]["name"] = $cat->name;
+        $form_values["category"][$i]["toggle"] = $cat->removed ? 0 : 1;
     }
 }
 
@@ -44,16 +46,12 @@ $location_label = $fields["location_label"];
 $location_url = $fields["location_url"];
 $description = $fields["description"];
 $deadline = $fields["deadline"];
-$categories = [];
+$categories = $v->collection("category");
+$category_id = $categories->hidden("id");
+$category_name = $categories->text("name");
+$category_toggle = $categories->switch("toggle");
 $category_rows = [];
 foreach ($activity->categories as $index => $category) {
-    $categories[$index] = [
-        'id' => $category->id,
-        'entry_count' => count($category->activity_entries ?? []),
-    ];
-    $category_rows[$index]['name'] = $v->text("category_{$index}_name");
-    $category_rows[$index]['toggle'] = $v->switch("category_{$index}_toggle");
-    $category_rows[$index]['id'] = $category->id;
     $category_rows[$index]['entry_count'] = count($category->activity_entries ?? []);
 }
 
@@ -61,19 +59,18 @@ if ($v->valid()) {
     $activity->set($name->value, $start_date->value, $end_date->value, $location_label->value, $location_url->value, $description->value);
     $activity->type = ActivityType::from($type->value);
     $activity->deadline = $deadline->value ? date_create($deadline->value) : date_create($deadline->value);
-    foreach ($activity->categories as $index => $category) {
-        $category->name = $category_rows[$index]['name']->value;
-        $category->removed = !$category_rows[$index]['toggle']->value ?? 0;
-        if ($category->removed) {
-            em()->remove($category);
-            $activity->categories->removeElement($category);
-        }
-    }
-    $new_categories = $_POST["new_categories"] ?? [];
-    foreach ($new_categories as $category_name) {
-        if ($category_name) {
+    foreach ($category_name->fields() as $index => $name_field) {
+        $existing = find_owned_category($activity, $category_id->fields()[$index]->value);
+        if ($existing) {
+            $existing->name = $name_field->value;
+            $existing->removed = !($category_toggle->fields()[$index]->value ?? 0);
+            if ($existing->removed) {
+                em()->remove($existing);
+                $activity->categories->removeElement($existing);
+            }
+        } else {
             $category = new Category();
-            $category->name = $category_name;
+            $category->name = $name_field->value;
             $category->activity = $activity;
             $activity->categories[] = $category;
         }
@@ -103,7 +100,7 @@ page($event_id ? "{$event->name} : Modifier" : "Créer un événement mono-activ
 ?>
 <form method="post">
     <?= $action ?>
-    <?php render_activity_form($fields, $category_rows, $categories, $v, false, true, null, $activity->id ?? null, $event); ?>
+    <?php render_activity_form($fields, $category_rows, $categories, $v, false, true, null, $event); ?>
 </form>
 <?php if ($event_id): ?>
     <a href="/evenements/<?= $event_id ?>/type" type="button" class="secondary">Changer de type d'événement

@@ -89,6 +89,17 @@ Router::add('/evenements/$event_id/message/nouveau', __DIR__ . '/app/pages/event
 Router::add('/evenements/$event_id/rappel', __DIR__ . '/app/pages/events/messages/event_reminder_edit.php');
 Router::add('/evenements/$event_id/type', __DIR__ . '/app/pages/events/edit/event_simple_change_confirm.php');
 
+// Team routes
+Router::add('/evenements/$event_id/groupe-equipes', __DIR__ . '/app/pages/events/teams/teamgroups_list.php');
+Router::add('/evenements/$event_id/groupe-equipes/nouveau', __DIR__ . '/app/pages/events/teams/teamgroup_edit.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/team_form', __DIR__ . '/app/pages/events/teams/team_edit_form.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/team_slots/$team_index', __DIR__ . '/app/pages/events/teams/slots_component.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/team_composition', __DIR__ . '/app/pages/events/teams/composition_component.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/supprimer', __DIR__ . '/app/pages/events/teams/teamgroup_delete.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/publier', __DIR__ . '/app/pages/events/teams/teamgroup_publish.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id/modifier', __DIR__ . '/app/pages/events/teams/teamgroup_edit.php');
+Router::add('/evenements/$event_id/groupe-equipes/$team_group_id', __DIR__ . '/app/pages/events/teams/teamgroup_view.php');
+
 //Vehicles
 Router::add('/evenements/$event_id/vehicules', __DIR__ . '/app/pages/vehicle/vehicle_view.php');
 Router::add('/evenements/$event_id/vehicule/nouveau', __DIR__ . '/app/pages/vehicle/vehicle_edit.php');
@@ -139,6 +150,7 @@ Router::add('/groupes/nouveau', __DIR__ . '/app/pages/users/groups/group_create.
 Router::add('/groupes/$group_id', __DIR__ . '/app/pages/users/groups/group_view.php');
 Router::add('/groupes/$group_id/supprimer', __DIR__ . '/app/pages/users/groups/group_delete.php');
 Router::add('/groupes/$group_id/retirer/$member_id', __DIR__ . '/app/pages/users/groups/group_delete_user.php');
+Router::add('/groupes/$group_id/export', __DIR__ . '/app/pages/users/groups/group_export.php');
 Router::add('/groupes/$group_id/messages', __DIR__ . '/app/pages/users/groups/group_message_view.php');
 Router::add('/groupes/$group_id/message/nouveau', __DIR__ . '/app/pages/users/groups/group_message_edit.php');
 

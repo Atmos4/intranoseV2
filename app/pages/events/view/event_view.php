@@ -19,7 +19,7 @@ $is_simple = $event->type == EventType::Simple;
 
 $today = date_create("today");
 
-page($event->name)->css("event_view.css")->css("entry_list.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
+page($event->name)->css("event_view.css")->css("entry_list.css")->css("team_group_list.css")->script("select-table.js")->script("copy-entry-emails.js")->enableHelp();
 ?>
 <script src="/assets/js/start-intro.js"></script>
 
@@ -65,6 +65,11 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     <sl-tab slot="nav" panel="messages" id="messages-tab" hx-trigger="load"
         hx-post="/evenements/<?= $event->id ?>/messages" hx-target="#messages">
         Messages
+    </sl-tab>
+    <sl-tab slot="nav" panel="teams" id="teams-tab" hx-trigger="load"
+        hx-post="/evenements/<?= $event->id ?>/groupe-equipes" hx-target="#teams" <?= ($tab == "teams") ? "active" : "" ?>
+        data-intro="Gérez les groupes d'équipes pour cet événement">
+        Équipes
     </sl-tab>
 
 
@@ -176,6 +181,7 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
         <sl-tab-panel name="vehicles" id="vehicles"></sl-tab-panel>
     <?php endif ?>
     <sl-tab-panel name="messages" id="messages"></sl-tab-panel>
+    <sl-tab-panel name="teams" id="teams"></sl-tab-panel>
 </sl-tab-group>
 
 <script>
@@ -188,7 +194,8 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
             'information': null, // Default tab, no parameter needed
             'entry-list': 'participants',
             'vehicles': 'vehicules',
-            'messages': 'messages'
+            'messages': 'messages',
+            'teams': 'teams'
         };
 
         tabGroup.addEventListener('sl-tab-show', (event) => {

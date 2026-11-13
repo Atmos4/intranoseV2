@@ -168,7 +168,8 @@ class EventDto
         public bool $open,
         /** @var UserGroup[] */
         public ?bool $registered,
-    ) {}
+    ) {
+    }
 
     /** Used to transfer basic event data without graph
      *  @return EventDto[] */

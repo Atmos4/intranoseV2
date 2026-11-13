@@ -2,12 +2,11 @@
 function render_activity_form(
     array $fields,
     array $category_rows,
-    array $categories,
-    Validator $v,
+    FieldCollection $categories,
+    Validator|FieldRow $v,
     bool $is_complex,
     bool $is_simple,
     ?int $activity_index,
-    ?string $activity_id,
     Event $event,
 ): void {
     $name = $fields['name'];
@@ -24,8 +23,7 @@ function render_activity_form(
     <?php if ($is_complex): ?>
         <article class="activity-form" data-activity-index="<?= $activity_index ?>"
             id="activity-wrapper-<?= $activity_index ?>">
-            <input type="hidden" name="activity_<?= $activity_index ?>_id" value="<?= $activity_id ?>">
-            <input type="hidden" name="activity_<?= $activity_index ?>_category_count" value="<?= count($categories) ?>">
+            <?= $fields['id']->render() ?>
         <?php else: ?>
             <article>
             <?php endif ?>
@@ -69,14 +67,11 @@ function render_activity_form(
             <div id="<?= $is_complex ? "activity_{$activity_index}_categories" : "categories" ?>" class="col-12">
                 <?php foreach ($categories as $index => $category):
                     $entry_count = $category_rows[$index]['entry_count']; ?>
-                    <?php if ($is_complex): ?>
-                        <input type="hidden" name="activity_<?= $activity_index ?>_category_<?= $index ?>_id"
-                            value="<?= $category_rows[$index]['id'] ?>">
-                    <?php endif ?>
                     <?= "$entry_count inscrits" ?>
                     <div class="category-row">
-                        <?= $category_rows[$index]['name']->render() ?>
-                        <?= $category_rows[$index]['toggle']->render() ?>
+                        <?= $category->field("id")->render() ?>
+                        <?= $category->field("name")->render() ?>
+                        <?= $category->field("toggle")->render() ?>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -85,14 +80,29 @@ function render_activity_form(
             <script>
                 function addCategory() {
                     const categoriesDiv = document.getElementById("categories");
-                    const input = document.createElement("input");
-                    input.name = "new_categories[]";
-                    input.placeholder = "Entrer le nom de la catégorie";
-                    categoriesDiv.appendChild(input);
+                    const nextIndex = categoriesDiv.querySelectorAll('.category-row').length;
+                    const row = document.createElement("div");
+                    row.className = "category-row";
+                    row.innerHTML = `<input name="category[${nextIndex}][name]" placeholder="Entrer le nom de la catégorie" required>`
+                        + `<input type="hidden" name="category[${nextIndex}][toggle]" value="1">`;
+                    categoriesDiv.appendChild(row);
                 }
             </script>
         <?php endif ?>
         <?php
+}
+
+/** Returns the activity's category with this id, null for a new row, 404 if it belongs elsewhere. */
+function find_owned_category(Activity $activity, mixed $id): ?Category
+{
+    if (!$id) {
+        return null;
+    }
+    $category = $activity->categories->filter(fn($c) => (string) $c->id === (string) $id)->first();
+    if (!$category) {
+        force_404("Cette catégorie n'appartient pas à l'activité.");
+    }
+    return $category;
 }
 
 /**
@@ -102,13 +112,12 @@ function render_activity_form(
  * constraints. Used by both event_edit_complex.php (POST processing) and
  * activity_edit_form.php (rendering).
  *
- * @param Validator  $v      The validator instance to register fields on.
+ * @param FieldBuilder $v      The field builder (Validator or FieldRow) to register fields on.
  * @param string|null $event_start  Event start date string for min/max bounds (submitted or entity value).
  * @param string|null $event_end    Event end date string for min/max bounds (submitted or entity value).
- * @param int|null   $index  Activity index (used to build field name prefix).
  *
  * @return array {
- *   id: mixed,
+ *   id: HiddenField,
  *   name: Field,
  *   type: Field,
  *   start_date: DateTimeField,
@@ -119,20 +128,19 @@ function render_activity_form(
  *   deadline: DateTimeField,
  * }
  */
-function build_activity_validator(Validator $v, ?string $event_start, ?string $event_end, ?int $index = null): array
+function build_activity_validator(FieldBuilder $v, ?string $event_start, ?string $event_end): array
 {
-    $p = !is_null($index) ? "activity_{$index}_" : "";
-
-    $name = $v->text("{$p}name")->label("Nom de l'activité")->placeholder()->required();
+    $id = $v->hidden("id");
+    $name = $v->text("name")->label("Nom de l'activité")->placeholder()->required();
 
     $type_array = ["RACE" => "Course", "TRAINING" => "Entraînement", "OTHER" => "Autre"];
-    $type = $v->select("{$p}type")->options($type_array)->label("Type d'activité");
+    $type = $v->select("type")->options($type_array)->label("Type d'activité");
 
-    $start_date = $v->date_time("{$p}start_date")
+    $start_date = $v->date_time("start_date")
         ->label("Date de début")
         ->required();
 
-    $end_date = $v->date_time("{$p}end_date")
+    $end_date = $v->date_time("end_date")
         ->label("Date de fin")
         ->min($start_date->value, "Doit être après le départ")
         ->required();
@@ -146,15 +154,16 @@ function build_activity_validator(Validator $v, ?string $event_start, ?string $e
             ->max($event_end, "Doit être avant la date de fin de l'événement", true);
     }
 
-    $location_label = $v->text("{$p}location_label")->label("Nom du Lieu")->required();
-    $location_url = $v->url("{$p}location_url")->label("URL du lieu");
-    $description = $v->textarea("{$p}description")->label("Description de l'activité");
+    $location_label = $v->text("location_label")->label("Nom du Lieu")->required();
+    $location_url = $v->url("location_url")->label("URL du lieu");
+    $description = $v->textarea("description")->label("Description de l'activité");
 
-    $deadline = $v->date_time("{$p}deadline")
+    $deadline = $v->date_time("deadline")
         ->max($start_date->value ? date_create($start_date->value)->format("Y-m-d H:i:s") : "", "Doit être avant le jour et l'heure de l'activité")
         ->label("Date limite d'inscription");
 
     return [
+        "id" => $id,
         "name" => $name,
         "type" => $type,
         "start_date" => $start_date,
