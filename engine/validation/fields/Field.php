@@ -83,7 +83,7 @@ class Field
 
     public function props(bool $includeValue = true): string
     {
-        $v = e($this->value);
+        $v = $includeValue ? e($this->value) : "";
         $id = Validator::keyToId($this->key);
         return
             "type=\"{$this->type->value}\" name=\"$this->key\" id=\"$id\""

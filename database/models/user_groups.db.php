@@ -1,5 +1,6 @@
 <?php
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -31,7 +32,10 @@ class UserGroup
     #[Column]
     public ThemeColor $color;
 
-    #[OneToOne(targetEntity: Conversation::class, cascade: ["persist", "remove"])]
-    public ?Conversation $conversation = null;
+    #[ManyToMany(targetEntity: Conversation::class, mappedBy: 'groups')]
+    public Collection $conversations;
 
+    public function __construct(){
+        $this->conversations = new ArrayCollection();
+    }
 }

@@ -1,0 +1,46 @@
+.group-message {
+  cursor: pointer;
+}
+
+.group-message:where(:hover, :focus, :focus-within) {
+  background-color: var(--pico-secondary-focus) !important;
+}
+
+.group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  min-width: 0;
+  margin-bottom: var(--pico-spacing);
+}
+
+header .group-chips {
+  margin-bottom: 0;
+}
+
+.group-more {
+  color: var(--pico-muted-color);
+}
+
+.group-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+}
+
+.group-dot {
+  width: 0.9rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: var(--group-color);
+}
+
+/* Shoelace multi-select in forms */
+sl-select {
+    margin-bottom: var(--pico-spacing, 1rem);
+}
+
+sl-select::part(combobox) {
+    padding-inline: .75rem;
+}
