@@ -9,16 +9,16 @@ test.describe.configure({ mode: "serial" });
 /** Fills the event-level fields (the activity panels have their own inputs). */
 async function fillEvent(page: Page, name: string) {
   await page.locator('input[name="event_name"]').fill(name);
-  await page.locator('input[name="event_start_date"]').fill(dateTimeIn(30, 9));
-  await page.locator('input[name="event_end_date"]').fill(dateTimeIn(31, 18));
-  await page.locator('input[name="event_limit_date"]').fill(dateTimeIn(29, 9));
+  await page.locator('input[name="start_date"]').fill(dateTimeIn(30, 9));
+  await page.locator('input[name="end_date"]').fill(dateTimeIn(31, 18));
+  await page.locator('input[name="limit_date"]').fill(dateTimeIn(29, 9));
 }
 
 /** Adds an activity tab through htmx and fills it. */
 async function addActivity(page: Page, index: number, name: string, startDay: number) {
   await page.getByRole("button", { name: "Ajouter une activité" }).click();
   const wrapper = page.locator(`#activity-wrapper-${index}`);
-  const field = (n: string) => wrapper.locator(`[name="activity[${index}][${n}]"]`);
+  const field = (n: string) => wrapper.locator(`[name="activity_${index}_${n}"]`);
 
   await expect(field("name")).toBeVisible(); // form is loaded through htmx
   await field("name").fill(name);
@@ -58,12 +58,13 @@ test.describe("complex event", () => {
   test("edit form is prefilled with both activities", async ({ page }) => {
     await page.goto(`${eventUrl}/modifier/complexe`);
     await expect(page.locator('input[name="event_name"]')).toHaveValue(NAME);
-    await expect(page.locator('input[name="activity[0][name]"]')).toHaveValue("Footing");
-    await expect(page.locator('input[name="activity[1][name]"]')).toHaveValue("Orientation");
+    await expect(page.locator('input[name="activity_0_name"]')).toHaveValue("Footing");
+    await expect(page.locator('input[name="activity_1_name"]')).toHaveValue("Orientation");
   });
 
   test("admin publishes, then a member registers to one activity", async ({ page, browser }) => {
     await page.goto(`${eventUrl}/publier`);
+    await page.locator('input[name="send_email"]').uncheck(); // no mail during tests
     await page.getByRole("button", { name: "Publier" }).click();
     await expect(page.getByText("Événement publié")).toBeVisible();
 

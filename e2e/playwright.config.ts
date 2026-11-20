@@ -23,6 +23,8 @@ export default defineConfig({
     cwd: "..",
     url: `${BASE_URL}/select-club`,
     reuseExistingServer: false,
+    // Safety net: never send real emails, whatever the local .env says
+    env: { EMAIL_MOCK: "1" },
     timeout: 30_000,
     stdout: "ignore",
     stderr: "ignore",

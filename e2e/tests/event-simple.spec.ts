@@ -63,6 +63,7 @@ test.describe("simple event lifecycle", () => {
 
   test("admin publishes, then a member registers", async ({ page, browser }) => {
     await page.goto(`${eventUrl}/publier`);
+    await page.locator('input[name="send_email"]').uncheck();
     await page.getByRole("button", { name: "Publier" }).click();
     await expect(page.getByText("Événement publié")).toBeVisible();
 

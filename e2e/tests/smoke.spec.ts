@@ -11,8 +11,6 @@ const PAGES = [
   "/evenements/nouveau/complexe",
   "/evenements/1",
   "/evenements/1/participants",
-  "/evenements/1/groupe-equipes",
-  "/evenements/1/groupe-equipes/nouveau",
   "/evenements/1/vehicules",
   "/evenements/1/messages",
   "/licencies",

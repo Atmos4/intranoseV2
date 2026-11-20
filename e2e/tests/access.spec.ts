@@ -10,7 +10,6 @@ const RESTRICTED = [
   "/evenements/nouveau/simple",
   "/evenements/nouveau/complexe",
   "/evenements/1/publier",
-  "/evenements/1/groupe-equipes/nouveau",
   "/club_settings",
 ];
 
