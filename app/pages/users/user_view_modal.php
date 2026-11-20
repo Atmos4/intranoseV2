@@ -101,11 +101,6 @@ if (!Component::mounted()) {
             <section>
                 <?= $user->birthdate ? "🎂 " . date_format($user->birthdate, "d/m/Y") : "" ?>
             </section>
-            <?php if ($isNotMe && FeatureService::enabled(Feature::Messages)): ?>
-                <section>
-                    <a role="button" href="/messages/direct/<?= $user->id ?>">Message</a>
-                </section>
-            <?php endif ?>
         </div>
 
         <?php if ($user->guardians->count() > 0): ?>

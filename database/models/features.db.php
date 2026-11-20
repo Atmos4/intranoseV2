@@ -48,7 +48,6 @@ class ClubFeature
 
 enum Feature: string
 {
-    case Messages = "Messages";
     case Carpooling = "Carpooling";
     case JootForm = "JootForm";
     case Calendar = "Calendar";
@@ -61,7 +60,6 @@ enum Feature: string
     public function translate()
     {
         return match ($this) {
-            Feature::Messages => "Messagerie",
             Feature::Carpooling => "Covoiturage",
             Feature::JootForm => "JotForm",
             Feature::Calendar => "Calendrier",
