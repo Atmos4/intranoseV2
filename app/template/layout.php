@@ -67,7 +67,7 @@ $clubColor = array_key_exists("selected_club", $_SESSION) ? ClubManagementServic
 <body hx-ext="head-support,loading-states" <?= has_session("user_id") || $page->_boost ? 'hx-boost="true"' : "" ?>
     hx-indicator="#hx-indicator" hx-on:show-modal="document.getElementById(event.detail.modalId).showModal()">
     <?php if ($page->nav && has_session("user_id")): ?>
-        <?= import(__DIR__ . "/topnav.php")(Feature::Messages->on(), $page->help, User::getMain()) ?>
+        <?= import(__DIR__ . "/topnav.php")($page->help, User::getMain()) ?>
         <?= component(__DIR__ . "/nav.php") ?>
 
     <?php endif ?>

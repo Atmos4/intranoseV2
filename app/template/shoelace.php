@@ -16,4 +16,15 @@
     import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/components/tab-panel/tab-panel.js';
     import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/components/drawer/drawer.js';
     import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/components/dropdown/dropdown.js';
+    import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/components/select/select.js';
+    import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/components/option/option.js';
+
+    // htmx does not read shoelace controls: add sl-select values to the request
+    document.addEventListener('htmx:configRequest', (e) => {
+        const form = e.detail.elt.closest?.('form') ?? (e.detail.elt.tagName === 'FORM' ? e.detail.elt : null);
+        form?.querySelectorAll('sl-select[name]').forEach((select) => {
+            const values = [].concat(select.value).filter((v) => v !== '');
+            if (values.length) e.detail.parameters[select.name] = values;
+        });
+    });
 </script>

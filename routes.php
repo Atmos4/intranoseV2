@@ -139,8 +139,6 @@ Router::add('/groupes/nouveau', __DIR__ . '/app/pages/users/groups/group_create.
 Router::add('/groupes/$group_id', __DIR__ . '/app/pages/users/groups/group_view.php');
 Router::add('/groupes/$group_id/supprimer', __DIR__ . '/app/pages/users/groups/group_delete.php');
 Router::add('/groupes/$group_id/retirer/$member_id', __DIR__ . '/app/pages/users/groups/group_delete_user.php');
-Router::add('/groupes/$group_id/messages', __DIR__ . '/app/pages/users/groups/group_message_view.php');
-Router::add('/groupes/$group_id/message/nouveau', __DIR__ . '/app/pages/users/groups/group_message_edit.php');
 
 Router::add('/user-control/$user_id', __DIR__ . '/app/pages/users/take_user_control.php');
 
@@ -157,9 +155,10 @@ Router::add('/documents/$doc_id/supprimer', __DIR__ . '/app/pages/shared_documen
 
 // Messages
 Router::add('/messages', __DIR__ . "/app/pages/messages/messages_overview.php");
-Router::add('/messages/nouveau', __DIR__ . "/app/pages/messages//new/new_message.php");
-Router::add('/messages/search-users', __DIR__ . "/app/pages/messages//new/search_users.php");
-Router::add('/messages/direct/$user_id', __DIR__ . "/app/pages/messages/messages_direct.php");
+Router::add('/messages/nouveau', __DIR__ . "/app/pages/messages/group_message_edit.php");
+Router::add('/messages/conversation/$conversation_id', __DIR__ . "/app/pages/messages/conversation_view.php");
+Router::add('/messages/conversation/$conversation_id/renommer', __DIR__ . "/app/pages/messages/conversation_edit.php");
+Router::add('/messages/conversation/$conversation_id/nouveau', __DIR__ . "/app/pages/messages/conversation_reply.php");
 
 //Report
 Router::add('/feedback/nouveau', __DIR__ . '/app/pages/user_feedback_submit.php');

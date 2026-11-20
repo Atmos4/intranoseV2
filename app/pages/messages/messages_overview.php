@@ -1,26 +1,18 @@
 <?php
 restrict_access();
-restrict_feature(Feature::Messages);
-$user_id = User::getMainUserId();
-$conversations = Conversation::getAllFromUser($user_id);
-page("Messages")->css("messages.css") ?>
-<?= actions()->link("/messages/nouveau", "Nouveau", "fa-plus") ?>
-<ul>
-    <?php if (!$conversations): ?>
-        <p class="center">
-            Pas de messages pour le moment
-        </p>
-    <?php endif;
-foreach ($conversations as $c):
-    if ($c->private_hash):
-        $targetUser = $c->participants[0]->directUser ?>
-            <li>
-                <a href="/messages/direct/<?= Conversation::getUrlFromHash($c->private_hash, $user_id) ?>">
-                    <?= "$targetUser->first_name $targetUser->last_name" ?>
-                </a>
-            </li>
-        <?php else: ?>
-            <li>Not supported yet</li>
-        <?php endif;
-endforeach ?>
-</ul>
+$me_user = User::getMain();
+$row = MessageService::getAllGroupMessages();
+page("Messages de groupe")->css("group_messages.css");
+?>
+<?php if (check_auth(Access::$ADD_EVENTS)): ?>
+    <?= actions()->link("/messages/nouveau", "Nouveau", "fa-plus") ?>
+<?php endif ?>
+
+<?php if (!$row): ?>
+    <p class="center">
+        Pas de messages pour le moment
+    </p>
+<?php endif;
+foreach ($row as $conversation): ?>
+    <?= MessageService::renderGroupFeed($conversation) ?>
+<?php endforeach;

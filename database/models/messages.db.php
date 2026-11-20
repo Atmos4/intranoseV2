@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'messages')]
@@ -56,11 +57,14 @@ class Conversation
     #[OneToMany(mappedBy: "conversation", targetEntity: Message::class)]
     public Collection $messages;
 
+    #[ManyToMany(targetEntity: UserGroup::class, inversedBy: 'conversations')]
+    public Collection $groups;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->groups = new ArrayCollection();
     }
 
     public static function upsertPrivateConversation(User $u1, User $u2): Conversation

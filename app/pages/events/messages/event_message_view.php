@@ -21,5 +21,5 @@ if (!$event->open): ?>
     $messages = $event->conversation->getMessages();
     ?>
 
-    <?= MessageService::renderMessages($messages, $me_user, $event->id, MessageSourceType::EVENT) ?>
+    <?= MessageService::renderMessages($messages, $me_user, "/evenements/{$event->id}/message/nouveau") ?>
 <?php endif ?>

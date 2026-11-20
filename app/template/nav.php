@@ -4,7 +4,8 @@ $menu = MainMenu::create()
     ->addItem("Les licenciés", "/licencies", "fa-users")
     ->addItem("Groupes", "/groupes", "fa-user-group")
     ->addItem("Documents", "/documents", "fa-file")
-    ->addItem("Liens utiles", "/liens-utiles", "fa-arrow-up-right-from-square");
+    ->addItem("Liens utiles", "/liens-utiles", "fa-arrow-up-right-from-square")
+    ->addItem("Messages", "/messages", "fas fa-message");
 
 if (dev_or_staging()) {
     $menu->addItem("Dev", "/dev", "fa-code");
