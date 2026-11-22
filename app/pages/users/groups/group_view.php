@@ -1,11 +1,14 @@
 <?php
 require __DIR__ . "/../../../components/user_card.php";
 $user = User::getMain();
-$can_edit_user = check_auth(Access::$EDIT_USERS);
-$group = em()->find(UserGroup::class, get_route_param("group_id"));
-if (!$group) {
+$group_id = get_route_param("group_id", numeric: false);
+$is_club = GroupService::isClub($group_id);
+$group = $is_club ? null : em()->find(UserGroup::class, $group_id);
+if (!$is_club && !$group) {
     force_404("this group does not exist");
 }
+$group_name = $is_club ? GroupService::CLUB_NAME : $group->name;
+$can_edit_user = check_auth(Access::$EDIT_USERS) && !$is_club; // the club group is virtual and read-only
 if ($can_edit_user && isset($_POST['add_members']) && count($_POST['add_members'])) {
     // Fetch all users to be added
     $users = UserService::getFromList($_POST['add_members']);
@@ -18,22 +21,43 @@ if ($can_edit_user && isset($_POST['add_members']) && count($_POST['add_members'
     }
     em()->flush();
 }
-$add_member_list = GroupService::getAvailableMembers($group);
+$include_deactivated = $is_club && isset($_GET['desactives']);
+$members = GroupService::getMembers($group_id, $include_deactivated);
+$add_member_list = $is_club ? [] : GroupService::getAvailableMembers($group);
 
 $actions = actions()->back("/groupes");
-if ($can_edit_user) {
-    $actions->dropdown(
-        fn($b) => $b
-            ->link(
+$can_export = check_auth(Access::$EDIT_USERS);
+$export_query = $include_deactivated ? "?desactives=1" : "";
+if ($is_club) {
+    $actions->link(
+        $include_deactivated ? "/groupes/$group_id" : "/groupes/$group_id?desactives=1",
+        $include_deactivated ? "Masquer les désactivés" : "Afficher les désactivés",
+        "fa fa-user-slash",
+    );
+}
+if ($can_export || $can_edit_user) {
+    $actions->dropdown(function ($b) use ($can_export, $can_edit_user, $group_id, $group, $export_query) {
+        if ($can_export) {
+            $b->link(
+                "/groupes/$group_id/export$export_query",
+                "Exporter (CSV)",
+                "fa fa-file-csv",
+                ["hx-boost" => "false"],
+            );
+        }
+        if ($can_edit_user) {
+            $b->link(
                 "/groupes/$group->id/supprimer",
                 "Supprimer le groupe",
                 "fa fa-trash",
                 ["class" => "destructive outline"],
-            ),
-    );
+            );
+        }
+        return $b;
+    });
 }
 
-page("Groupe : " . $group->name)->css("group_view.css");
+page("Groupe : " . $group_name)->css("group_view.css");
 
 ?>
 
@@ -43,24 +67,26 @@ page("Groupe : " . $group->name)->css("group_view.css");
     <sl-tab slot="nav" panel="members" id="members-tab" data-intro="Cet onglet contient les membres du groupe">
         Membres
     </sl-tab>
-    <sl-tab slot="nav" panel="messages" id="messages-tab" hx-trigger="load"
-        hx-post="/groupes/<?= $group->id ?>/messages" hx-target="#messages">
-        Messages
-    </sl-tab>
+    <?php if (!$is_club): ?>
+        <sl-tab slot="nav" panel="messages" id="messages-tab" hx-trigger="load"
+            hx-post="/groupes/<?= $group->id ?>/messages" hx-target="#messages">
+            Messages
+        </sl-tab>
+    <?php endif ?>
 
     <sl-tab-panel name="members">
         <div>
 
             <div class="row">
-                <?php foreach ($group->members as $key => $g_member): ?>
+                <?php foreach ($members as $key => $g_member): ?>
                     <div class="col-sm-12 col-md-6">
                         <?php UserCard(
                             user: $g_member,
-                            actions: function ($g_member) use ($group) { ?>
+                            actions: function ($g_member) use ($group, $can_edit_user) { ?>
                             <nav>
                                 <ul>
                                     <li>
-                                        <?php if (check_auth(Access::$EDIT_USERS)): ?>
+                                        <?php if ($can_edit_user): ?>
                                             <details class="dropdown" dir="rtl">
                                                 <summary aria-haspopup="listbox" class="contrast actions">
                                                     <i class="fa fa-ellipsis-vertical"></i>
@@ -78,7 +104,7 @@ page("Groupe : " . $group->name)->css("group_view.css");
                                 </ul>
                             </nav>
                             <?php
-                            },
+                                                    },
                         ) ?>
                     </div>
                 <?php endforeach ?>

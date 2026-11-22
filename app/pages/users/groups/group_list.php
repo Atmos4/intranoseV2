@@ -4,6 +4,15 @@ $colorList = ThemeColor::colorsList();
 page("Groupes")->css("group_list.css"); ?>
 <?= actions()->back("/licencies")->link("/groupes/nouveau", "Nouveau groupe", "fas fa-plus") ?>
 <table>
+    <article class="group-article" hx-trigger="click,keyup[key=='Enter'||key==' ']"
+        hx-get="/groupes/<?= GroupService::CLUB_ID ?>" hx-target="body" hx-push-url="true" tabindex=0>
+        <div class="grid">
+            <div class="group-dot" style="background-color:var(--pico-muted-color)"></div>
+            <div class="title">
+                <b><?= GroupService::CLUB_NAME ?></b>
+            </div>
+        </div>
+    </article>
     <?php foreach ($groups as $group): ?>
         <article class="group-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" hx-get="/groupes/<?= $group->id ?>"
             hx-target="body" hx-push-url="true" tabindex=0>
