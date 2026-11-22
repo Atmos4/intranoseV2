@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+// Non-interactive seed for the end-to-end tests (see e2e/). Recreates the club from scratch.
+
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../engine/load_env.php';
+
+$cli = new Cli;
+
+if (env("PRODUCTION") || env("STAGING"))
+    $cli->abort("Cannot be used in production or staging");
+
+$slug = "e2e-club";
+if (file_exists(club_data_path($slug))) {
+    rm_rf(club_data_path($slug));
+}
+
+$result = ClubManagementService::createNewClub("E2E club", $slug);
+if (!$result->success) {
+    $cli->abort($result->print());
+}
+$db = $result->unwrap();
+$em = $db->em();
+DB::setupForClub($slug);
+
+[$admin] = SeedingService::createTestUser("Admin", "E2E", $em, "admin", "admin-pw");
+$admin->permission = Permission::ROOT;
+
+[$member] = SeedingService::createTestUser("Member", "E2E", $em, "member", "member-pw");
+$member->permission = Permission::USER;
+$em->flush();
+
+SeedingService::createTestEvent($em);
+$event = $em->getRepository(Event::class)->findOneBy([]);
+$event->open = true;
+$em->flush();
+
+$cli->ok("E2E club '$slug' ready (users: admin / member)");
