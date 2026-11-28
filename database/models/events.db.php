@@ -104,6 +104,9 @@ class Event
     #[Column]
     public bool $is_accomodation = true;
 
+    #[Column(options: ['default' => false])]
+    public bool $is_cancelled = false;
+
     #[Column(options: ["default" => "COMPLEX"])]
     public EventType $type = EventType::Complex;
 
@@ -168,6 +171,7 @@ class EventDto
         public bool $open,
         /** @var UserGroup[] */
         public ?bool $registered,
+        public bool $is_cancelled = false,
     ) {}
 
     /** Used to transfer basic event data without graph
@@ -185,6 +189,7 @@ class EventDto
                 $event['deadline'],
                 $event['open'],
                 isset($event['present']) ? $event['present'] : null,
+                (bool) ($event['is_cancelled'] ?? false),
             );
         }
         return $result;

@@ -2,6 +2,7 @@
 
 use Eluceo\iCal\Domain\Entity\Calendar;
 use Eluceo\iCal\Domain\Entity\Event as ICalEvent;
+use Eluceo\iCal\Domain\Enum\EventStatus;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Domain\ValueObject\Uri;
@@ -68,7 +69,11 @@ class CalendarFeedService
         $iCalEvent = new ICalEvent($uid);
 
         // Set summary (title)
-        $iCalEvent->setSummary("[$clubName] $event->name");
+        $iCalEvent->setSummary("[$clubName] " . ($event->is_cancelled ? "[ANNULÉ] " : "") . $event->name);
+
+        if ($event->is_cancelled) {
+            $iCalEvent->setStatus(EventStatus::CANCELLED());
+        }
 
         // Set description
         $description = self::formatDescription($event, $eventUrl);
@@ -97,8 +102,8 @@ class CalendarFeedService
             }
         }
 
-        // Add deadline as alarm (reminder)
-        if ($event->deadline < $event->start_date) {
+        // Add deadline as alarm (reminder), useless for a cancelled event
+        if (!$event->is_cancelled && $event->deadline < $event->start_date) {
             $alarm = new Alarm(
                 new DisplayAction("Deadline d'inscription : $event->name"),
                 new AbsoluteDateTimeTrigger(new Timestamp($event->deadline)),

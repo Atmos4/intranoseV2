@@ -60,6 +60,12 @@ div.calendar-wrapper {
   border-radius: 99ch;
 }
 
+.event.cancelled {
+  background-color: transparent;
+  border: 2px solid var(--pico-del-color);
+  box-sizing: border-box;
+}
+
 .calendar-header {
   display: flex;
   padding-bottom: 0.5rem;

@@ -71,7 +71,7 @@ while ($day <= $endDate) {
                 <div class=\"event-wrapper\">";
     if (isset($eventsByDate[$dateStr])) {
         foreach ($eventsByDate[$dateStr] as $event) {
-            echo "<span class='event'></span>";
+            echo "<span class='event" . ($event->is_cancelled ? " cancelled" : "") . "'></span>";
         }
     }
     echo "</div></div>";

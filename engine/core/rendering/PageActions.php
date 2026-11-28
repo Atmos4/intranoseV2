@@ -21,7 +21,7 @@ class PageActionBuilder extends OutputBuilder
     }
 
     /**
-     * @param Closure(PageActionDropdownBuilder):void|PageActionDropdownBuilder $functor
+     * @param callable(PageActionDropdownBuilder): mixed $functor Return value is ignored
      * @return static
      */
     public function dropdown(callable $functor, $label = "Actions", $attributes = []): static
