@@ -21,6 +21,19 @@ class MailerFactory
         return $mailer;
     }
 
+    public static function createEventCancellationEmail(Event $event, EventRecipientType $recipients_type = EventRecipientType::EVENT_GROUPS): Mailer
+    {
+        $template = EmailTemplates::eventCancellationEmail($event);
+        $mailer = Mailer::create();
+        $emails = RecipientResolver::getEventEmails($event, $recipients_type);
+        $users = self::formatEmailsForBulk($emails);
+
+        if (!empty($users)) {
+            $mailer->createBulkEmails($users, $template['subject'], $template['content']);
+        }
+        return $mailer;
+    }
+
     public static function createEventMessageEmail(Event $event, Message $message, EventRecipientType $recipients = EventRecipientType::REGISTERED_USERS, $subject = "Nouveau message sur l'évenement"): Mailer
     {
         $template = EmailTemplates::eventMessageEmail($event, $message, $subject);
@@ -94,6 +107,40 @@ class EmailTemplates
         return [
             'subject' => $prefix . "$event->name",
             'content' => "<h3>Un nouvel événement a été publié sur " . self::getAppName() . " !</h3><br>" . $footer,
+        ];
+    }
+
+    public static function eventCancellationEmail(Event $event): array
+    {
+        $prefix = self::createPrefix();
+        $base_url = env("BASE_URL");
+        $event_name = htmlspecialchars($event->name);
+        $club_name = htmlspecialchars(self::getAppName());
+
+        $content = <<<EOD
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#e8e8e8;margin-top:20px;">
+            <tr>
+                <td style="padding:10px;">
+                    <h3 style="margin:0 0 15px 0;font-size:16px;color:#111111;font-family:Arial,Helvetica,sans-serif;line-height:1.3;">L'événement $event_name a été annulé</h3>
+                    <p style="margin:0 0 10px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        <strong>Nom :</strong> $event_name<br>
+                        <strong>Date de début prévue :</strong> {$event->start_date->format('d/m/Y H:i')}<br>
+                        <strong>Date de fin prévue :</strong> {$event->end_date->format('d/m/Y H:i')}<br>
+                    </p>
+                    <p style="margin:0 0 15px 0;font-size:14px;color:#333333;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        <a href="$base_url/evenements/$event->id" style="color:#0066cc;text-decoration:underline;">Voir les informations</a>
+                    </p>
+                    <p style="margin:0;font-size:12px;color:#777777;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
+                        $club_name<br>
+                    </p>
+                </td>
+            </tr>
+        </table>
+        EOD;
+
+        return [
+            'subject' => $prefix . "$event->name : événement annulé",
+            'content' => $content,
         ];
     }
 
@@ -194,7 +241,7 @@ class EmailTemplates
         $base_url = env("BASE_URL");
         $event_date = $event->deadline->format('d/m/Y');
         $event_name = htmlspecialchars($event->name);
-        $compagny_name = env("INTRANOSE") ? "Le Nose" : "Linklub";
+        $club_name = htmlspecialchars(self::getAppName());
 
         return <<<EOD
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#e8e8e8;margin-top:20px;">
@@ -213,7 +260,7 @@ class EmailTemplates
                     </p>
                     <p style="margin:0;font-size:12px;color:#777777;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
                         A bientôt pour de nouveaux événements !<br>
-                        $compagny_name<br>
+                        $club_name<br>
                     </p>
                 </td>
             </tr>
@@ -225,7 +272,7 @@ class EmailTemplates
     {
         $base_url = env("BASE_URL");
         $group_name = htmlspecialchars($group->name);
-        $compagny_name = env("INTRANOSE") ? "Le Nose" : "Linklub";
+        $club_name = htmlspecialchars(self::getAppName());
 
         return <<<EOD
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#e8e8e8;margin-top:20px;">
@@ -240,7 +287,7 @@ class EmailTemplates
                     </p>
                     <p style="margin:0;font-size:12px;color:#777777;font-family:Arial,Helvetica,sans-serif;line-height:1.4;">
                         Restez connectés avec votre groupe !<br>
-                        $compagny_name<br>
+                        $club_name<br>
                     </p>
                 </td>
             </tr>

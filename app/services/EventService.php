@@ -60,7 +60,7 @@ class EventService
     public static function listAllFutureOpenEvents($user_id)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, ev.is_cancelled, en.present FROM Event ev"
                 . " LEFT JOIN ev.entries en WITH en.user = ?1"
                 . " WHERE ev.open = 1"
                 . " AND ev.end_date > CURRENT_DATE()"
@@ -85,7 +85,7 @@ class EventService
     public static function listAllPastOpen($user_id)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, ev.is_cancelled, en.present FROM Event ev"
                 . " LEFT JOIN ev.entries en WITH en.user = ?1"
                 . " WHERE ev.open = 1"
                 . " AND ev.end_date <= CURRENT_DATE()"
@@ -100,7 +100,7 @@ class EventService
     public static function listPastOpenPaginated($user_id, $limit, $offset)
     {
         $events = em()
-            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev"
+            ->createQuery("SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, ev.is_cancelled, en.present FROM Event ev"
                 . " LEFT JOIN ev.entries en WITH en.user = ?1"
                 . " WHERE ev.open = 1"
                 . " AND ev.end_date <= CURRENT_DATE()"
@@ -154,7 +154,7 @@ class EventService
         $currentDate_e = (clone $currentDate_b)->setTime(23, 59, 59);
 
         return EventDto::fromEventList(em()->createQuery(
-            "SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, en.present FROM Event ev 
+            "SELECT ev.id, ev.name, ev.start_date, ev.end_date, ev.deadline, ev.open, ev.is_cancelled, en.present FROM Event ev 
             LEFT JOIN ev.entries en WITH en.user = :user 
             WHERE ev.open = 1 
             AND :current_date_e >= ev.start_date 

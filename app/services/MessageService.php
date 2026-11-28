@@ -15,6 +15,9 @@ class MessageService
                     </a>
                 </p>
             <?php endif ?>
+            <?php if (empty($messages)): ?>
+                <p class="center">Aucun message pour le moment 💭</p>
+            <?php endif ?>
             <?php foreach ($messages as $message):
                 $fromMe = $message->sender == $me_user; ?>
                 <article>

@@ -82,6 +82,7 @@ Router::add('/evenements/$event_id', __DIR__ . '/app/pages/events/view/event_vie
 Router::add('/evenements/$event_id/inscription', __DIR__ . '/app/pages/events/register/event_register_complex.php');
 Router::add('/evenements/$event_id/inscription_simple', __DIR__ . '/app/pages/events/register/event_register_simple.php');
 Router::add('/evenements/$event_id/publier', __DIR__ . '/app/pages/events/event_publish.php');
+Router::add('/evenements/$event_id/annuler', __DIR__ . '/app/pages/events/event_cancel.php');
 Router::add('/evenements/$event_id/supprimer', __DIR__ . '/app/pages/events/delete/event_delete.php');
 Router::add('/evenements/$event_id/event_form', __DIR__ . '/app/pages/events/edit/EventEditForm.php');
 Router::add('/evenements/$event_id/messages', __DIR__ . '/app/pages/events/messages/event_message_view.php');

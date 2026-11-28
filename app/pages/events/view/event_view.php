@@ -12,7 +12,7 @@ $tab = get_query_param("tab", false, false);
 $can_edit = check_auth(Access::$ADD_EVENTS);
 $now_date = date_create("now");
 $deadline_in_future = $event->deadline >= $now_date;
-$can_register = ($event->open && $deadline_in_future) || $can_edit;
+$can_register = !$event->is_cancelled && (($event->open && $deadline_in_future) || $can_edit);
 $entry = $event->entries->get(0) ?? null;
 $totalEntryCount = EventService::getEntryCount($event->id);
 $is_simple = $event->type == EventType::Simple;
@@ -28,6 +28,11 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     ->if($can_edit, fn($b) => $b->dropdown(function ($dropdown) use ($event, $is_simple) {
         $dropdown->link("/evenements/$event->id/modifier" . ($is_simple ? "/simple" : "/complexe"), "Éditer", "fa-pen", ["class" => "secondary"]);
         $dropdown->link("/evenements/$event->id/rappel", "Rappel", "fa-bell", ["class" => "secondary"]);
+        if ($event->open) {
+            $event->is_cancelled
+                ? $dropdown->link("/evenements/$event->id/annuler", "Rétablir", "fa-rotate-left", ["class" => "secondary"])
+                : $dropdown->link("/evenements/$event->id/annuler", "Annuler", "fa-ban", ["class" => "destructive"]);
+        }
         $event->open
             ? $dropdown->link("/evenements/$event->id/publier", "Retirer", "fa-calendar-minus", ["class" => "destructive"])
             : $dropdown->link("/evenements/$event->id/supprimer", "Supprimer", "fa-trash", ["class" => "destructive"]);
@@ -42,7 +47,20 @@ page($event->name)->css("event_view.css")->css("entry_list.css")->script("select
     </article>
 <?php endif ?>
 
-<?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
+<?php if ($event->is_cancelled): ?>
+    <article class="notice horizontal">
+        <span><i class="fas fa-ban"></i> Cet événement a été annulé</span>
+        <?php if ($can_edit): ?>
+            <a href="/evenements/<?= $event->id ?>/annuler" class="outline contrast">
+                <i class="fas fa-rotate-left"></i> Rétablir
+            </a>
+        <?php endif ?>
+    </article>
+<?php endif ?>
+
+<?php if (!$event->is_cancelled): ?>
+    <?= $is_simple ? RenderActivityEntry($event->activities[0], $can_register) : RenderEventEntry($entry, $event, $can_edit) ?>
+<?php endif ?>
 
 <sl-tab-group id="event-tabs">
     <sl-tab slot="nav" panel="information" id="information-tab" <?= $tab ? "" : "active" ?>

@@ -3,7 +3,9 @@ function render_events(EventDto $event)
 {
     $diff = date_create('now')->diff($event->deadline);
     $limit_class = $tooltip_content = "";
-    if ($diff->invert) {
+    if ($event->is_cancelled) {
+        // No deadline alert for a cancelled event
+    } elseif ($diff->invert) {
         $limit_class = "passed";
         $tooltip_content = "Deadline dépassée";
     } elseif ($diff->days < 7) {
@@ -14,11 +16,13 @@ function render_events(EventDto $event)
     }
     $groups = GroupService::getEventGroups($event->id); ?>
 
-    <article class="event-article" hx-trigger="click,keyup[key=='Enter'||key==' ']" onkeydown="console.log(event.key)"
+    <article class="event-article<?= $event->is_cancelled ? " event-cancelled" : "" ?>" hx-trigger="click,keyup[key=='Enter'||key==' ']" onkeydown="console.log(event.key)"
         hx-get="/evenements/<?= $event->id ?>" hx-target="body" hx-push-url="true" tabindex=0>
         <div class="grid">
             <div class="icon">
-                <?php if ($event->open):
+                <?php if ($event->is_cancelled): ?>
+                    <i class="fas fa-ban fa-xl cancelled-icon" title="Annulé"></i>
+                <?php elseif ($event->open):
                     if ($event->registered == true): ?>
                         <ins><i class="fas fa-check fa-xl" title="Inscrit !"></i></ins>
                     <?php elseif ($event->registered === false): ?>
@@ -35,6 +39,9 @@ function render_events(EventDto $event)
                 <b>
                     <?= $event->name ?>
                 </b>
+                <?php if ($event->is_cancelled): ?>
+                    <sl-badge variant="danger" pill>Annulé</sl-badge>
+                <?php endif ?>
             </div>
             <div class="grid-tag">
                 <?= GroupService::renderDots($groups) ?>
